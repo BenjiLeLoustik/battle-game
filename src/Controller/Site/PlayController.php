@@ -153,7 +153,7 @@ class PlayController extends AbstractController
     }
 
     #[Route('/match/{code}', name: 'show', methods: ['GET'])]
-    public function show(string $code, Request $request, WebProfilerManagerInterface $profiler, GameManager $games): Response
+    public function show(string $code, Request $request, GameManager $games, ?WebProfilerManagerInterface $profiler): Response
     {
         $match = $this->find($code);
         $preview = $this->isPreview($request);
@@ -161,7 +161,7 @@ class PlayController extends AbstractController
         $this->matches->join($match, $this->getUser());
 
         if ($preview) {
-            $profiler->disable();
+            $profiler?->disable();
         }
 
         return $this->render('@game/match.html.twig', [
