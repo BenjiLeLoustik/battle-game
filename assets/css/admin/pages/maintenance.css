@@ -1,0 +1,181 @@
+.maintenance-state {
+    @apply grid grid-cols-[repeat(auto-fit,minmax(280px,1fr))] gap-3;
+}
+
+.maintenance-state__card {
+    @apply flex items-center gap-3 rounded-xl border border-adm-line bg-adm-panel px-[18px] py-4;
+}
+
+.maintenance-state__dot {
+    @apply size-2.5 shrink-0 rounded-full;
+}
+
+.maintenance-state__dot--ok {
+    @apply bg-success shadow-[0_0_10px_var(--color-success)];
+}
+
+.maintenance-state__dot--warning {
+    @apply bg-yellow shadow-[0_0_10px_var(--color-yellow)];
+}
+
+.maintenance-state__text {
+    @apply flex min-w-0 flex-1 flex-col text-sm;
+}
+
+.maintenance-state__meta {
+    @apply text-xs text-[#9BA1AE];
+}
+
+.maintenance-table {
+    @apply overflow-x-auto;
+}
+
+.maintenance-table__name {
+    @apply flex flex-col;
+}
+
+.maintenance-table__meta {
+    @apply text-xs text-adm-muted;
+}
+
+.maintenance-table__actions {
+    @apply flex flex-wrap gap-1.5;
+}
+
+.maintenance-pill {
+    @apply inline-flex rounded-md bg-adm-hover px-2 py-[3px] text-xs font-semibold text-adm-ink-soft;
+}
+
+.maintenance-pill--site {
+    @apply bg-danger/12 text-[#FF8A9C];
+}
+
+.maintenance-pill--games {
+    @apply bg-yellow/10 text-[#FFD36E];
+}
+
+.maintenance-status {
+    @apply inline-flex rounded-md bg-adm-hover px-2 py-[3px] text-xs font-semibold text-[#9BA1AE];
+}
+
+.maintenance-status--running {
+    @apply bg-yellow/14 text-[#FFD36E];
+}
+
+.maintenance-status--planned {
+    @apply bg-adm-accent/16 text-adm-accent-soft;
+}
+
+.maintenance-status--cancelled {
+    @apply line-through;
+}
+
+.maintenance-form {
+    @apply flex flex-col gap-5;
+}
+
+.maintenance-form__preset {
+    @apply flex flex-wrap items-center justify-between gap-3 rounded-[10px] border border-[#6B5A2A]
+    bg-[#1C1810] px-4 py-3 text-[13px] text-[#E6D3A6];
+}
+
+.maintenance-form__targets {
+    @apply grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-2.5;
+}
+
+.maintenance-form__target {
+    @apply flex cursor-pointer flex-col gap-1 rounded-[10px] border-2 border-adm-line bg-adm-bg p-3.5
+    text-sm has-checked:border-adm-accent has-checked:bg-[#1E1B36];
+}
+
+.maintenance-form__radio {
+    @apply sr-only;
+}
+
+.maintenance-form__help {
+    @apply text-xs leading-[1.45] text-[#9BA1AE];
+}
+
+.maintenance-form__chips {
+    @apply flex flex-wrap gap-2;
+}
+
+.maintenance-form__chip {
+    @apply flex h-[34px] cursor-pointer items-center rounded-full border border-adm-line
+    bg-adm-bg px-3 text-[13px] font-semibold text-adm-ink-soft has-checked:border-yellow
+    has-checked:bg-yellow/14 has-checked:text-[#FFD36E];
+}
+
+.maintenance-form__chip-input {
+    @apply sr-only;
+}
+
+.maintenance-form__checks {
+    @apply flex flex-wrap gap-x-5 gap-y-2.5;
+}
+
+.maintenance-form__check {
+    @apply flex items-center gap-2 text-sm text-adm-ink-soft;
+}
+
+.maintenance-form__grid {
+    @apply grid grid-cols-3 gap-3.5 max-md:grid-cols-1;
+}
+
+.maintenance-form__pages {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-2;
+}
+
+.maintenance-form__page {
+    @apply flex items-center gap-2.5 rounded-lg border border-adm-line bg-adm-bg px-3 py-2.5
+    text-[13px] has-checked:border-[#3A3570];
+}
+
+.maintenance-form__page--locked {
+    @apply opacity-75;
+}
+
+.maintenance-form__page-text {
+    @apply flex flex-col;
+}
+
+.maintenance-form__path {
+    @apply font-mono text-[11px] text-adm-muted;
+}
+
+.maintenance-form__notice {
+    @apply grid grid-cols-[1fr_320px] gap-4 max-lg:grid-cols-1;
+}
+
+.maintenance-form__notice-fields {
+    @apply flex flex-col gap-3;
+}
+
+.maintenance-form__preview {
+    @apply flex flex-col gap-2;
+}
+
+.maintenance-form__preview-label {
+    @apply text-xs font-bold tracking-[0.08em] text-adm-muted uppercase;
+}
+
+.maintenance-form__preview-card {
+    @apply flex flex-col gap-1.5 rounded-xl border border-[#6B5A2A] bg-[#1C1810] p-4 text-[13px] text-[#E6D3A6];
+}
+
+.maintenance-form__preview-tag {
+    @apply self-start rounded-[5px] bg-yellow px-2 py-0.5 font-display text-[11px] font-bold
+    tracking-[0.14em] text-[#1A1405];
+}
+
+.maintenance-form__preview-title {
+    @apply text-[15px] text-[#FFE3A0];
+}
+
+.maintenance-form__preview-when {
+    @apply text-xs text-[#D9C48A];
+}
+
+.maintenance-form__actions {
+    @apply justify-end;
+}

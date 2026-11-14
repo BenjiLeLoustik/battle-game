@@ -1,0 +1,93 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'shop_orders' %}
+
+{% block title %}{{ order.reference }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page admin-page--narrow">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_shop_orders') }}" class="admin-crumbs__link">{{ 'admin.shop.orders.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ order.reference }}</span>
+        </nav>
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ order.productName }}</h1>
+            <span class="admin-pill admin-pill--{{ order.status.tone }}">{{ order.status.translate() }}</span>
+        </div>
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.shop.order.details'|trans({}, 'admin') }}</h2>
+            <dl class="admin-dl">
+                <dt class="admin-dl__term">{{ 'admin.shop.orders.column.reference'|trans({}, 'admin') }}</dt><dd class="admin-dl__value"><code>{{ order.reference }}</code></dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.orders.column.user'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{% if order.user %}<a class="admin-link" href="{{ path('admin_user_show', { id: order.user.id }) }}">{{ order.user.username }}</a>{% else %}{{ 'admin.shop.orders.deleted_user'|trans({}, 'admin') }}{% endif %}</dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.orders.column.type'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.type.translate() }}</dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.order.payment'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.payment.translate() }} · {{ order.payment.value == 'coins' ? 'admin.shop.coins'|trans({ count: order.amountCoins }, 'admin') : ((order.amountCents ?? 0) / 100)|number_format(2, ',', ' ') ~ ' €' }}</dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.order.created'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.createdAt|date('d/m/Y H:i') }}</dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.order.paid'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.paidAt ? order.paidAt|date('d/m/Y H:i') : '—' }}</dd>
+                {% if order.stripeSession %}
+                    <dt class="admin-dl__term">Stripe</dt><dd class="admin-dl__value"><code class="shop-admin-code">{{ order.stripeSession }}</code></dd>
+                {% endif %}
+                {% if order.variant %}
+                    <dt class="admin-dl__term">{{ 'admin.shop.order.variant'|trans({}, 'admin') }}</dt><dd class="admin-dl__value"><strong>{{ order.variant }}</strong></dd>
+                {% endif %}
+                {% if order.termsAcceptedAt %}
+                    <dt class="admin-dl__term">{{ 'admin.shop.order.terms'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.termsAcceptedAt|date('d/m/Y H:i') }}</dd>
+                {% endif %}
+                {% for invoice in invoices %}
+                    <dt class="admin-dl__term">{{ invoice.kind.translate }}</dt><dd class="admin-dl__value"><a class="admin-link" href="{{ path('admin_shop_invoice', { number: invoice.number }) }}" target="_blank" rel="noopener">{{ invoice.number }}</a></dd>
+                {% endfor %}
+                {% if order.tracking %}
+                    <dt class="admin-dl__term">{{ 'admin.shop.order.tracking'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.tracking }}</dd>
+                {% endif %}
+                {% if order.note %}
+                    <dt class="admin-dl__term">{{ 'admin.shop.order.note'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ order.note }}</dd>
+                {% endif %}
+            </dl>
+        </section>
+
+        {% if order.type.value == 'physical' %}
+            <section class="admin-panel">
+                <h2 class="admin-panel__title">{{ 'admin.shop.order.shipping'|trans({}, 'admin') }}</h2>
+                {% if order.shipping is not empty %}
+                    <address class="shop-admin-address">
+                        <strong>{{ order.shipping.name ?? '' }}</strong><br>
+                        {{ order.shipping.line1 ?? '' }}{% if order.shipping.line2 is defined %}<br>{{ order.shipping.line2 }}{% endif %}<br>
+                        {{ order.shipping.postal_code ?? '' }} {{ order.shipping.city ?? '' }} · {{ order.shipping.country ?? '' }}
+                        {% if order.shipping.phone is defined %}<br>{{ order.shipping.phone }}{% endif %}
+                    </address>
+                {% else %}
+                    <p class="admin-empty">{{ 'admin.shop.order.no_address'|trans({}, 'admin') }}</p>
+                {% endif %}
+                {% if order.status.value == 'paid' %}
+                    <form class="admin-actions" method="post" action="{{ path('admin_shop_order_action', { id: order.id, action: 'ship' }) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+                        <input class="admin-field__input" name="tracking" maxlength="120" placeholder="{{ 'admin.shop.order.tracking_placeholder'|trans({}, 'admin') }}" aria-label="{{ 'admin.shop.order.tracking'|trans({}, 'admin') }}">
+                        <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.shop.order.ship'|trans({}, 'admin') }}</button>
+                    </form>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.shop.order.actions'|trans({}, 'admin') }}</h2>
+            <span class="admin-panel__help">{{ 'admin.shop.order.actions_help'|trans({}, 'admin') }}</span>
+            <span class="admin-actions">
+                {% if order.status.value == 'pending' %}
+                    {{ admin_ui.post('admin_shop_order_action', { id: order.id, action: 'deliver' }, 'admin.shop.order.deliver'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-shop', 'admin.shop.order.deliver_confirm'|trans({}, 'admin')) }}
+                {% endif %}
+                {% if order.status.value in ['pending', 'paid'] %}
+                    {{ admin_ui.post('admin_shop_order_action', { id: order.id, action: 'cancel' }, 'admin.shop.order.cancel'|trans({}, 'admin'), 'admin-btn admin-btn--ghost', 'admin-shop', 'admin.shop.order.cancel_confirm'|trans({}, 'admin')) }}
+                {% endif %}
+                {% if order.status.value in ['paid', 'shipped'] %}
+                    {{ admin_ui.post('admin_shop_order_action', { id: order.id, action: 'refund' }, 'admin.shop.order.refund'|trans({}, 'admin'), 'admin-btn admin-btn--danger', 'admin-shop', 'admin.shop.order.refund_confirm'|trans({}, 'admin')) }}
+                {% endif %}
+                {% if order.stripeSession %}
+                    <a class="admin-btn admin-btn--ghost" href="{{ stripe }}/payments" target="_blank" rel="noopener">{{ 'admin.shop.order.stripe'|trans({}, 'admin') }}</a>
+                {% endif %}
+            </span>
+        </section>
+    </div>
+{% endblock %}

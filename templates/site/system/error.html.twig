@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'system.error.title'|trans({ status: status }) }}{% endblock %}
+
+{% block body %}
+    <main class="error-page">
+        <p class="error-page__status">
+            {{ status }}
+        </p>
+        <h1 class="error-page__message">
+            {{ message }}
+        </h1>
+        <a class="error-page__link" href="/">
+            {{ 'system.error.back'|trans }}
+        </a>
+    </main>
+{% endblock %}

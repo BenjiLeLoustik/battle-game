@@ -1,0 +1,84 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'shop_orders' %}
+
+{% block title %}{{ 'admin.shop.orders.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.shop.orders.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.shop.orders.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+        </div>
+
+        {% include '@admin/pages/shop/_kpis.html.twig' %}
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar shop-filters" method="get" action="{{ path('admin_shop_orders') }}">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.shop.orders.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.shop.orders.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.shop.orders.column.status'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.shop.orders.all_statuses'|trans({}, 'admin') }}</option>
+                    {% for item in statuses %}<option value="{{ item.value }}"{{ filters.status == item ? ' selected' }}>{{ item.translate() }}</option>{% endfor %}
+                </select>
+                <select class="admin-select" name="type" data-component="AutoSubmit" aria-label="{{ 'admin.shop.orders.column.type'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.shop.orders.all_types'|trans({}, 'admin') }}</option>
+                    {% for item in types %}<option value="{{ item.value }}"{{ filters.type == item ? ' selected' }}>{{ item.translate() }}</option>{% endfor %}
+                </select>
+                <select class="admin-select" name="payment" data-component="AutoSubmit" aria-label="{{ 'admin.shop.order.payment'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.shop.orders.all_payments'|trans({}, 'admin') }}</option>
+                    {% for item in payments %}<option value="{{ item.value }}"{{ filters.payment == item ? ' selected' }}>{{ item.translate() }}</option>{% endfor %}
+                </select>
+                <select class="admin-select" name="period" data-component="AutoSubmit" aria-label="{{ 'admin.shop.orders.period'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.shop.orders.all_periods'|trans({}, 'admin') }}</option>
+                    {% for item in periods %}<option value="{{ item }}"{{ filters.period == item ? ' selected' }}>{{ ('admin.shop.orders.periods.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}
+                </select>
+                <label class="admin-check shop-filters__check">
+                    <input type="checkbox" class="admin-check__input" name="shipping" value="1" data-component="AutoSubmit"{{ filters.shipping ? ' checked' }}>
+                    {{ 'admin.shop.orders.to_ship_only'|trans({}, 'admin') }}
+                </label>
+                {% if filtered %}
+                    <span class="shop-filters__meta">
+                        {{ 'admin.shop.orders.results'|trans({ count: orders|length }, 'admin') }}
+                        <a href="{{ path('admin_shop_orders') }}" class="admin-link admin-link--inline">{{ 'admin.shop.orders.reset'|trans({}, 'admin') }}</a>
+                    </span>
+                {% endif %}
+            </form>
+            {% if orders is empty %}
+                <p class="admin-empty">{{ (filtered ? 'admin.shop.orders.no_match' : 'admin.shop.orders.empty')|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(orders, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['reference', 'user', 'product', 'amount', 'date', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.shop.orders.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for order in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><code>{{ order.reference }}</code></td>
+                                    <td class="admin-table__cell">{% if order.user %}{{ admin_ui.user(order.user) }}{% else %}<span class="admin-user__meta">{{ 'admin.shop.orders.deleted_user'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            <span class="admin-user__name">{{ order.productName }}{% if order.variant %} · {{ order.variant }}{% endif %}</span>
+                                            <span class="admin-user__meta">{{ order.type.translate() }}</span>
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ order.payment.value == 'coins' ? 'admin.shop.coins'|trans({ count: order.amountCoins }, 'admin') : ((order.amountCents ?? 0) / 100)|number_format(2, ',', ' ') ~ ' €' }}</td>
+                                    <td class="admin-table__cell">{{ order.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill admin-pill--{{ order.status.tone }}">{{ order.status.translate() }}</span>{% if order.type.value == 'physical' and order.status.value == 'paid' %} <span class="admin-pill admin-pill--accent">{{ 'admin.shop.orders.to_ship'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell"><a href="{{ path('admin_shop_order', { id: order.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.shop.orders.open'|trans({}, 'admin') }}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

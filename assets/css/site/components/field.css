@@ -1,0 +1,55 @@
+.field {
+    @apply flex flex-col gap-1 text-xs text-muted-2;
+}
+
+.field--form {
+    @apply gap-1.5;
+}
+
+.field__label {
+    @apply text-[13px] font-semibold text-ink-soft;
+}
+
+.field__input {
+    @apply h-11 rounded-[10px] border border-line bg-bg px-3 text-sm text-ink placeholder:text-muted;
+}
+
+.field__input--large {
+    @apply h-[46px] px-3.5;
+}
+
+.field__input--area {
+    @apply h-auto resize-y px-3 py-2.5 leading-normal;
+}
+
+.field__input--surface {
+    @apply bg-surface px-3.5;
+}
+
+.field__input--invalid {
+    @apply border-danger;
+}
+
+.field__input--code {
+    @apply font-display text-[15px] tracking-[0.12em] uppercase;
+}
+
+.field__help {
+    @apply text-xs text-muted;
+}
+
+.field__errors {
+    @apply flex flex-col gap-0.5;
+}
+
+.field__error {
+    @apply text-xs text-danger;
+}
+
+.field__check {
+    @apply flex items-start gap-2 text-[13px] leading-[1.4] text-ink-soft;
+}
+
+.field__checkbox {
+    @apply m-0 size-[18px] shrink-0 accent-cyan;
+}

@@ -1,0 +1,47 @@
+.site-footer {
+    @apply flex flex-col gap-6 border-t border-line-soft bg-footer px-6 pt-8 pb-5 text-sm text-muted-2;
+}
+
+.site-footer__columns {
+    @apply flex flex-wrap gap-10;
+}
+
+.site-footer__about {
+    @apply flex flex-[2_1_260px] flex-col gap-3;
+}
+
+.site-footer__brand {
+    @apply font-display text-lg font-bold tracking-[0.08em] text-ink;
+}
+
+.site-footer__accent {
+    @apply text-cyan;
+}
+
+.site-footer__pitch {
+    @apply max-w-[340px] leading-[1.55];
+}
+
+.site-footer__discord {
+    @apply self-start;
+}
+
+.site-footer__discord-icon {
+    @apply size-[18px];
+}
+
+.site-footer__column {
+    @apply flex flex-[1_1_140px] flex-col gap-2.5;
+}
+
+.site-footer__title {
+    @apply font-display text-[13px] font-semibold tracking-[0.12em] text-ink uppercase;
+}
+
+.site-footer__link {
+    @apply text-muted-2 hover:text-ink;
+}
+
+.site-footer__bottom {
+    @apply flex flex-wrap justify-between gap-3 border-t border-[#1B2036] pt-4 text-xs text-muted;
+}

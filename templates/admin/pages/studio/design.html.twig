@@ -1,0 +1,207 @@
+{% extends 'base.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set labels = {
+    ready: 'admin.design.ready'|trans({}, 'admin'),
+    unsaved: 'admin.design.unsaved'|trans({}, 'admin'),
+    saving: 'admin.design.saving'|trans({}, 'admin'),
+    saved: 'admin.design.saved'|trans({}, 'admin'),
+    cleaned: 'admin.design.cleaned'|trans({}, 'admin'),
+    error: 'admin.design.error'|trans({}, 'admin'),
+    remove: 'admin.design.remove'|trans({}, 'admin')
+} %}
+
+{% macro field(property, label, placeholder = '') %}
+    <label class="studio-design__field">
+        <span class="studio-design__label">{{ label }}</span>
+        <input class="studio-design__input" data-prop="{{ property }}" placeholder="{{ placeholder }}" autocomplete="off" spellcheck="false">
+    </label>
+{% endmacro %}
+
+{% macro choice(property, label, options) %}
+    <label class="studio-design__field">
+        <span class="studio-design__label">{{ label }}</span>
+        <select class="studio-design__input" data-prop="{{ property }}">
+            <option value="">—</option>
+            {% for value, text in options %}
+                <option value="{{ value }}">{{ text }}</option>
+            {% endfor %}
+        </select>
+    </label>
+{% endmacro %}
+
+{% macro color(property, label) %}
+    <label class="studio-design__field">
+        <span class="studio-design__label">{{ label }}</span>
+        <span class="studio-design__color">
+            <input type="color" class="studio-design__swatch" data-color-for="{{ property }}" aria-label="{{ label }}">
+            <input class="studio-design__input" data-prop="{{ property }}" autocomplete="off" spellcheck="false">
+        </span>
+    </label>
+{% endmacro %}
+
+{% macro sides(prefix, label) %}
+    <div class="studio-design__sides studio-design__sides--{{ prefix }}">
+        <span class="studio-design__sides-label">{{ label }}</span>
+        {% for side in ['top', 'right', 'bottom', 'left'] %}
+            <input class="studio-design__side studio-design__side--{{ side }}" data-prop="{{ prefix }}-{{ side }}" aria-label="{{ label }} · {{ ('admin.design.sides.' ~ side)|trans({}, 'admin') }}" autocomplete="off">
+        {% endfor %}
+    </div>
+{% endmacro %}
+
+{% block title %}{{ 'admin.design.title'|trans({ name: game.name }, 'admin') }} · {{ parent() }}{% endblock %}
+{% block body_class %}admin-layout admin-layout--editor{% endblock %}
+{% block space %}admin{% endblock %}
+
+{% block body %}
+    {% include '@admin/components/partials/topbar.html.twig' %}
+    {% set t = 'admin.design.' %}
+
+    <div class="studio-design" data-component="StudioDesigner"
+         data-rules="{{ (rules ?: {})|json_encode }}"
+         data-fonts="{{ fonts|json_encode }}"
+         data-shadows="{{ shadows|json_encode }}"
+         data-labels="{{ labels|json_encode }}"
+         data-token="{{ csrf_token('studio-design-' ~ game.slug) }}"
+         data-save="{{ path('admin_studio_design_save', { slug: game.slug }) }}"
+         data-preview="{{ game.solo ? path('site_play_solo', { slug: game.slug, preview: 1 }) : '' }}">
+
+        <div class="studio-design__toolbar">
+            {{ admin_ui.link(path('admin_studio_show', { slug: game.slug }), 'admin.studio.title'|trans({}, 'admin'), 'back') }}
+            <span class="studio-design__separator" aria-hidden="true">/</span>
+            <strong class="studio-design__name">{{ game.name }}</strong>
+            <span class="studio-design__badge">{{ (t ~ 'badge')|trans({}, 'admin') }}</span>
+            <div class="studio-design__modes" role="group" aria-label="{{ (t ~ 'mode')|trans({}, 'admin') }}">
+                <button type="button" class="studio-design__mode" data-mode="select" aria-pressed="true">⌖ {{ (t ~ 'select')|trans({}, 'admin') }}</button>
+                <button type="button" class="studio-design__mode" data-mode="play" aria-pressed="false">▶ {{ (t ~ 'play')|trans({}, 'admin') }}</button>
+            </div>
+            <span class="studio-design__state" aria-live="polite"></span>
+            <div class="studio-design__actions">
+                <a href="{{ path('admin_studio_editor_index', { slug: game.slug }) }}" class="studio-editor__button">{{ (t ~ 'code')|trans({}, 'admin') }}</a>
+                {% if game.solo %}
+                    <button type="button" class="studio-editor__button" data-action="reload">{{ 'admin.editor.reload'|trans({}, 'admin') }}</button>
+                {% endif %}
+                <button type="button" class="studio-editor__button studio-editor__button--primary" data-action="save">{{ 'admin.editor.save'|trans({}, 'admin') }}</button>
+            </div>
+        </div>
+
+        <div class="studio-design__body">
+            <div class="studio-design__stage">
+                {% if game.solo %}
+                    <iframe class="studio-design__frame" title="{{ 'admin.editor.preview'|trans({}, 'admin') }}"></iframe>
+                {% else %}
+                    <p class="studio-design__no-preview">{{ 'admin.editor.no_preview'|trans({}, 'admin') }}</p>
+                {% endif %}
+                <span class="studio-design__outline studio-design__outline--hover" hidden></span>
+                <span class="studio-design__outline studio-design__outline--selected" hidden></span>
+            </div>
+
+            <aside class="studio-design__panel" aria-label="{{ (t ~ 'panel')|trans({}, 'admin') }}">
+                <p class="studio-design__empty">{{ (t ~ 'empty')|trans({}, 'admin') }}</p>
+
+                <div class="studio-design__target" hidden>
+                    <nav class="studio-design__crumbs" aria-label="{{ (t ~ 'parents')|trans({}, 'admin') }}"></nav>
+                    <label class="studio-design__field">
+                        <span class="studio-design__label">{{ (t ~ 'target')|trans({}, 'admin') }}</span>
+                        <select class="studio-design__input studio-design__selector"></select>
+                    </label>
+                    <label class="studio-design__check">
+                        <input type="checkbox" class="studio-design__hover-state">
+                        {{ (t ~ 'hover')|trans({}, 'admin') }}
+                    </label>
+                    <p class="studio-design__help">{{ (t ~ 'target_help')|trans({}, 'admin') }}</p>
+                </div>
+
+                <form class="studio-design__controls" hidden onsubmit="return false">
+                    <details class="studio-design__group" open>
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.box')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__box">
+                            {{ _self.sides('margin', (t ~ 'margin')|trans({}, 'admin')) }}
+                            <div class="studio-design__box-inner">
+                                {{ _self.sides('padding', (t ~ 'padding')|trans({}, 'admin')) }}
+                                <span class="studio-design__box-content">{{ (t ~ 'content')|trans({}, 'admin') }}</span>
+                            </div>
+                        </div>
+                        <div class="studio-design__grid">
+                            {{ _self.field('width', (t ~ 'width')|trans({}, 'admin')) }}
+                            {{ _self.field('height', (t ~ 'height')|trans({}, 'admin')) }}
+                            {{ _self.field('max-width', (t ~ 'max_width')|trans({}, 'admin')) }}
+                            {{ _self.field('min-height', (t ~ 'min_height')|trans({}, 'admin')) }}
+                        </div>
+                    </details>
+
+                    <details class="studio-design__group">
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.layout')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__grid">
+                            {{ _self.choice('display', (t ~ 'display')|trans({}, 'admin'), { block: 'Bloc', flex: 'Flex', 'inline-flex': 'Flex en ligne', grid: 'Grille', none: 'Masqué' }) }}
+                            {{ _self.choice('flex-direction', (t ~ 'direction')|trans({}, 'admin'), { row: '→', column: '↓', 'row-reverse': '←', 'column-reverse': '↑' }) }}
+                            {{ _self.choice('justify-content', (t ~ 'justify')|trans({}, 'admin'), { 'flex-start': 'Début', center: 'Centre', 'flex-end': 'Fin', 'space-between': 'Réparti', 'space-around': 'Espacé' }) }}
+                            {{ _self.choice('align-items', (t ~ 'align')|trans({}, 'admin'), { 'flex-start': 'Début', center: 'Centre', 'flex-end': 'Fin', stretch: 'Étiré' }) }}
+                            {{ _self.field('gap', (t ~ 'gap')|trans({}, 'admin')) }}
+                        </div>
+                    </details>
+
+                    <details class="studio-design__group" open>
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.background')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__grid">
+                            {{ _self.color('background-color', (t ~ 'background')|trans({}, 'admin')) }}
+                        </div>
+                        <div class="studio-design__gradient">
+                            <label class="studio-design__check">
+                                <input type="checkbox" data-gradient="enabled">
+                                {{ (t ~ 'gradient')|trans({}, 'admin') }}
+                            </label>
+                            <input type="color" class="studio-design__swatch" data-gradient="from" aria-label="{{ (t ~ 'gradient_from')|trans({}, 'admin') }}">
+                            <input type="color" class="studio-design__swatch" data-gradient="to" aria-label="{{ (t ~ 'gradient_to')|trans({}, 'admin') }}">
+                            <input type="number" class="studio-design__input studio-design__angle" data-gradient="angle" min="0" max="360" step="15" aria-label="{{ (t ~ 'angle')|trans({}, 'admin') }}">
+                            <span class="studio-design__unit">°</span>
+                        </div>
+                    </details>
+
+                    <details class="studio-design__group">
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.border')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__grid">
+                            {{ _self.field('border-width', (t ~ 'border_width')|trans({}, 'admin')) }}
+                            {{ _self.choice('border-style', (t ~ 'border_style')|trans({}, 'admin'), { none: 'Aucune', solid: 'Pleine', dashed: 'Tirets', dotted: 'Points' }) }}
+                            {{ _self.color('border-color', (t ~ 'border_color')|trans({}, 'admin')) }}
+                            {{ _self.field('border-radius', (t ~ 'radius')|trans({}, 'admin')) }}
+                        </div>
+                    </details>
+
+                    <details class="studio-design__group" open>
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.text')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__grid">
+                            {{ _self.choice('font-family', (t ~ 'font')|trans({}, 'admin'), fonts|map((stack, name) => name)) }}
+                            {{ _self.field('font-size', (t ~ 'font_size')|trans({}, 'admin')) }}
+                            {{ _self.choice('font-weight', (t ~ 'weight')|trans({}, 'admin'), { '300': 'Léger', '400': 'Normal', '500': 'Moyen', '600': 'Semi-gras', '700': 'Gras', '800': 'Très gras' }) }}
+                            {{ _self.color('color', (t ~ 'color')|trans({}, 'admin')) }}
+                            {{ _self.choice('text-align', (t ~ 'text_align')|trans({}, 'admin'), { left: 'Gauche', center: 'Centre', right: 'Droite' }) }}
+                            {{ _self.choice('text-transform', (t ~ 'transform')|trans({}, 'admin'), { none: 'Normal', uppercase: 'MAJUSCULES', lowercase: 'minuscules' }) }}
+                            {{ _self.field('letter-spacing', (t ~ 'spacing')|trans({}, 'admin')) }}
+                        </div>
+                    </details>
+
+                    <details class="studio-design__group">
+                        <summary class="studio-design__summary">{{ (t ~ 'groups.effects')|trans({}, 'admin') }}</summary>
+                        <div class="studio-design__grid">
+                            {{ _self.choice('box-shadow', (t ~ 'shadow')|trans({}, 'admin'), shadows|map((value, name) => ('admin.design.shadows.' ~ name)|trans({}, 'admin'))) }}
+                            <label class="studio-design__field">
+                                <span class="studio-design__label">{{ (t ~ 'opacity')|trans({}, 'admin') }} <output class="studio-design__opacity-value"></output></span>
+                                <input type="range" class="studio-design__range" data-prop="opacity" min="0" max="1" step="0.05">
+                            </label>
+                        </div>
+                    </details>
+
+                    <button type="button" class="admin-btn admin-btn--ghost admin-btn--small studio-design__reset" data-action="reset">{{ (t ~ 'reset')|trans({}, 'admin') }}</button>
+                </form>
+
+                <div class="studio-design__list">
+                    <strong class="studio-design__list-title">{{ (t ~ 'styled')|trans({}, 'admin') }}</strong>
+                    <ul class="studio-design__rules" data-empty="true"></ul>
+                    <p class="studio-design__help">{{ lead ? (t ~ 'publish_lead')|trans({}, 'admin') : (t ~ 'publish_dev')|trans({}, 'admin') }}</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

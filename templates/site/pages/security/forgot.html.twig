@@ -1,0 +1,22 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.reset.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% embed '@site/components/embeds/auth-card.html.twig' with { tab: 'login' } %}
+        {% block form %}
+            <form class="auth-card__form" method="post" action="{{ path('site_security_forgot') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('forgot') }}">
+                {% if sent %}
+                    <p class="auth-card__alert auth-card__alert--success" role="status">{{ 'site.reset.sent'|trans }}</p>
+                {% endif %}
+                <p class="auth-card__hint">{{ 'site.reset.intro'|trans }}</p>
+                <div class="field field--form">
+                    <label class="field__label" for="forgot-email">{{ 'site.auth.email'|trans }}</label>
+                    <input id="forgot-email" class="field__input field__input--large" type="email" name="email" autocomplete="email" required autofocus>
+                </div>
+                <button type="submit" class="btn btn--primary btn--large btn--block">{{ 'site.reset.submit_request'|trans }}</button>
+            </form>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

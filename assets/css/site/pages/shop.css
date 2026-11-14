@@ -1,0 +1,459 @@
+.shop {
+    @apply flex flex-col gap-6 max-sm:gap-3.5;
+}
+
+.shop--narrow {
+    @apply mx-auto w-full max-w-xl;
+}
+
+.shop__head {
+    @apply flex flex-wrap items-end justify-between gap-5 max-sm:gap-3;
+}
+
+.shop__intro {
+    @apply flex min-w-0 flex-col gap-2;
+}
+
+.shop__title {
+    @apply font-display text-[34px] font-bold;
+}
+
+.shop__subtitle {
+    @apply max-w-2xl text-sm text-muted-2;
+}
+
+.shop-icon {
+    @apply size-[18px] shrink-0;
+}
+
+.shop-subnav {
+    @apply mt-1 flex flex-wrap gap-1.5;
+}
+
+.shop-subnav__link {
+    @apply rounded-lg px-3 py-1.5 text-[13px] font-semibold text-muted-2 transition hover:bg-surface-2 hover:text-ink;
+}
+
+.shop-subnav__link--active {
+    @apply bg-surface-2 text-cyan;
+}
+
+.shop-purse {
+    @apply flex flex-wrap gap-2.5 max-sm:w-full max-sm:flex-col max-sm:gap-2;
+}
+
+.shop-purse__item {
+    @apply grid grid-cols-[auto_1fr] items-center gap-x-2.5 rounded-xl border border-line bg-panel px-4 py-2.5;
+}
+
+.shop-purse__item .shop-icon {
+    @apply row-span-2 size-6;
+}
+
+.shop-purse__item--coins .shop-icon {
+    @apply text-yellow;
+}
+
+.shop-purse__item--lives .shop-icon {
+    @apply text-danger;
+}
+
+.shop-purse__item--plan .shop-icon {
+    @apply text-violet;
+}
+
+.shop-purse__value {
+    @apply font-display text-xl leading-none font-bold whitespace-nowrap;
+}
+
+.shop-purse__bonus {
+    @apply text-xs text-danger;
+}
+
+.shop-purse__label {
+    @apply text-[11px] text-muted;
+}
+
+.shop-flash {
+    @apply rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-success;
+}
+
+.shop-flash--error {
+    @apply border-danger/40 bg-danger/10 text-[#FF7A8F];
+}
+
+.shop-flash--info {
+    @apply border-yellow/40 bg-yellow/10 text-yellow;
+}
+
+.shop-tabs {
+    @apply flex gap-2 overflow-x-auto pb-1;
+}
+
+.shop-tabs__tab {
+    @apply flex shrink-0 items-center gap-2 rounded-full border border-line bg-surface px-4 py-2 text-[13px] font-semibold
+    text-muted-2 transition hover:border-(--type-color) hover:text-ink;
+}
+
+.shop-tabs__tab .shop-icon {
+    @apply text-(--type-color);
+}
+
+.shop-tabs__tab--active {
+    @apply border-(--type-color) bg-(--type-color)/12 text-(--type-color);
+}
+
+.shop-plans {
+    @apply grid gap-4 md:grid-cols-2;
+}
+
+.shop-plan {
+    --plan-color: #7C5CFF;
+    @apply relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-(--plan-color)/50 bg-panel p-6
+    shadow-[0_0_40px_color-mix(in_srgb,var(--plan-color)_14%,transparent)] max-sm:p-3.5;
+}
+
+.shop-plan__top {
+    @apply flex flex-col gap-1.5;
+}
+
+.shop-plan__tag {
+    @apply w-fit rounded-md bg-(--plan-color)/15 px-2 py-0.5 font-display text-[11px] font-bold tracking-widest text-(--plan-color);
+}
+
+.shop-plan__name {
+    @apply font-display text-2xl font-bold;
+}
+
+.shop-plan__price {
+    @apply font-display text-3xl font-bold text-ink;
+}
+
+.shop-plan__period {
+    @apply text-sm font-medium text-muted;
+}
+
+.shop-plan__description {
+    @apply text-sm text-muted-2;
+}
+
+.shop-plan__perks {
+    @apply flex flex-1 flex-col gap-2;
+}
+
+.shop-plan__perk {
+    @apply relative pl-6 text-sm text-ink-soft before:absolute before:top-[3px] before:left-0 before:size-3.5
+    before:rounded-full before:bg-success/20 before:content-[''] after:absolute after:top-[7px] after:left-[4px]
+    after:size-1.5 after:rounded-full after:bg-success after:content-[''] max-sm:pl-3.5;
+}
+
+.shop-grid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4;
+}
+
+.shop-card {
+    @apply flex flex-col overflow-hidden rounded-2xl border border-line bg-panel transition hover:border-ghost;
+}
+
+.shop-card__media {
+    @apply relative flex h-36 items-center justify-center bg-surface-2;
+}
+
+.shop-card__media {
+    @apply bg-(--type-color)/10 text-(--type-color);
+}
+
+.shop-card__image {
+    @apply size-full object-cover;
+}
+
+.shop-card__glyph .shop-icon {
+    @apply size-14;
+}
+
+.shop-card__sample {
+    @apply font-display text-2xl font-bold;
+}
+
+.shop-card__title-sample {
+    @apply rounded-md border border-line bg-bg px-3 py-1 font-display text-sm font-bold tracking-wider text-yellow uppercase;
+}
+
+.shop-card__type {
+    @apply absolute top-2.5 left-2.5 rounded-md bg-bg/80 px-2 py-0.5 text-[11px] font-semibold text-muted-2;
+}
+
+.shop-card__body {
+    @apply flex flex-1 flex-col gap-1.5 p-4 pb-3;
+}
+
+.shop-card__name {
+    @apply font-display text-base font-bold;
+}
+
+.shop-card__description {
+    @apply text-[13px] text-muted-2;
+}
+
+.shop-card__stock {
+    @apply text-xs text-muted;
+}
+
+.shop-card__stock--low {
+    @apply text-orange;
+}
+
+.shop-card > .btn,
+.shop-card > .shop-card__owned,
+.shop-card > .shop-card__actions {
+    @apply mx-4 mb-4;
+}
+
+.shop-card__actions {
+    @apply flex flex-col gap-2;
+}
+
+.shop-card__actions .btn {
+    @apply w-full;
+}
+
+.shop-card__owned {
+    @apply flex h-11 items-center justify-center rounded-[10px] border border-success/40 bg-success/10 text-sm font-semibold text-success;
+}
+
+.shop-btn--coins {
+    @apply border border-yellow/60 bg-yellow/10 text-yellow hover:bg-yellow/20;
+}
+
+.shop-btn--card {
+    @apply bg-cyan font-bold text-on-cyan hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100;
+}
+
+.shop-plan .shop-btn--card {
+    @apply bg-(--plan-color) text-bg;
+}
+
+.shop-plan__perk--lives {
+    @apply font-semibold text-ink;
+}
+
+.shop-empty {
+    @apply rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-muted max-sm:py-3.5;
+}
+
+.shop-link {
+    @apply font-semibold text-cyan hover:underline;
+}
+
+.shop-panel {
+    @apply flex flex-col gap-3 rounded-2xl border border-line bg-panel p-5 max-sm:p-3;
+}
+
+.shop-panel__title {
+    @apply font-display text-lg font-bold;
+}
+
+.shop-list {
+    @apply flex flex-col divide-y divide-line-soft;
+}
+
+.shop-list__row {
+    @apply flex items-center gap-3 py-3;
+}
+
+.shop-list__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted-2;
+}
+
+.shop-list__main {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.shop-list__name {
+    @apply truncate text-sm font-semibold;
+}
+
+.shop-list__meta {
+    @apply truncate text-xs text-muted;
+}
+
+.shop-list__amount {
+    @apply text-sm font-semibold whitespace-nowrap text-ink-soft;
+}
+
+.shop-list__coins {
+    @apply font-display text-sm font-bold text-yellow;
+}
+
+.shop-list__coins--minus {
+    @apply text-muted-2;
+}
+
+.shop-status {
+    @apply rounded-md px-2 py-0.5 text-[11px] font-semibold whitespace-nowrap;
+}
+
+.shop-status--ok {
+    @apply bg-success/15 text-success;
+}
+
+.shop-status--warn {
+    @apply bg-yellow/15 text-yellow;
+}
+
+.shop-status--danger {
+    @apply bg-danger/15 text-danger;
+}
+
+.shop-pager {
+    @apply flex gap-1.5;
+}
+
+.shop-pager__link {
+    @apply flex size-8 items-center justify-center rounded-lg text-sm text-muted-2 hover:bg-surface-2;
+}
+
+.shop-pager__link--active {
+    @apply bg-surface-2 text-cyan;
+}
+
+.shop-sub {
+    --plan-color: #7C5CFF;
+    @apply flex flex-wrap items-center gap-3 rounded-xl border border-(--plan-color)/40 bg-(--plan-color)/5 p-4;
+}
+
+.shop-sub__icon {
+    @apply flex size-10 items-center justify-center rounded-lg bg-(--plan-color)/20 text-(--plan-color);
+}
+
+.shop-items {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(170px,1fr))] gap-3;
+}
+
+.shop-item {
+    @apply flex flex-col items-center gap-2 rounded-xl border border-line bg-surface p-4 text-center;
+}
+
+.shop-item--equipped {
+    @apply border-cyan;
+}
+
+.shop-item__preview {
+    @apply flex h-20 items-center justify-center;
+}
+
+.shop-item__name {
+    @apply text-sm font-semibold;
+}
+
+.shop-item__kind {
+    @apply text-xs text-muted;
+}
+
+.shop-done {
+    @apply flex flex-col items-center gap-3 rounded-2xl border border-yellow/40 bg-panel p-8 text-center max-sm:p-5;
+}
+
+.shop-done--ok {
+    @apply border-success/40;
+}
+
+.shop-done__icon {
+    @apply flex size-16 items-center justify-center rounded-2xl bg-yellow/10 text-yellow;
+}
+
+.shop-done--ok .shop-done__icon {
+    @apply bg-success/10 text-success;
+}
+
+.shop-done__icon .shop-icon {
+    @apply size-8;
+}
+
+.shop-done__title {
+    @apply font-display text-2xl font-bold;
+}
+
+.shop-done__text {
+    @apply text-sm text-muted-2;
+}
+
+.shop-done__reference {
+    @apply text-xs text-muted;
+}
+
+.shop-done__actions {
+    @apply mt-2 flex flex-wrap justify-center gap-2.5;
+}
+
+.shop-plan__head {
+    @apply flex items-center gap-2.5;
+}
+
+.shop-list__docs {
+    @apply flex flex-col items-end gap-0.5 text-xs whitespace-nowrap;
+}
+
+.shop-checkout {
+    @apply flex flex-col gap-2;
+}
+
+.shop-checkout__size {
+    @apply flex items-center justify-between gap-3 text-[13px] text-muted-2;
+}
+
+.shop-checkout__select {
+    @apply h-9 min-w-24 rounded-lg border border-line bg-field px-2.5 text-sm text-ink;
+}
+
+.shop-checkout__terms {
+    @apply flex cursor-pointer items-start gap-2 text-[11px] leading-snug text-muted;
+}
+
+.shop-checkout__terms input {
+    @apply mt-0.5 size-3.5 shrink-0 accent-cyan;
+}
+
+.shop-checkout__terms a {
+    @apply font-semibold text-ink-soft underline;
+}
+
+.shop-checkout__code {
+    @apply h-9 rounded-lg border border-line bg-field px-2.5 text-xs text-ink uppercase placeholder:normal-case placeholder:text-muted;
+}
+
+.shop-gift {
+    @apply flex flex-col items-center gap-1.5 rounded-xl border border-success/40 bg-success/10 px-4 py-3;
+}
+
+.shop-gift__label {
+    @apply text-xs text-muted-2;
+}
+
+.shop-gift__code {
+    @apply font-mono text-lg font-bold tracking-wider text-success select-all;
+}
+
+.shop-gift__help {
+    @apply text-center text-xs text-muted-2;
+}
+
+.shop-gift__inline {
+    @apply font-mono text-success select-all;
+}
+
+.shop-redeem {
+    @apply max-w-xl;
+}
+
+.shop-redeem__help {
+    @apply text-sm text-muted-2;
+}
+
+.shop-redeem__form {
+    @apply flex flex-wrap gap-2.5;
+}
+
+.shop-redeem__input {
+    @apply min-w-0 flex-1 font-mono uppercase;
+}

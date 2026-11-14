@@ -1,0 +1,69 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'settings' %}
+{% set user = app_user() %}
+{% set groups = {
+    account: [
+        { id: 'profile', route: 'site_settings_profile', color: '#2EE6D6', icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0' },
+        { id: 'account', route: 'site_settings_account', color: '#A78BFA', icon: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z' },
+        { id: 'privacy', route: 'site_settings_privacy', color: '#4ADE80', icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z' },
+        { id: 'referral', route: 'site_settings_referral', color: '#FF9F43', icon: 'M16 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 11-5.7M19 14v6M16 17h6M9 11a4 4 0 1 0 0-8' },
+    ],
+    experience: [
+        { id: 'game', route: 'site_settings_game', color: '#FFC94A', icon: 'M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z' },
+        { id: 'notifications', route: 'site_settings_notifications', color: '#FF3DCB', icon: 'M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4' },
+    ],
+} %}
+
+{% block title %}{{ 'site.settings.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="settings">
+        <h1 class="settings__title">{{ 'site.settings.title'|trans }}</h1>
+        <div class="settings__layout">
+            <nav class="settings-nav" aria-label="{{ 'site.settings.nav'|trans }}">
+                <div class="settings-nav__user">
+                    {{ ui.avatar(user, 'round') }}
+                    <span class="settings-nav__identity">
+                        <strong class="settings-nav__name">{{ user.username }}</strong>
+                        <span class="settings-nav__email">{{ user.email }}</span>
+                    </span>
+                </div>
+                {% for group, items in groups %}
+                    <div class="settings-nav__group">
+                        <span class="settings-nav__caption">{{ ('site.settings.groups.' ~ group)|trans }}</span>
+                        {% for item in items %}
+                            {% set current = item.id == section %}
+                            <a href="{{ path(item.route) }}" class="settings-nav__link{{ current ? ' settings-nav__link--active' }}" style="--item-color: {{ item.color }}"{% if current %} aria-current="page"{% endif %}>
+                                <span class="settings-nav__bubble">
+                                    <svg class="settings-nav__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ item.icon }}"/></svg>
+                                </span>
+                                <span class="settings-nav__text">
+                                    <span class="settings-nav__label">{{ ('site.settings.nav_items.' ~ item.id ~ '.title')|trans }}</span>
+                                    <span class="settings-nav__hint">{{ ('site.settings.nav_items.' ~ item.id ~ '.hint')|trans }}</span>
+                                </span>
+                            </a>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+                <a href="{{ path('site_settings_delete') }}" class="settings-nav__delete{{ section == 'delete' ? ' settings-nav__delete--active' }}"{% if section == 'delete' %} aria-current="page"{% endif %}>
+                    <svg class="settings-nav__delete-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+                    {{ 'site.settings.delete.title'|trans }}
+                </a>
+            </nav>
+
+            <div class="settings__content">
+                {% for type, messages in flashes() %}
+                    {% for message in messages %}
+                        <p class="settings-flash settings-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">
+                            {{ type == 'error' ? message|trans({}, 'validators') : message|trans }}
+                        </p>
+                    {% endfor %}
+                {% endfor %}
+                {% block settings %}{% endblock %}
+            </div>
+        </div>
+    </div>
+{% endblock %}

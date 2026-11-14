@@ -1,0 +1,51 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% set active = 'engage_ranks' %}
+
+{% block title %}{{ 'admin.engage.ranks.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% macro row(index, tier) %}
+    <li class="rank-admin__row" data-row style="--rank-color: {{ tier.color }}">
+        <input type="color" class="pass-admin__color" name="tiers[{{ index }}][color]" value="{{ tier.color }}" data-rank-color aria-label="{{ 'admin.engage.ranks.color'|trans({}, 'admin') }}">
+        <input class="admin-field__input rank-admin__name" name="tiers[{{ index }}][name]" maxlength="30" value="{{ tier.name }}" placeholder="{{ 'admin.engage.ranks.name_placeholder'|trans({}, 'admin') }}" data-rank-name aria-label="{{ 'admin.engage.ranks.name'|trans({}, 'admin') }}">
+        <label class="rank-admin__min">
+            <span>{{ 'admin.engage.ranks.from'|trans({}, 'admin') }}</span>
+            <input class="admin-field__input" type="number" min="0" name="tiers[{{ index }}][min]" value="{{ tier.min }}" aria-label="{{ 'admin.engage.ranks.min'|trans({}, 'admin') }}">
+        </label>
+        <span class="rank-admin__preview"><span class="rank-chip" data-rank-preview>{{ tier.name }}</span></span>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-remove-row aria-label="{{ 'admin.delete'|trans({}, 'admin') }}" title="{{ 'admin.delete'|trans({}, 'admin') }}"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </li>
+{% endmacro %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post" data-component="RowsEditor">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.ranks.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.ranks.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+        <section class="admin-panel">
+            <div class="pass-admin__bar">
+                <div>
+                    <h2 class="admin-panel__title">{{ 'admin.engage.ranks.list'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.engage.ranks.list_help'|trans({}, 'admin') }}</span>
+                </div>
+                <button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-add-row>+ {{ 'admin.engage.ranks.add'|trans({}, 'admin') }}</button>
+            </div>
+            <ul class="rank-admin" data-rows>
+                {% for tier in tiers %}{{ _self.row(loop.index0, tier) }}{% endfor %}
+            </ul>
+        </section>
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.engage.ranks.beyond'|trans({}, 'admin') }}</h2>
+            <label class="admin-field">{{ 'admin.engage.ranks.step'|trans({}, 'admin') }}
+                <input class="admin-field__input rank-admin__step" type="number" min="10" name="step" value="{{ step }}">
+            </label>
+            <span class="admin-panel__help">{{ 'admin.engage.ranks.step_help'|trans({ name: (tiers|last).name, min: (tiers|last).min, step: step, next: (tiers|last).min + step }, 'admin') }}</span>
+        </section>
+        <template data-row-template>{{ _self.row('__INDEX__', { name: '', min: ((tiers|last).min ?? 0) + 150, color: '#7C5CFF' }) }}</template>
+    </form>
+{% endblock %}

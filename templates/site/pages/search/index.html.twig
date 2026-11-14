@@ -1,0 +1,48 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% block title %}{{ 'site.search.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="search-page">
+        <form class="search-page__form" action="{{ path('site_search_index') }}" method="get" role="search">
+            <h1 class="search-page__title">{{ 'site.search.title'|trans }}</h1>
+            <label class="search-page__field">
+                <svg class="search-page__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                <input type="search" class="search-page__input" name="q" value="{{ query }}" minlength="{{ min }}" maxlength="60" aria-label="{{ 'site.header.search_label'|trans }}" placeholder="{{ 'site.header.search'|trans }}" autofocus>
+            </label>
+        </form>
+
+        {% if query|length < min %}
+            <p class="search-page__empty">{{ 'site.search.too_short'|trans({ min: min }) }}</p>
+        {% elseif results.games is empty and results.players is empty %}
+            <p class="search-page__empty">{{ 'site.search.empty'|trans({ query: query }) }}</p>
+        {% else %}
+            {% for section, items in results %}
+                {% if items is not empty %}
+                    <section class="search-page__section" aria-labelledby="search-{{ section }}">
+                        <h2 id="search-{{ section }}" class="search-page__caption">{{ ('site.search.' ~ section)|trans }} · {{ items|length }}</h2>
+                        <ul class="search-page__list">
+                            {% for item in items %}
+                                <li>
+                                    <a href="{{ item.url }}" class="search-result">
+                                        {% if section == 'players' %}
+                                            {{ ui.avatar(item) }}
+                                        {% else %}
+                                            <span class="search-result__swatch" style="--swatch: {{ item.color }}" aria-hidden="true"></span>
+                                        {% endif %}
+                                        <span class="search-result__text">
+                                            <span class="search-result__name">{{ item.name }}</span>
+                                            <span class="search-result__meta">{{ item.meta }}</span>
+                                        </span>
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </div>
+{% endblock %}

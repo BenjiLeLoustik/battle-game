@@ -1,0 +1,96 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'rooms' %}
+
+{% block title %}{{ room.code }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_room_index') }}" class="admin-crumbs__link">{{ 'admin.rooms.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ room.code }}</span>
+        </nav>
+
+        <section class="admin-panel admin-user-head">
+            <div class="admin-user-head__text">
+                <h1 class="admin-user-head__name">{{ room.name }} <span class="admin-pill admin-pill--ok">{{ room.status.translate() }}</span></h1>
+                <span class="admin-page__subtitle">{{ room.code }} · {{ room.visibility.translate() }} · {{ 'admin.rooms.host'|trans({ name: room.host ? room.host.username : '—' }, 'admin') }} · {{ 'admin.rooms.opened'|trans({ date: room.createdAt|date('d/m H:i') }, 'admin') }}</span>
+            </div>
+            <div class="admin-actions">
+                {% if game %}
+                    <a href="{{ path('site_play_show', { code: room.matchCode }) }}" class="admin-btn admin-btn--secondary" target="_blank" rel="noopener">{{ 'admin.rooms.watch'|trans({}, 'admin') }}</a>
+                {% endif %}
+                <a href="{{ path('admin_room_edit', { code: room.code }) }}" class="admin-btn admin-btn--secondary">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+            </div>
+        </section>
+
+        <div class="admin-grid">
+            <section class="admin-panel admin-panel--flush" aria-labelledby="room-players">
+                <div class="admin-panel__bar"><h2 id="room-players" class="admin-panel__title">{{ 'admin.rooms.players'|trans({ count: present, max: room.maxPlayers }, 'admin') }}</h2></div>
+                {% set pager = paginate(members) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['player', 'state', 'action'] %}<th class="admin-table__th">{{ ('admin.rooms.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for member in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">{{ admin_ui.user(member.user, member.user.guest ? 'admin.rooms.guest'|trans({}, 'admin') : member.user.email) }}</td>
+                                    <td class="admin-table__cell">{{ (member.spectator ? 'admin.rooms.spectator' : (member.isPresent(now) ? 'admin.rooms.present' : 'admin.rooms.away'))|trans({}, 'admin') }}</td>
+                                    <td class="admin-table__cell">{{ admin_ui.post('admin_room_kick', { code: room.code, user: member.user.id }, 'admin.rooms.kick'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-rooms') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            </section>
+
+            <section class="admin-panel" aria-labelledby="room-settings">
+                <h2 id="room-settings" class="admin-panel__title">{{ 'admin.rooms.settings'|trans({}, 'admin') }}</h2>
+                <dl class="admin-dl">
+                    <dt class="admin-dl__term">{{ 'admin.rooms.max'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ room.maxPlayers }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.rooms.vote'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ 'admin.rooms.vote_value'|trans({ choices: room.choices, seconds: room.voteDuration }, 'admin') }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.rooms.played'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ room.history|length }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.rooms.guests'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ (room.allowsGuests ? 'admin.yes' : 'admin.no')|trans({}, 'admin') }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.rooms.spectators'|trans({}, 'admin') }}</dt><dd class="admin-dl__value">{{ (room.allowsSpectators ? 'admin.yes' : 'admin.no')|trans({}, 'admin') }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.rooms.topic'|trans({}, 'admin') }}</dt><dd class="admin-dl__value admin-table__cell--mono">{{ topic }}</dd>
+                </dl>
+            </section>
+        </div>
+
+        <div class="admin-grid">
+            <section class="admin-panel" aria-labelledby="room-chat">
+                <h2 id="room-chat" class="admin-panel__title">{{ 'admin.rooms.chat'|trans({}, 'admin') }}</h2>
+                {% if messages is empty %}
+                    <p class="admin-panel__help">{{ 'admin.rooms.no_chat'|trans({}, 'admin') }}</p>
+                {% else %}
+                    <ul class="moderation__context">
+                        {% for message in messages %}
+                            <li class="moderation__message{{ message.system ? ' moderation__message--system' }}">
+                                <span class="moderation__time">{{ message.createdAt|date('H:i') }}</span>
+                                {% if not message.system %}
+                                    <span class="moderation__where">{{ message.user ? message.user.username : '—' }}</span>
+                                {% endif %}
+                                <span class="moderation__text">{{ message.text }}</span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+
+            <form class="admin-panel admin-panel--danger" method="post" action="{{ path('admin_room_close', { code: room.code }) }}" data-component="ConfirmSubmit" data-message="{{ 'admin.rooms.close_confirm'|trans({ code: room.code }, 'admin') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-rooms') }}">
+                <h2 class="admin-panel__title admin-panel__title--danger">{{ 'admin.rooms.close'|trans({}, 'admin') }}</h2>
+                <p class="admin-panel__help">{{ 'admin.rooms.close_help'|trans({}, 'admin') }}</p>
+                <label class="admin-field">
+                    {{ 'admin.rooms.close_message'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="message" maxlength="200" placeholder="{{ 'admin.rooms.closed_default'|trans({}, 'admin') }}">
+                </label>
+                <button type="submit" class="admin-btn admin-btn--danger">{{ 'admin.rooms.close_action'|trans({}, 'admin') }}</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

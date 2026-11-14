@@ -1,0 +1,131 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'moderation' %}
+
+{% block title %}{{ 'admin.moderation.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ 'admin.moderation.title'|trans({}, 'admin') }}</h1>
+            <nav class="admin-tabs" aria-label="{{ 'admin.moderation.title'|trans({}, 'admin') }}">
+                {% for item in ['reports', 'sanctions', 'words'] %}
+                    <a href="{{ path('admin_moderation_index', { tab: item }) }}" class="admin-tabs__tab{{ item == tab ? ' admin-tabs__tab--active' }}"{% if item == tab %} aria-current="page"{% endif %}>
+                        {{ ('admin.moderation.tabs.' ~ item)|trans({ count: counts[item] ?? 0 }, 'admin') }}
+                    </a>
+                {% endfor %}
+            </nav>
+        </div>
+
+        {% if tab == 'reports' %}
+            <section class="admin-panel admin-panel--flush">
+                <form class="admin-panel__bar moderation-filters" method="get" action="{{ path('admin_moderation_index') }}">
+                    <label class="admin-search">
+                        <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                        <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.moderation.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.moderation.search'|trans({}, 'admin') }}">
+                    </label>
+                    <select class="admin-select" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.moderation.filter_status'|trans({}, 'admin') }}">
+                        {% for status in statuses %}
+                            <option value="{{ status }}"{{ filters.status == status ? ' selected' }}>{{ ('admin.moderation.statuses.' ~ status)|trans({}, 'admin') }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="admin-select" name="reason" data-component="AutoSubmit" aria-label="{{ 'admin.moderation.filter_reason'|trans({}, 'admin') }}">
+                        <option value="">{{ 'admin.moderation.all_reasons'|trans({}, 'admin') }}</option>
+                        {% for reason in reasons %}
+                            <option value="{{ reason.value }}"{{ filters.reason == reason.value ? ' selected' }}>{{ reason.translate() }}</option>
+                        {% endfor %}
+                    </select>
+                    <select class="admin-select" name="sort" data-component="AutoSubmit" aria-label="{{ 'admin.moderation.sort'|trans({}, 'admin') }}">
+                        {% for sort in sorts %}
+                            <option value="{{ sort }}"{{ filters.sort == sort ? ' selected' }}>{{ ('admin.moderation.sorts.' ~ sort)|trans({}, 'admin') }}</option>
+                        {% endfor %}
+                    </select>
+                </form>
+
+                {% if cases is empty %}
+                    <p class="admin-empty">{{ (filters.status == 'open' and filters.q == '' and filters.reason == '' ? 'admin.moderation.empty' : 'admin.moderation.no_match')|trans({}, 'admin') }}</p>
+                {% else %}
+                    {% set cases_pager = paginate(cases, 'cases_page') %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table moderation-cases" data-component="RowLink">
+                            <thead><tr>{% for column in ['player', 'reasons', 'reports', 'reporters', 'last', 'history', 'state', 'actions'] %}<th class="admin-table__th">{{ ('admin.moderation.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                            <tbody>
+                                {% for case in cases_pager.items %}
+                                    {% set url = path('admin_moderation_case', { id: case.user.id }) %}
+                                    <tr class="admin-table__row moderation-cases__row" data-href="{{ url }}">
+                                        <td class="admin-table__cell">
+                                            <a href="{{ url }}" class="moderation-cases__link">{{ admin_ui.user(case.user, case.user.handle) }}</a>
+                                        </td>
+                                        <td class="admin-table__cell">
+                                            <span class="moderation-cases__reasons">
+                                                {% for reason, count in case.reasons|slice(0, 2, true) %}
+                                                    <span class="admin-pill admin-pill--warn">{{ ('report_reason.' ~ reason)|trans({}, 'enums') }}{{ count > 1 ? ' ×' ~ count }}</span>
+                                                {% endfor %}
+                                                {% if case.reasons|length > 2 %}<span class="admin-pill">+{{ case.reasons|length - 2 }}</span>{% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="admin-table__cell"><strong class="moderation-cases__count{{ case.reports|length >= 3 ? ' moderation-cases__count--high' }}">{{ case.reports|length }}</strong></td>
+                                        <td class="admin-table__cell moderation-cases__reporters">{{ case.reports|map(report => report.reporter ? report.reporter.username : '?')|slice(0, 3)|join(', ') }}{{ case.reports|length > 3 ? '…' }}</td>
+                                        <td class="admin-table__cell">{{ case.last|date('d/m/Y H:i') }}</td>
+                                        <td class="admin-table__cell">{{ case.history > 0 ? 'admin.moderation.history'|trans({ count: case.history }, 'admin') : '—' }}</td>
+                                        <td class="admin-table__cell">
+                                            {% if case.open > 0 %}
+                                                <span class="admin-pill admin-pill--danger">{{ 'admin.moderation.to_handle'|trans({ count: case.open }, 'admin') }}</span>
+                                            {% else %}
+                                                <span class="admin-pill">{{ 'admin.moderation.handled'|trans({}, 'admin') }}</span>
+                                            {% endif %}
+                                        </td>
+                                        <td class="admin-table__cell">
+                                            <a href="{{ url }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.moderation.review'|trans({}, 'admin') }} →</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ admin_ui.pagination(cases_pager) }}
+                {% endif %}
+            </section>
+        {% elseif tab == 'sanctions' %}
+            <section class="admin-panel admin-panel--flush">
+                {% if sanctions is empty %}
+                    <p class="admin-empty">{{ 'admin.moderation.empty_sanctions'|trans({}, 'admin') }}</p>
+                {% else %}
+                    {% set sanctions_pager = paginate(sanctions, 'sanctions_page') %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr>{% for column in ['target', 'type', 'reason', 'by', 'end', 'actions'] %}<th class="admin-table__th">{{ ('admin.moderation.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                            <tbody>
+                                {% for sanction in sanctions_pager.items %}
+                                    <tr class="admin-table__row">
+                                        <td class="admin-table__cell"><a href="{{ path('admin_user_show', { id: sanction.user.id }) }}" class="admin-link admin-link--inline">{{ sanction.user.username }}</a></td>
+                                        <td class="admin-table__cell">{{ admin_ui.status(sanction.type.value) }}</td>
+                                        <td class="admin-table__cell">{{ sanction.reason.translate() }}</td>
+                                        <td class="admin-table__cell">{{ sanction.author ? sanction.author.username : '—' }}</td>
+                                        <td class="admin-table__cell">{{ sanction.endsAt ? sanction.endsAt|date('d/m/Y H:i') : 'admin.moderation.permanent'|trans({}, 'admin') }}</td>
+                                        <td class="admin-table__cell">{{ admin_ui.post('admin_moderation_revoke', { id: sanction.id }, 'admin.moderation.revoke'|trans({}, 'admin'), 'admin-btn admin-btn--secondary admin-btn--small', 'admin-moderation') }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ admin_ui.pagination(sanctions_pager) }}
+                {% endif %}
+            </section>
+        {% else %}
+            <form class="admin-panel" method="post" action="{{ path('admin_moderation_words') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-moderation') }}">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.moderation.words_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.moderation.words_help'|trans({}, 'admin') }}</span>
+                </div>
+                <textarea class="admin-field__input admin-field__input--area" name="words" rows="10" aria-label="{{ 'admin.moderation.words_title'|trans({}, 'admin') }}">{{ words }}</textarea>
+                <div class="admin-actions admin-actions--end">
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+                </div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

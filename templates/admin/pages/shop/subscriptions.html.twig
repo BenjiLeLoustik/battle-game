@@ -1,0 +1,111 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'shop_subscriptions' %}
+
+{% block title %}{{ 'admin.shop.subscriptions.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.shop.subscriptions.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.shop.subscriptions.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_shop_product_new', { type: 'subscription' }) }}" class="admin-btn admin-btn--primary">+ {{ 'admin.shop.subscriptions.new_offer'|trans({}, 'admin') }}</a>
+        </div>
+
+        {% include '@admin/pages/shop/_kpis.html.twig' %}
+
+        <section class="admin-panel admin-panel--flush">
+            <div class="admin-panel__bar"><h2 class="admin-panel__title">{{ 'admin.shop.subscriptions.offers'|trans({}, 'admin') }}</h2></div>
+            {% if offers is empty %}
+                <p class="admin-empty">{{ 'admin.shop.subscriptions.no_offer'|trans({}, 'admin') }}</p>
+            {% else %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['offer', 'price', 'lives', 'subscribers', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.shop.subscriptions.offer_column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for item in offers %}
+                                {% set offer = item.product %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><span class="shop-admin-plan">{{ ui.plan(offer.badge) }}{{ offer.name }}{% if offer.earlyAccess %} <span class="admin-pill admin-pill--warn">{{ 'admin.games.early_pill'|trans({}, 'admin') }}</span>{% endif %}</span></td>
+                                    <td class="admin-table__cell">{{ offer.priceCents is not null ? (offer.priceCents / 100)|number_format(2, ',', ' ') ~ ' € / ' ~ 'admin.shop.month'|trans({}, 'admin') : '—' }}</td>
+                                    <td class="admin-table__cell">{{ offer.unlimited ? 'admin.shop.subscriptions.unlimited'|trans({}, 'admin') : 'admin.shop.subscriptions.lives_day'|trans({ count: offer.option('lives') }, 'admin') }}</td>
+                                    <td class="admin-table__cell">{{ item.subscribers }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ offer.available ? ' admin-pill--ok' }}">{{ (offer.active ? (offer.available ? 'admin.shop.products.on' : 'admin.shop.products.out') : 'admin.shop.products.off')|trans({}, 'admin') }}</span></td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_shop_product_edit', { id: offer.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_shop_product_toggle', { id: offer.id }, (offer.active ? 'admin.shop.products.disable' : 'admin.shop.products.enable')|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-shop') }}
+                                            {{ admin_ui.post('admin_shop_product_delete', { id: offer.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-shop', 'admin.shop.subscriptions.delete_offer'|trans({ name: offer.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+        {% if offers is not empty %}
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.subscriptions.grant'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.shop.subscriptions.grant_help'|trans({}, 'admin') }}</span>
+                </div>
+                <form class="admin-actions" method="post" action="{{ path('admin_shop_subscription_grant') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+                    <div class="shop-grant__player">{{ admin_ui.player('username', path('admin_shop_players'), 'admin.shop.settings.player_search'|trans({}, 'admin')) }}</div>
+                    <select class="admin-select" name="offer" aria-label="{{ 'admin.shop.subscriptions.plan'|trans({}, 'admin') }}">
+                        {% for item in offers %}<option value="{{ item.product.id }}">{{ item.product.name }}</option>{% endfor %}
+                    </select>
+                    <input class="admin-field__input shop-admin-days" type="number" name="days" min="1" max="366" value="30" aria-label="{{ 'admin.shop.subscriptions.days'|trans({}, 'admin') }}">
+                    <span class="admin-user__meta">{{ 'admin.shop.subscriptions.days'|trans({}, 'admin') }}</span>
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.shop.subscriptions.grant_submit'|trans({}, 'admin') }}</button>
+                </form>
+            </section>
+        {% endif %}
+
+        <nav class="admin-tabs" aria-label="{{ 'admin.shop.subscriptions.subscribers'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_shop_subscriptions') }}" class="admin-tabs__tab{{ status is null ? ' admin-tabs__tab--active' }}">{{ 'admin.shop.all'|trans({}, 'admin') }}</a>
+            {% for item in statuses %}
+                <a href="{{ path('admin_shop_subscriptions', { status: item.value }) }}" class="admin-tabs__tab{{ status == item ? ' admin-tabs__tab--active' }}">{{ item.translate() }}</a>
+            {% endfor %}
+        </nav>
+
+        <section class="admin-panel admin-panel--flush">
+            <div class="admin-panel__bar"><h2 class="admin-panel__title">{{ 'admin.shop.subscriptions.subscribers'|trans({}, 'admin') }}</h2></div>
+            {% if subscriptions is empty %}
+                <p class="admin-empty">{{ 'admin.shop.subscriptions.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(subscriptions, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['user', 'plan', 'source', 'ends', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.shop.subscriptions.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for subscription in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">{{ admin_ui.user(subscription.user) }}</td>
+                                    <td class="admin-table__cell"><span class="shop-admin-plan">{{ ui.plan(subscription.badge) }}{{ subscription.name }}</span></td>
+                                    <td class="admin-table__cell">{{ (subscription.stripeSubscription ? 'admin.shop.subscriptions.stripe' : 'admin.shop.subscriptions.manual')|trans({}, 'admin') }}</td>
+                                    <td class="admin-table__cell">{{ subscription.endsAt|date('d/m/Y') }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ subscription.current ? ' admin-pill--ok' }}">{{ subscription.status.translate() }}</span></td>
+                                    <td class="admin-table__cell">
+                                        {% if subscription.status.value == 'active' and subscription.current %}
+                                            {{ admin_ui.post('admin_shop_subscription_cancel', { id: subscription.id }, 'admin.shop.subscriptions.cancel'|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-shop', 'admin.shop.subscriptions.cancel_confirm'|trans({ name: subscription.user.username }, 'admin')) }}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

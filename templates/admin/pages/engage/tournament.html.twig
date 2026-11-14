@@ -1,0 +1,147 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_tournaments' %}
+{% set title = tournament.id ? tournament.name : 'admin.engage.tournaments.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% macro reward(index, reward, types, items, offers) %}
+    {% set type = reward.type ?? 'coins' %}
+    <li class="reward-row" data-row data-reward-row>
+        <label class="reward-row__place">
+            <span>{{ 'admin.engage.tournaments.place'|trans({}, 'admin') }}</span>
+            <input class="admin-field__input" type="number" min="1" max="500" name="rewards[{{ index }}][place]" value="{{ reward.place ?? 1 }}">
+        </label>
+        <select class="admin-field__input reward-row__type" name="rewards[{{ index }}][type]" data-reward-kind aria-label="{{ 'admin.engage.pass.type'|trans({}, 'admin') }}">
+            {% for item in types %}<option value="{{ item }}"{{ type == item ? ' selected' }}>{{ ('admin.engage.rewards.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}
+        </select>
+        <span class="reward-row__fields">
+            <input class="admin-field__input" type="number" min="1" name="rewards[{{ index }}][value]" value="{{ type in ['coins', 'lives', 'giftcard'] ? reward.value }}" placeholder="{{ 'admin.engage.rewards.amount'|trans({}, 'admin') }}" data-show="coins lives giftcard" aria-label="{{ 'admin.engage.rewards.amount'|trans({}, 'admin') }}">
+            <select class="admin-field__input" name="rewards[{{ index }}][product]" data-show="product" aria-label="{{ 'admin.engage.rewards.product'|trans({}, 'admin') }}">
+                {% for item in items %}<option value="{{ item.id }}"{{ type == 'product' and reward.product == item.id ? ' selected' }}>{{ item.name }} · {{ item.type.translate() }}</option>{% endfor %}
+            </select>
+            <select class="admin-field__input" name="rewards[{{ index }}][offer]" data-show="subscription" aria-label="{{ 'admin.engage.rewards.subscription'|trans({}, 'admin') }}">
+                {% for offer in offers %}<option value="{{ offer.id }}"{{ type == 'subscription' and reward.product == offer.id ? ' selected' }}>{{ offer.name }}</option>{% endfor %}
+            </select>
+            <input class="admin-field__input reward-row__days" type="number" min="1" name="rewards[{{ index }}][days]" value="{{ type == 'subscription' ? reward.value : 30 }}" data-show="subscription" aria-label="{{ 'admin.engage.rewards.days'|trans({}, 'admin') }}" title="{{ 'admin.engage.rewards.days'|trans({}, 'admin') }}">
+            <input class="admin-field__input" name="rewards[{{ index }}][label]" maxlength="120" value="{{ type == 'custom' ? reward.label }}" placeholder="{{ 'admin.engage.rewards.custom_placeholder'|trans({}, 'admin') }}" data-show="custom" aria-label="{{ 'admin.engage.rewards.custom'|trans({}, 'admin') }}">
+        </span>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-remove-row aria-label="{{ 'admin.delete'|trans({}, 'admin') }}" title="{{ 'admin.delete'|trans({}, 'admin') }}"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </li>
+{% endmacro %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs"><a href="{{ path('admin_engage_tournaments') }}" class="admin-crumbs__link">{{ 'admin.engage.tournaments.title'|trans({}, 'admin') }}</a> <span aria-hidden="true">/</span> <span class="admin-crumbs__current">{{ title }}</span></nav>
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ title }}</h1>
+            {% if tournament.id %}<a class="admin-btn admin-btn--ghost admin-btn--small" href="{{ path('site_tournament_show', { id: tournament.id }) }}" target="_blank" rel="noopener">{{ 'admin.engage.tournaments.view'|trans({}, 'admin') }}</a>{% endif %}
+        </div>
+        {% if error %}<p class="admin-note"><span class="admin-note__icon">!</span>{{ error|trans({}, 'admin') }}</p>{% endif %}
+
+        <div class="tourney-admin">
+            <form class="tourney-admin__main" method="post" id="tournament-form" data-component="RowsEditor">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.engage.tournaments.general'|trans({}, 'admin') }}</h2>
+                    <label class="admin-field">{{ 'admin.engage.tournaments.name'|trans({}, 'admin') }}<input class="admin-field__input" name="name" maxlength="80" required value="{{ tournament.name }}"></label>
+                    <label class="admin-field">{{ 'admin.engage.tournaments.description'|trans({}, 'admin') }}<textarea class="admin-field__input admin-field__input--area" name="description" rows="3" maxlength="2000">{{ tournament.description }}</textarea></label>
+                    <div class="admin-form-grid">
+                        <label class="admin-field">{{ 'admin.engage.tournaments.game'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="game" required>
+                                {% for game in games %}<option value="{{ game.id }}"{{ tournament.id and tournament.game.id == game.id ? ' selected' }}>{{ game.name }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <label class="admin-field">{{ 'admin.engage.tournaments.max'|trans({}, 'admin') }}<input class="admin-field__input" type="number" min="2" name="max_players" value="{{ tournament.maxPlayers }}" placeholder="∞"></label>
+                        <label class="admin-field">{{ 'admin.engage.tournaments.starts'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="starts_at" required value="{{ tournament.startsAt|date('Y-m-d\\TH:i') }}"></label>
+                        <label class="admin-field">{{ 'admin.engage.tournaments.ends'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="ends_at" required value="{{ tournament.endsAt|date('Y-m-d\\TH:i') }}"></label>
+                    </div>
+                    <label class="admin-check"><input type="checkbox" class="admin-check__input" name="published" value="1"{{ tournament.published ? ' checked' }}> {{ 'admin.engage.tournaments.published'|trans({}, 'admin') }}</label>
+                </section>
+
+                <section class="admin-panel">
+                    <div class="pass-admin__bar">
+                        <div>
+                            <h2 class="admin-panel__title">{{ 'admin.engage.tournaments.rewards'|trans({}, 'admin') }}</h2>
+                            <span class="admin-panel__help">{{ 'admin.engage.tournaments.rewards_help'|trans({}, 'admin') }}</span>
+                        </div>
+                        <button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-add-row>+ {{ 'admin.engage.tournaments.add_reward'|trans({}, 'admin') }}</button>
+                    </div>
+                    <ul class="reward-rows" data-rows>
+                        {% for reward in tournament.rewards %}{{ _self.reward(loop.index0, reward, types, items, offers) }}{% endfor %}
+                    </ul>
+                    <span class="admin-panel__help">{{ 'admin.engage.tournaments.help'|trans({}, 'admin') }}</span>
+                </section>
+
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.engage.tournaments.qualification'|trans({}, 'admin') }}</h2>
+                    <div class="admin-form-grid">
+                        <label class="admin-field">{{ 'admin.engage.tournaments.qualifier'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="qualifier">
+                                {% for item in ['open', 'general', 'game'] %}<option value="{{ item }}"{{ tournament.qualifier == item ? ' selected' }}>{{ ('admin.engage.tournaments.qualifiers.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}
+                            </select>
+                        </label>
+                        <label class="admin-field">{{ 'admin.engage.tournaments.qualifier_count'|trans({}, 'admin') }}<input class="admin-field__input" type="number" min="1" name="qualifier_count" value="{{ tournament.qualifierCount ?? 10 }}"></label>
+                        <label class="admin-field">{{ 'admin.engage.tournaments.qualifier_period'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="qualifier_period">
+                                {% for item in ['season', 'month', 'week', 'all'] %}<option value="{{ item }}"{{ tournament.qualifierPeriod == item ? ' selected' }}>{{ ('leaderboard_period.' ~ item)|trans({}, 'enums') }}</option>{% endfor %}
+                            </select>
+                        </label>
+                    </div>
+                    <span class="admin-panel__help">{{ 'admin.engage.tournaments.qualification_help'|trans({}, 'admin') }}</span>
+                </section>
+
+                <div class="admin-actions admin-actions--end">
+                    <a href="{{ path('admin_engage_tournaments') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+                </div>
+                <template data-row-template>{{ _self.reward('__INDEX__', { place: (tournament.rewards|length) + 1, type: 'coins' }, types, items, offers) }}</template>
+            </form>
+
+            <aside class="tourney-admin__side">
+                {% if tournament.id and tournament.restricted %}
+                    <section class="admin-panel">
+                        <div class="pass-admin__bar">
+                            <h2 class="admin-panel__title">{{ 'admin.engage.tournaments.qualified'|trans({ count: qualified|length }, 'admin') }}</h2>
+                        </div>
+                        {% if qualified is empty %}
+                            <p class="admin-empty">{{ 'admin.engage.tournaments.no_qualified'|trans({}, 'admin') }}</p>
+                        {% else %}
+                            <ol class="qualified-list">
+                                {% for row in qualified %}
+                                    <li class="qualified-list__row">
+                                        <span class="qualified-list__rank">{{ row.rank }}</span>
+                                        <span class="qualified-list__name">{{ row.username }}</span>
+                                        <span class="admin-user__meta">{{ row.points }} pts</span>
+                                        {% if row.id in entries %}<span class="admin-pill admin-pill--ok">{{ 'admin.engage.tournaments.registered'|trans({}, 'admin') }}</span>{% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                            {% if tournament.state != 'finished' %}
+                                {{ admin_ui.post('admin_engage_tournament_qualify', { id: tournament.id }, 'admin.engage.tournaments.qualify'|trans({}, 'admin'), 'admin-btn admin-btn--primary admin-btn--block', 'admin-engage', 'admin.engage.tournaments.qualify_confirm'|trans({}, 'admin')) }}
+                                <span class="admin-panel__help">{{ 'admin.engage.tournaments.qualify_help'|trans({}, 'admin') }}</span>
+                            {% endif %}
+                        {% endif %}
+                    </section>
+                {% endif %}
+                {% if tournament.results is not empty %}
+                    <section class="admin-panel">
+                        <h2 class="admin-panel__title">{{ 'admin.engage.tournaments.winners'|trans({}, 'admin') }}</h2>
+                        <ol class="qualified-list">
+                            {% for result in tournament.results %}
+                                <li class="qualified-list__row qualified-list__row--stack">
+                                    <span class="qualified-list__rank">{{ result.place }}</span>
+                                    <span class="qualified-list__name">{{ result.username }}</span>
+                                    {% if result.manual %}<span class="admin-pill admin-pill--warn">{{ 'admin.engage.tournaments.manual'|trans({}, 'admin') }}</span>{% endif %}
+                                    <span class="qualified-list__rewards">{{ result.rewards|join(' + ') }}</span>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </section>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+{% endblock %}

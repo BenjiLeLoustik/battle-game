@@ -1,0 +1,73 @@
+{% set perks = ['progress', 'leaderboard', 'friends', 'rooms'] %}
+{% set tabs = { login: path('site_security_login'), register: path('site_security_register') } %}
+
+<div class="auth-card">
+    <section class="auth-card__aside" aria-label="{{ 'site.auth.aside'|trans }}">
+        <span class="auth-card__grid" aria-hidden="true"></span>
+        <span class="auth-card__mark" aria-hidden="true">BG</span>
+        <h1 class="auth-card__title">
+            {{ 'site.auth.title'|trans }}
+            <span class="auth-card__accent">
+                {{ 'site.auth.title_accent'|trans }}
+            </span>
+            .
+        </h1>
+        <p class="auth-card__intro">
+            {{ 'site.auth.intro'|trans }}
+        </p>
+        <ul class="auth-card__perks">
+            {% for perk in perks %}
+                <li class="auth-card__perk">
+                    <span class="auth-card__check">
+                        <svg class="auth-card__check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+                    </span>
+                    <span class="auth-card__perk-text">
+                        <strong class="auth-card__perk-title">
+                            {{ ('site.auth.perks.' ~ perk ~ '.title')|trans }}
+                        </strong>
+                        <span class="auth-card__perk-desc">
+                            {{ ('site.auth.perks.' ~ perk ~ '.description')|trans }}
+                        </span>
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+
+    <section class="auth-card__main" aria-label="{{ 'site.auth.form'|trans }}">
+        <nav class="auth-card__tabs" aria-label="{{ 'site.auth.tabs'|trans }}">
+            {% for id, href in tabs %}
+                <a href="{{ href }}" class="auth-card__tab{{ id == tab ? ' auth-card__tab--active' }}"{% if id == tab %} aria-current="page"{% endif %}>
+                    {{ ('site.auth.tab_' ~ id)|trans }}
+                </a>
+            {% endfor %}
+        </nav>
+
+        <a href="{{ path('site_security_discord') }}" class="btn btn--discord btn--xl btn--block">
+            <svg class="btn__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 4.4A19.6 19.6 0 0 0 15.4 3l-.6 1.3a18 18 0 0 0-5.6 0L8.6 3a19.6 19.6 0 0 0-4.9 1.4C.6 9-.3 13.6.1 18.1a19.8 19.8 0 0 0 6 3l1.3-2.1a12.7 12.7 0 0 1-2-1l.5-.4a14 14 0 0 0 12.2 0l.5.4a12.7 12.7 0 0 1-2 1l1.3 2.1a19.7 19.7 0 0 0 6-3c.5-5.2-.9-9.7-3.6-13.7zM8.1 15.3c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4zm7.8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4z"/></svg>
+            {{ ('site.auth.discord_' ~ tab)|trans }}
+        </a>
+
+        <span class="auth-card__divider">
+            {{ 'site.auth.or_email'|trans }}
+        </span>
+
+        {% block form %}{% endblock %}
+
+        {% if guest is defined and guest %}
+            {{ form_start(guest, { attr: { class: 'auth-card__guest' } }) }}
+                <div class="field field--form auth-card__guest-field">
+                    {{ form_label(guest.username, 'site.auth.guest'|trans, { label_attr: { class: 'field__label' } }) }}
+                    {{ form_widget(guest.username, { attr: { class: 'field__input field__input--surface' ~ (guest.username.errors is empty ? '' : ' field__input--invalid'), maxlength: 30, autocomplete: 'nickname', placeholder: 'site.auth.guest_placeholder'|trans, 'aria-describedby': 'guest-help' } }) }}
+                    {{ form_errors(guest.username) }}
+                </div>
+                <button type="submit" class="btn btn--ghost">
+                    {{ 'site.auth.guest_submit'|trans }}
+                </button>
+                <span id="guest-help" class="auth-card__guest-help">
+                    {{ 'site.auth.guest_help'|trans }}
+                </span>
+            {{ form_end(guest) }}
+        {% endif %}
+    </section>
+</div>

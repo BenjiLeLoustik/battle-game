@@ -1,0 +1,10 @@
+site:
+    resource: ../src/Controller/Site
+    type: attribute
+    name_prefix: site_
+    
+admin:
+    resource: ../src/Controller/Admin
+    type: attribute
+    prefix: /admin
+    name_prefix: admin_

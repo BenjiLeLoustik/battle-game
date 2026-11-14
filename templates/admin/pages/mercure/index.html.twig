@@ -1,0 +1,81 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% set active = 'realtime' %}
+
+{% block title %}{{ 'admin.mercure.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page" data-component="MercureFeed" data-url="{{ mercure('*', { subscribe: ['*'] }) }}" data-labels="{{ { paused: 'admin.mercure.paused'|trans({}, 'admin'), live: 'admin.mercure.live'|trans({}, 'admin'), pause: 'admin.mercure.pause'|trans({}, 'admin'), resume: 'admin.mercure.resume'|trans({}, 'admin'), connecting: 'admin.mercure.terminal.connecting'|trans({}, 'admin'), connected: 'admin.mercure.terminal.connected'|trans({}, 'admin'), lost: 'admin.mercure.terminal.lost'|trans({}, 'admin'), published: 'admin.flash.published'|trans({}, 'admin'), failed: 'admin.mercure.publish_failed'|trans({}, 'admin') }|json_encode }}">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.mercure.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">
+                    {{ 'admin.mercure.hub'|trans({}, 'admin') }} <span class="admin-table__cell--mono">{{ hub ?? '—' }}</span> ·
+                    <span class="admin-pill admin-pill--{{ status.ok ? 'ok' : 'danger' }}">{{ status.ok ? 'admin.mercure.connected'|trans({ ms: status.latency }, 'admin') : 'admin.mercure.down'|trans({}, 'admin') }}</span>
+                </span>
+            </div>
+        </div>
+
+        <div class="admin-kpis">
+            <div class="admin-kpi"><span class="admin-kpi__label">{{ 'admin.mercure.kpi.messages'|trans({}, 'admin') }}</span><strong class="admin-kpi__value" data-count>0</strong><span class="admin-kpi__sub">{{ 'admin.mercure.kpi.since'|trans({}, 'admin') }}</span></div>
+            <div class="admin-kpi"><span class="admin-kpi__label">{{ 'admin.mercure.kpi.rate'|trans({}, 'admin') }}</span><strong class="admin-kpi__value" data-rate>0</strong><span class="admin-kpi__sub">{{ 'admin.mercure.kpi.per_minute'|trans({}, 'admin') }}</span></div>
+            <div class="admin-kpi"><span class="admin-kpi__label">{{ 'admin.mercure.kpi.topics'|trans({}, 'admin') }}</span><strong class="admin-kpi__value" data-topics>0</strong><span class="admin-kpi__sub">{{ 'admin.mercure.kpi.distinct'|trans({}, 'admin') }}</span></div>
+            <div class="admin-kpi"><span class="admin-kpi__label">{{ 'admin.mercure.kpi.latency'|trans({}, 'admin') }}</span><strong class="admin-kpi__value">{{ status.latency ?? '—' }}</strong><span class="admin-kpi__sub">ms</span></div>
+        </div>
+
+        <div class="mercure-layout">
+            <section class="admin-panel admin-panel--flush" aria-labelledby="mercure-feed">
+                <div class="admin-panel__bar">
+                    <h2 id="mercure-feed" class="admin-panel__title">{{ 'admin.mercure.feed'|trans({}, 'admin') }} <span class="admin-pill admin-pill--ok" data-state>{{ 'admin.mercure.live'|trans({}, 'admin') }}</span></h2>
+                    <span class="admin-actions">
+                        <input class="admin-field__input admin-field__input--auto" type="search" data-filter placeholder="{{ 'admin.mercure.filter'|trans({}, 'admin') }}" aria-label="{{ 'admin.mercure.filter'|trans({}, 'admin') }}">
+                        <button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-pause>{{ 'admin.mercure.pause'|trans({}, 'admin') }}</button>
+                    </span>
+                </div>
+                <div class="mercure-terminal">
+                    <div class="mercure-terminal__bar">
+                        <span class="mercure-terminal__dots" aria-hidden="true"><i></i><i></i><i></i></span>
+                        <span class="mercure-terminal__title">mercure@battlegame — subscribe "*"</span>
+                    </div>
+                    <ol class="mercure-terminal__screen" data-feed aria-live="polite"></ol>
+                </div>
+            </section>
+
+            <div class="mercure-side">
+                <form class="admin-panel" method="post" action="{{ path('admin_mercure_publish') }}" data-publish>
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-mercure') }}">
+                    <h2 class="admin-panel__title">{{ 'admin.mercure.test'|trans({}, 'admin') }}</h2>
+                    <label class="admin-field">
+                        {{ 'admin.mercure.topic'|trans({}, 'admin') }}
+                        <input class="admin-field__input admin-table__cell--mono" name="topic" value="admin/test">
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.mercure.data'|trans({}, 'admin') }}
+                        <textarea class="admin-field__input admin-field__input--area admin-table__cell--mono" name="data" rows="3">{"message": "ping"}</textarea>
+                    </label>
+                    <label class="admin-check"><input type="checkbox" class="admin-check__input" name="private"> {{ 'admin.mercure.private'|trans({}, 'admin') }}</label>
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.mercure.publish'|trans({}, 'admin') }}</button>
+                </form>
+
+                <section class="admin-panel admin-panel--flush">
+                    <div class="admin-panel__bar"><h2 class="admin-panel__title">{{ 'admin.mercure.top'|trans({}, 'admin') }}</h2></div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr><th class="admin-table__th">{{ 'admin.mercure.topic'|trans({}, 'admin') }}</th><th class="admin-table__th">{{ 'admin.mercure.messages'|trans({}, 'admin') }}</th></tr></thead>
+                            <tbody data-top></tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.mercure.errors'|trans({}, 'admin') }}</h2>
+                    {% if errors is empty %}
+                        <p class="admin-panel__help">{{ 'admin.mercure.no_errors'|trans({}, 'admin') }}</p>
+                    {% else %}
+                        <pre class="admin-log">{{ errors|join("\n") }}</pre>
+                    {% endif %}
+                </section>
+            </div>
+        </div>
+    </div>
+{% endblock %}

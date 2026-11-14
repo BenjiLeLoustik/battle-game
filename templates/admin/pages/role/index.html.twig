@@ -1,0 +1,74 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'roles' %}
+
+{% block title %}{{ 'admin.roles.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.roles.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.roles.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_role_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.roles.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            {% set pager = paginate(roles) %}
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr>{% for column in ['role', 'permissions', 'members', 'updated', 'actions'] %}<th class="admin-table__th">{{ ('admin.roles.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                    <tbody>
+                        {% for row in pager.items %}
+                            {% set role = row.role %}
+                            <tr class="admin-table__row">
+                                <td class="admin-table__cell">
+                                    <span class="admin-user__text">
+                                        <span class="admin-user__name"><span class="admin-swatch" style="background: {{ role.color }}"></span> {{ role.name }}{% if role.system %} <span class="admin-pill">{{ 'admin.roles.system'|trans({}, 'admin') }}</span>{% endif %}</span>
+                                        <span class="admin-user__meta">{{ role.description }}</span>
+                                    </span>
+                                </td>
+                                <td class="admin-table__cell">{{ role.system ? 'admin.roles.all'|trans({}, 'admin') : 'admin.roles.count'|trans({ count: role.permissions|length, total: total }, 'admin') }}</td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-stack">
+                                        {% for member in row.members|slice(0, 4) %}{{ ui.avatar(member, 'stack') }}{% endfor %}
+                                        <span class="admin-user__meta">{{ row.members|length }}</span>
+                                    </span>
+                                </td>
+                                <td class="admin-table__cell">{{ role.updatedAt ? role.updatedAt|date('d/m/Y') : '—' }}</td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-actions">
+                                        <a href="{{ path('admin_role_edit', { id: role.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                        <a href="{{ path('admin_role_new', { from: role.id }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.roles.duplicate'|trans({}, 'admin') }}</a>
+                                        {% set others = all|filter(other => other.id != role.id) %}
+                                        {% if role.system %}
+                                        {% elseif row.members is empty %}
+                                            {{ admin_ui.post('admin_role_delete', { id: role.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-roles', 'admin.roles.delete_empty_confirm'|trans({ name: role.name }, 'admin')) }}
+                                        {% elseif others is empty %}
+                                            <button type="button" class="admin-btn admin-btn--danger admin-btn--small" disabled title="{{ 'admin.roles.delete_blocked'|trans({}, 'admin') }}">{{ 'admin.delete'|trans({}, 'admin') }}</button>
+                                        {% else %}
+                                            <form class="admin-actions" method="post" action="{{ path('admin_role_delete', { id: role.id }) }}" data-component="ConfirmSubmit" data-message="{{ 'admin.roles.delete_confirm'|trans({ name: role.name }, 'admin') }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('admin-roles') }}">
+                                                <select class="admin-select admin-select--small" name="target" aria-label="{{ 'admin.roles.reassign'|trans({}, 'admin') }}">
+                                                    {% for other in others %}
+                                                        <option value="{{ other.id }}">{{ 'admin.roles.move_to'|trans({ name: other.name }, 'admin') }}</option>
+                                                    {% endfor %}
+                                                </select>
+                                                <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">{{ 'admin.delete'|trans({}, 'admin') }}</button>
+                                            </form>
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {{ admin_ui.pagination(pager) }}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,103 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'emails' %}
+{% set title = campaign.id ? campaign.subject : 'admin.emails.new'|trans({}, 'admin') %}
+{% set locked = campaign.sent %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_email_index') }}" class="admin-crumbs__link">{{ 'admin.emails.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ title }}</h1>
+            {% if locked %}
+                <span class="admin-pill admin-pill--ok">{{ 'admin.emails.states.sent'|trans({ count: campaign.recipients, date: campaign.sentAt|date('d/m H:i') }, 'admin') }}</span>
+            {% endif %}
+        </div>
+
+        <div class="email-editor">
+            <form class="email-editor__form" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-emails') }}">
+                <fieldset class="email-editor__fields"{{ locked ? ' disabled' }}>
+                    <section class="admin-panel">
+                        <label class="admin-field">
+                            {{ 'admin.emails.subject'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="subject" value="{{ campaign.subject }}" maxlength="150" required>
+                            {{ admin_ui.error(errors, 'subject') }}
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.emails.list'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="list">
+                                <option value="">{{ 'admin.emails.no_list'|trans({}, 'admin') }}</option>
+                                {% for row in lists %}
+                                    <option value="{{ row.list.id }}"{{ campaign.list and campaign.list.id == row.list.id ? ' selected' }}>{{ row.list.name }} · {{ 'admin.emails.lists.recipients'|trans({ count: row.count }, 'admin') }}</option>
+                                {% endfor %}
+                            </select>
+                            {% if lists is empty %}
+                                <span class="admin-panel__help">{{ admin_ui.link(path('admin_email_list_new'), 'admin.emails.lists.new'|trans({}, 'admin')) }}</span>
+                            {% endif %}
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.emails.content'|trans({}, 'admin') }}
+                            <textarea class="admin-field__input admin-field__input--area admin-field__input--code" name="content" rows="14" spellcheck="true" placeholder="Salut {username},&#10;&#10;**Nouveau** cette semaine…">{{ campaign.content }}</textarea>
+                            <span class="admin-panel__help">{{ 'admin.emails.content_help'|trans({}, 'admin') }}</span>
+                            {{ admin_ui.error(errors, 'content') }}
+                        </label>
+                        <div class="admin-form-grid">
+                            <label class="admin-field">
+                                {{ 'admin.emails.button_label'|trans({}, 'admin') }}
+                                <input class="admin-field__input" name="button_label" value="{{ campaign.buttonLabel }}" maxlength="60" placeholder="{{ 'admin.emails.button_placeholder'|trans({}, 'admin') }}">
+                            </label>
+                            <label class="admin-field">
+                                {{ 'admin.emails.button_url'|trans({}, 'admin') }}
+                                <input class="admin-field__input" name="button_url" value="{{ campaign.buttonUrl }}" maxlength="255" placeholder="https://">
+                                {{ admin_ui.error(errors, 'button_url') }}
+                            </label>
+                        </div>
+                    </section>
+                    {% if not locked %}
+                        {{ admin_ui.translations(campaign) }}
+                    {% endif %}
+                    {% if not locked %}
+                        <div class="admin-actions admin-actions--end">
+                            <button type="submit" class="admin-btn admin-btn--ghost" name="intent" value="test">{{ 'admin.emails.save_test'|trans({}, 'admin') }}</button>
+                            <button type="submit" class="admin-btn admin-btn--primary" name="intent" value="save">{{ 'admin.emails.save'|trans({}, 'admin') }}</button>
+                        </div>
+                    {% endif %}
+                </fieldset>
+            </form>
+
+            <aside class="email-editor__side">
+                {% if campaign.id %}
+                    <section class="admin-panel admin-panel--flush email-editor__preview">
+                        <div class="admin-panel__bar">
+                            <h2 class="admin-panel__title">{{ 'admin.emails.preview'|trans({}, 'admin') }}</h2>
+                        </div>
+                        <iframe class="email-editor__frame" srcdoc="{{ preview }}" title="{{ 'admin.emails.preview'|trans({}, 'admin') }}" sandbox></iframe>
+                    </section>
+                    {% if not locked %}
+                        {% set count = campaign.list ? (lists|filter(row => row.list.id == campaign.list.id)|first).count ?? 0 : 0 %}
+                        <section class="admin-panel">
+                            <h2 class="admin-panel__title">{{ 'admin.emails.send_title'|trans({}, 'admin') }}</h2>
+                            {% if campaign.list %}
+                                <p class="admin-panel__help">{{ 'admin.emails.send_help'|trans({ count: count, list: campaign.list.name }, 'admin') }}</p>
+                                {{ admin_ui.post('admin_email_send', { id: campaign.id }, 'admin.emails.send'|trans({ count: count }, 'admin'), 'admin-btn admin-btn--primary', 'admin-emails', 'admin.emails.send_confirm'|trans({ count: count }, 'admin')) }}
+                            {% else %}
+                                <p class="admin-panel__help">{{ 'admin.emails.send_no_list'|trans({}, 'admin') }}</p>
+                            {% endif %}
+                        </section>
+                    {% endif %}
+                {% else %}
+                    <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.emails.preview_help'|trans({}, 'admin') }}</p>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+{% endblock %}

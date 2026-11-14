@@ -1,0 +1,93 @@
+user:
+    first_name:
+        not_blank: Indique ton prénom.
+        too_long: Ton prénom est trop long (50 caractères maximum).
+    last_name:
+        not_blank: Indique ton nom.
+        too_long: Ton nom est trop long (50 caractères maximum).
+    username:
+        not_blank: Choisis un pseudo.
+        invalid: "Ton pseudo doit faire 3 à 30 caractères : lettres, chiffres et _."
+        taken: Ce pseudo est déjà pris.
+    email:
+        not_blank: Indique ton adresse email.
+        invalid: Cette adresse email n'est pas valide.
+        taken: Un compte existe déjà avec cette adresse email.
+    password:
+        not_blank: Choisis un mot de passe.
+        too_short: Ton mot de passe doit faire au moins 10 caractères.
+        too_long: Ton mot de passe est trop long.
+    terms:
+        required: Tu dois accepter les règles de la communauté.
+
+error:
+    validation:
+        unique: Cette valeur est déjà utilisée.
+
+"This value should not be blank.": Ce champ est obligatoire.
+"The CSRF token is invalid. Please try to resubmit the form.": Le formulaire a expiré, renvoie-le.
+
+
+studio:
+    name:
+        not_blank: Donne un nom au jeu.
+        too_long: Le nom est trop long (60 caractères maximum).
+    slug:
+        invalid: Le nom doit contenir au moins une lettre ou un chiffre.
+        taken: Un jeu utilise déjà cet identifiant.
+    category:
+        not_blank: Choisis une catégorie.
+    players:
+        range: Le nombre de joueurs doit être entre 1 et 32.
+        order: Le maximum doit être supérieur ou égal au minimum.
+    description:
+        too_long: La description est trop longue (160 caractères maximum).
+        
+
+maintenance:
+    title:
+        not_blank: Donne un titre interne à la maintenance.
+    date:
+        invalid: Indique une date de début valide.
+        order: La fin doit être après le début.
+    games:
+        empty: Choisis au moins un jeu.
+    features:
+        empty: Choisis au moins une fonctionnalité.
+    message:
+        not_blank: Écris le message affiché aux joueurs.
+
+room:
+    name:
+        too_short: Donne un nom d'au moins 3 caractères à ta room.
+    password:
+        invalid: "Le mot de passe doit faire 4 à 30 caractères, sans espace."
+
+account:
+    avatar:
+        type: "Image invalide : choisis un fichier PNG, JPG ou WebP."
+        size: "Image trop lourde : 2 Mo maximum."
+    username:
+        too_soon: Tu as déjà changé de pseudo il y a moins de 30 jours.
+    password:
+        wrong: Mot de passe incorrect.
+        mismatch: Les deux mots de passe ne correspondent pas.
+    email:
+        token: Ce lien de confirmation est invalide ou a déjà été utilisé.
+    discord:
+        password_required: Définis d'abord un mot de passe pour pouvoir délier Discord.
+    delete:
+        username: Le pseudo saisi ne correspond pas.
+
+social:
+    user:
+        not_found: Aucun joueur avec ce pseudo.
+    friend:
+        self: Tu ne peux pas t'ajouter toi-même.
+        blocked: Impossible, un blocage existe entre vous.
+        exists: Une demande ou une amitié existe déjà avec ce joueur.
+        closed: Ce joueur n'accepte pas de demande d'ami de ta part.
+        missing: Cette demande n'existe plus.
+    invite:
+        no_room: Rejoins ou crée une room avant d'inviter quelqu'un.
+        closed: Ce joueur n'accepte pas d'invitation de ta part.

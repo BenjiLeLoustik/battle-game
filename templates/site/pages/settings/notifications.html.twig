@@ -1,0 +1,67 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% set notifications = preferences.section('notifications') %}
+
+{% block settings %}
+    <form class="settings__form" method="post" action="{{ path('site_settings_notifications') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+
+        <section class="settings-card" aria-labelledby="settings-channels">
+            <div class="settings-card__intro">
+                <h2 id="settings-channels" class="settings-card__title">{{ 'site.settings.notifications.title'|trans }}</h2>
+                <span class="settings-card__hint">{{ 'site.settings.notifications.help'|trans }}</span>
+            </div>
+            <div class="settings-matrix">
+                <table class="settings-matrix__table">
+                    <thead>
+                        <tr class="settings-matrix__head">
+                            <th class="settings-matrix__cell settings-matrix__cell--event">{{ 'site.settings.notifications.event'|trans }}</th>
+                            {% for channel in channels %}
+                                <th class="settings-matrix__cell">{{ ('site.settings.notifications.channels.' ~ channel)|trans }}</th>
+                            {% endfor %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for event in events %}
+                            <tr class="settings-matrix__row">
+                                <td class="settings-matrix__cell settings-matrix__cell--event">
+                                    <strong class="settings-matrix__title">{{ ('site.settings.notifications.events.' ~ event ~ '.title')|trans }}</strong>
+                                    <span class="settings-matrix__help">{{ ('site.settings.notifications.events.' ~ event ~ '.help')|trans }}</span>
+                                </td>
+                                {% for channel in channels %}
+                                    <td class="settings-matrix__cell">
+                                        <input type="checkbox" class="settings-matrix__check" name="{{ event }}[{{ channel }}]" aria-label="{{ ('site.settings.notifications.events.' ~ event ~ '.title')|trans }} · {{ ('site.settings.notifications.channels.' ~ channel)|trans }}"{{ notifications[event][channel] ? ' checked' }}>
+                                    </td>
+                                {% endfor %}
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="settings-card" aria-labelledby="settings-dnd">
+            <label class="settings-switch">
+                <span class="settings-switch__text">
+                    <strong id="settings-dnd" class="settings-switch__label">{{ 'site.settings.notifications.dnd'|trans }}</strong>
+                    <span class="settings-switch__help">{{ 'site.settings.notifications.dnd_help'|trans }}</span>
+                </span>
+                <input type="checkbox" class="settings-switch__input" name="dnd[enabled]" role="switch"{{ notifications.dnd.enabled ? ' checked' }}>
+            </label>
+            <div class="settings-card__times">
+                <label class="field field--form">
+                    <span class="field__label">{{ 'site.settings.notifications.from'|trans }}</span>
+                    <input type="time" class="field__input field__input--large" name="dnd[from]" value="{{ notifications.dnd.from }}">
+                </label>
+                <label class="field field--form">
+                    <span class="field__label">{{ 'site.settings.notifications.to'|trans }}</span>
+                    <input type="time" class="field__input field__input--large" name="dnd[to]" value="{{ notifications.dnd.to }}">
+                </label>
+            </div>
+        </section>
+
+        <div class="settings__actions">
+            <button type="submit" class="settings-button settings-button--primary settings-button--large">{{ 'site.settings.save'|trans }}</button>
+        </div>
+    </form>
+{% endblock %}

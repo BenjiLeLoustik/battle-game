@@ -1,0 +1,44 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.auth.login'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% embed '@site/components/embeds/auth-card.html.twig' with { tab: 'login' } %}
+        {% block form %}
+            <form class="auth-card__form" method="post" action="{{ path('site_security_login') }}">
+                {% if error %}
+                    <p class="auth-card__alert" role="alert">
+                        {{ error }}
+                    </p>
+                {% endif %}
+                <div class="field field--form">
+                    <label class="field__label" for="login-email">
+                        {{ 'site.auth.email'|trans }}
+                    </label>
+                    <input id="login-email" class="field__input field__input--large" type="email" name="_username" value="{{ last_username }}" autocomplete="username" placeholder="{{ 'site.auth.email_placeholder'|trans }}" required autofocus>
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="login-password">
+                        {{ 'site.auth.password'|trans }}
+                    </label>
+                    <input id="login-password" class="field__input field__input--large" type="password" name="_password" autocomplete="current-password" placeholder="••••••••" required>
+                </div>
+                <div class="auth-card__row">
+                    <label class="field__check">
+                        <input class="field__checkbox" type="checkbox" name="_remember_me" checked>
+                        <span class="field__check-label">
+                            {{ 'site.auth.remember_me'|trans }}
+                        </span>
+                    </label>
+                    <a href="{{ path('site_security_forgot') }}" class="auth-card__link">
+                        {{ 'site.auth.forgot'|trans }}
+                    </a>
+                </div>
+                <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+                <button type="submit" class="btn btn--primary btn--large btn--block">
+                    {{ 'site.auth.submit_login'|trans }}
+                </button>
+            </form>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,0 +1,462 @@
+.settings {
+    @apply flex max-w-[1240px] flex-col gap-5 max-sm:gap-3;
+}
+
+.settings__title {
+    @apply font-display text-[34px] font-bold;
+}
+
+.settings__layout {
+    @apply flex flex-wrap items-start gap-6 max-sm:gap-3.5;
+}
+
+.settings__content {
+    @apply flex min-w-0 flex-[1_1_520px] flex-col gap-5 max-sm:gap-3;
+}
+
+.settings__form {
+    @apply flex flex-col gap-5 max-sm:gap-3;
+}
+
+.settings__actions {
+    @apply flex justify-end gap-2.5 max-md:flex-col-reverse max-md:*:w-full;
+}
+
+.settings-nav {
+    @apply sticky top-5 flex max-w-full flex-[0_0_260px] flex-col gap-3.5 rounded-[18px] border border-[#1F2438] bg-[#11141F] p-3.5
+    max-md:static max-md:w-full max-md:flex-none max-md:flex-row max-md:items-center max-md:gap-1.5 max-md:overflow-x-auto max-md:rounded-xl max-md:p-1.5;
+}
+
+.settings-nav__user {
+    @apply flex items-center gap-3 border-b border-[#1F2438] px-1 pt-1 pb-3.5 max-md:hidden;
+}
+
+.settings-nav__identity {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.settings-nav__name {
+    @apply text-[15px];
+}
+
+.settings-nav__email {
+    @apply truncate text-xs text-muted;
+}
+
+.settings-nav__group {
+    @apply flex flex-col gap-1 max-md:flex-row max-md:gap-1.5;
+}
+
+.settings-nav__caption {
+    @apply px-2 pb-1 text-xs font-semibold text-[#6E7598] max-md:hidden;
+}
+
+.settings-nav__link {
+    @apply flex items-center gap-3 rounded-[14px] p-2 hover:bg-surface-2 max-md:shrink-0 max-md:gap-2 max-md:rounded-lg max-md:py-1.5 max-md:pr-3 max-md:pl-1.5;
+}
+
+.settings-nav__link--active {
+    @apply hover:bg-transparent;
+    background: linear-gradient(90deg, color-mix(in srgb, var(--item-color) 15%, transparent), color-mix(in srgb, var(--item-color) 3%, transparent));
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--item-color) 33%, transparent);
+}
+
+.settings-nav__bubble {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-full bg-[#1A1E30] text-(--item-color) max-md:size-7;
+}
+
+.settings-nav__link--active .settings-nav__bubble {
+    @apply bg-(--item-color) text-bg;
+}
+
+.settings-nav__icon {
+    @apply size-[17px];
+}
+
+.settings-nav__text {
+    @apply flex min-w-0 flex-col gap-px;
+}
+
+.settings-nav__label {
+    @apply text-sm font-semibold whitespace-nowrap text-[#D6D9EC] max-md:text-[13px];
+}
+
+.settings-nav__link--active .settings-nav__label {
+    @apply text-white;
+}
+
+.settings-nav__hint {
+    @apply truncate text-xs text-[#7D84A6] max-md:hidden;
+}
+
+.settings-nav__delete {
+    @apply flex h-[38px] items-center justify-center gap-2 rounded-xl text-[13px] font-semibold text-[#FF7A8F] shadow-[inset_0_0_0_1px_#2A1E26] hover:bg-[#2A121A]
+    max-md:shrink-0 max-md:px-3 max-md:whitespace-nowrap;
+}
+
+.settings-nav__delete--active {
+    @apply bg-[#2A121A] shadow-[inset_0_0_0_1px_#5B2333];
+}
+
+.settings-nav__delete-icon {
+    @apply size-[15px];
+}
+
+.settings-flash {
+    @apply rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-success;
+}
+
+.settings-flash--error {
+    @apply border-danger/40 bg-danger/10 text-[#FF7A8F];
+}
+
+.settings-card {
+    @apply flex flex-col gap-4 rounded-2xl border border-line bg-surface p-6 max-sm:p-3.5;
+}
+
+.settings-card--row {
+    @apply flex-row flex-wrap items-center gap-5 max-sm:gap-3;
+}
+
+.settings-card--danger {
+    @apply border-[#5B2333];
+}
+
+.settings-card__head {
+    @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.settings-card__intro {
+    @apply flex flex-col gap-1;
+}
+
+.settings-card__body {
+    @apply flex flex-[1_1_260px] flex-col gap-2.5;
+}
+
+.settings-card__title {
+    @apply font-display text-xl;
+}
+
+.settings-card__text {
+    @apply text-sm leading-normal text-ink-soft;
+}
+
+.settings-card__hint {
+    @apply text-xs text-muted;
+}
+
+.settings-card__buttons {
+    @apply flex flex-wrap gap-2;
+}
+
+.settings-card__grid {
+    @apply grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-4;
+}
+
+.settings-card__wide {
+    @apply col-span-full;
+}
+
+.settings-card__list {
+    @apply flex flex-col divide-y divide-line-soft;
+}
+
+.settings-card__times {
+    @apply grid max-w-[360px] grid-cols-2 gap-3;
+}
+
+.settings-button {
+    @apply inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-lg border border-line bg-surface-2 px-3.5 text-[13px] font-semibold whitespace-nowrap text-ink hover:border-ghost disabled:cursor-not-allowed disabled:opacity-50
+    max-md:h-11 max-md:w-full;
+}
+
+.settings-button--large {
+    @apply h-11 rounded-[10px] px-[18px] text-sm max-sm:px-2.5;
+}
+
+.settings-button--primary {
+    @apply border-transparent bg-cyan font-bold text-on-cyan hover:border-transparent hover:brightness-110;
+}
+
+.settings-button--ghost {
+    @apply bg-transparent text-muted-2;
+}
+
+.settings-button--discord {
+    @apply border-discord bg-transparent text-[#C7CBFF];
+}
+
+.settings-button--discord-solid {
+    @apply border-transparent bg-discord text-white;
+}
+
+.settings-button--danger {
+    @apply border-[#5B2333] bg-transparent text-[#FF7A8F];
+}
+
+.settings-button--danger-solid {
+    @apply border-transparent bg-danger font-bold text-[#1A0508] disabled:bg-[#2A1A20] disabled:text-[#7A5560] disabled:opacity-100;
+}
+
+.settings-button__file {
+    @apply sr-only;
+}
+
+.settings-panel {
+    @apply rounded-xl border border-line-soft bg-bg;
+}
+
+.settings-panel--static {
+    @apply flex flex-wrap items-center justify-between gap-3 px-4 py-3.5 max-md:flex-col max-md:items-stretch;
+}
+
+.settings-panel--static > form {
+    @apply max-md:w-full;
+}
+
+.settings-panel--danger {
+    @apply border-[#3A1E28];
+}
+
+.settings-panel__summary {
+    @apply flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3.5 [&::-webkit-details-marker]:hidden
+    max-md:flex-col max-md:items-stretch;
+}
+
+.settings-panel__info {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.settings-panel__label {
+    @apply text-xs text-muted-2;
+}
+
+.settings-panel__value {
+    @apply text-sm;
+}
+
+.settings-panel__note {
+    @apply text-xs font-normal text-muted;
+}
+
+.settings-panel__form {
+    @apply flex max-w-[460px] flex-col gap-3 border-t border-line-soft px-4 py-4;
+}
+
+.settings-switch {
+    @apply flex cursor-pointer items-center justify-between gap-4 py-3.5 first:pt-0 last:pb-0;
+}
+
+.settings-switch__text {
+    @apply flex flex-col gap-0.5;
+}
+
+.settings-switch__label {
+    @apply text-sm;
+}
+
+.settings-switch__help {
+    @apply text-[13px] text-muted-2;
+}
+
+.settings-switch__input {
+    @apply relative m-0 h-6 w-11 shrink-0 cursor-pointer appearance-none rounded-xl bg-[#2A3050] transition-colors checked:bg-cyan focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan;
+}
+
+.settings-switch__input::after {
+    @apply absolute top-[3px] left-[3px] size-[18px] rounded-[9px] bg-ink-soft transition-transform content-[''];
+}
+
+.settings-switch__input:checked::after {
+    @apply translate-x-5 bg-on-cyan;
+}
+
+.settings-select {
+    @apply flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0 max-md:flex-col max-md:items-stretch max-md:gap-2;
+}
+
+.settings-select__label {
+    @apply text-sm font-semibold;
+}
+
+.settings-select__input {
+    @apply h-11 w-auto min-w-[180px] max-md:w-full max-md:min-w-0;
+}
+
+.settings-range {
+    @apply flex flex-col gap-2 text-[13px] font-semibold text-ink-soft;
+}
+
+.settings-range__input {
+    @apply accent-cyan;
+}
+
+.settings-accents {
+    @apply flex flex-col gap-2.5;
+}
+
+.settings-accents__legend {
+    @apply pb-2.5 text-[13px] font-semibold text-ink-soft;
+}
+
+.settings-accents__list {
+    @apply flex flex-wrap gap-3;
+}
+
+.settings-accents__item {
+    @apply relative cursor-pointer;
+}
+
+.settings-accents__input {
+    @apply sr-only;
+}
+
+.settings-accents__swatch {
+    @apply block size-11 rounded-xl border-[3px] border-transparent bg-(--accent);
+}
+
+.settings-accents__input:checked + .settings-accents__swatch {
+    @apply border-ink shadow-[0_0_18px_var(--accent)];
+}
+
+.settings-accents__input:focus-visible + .settings-accents__swatch {
+    @apply outline-2 outline-offset-2 outline-cyan;
+}
+
+.settings-accents__name {
+    @apply sr-only;
+}
+
+.settings-devices {
+    @apply flex flex-col divide-y divide-line-soft;
+}
+
+.settings-devices__item {
+    @apply flex flex-wrap items-center justify-between gap-3 py-3 first:pt-0 last:pb-0;
+}
+
+.settings-devices__text {
+    @apply flex flex-col gap-0.5;
+}
+
+.settings-devices__name {
+    @apply text-sm;
+}
+
+.settings-devices__meta {
+    @apply text-xs text-muted;
+}
+
+.settings-devices__current {
+    @apply rounded-md bg-success/14 px-2 py-1 text-xs font-bold text-success;
+}
+
+.settings-matrix {
+    @apply overflow-x-auto;
+}
+
+.settings-matrix__table {
+    @apply w-full min-w-[480px] border-collapse text-sm;
+}
+
+.settings-matrix__head {
+    @apply text-xs tracking-[0.08em] text-muted-2 uppercase;
+}
+
+.settings-matrix__row {
+    @apply border-t border-line-soft;
+}
+
+.settings-matrix__cell {
+    @apply px-3 py-3 text-center;
+}
+
+.settings-matrix__cell--event {
+    @apply text-left;
+}
+
+.settings-matrix__title {
+    @apply block text-sm;
+}
+
+.settings-matrix__help {
+    @apply text-xs text-muted;
+}
+
+.settings-matrix__check {
+    @apply m-0 size-5 cursor-pointer accent-cyan;
+}
+
+.settings-delete {
+    @apply flex flex-col gap-2.5;
+}
+
+.settings-delete__caption {
+    @apply text-[13px] font-semibold text-ink-soft;
+}
+
+.settings-delete__list {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-2;
+}
+
+.settings-delete__item {
+    @apply text-sm text-[#FF9AAA];
+}
+
+.showcase {
+    @apply flex flex-col gap-4;
+}
+
+.showcase__counter {
+    @apply rounded-lg border border-line bg-bg px-3 py-1.5 font-display text-sm text-muted-2;
+}
+
+.showcase__counter strong {
+    @apply text-cyan;
+}
+
+.showcase__grid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(130px,1fr))] gap-3;
+}
+
+.showcase__item {
+    @apply relative flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-line bg-bg px-3 pt-5 pb-3 text-center transition-colors hover:border-muted has-checked:border-cyan has-checked:bg-cyan/8 has-disabled:cursor-not-allowed has-disabled:opacity-40 has-focus-visible:outline-2 has-focus-visible:outline-cyan;
+}
+
+.showcase__input {
+    @apply sr-only;
+}
+
+.showcase__check {
+    @apply absolute top-2 right-2 flex size-5 items-center justify-center rounded-full border border-line text-transparent transition-colors [&_svg]:size-3;
+}
+
+.showcase__item:has(:checked) .showcase__check {
+    @apply border-cyan bg-cyan text-on-cyan;
+}
+
+.showcase__name {
+    @apply line-clamp-2 text-sm font-semibold;
+}
+
+.showcase__meta {
+    @apply text-xs text-muted;
+}
+
+.showcase__empty {
+    @apply flex flex-wrap items-center gap-4 rounded-xl border border-dashed border-line bg-bg p-4;
+}
+
+.showcase__empty-icon {
+    @apply flex size-11 shrink-0 items-center justify-center rounded-xl bg-violet/15 text-[#B7A6FF] [&_svg]:size-5;
+}
+
+.showcase__empty-text {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5 text-sm;
+}
+
+.showcase__empty-text span {
+    @apply text-xs text-muted;
+}
+

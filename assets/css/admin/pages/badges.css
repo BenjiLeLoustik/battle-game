@@ -1,0 +1,27 @@
+.badge-editor {
+    @apply grid grid-cols-[minmax(0,1fr)_320px] items-start gap-4 max-lg:grid-cols-1;
+}
+
+.badge-editor__main {
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.badge-editor__preview {
+    @apply sticky top-5 items-center gap-5;
+}
+
+.badge-editor__big {
+    @apply flex min-h-[170px] items-center justify-center;
+}
+
+.badge-editor__sizes {
+    @apply grid w-full grid-cols-2 gap-2;
+}
+
+.badge-editor__size {
+    @apply flex min-h-[132px] flex-col items-center justify-center gap-2 rounded-xl border border-adm-line bg-adm-bg p-3 text-[11px] whitespace-nowrap text-adm-muted;
+}
+
+.badge-editor__size > span:first-child {
+    @apply flex flex-1 items-center justify-center;
+}

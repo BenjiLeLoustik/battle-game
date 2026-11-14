@@ -1,0 +1,432 @@
+.studio-builder {
+    @apply relative flex min-h-0 flex-1 flex-col;
+}
+
+.studio-builder__toolbar {
+    @apply flex shrink-0 flex-wrap items-center gap-3 border-b border-adm-line bg-adm-side px-4 py-2.5 max-md:gap-2 max-md:px-3;
+}
+
+.studio-builder__separator {
+    @apply text-[#4B5060] max-md:hidden;
+}
+
+.studio-builder__name {
+    @apply text-[15px];
+}
+
+.studio-builder__badge {
+    @apply rounded-md bg-adm-accent-soft px-2 py-[3px] text-[11px] font-bold tracking-wider text-adm-accent uppercase;
+}
+
+.studio-builder__state {
+    @apply max-w-[420px] truncate rounded-md px-2 py-[3px] text-xs font-semibold text-adm-muted;
+}
+
+.studio-builder__state[data-tone="ok"] {
+    @apply bg-success/12 text-[#6EE7A0];
+}
+
+.studio-builder__state[data-tone="warn"] {
+    @apply bg-yellow/12 text-[#FFD36E];
+}
+
+.studio-builder__state[data-tone="error"] {
+    @apply bg-danger/14 text-[#FF8A9C];
+}
+
+.studio-builder__actions {
+    @apply ml-auto flex flex-wrap gap-2 max-md:ml-0 max-md:w-full;
+}
+
+.studio-builder__body {
+    @apply flex min-h-0 flex-1 max-xl:flex-col max-xl:overflow-y-auto;
+}
+
+.studio-builder__side {
+    @apply flex w-[250px] shrink-0 flex-col gap-3 overflow-y-auto border-r border-adm-line bg-adm-side p-4 max-xl:w-full max-xl:border-r-0 max-xl:border-b;
+}
+
+.studio-builder__heading {
+    @apply text-[11px] font-bold tracking-wider text-adm-muted uppercase;
+}
+
+.studio-builder__palette {
+    @apply grid grid-cols-2 gap-1.5;
+}
+
+.studio-builder__block {
+    @apply flex h-9 cursor-pointer items-center gap-1 truncate rounded-md border border-adm-line bg-adm-panel px-2.5 text-left text-xs font-semibold text-adm-ink hover:border-adm-accent hover:bg-adm-hover;
+}
+
+.studio-builder__outline {
+    @apply m-0 flex list-none flex-col gap-1 p-0;
+}
+
+.studio-builder__item {
+    @apply flex items-center gap-1 rounded-md border border-transparent;
+}
+
+.studio-builder__item--active {
+    @apply border-[#FFC94A] bg-[#FFC94A]/8;
+}
+
+.studio-builder__item-name {
+    @apply min-w-0 flex-1 cursor-pointer truncate bg-transparent px-2 py-1.5 text-left text-xs text-adm-ink;
+}
+
+.studio-builder__mini {
+    @apply h-6 w-6 shrink-0 cursor-pointer rounded bg-transparent text-xs text-adm-muted hover:bg-adm-hover hover:text-adm-ink;
+}
+
+.studio-builder__canvas {
+    @apply flex min-w-0 flex-1 flex-col items-center gap-3 overflow-y-auto bg-stage p-5;
+}
+
+.studio-builder__help,
+.studio-builder__muted {
+    @apply m-0 text-xs leading-relaxed text-adm-muted;
+}
+
+.studio-builder__warning {
+    @apply m-0 rounded-md border border-yellow/40 bg-yellow/10 px-3 py-2 text-xs text-[#FFD36E];
+}
+
+.studio-builder__phone {
+    @apply w-full max-w-[560px] rounded-2xl border border-adm-line bg-[radial-gradient(circle_at_50%_30%,#161B3A,#05060C_72%)] p-5 shadow-[0_20px_50px_rgba(0,0,0,0.5)];
+}
+
+.studio-builder__screen {
+    @apply flex flex-col gap-3;
+}
+
+.studio-builder__row {
+    @apply flex gap-2.5;
+}
+
+.studio-builder__row > * {
+    @apply min-w-0 flex-1;
+}
+
+.studio-builder__mock {
+    @apply cursor-pointer rounded-lg border border-dashed border-transparent p-1.5 text-center text-[15px] text-[#E8EAF6] transition-colors hover:border-adm-accent;
+}
+
+.studio-builder__mock--active {
+    @apply border-solid border-[#FFC94A] bg-[#FFC94A]/5;
+}
+
+.studio-builder__mock--text.studio-builder__mock--title {
+    @apply font-display text-2xl font-bold;
+}
+
+.studio-builder__mock--text.studio-builder__mock--big {
+    @apply font-display text-4xl font-bold text-cyan;
+}
+
+.studio-builder__mock--text.studio-builder__mock--small {
+    @apply text-xs;
+}
+
+.studio-builder__mock--text.studio-builder__mock--hint {
+    @apply font-display text-xs font-bold tracking-widest text-[#9AA0BF] uppercase;
+}
+
+.studio-builder__mock-button {
+    @apply flex min-h-11 items-center justify-center rounded-xl border border-cyan bg-cyan/12 px-4 font-display font-bold text-cyan;
+}
+
+.studio-builder__mock--big .studio-builder__mock-button {
+    @apply min-h-20 text-2xl;
+}
+
+.studio-builder__mock--counter {
+    @apply flex flex-col items-center;
+}
+
+.studio-builder__mock--counter small {
+    @apply text-[11px] tracking-wider text-[#9AA0BF] uppercase;
+}
+
+.studio-builder__mock--counter strong {
+    @apply font-display text-3xl text-[#FFC94A];
+}
+
+.studio-builder__mock--grid {
+    @apply mx-auto grid w-full max-w-[300px] gap-1.5;
+    grid-template-columns: repeat(var(--columns, 3), minmax(0, 1fr));
+}
+
+.studio-builder__mock-cell {
+    @apply aspect-square rounded-lg border border-[#2E3456] bg-[#10142A];
+}
+
+.studio-builder__mock--input {
+    @apply flex gap-2;
+}
+
+.studio-builder__mock-field {
+    @apply h-11 flex-1 rounded-xl border border-[#2E3456] bg-[#0B0D17];
+}
+
+.studio-builder__mock--input .studio-builder__mock-button {
+    @apply border-0 bg-cyan text-[#04141A];
+}
+
+.studio-builder__mock--timer {
+    @apply py-2;
+}
+
+.studio-builder__mock-fill {
+    @apply block h-1.5 w-2/3 rounded-full bg-cyan;
+}
+
+.studio-builder__mock--scores {
+    @apply flex justify-center gap-2;
+}
+
+.studio-builder__mock-chip {
+    @apply rounded-full border border-[#262B45] bg-[#121524] px-3 py-1 text-xs;
+}
+
+.studio-builder__mock--message {
+    @apply font-display font-bold text-[#FFC94A] italic opacity-70;
+}
+
+.studio-builder__panel {
+    @apply flex w-[440px] shrink-0 flex-col border-l border-adm-line bg-adm-side max-xl:w-full max-xl:border-t max-xl:border-l-0;
+}
+
+.studio-builder__tabs {
+    @apply flex shrink-0 border-b border-adm-line;
+}
+
+.studio-builder__tab {
+    @apply flex-1 cursor-pointer border-b-2 border-transparent bg-transparent py-3 text-xs font-bold tracking-wider text-adm-muted uppercase;
+}
+
+.studio-builder__tab[aria-selected="true"] {
+    @apply border-adm-accent text-adm-ink;
+}
+
+.studio-builder__pane {
+    @apply flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto p-4;
+}
+
+.studio-builder__pane-title {
+    @apply m-0 text-sm font-bold text-adm-ink;
+}
+
+.studio-builder__field {
+    @apply flex flex-col gap-1;
+}
+
+.studio-builder__label {
+    @apply text-[11px] font-semibold text-adm-muted;
+}
+
+.studio-builder__input,
+.studio-builder__select {
+    @apply h-8 min-w-0 rounded-md border border-adm-line bg-adm-bg px-2 text-xs text-adm-ink outline-none focus:border-adm-accent;
+}
+
+.studio-builder__textarea {
+    @apply h-20 resize-y py-2 leading-relaxed;
+}
+
+.studio-builder__input--small {
+    @apply w-24;
+}
+
+.studio-builder__input--tiny {
+    @apply w-16;
+}
+
+.studio-builder__input--grow {
+    @apply min-w-[140px] flex-1;
+}
+
+.studio-builder__check {
+    @apply flex items-center gap-2 text-xs text-adm-ink;
+}
+
+.studio-builder__chips {
+    @apply flex flex-wrap items-center gap-1;
+}
+
+.studio-builder__chip {
+    @apply cursor-pointer rounded border border-adm-line bg-transparent px-1.5 py-0.5 font-mono text-[11px] text-adm-accent hover:border-adm-accent;
+}
+
+.studio-builder__rule,
+.studio-builder__variable {
+    @apply flex flex-col gap-2 rounded-lg border border-adm-line bg-adm-panel p-3;
+}
+
+.studio-builder__line {
+    @apply flex flex-wrap items-center gap-1.5;
+}
+
+.studio-builder__line--head {
+    @apply border-b border-adm-line pb-2;
+}
+
+.studio-builder__group {
+    @apply flex flex-col items-start gap-1.5 border-l-2 border-adm-line pl-2.5;
+}
+
+.studio-builder__group > .studio-builder__line {
+    @apply w-full;
+}
+
+.studio-builder__keyword {
+    @apply text-[11px] font-bold tracking-wider text-[#FFC94A] uppercase;
+}
+
+.studio-builder__operand {
+    @apply inline-flex flex-wrap items-center gap-1;
+}
+
+.studio-builder__word {
+    @apply text-[11px] text-adm-muted;
+}
+
+.studio-builder__warn {
+    @apply text-[11px] text-[#FFD36E];
+}
+
+.studio-builder__remove {
+    @apply ml-auto h-7 w-7 shrink-0 cursor-pointer rounded bg-transparent text-base text-adm-muted hover:text-danger;
+}
+
+.studio-builder__link {
+    @apply cursor-pointer self-start bg-transparent p-0 text-xs font-semibold text-adm-accent hover:underline;
+}
+
+.studio-builder__link--danger {
+    @apply text-danger;
+}
+
+.studio-builder__chooser {
+    @apply absolute inset-0 z-40 flex items-center justify-center bg-[rgba(5,6,12,0.82)] p-6 backdrop-blur-sm;
+}
+
+.studio-builder__chooser[hidden] {
+    @apply hidden;
+}
+
+.studio-builder__dialog {
+    @apply flex w-full max-w-[760px] flex-col gap-3 rounded-2xl border border-adm-line bg-adm-side p-6;
+}
+
+.studio-builder__dialog-title {
+    @apply m-0 text-xl font-bold text-adm-ink;
+}
+
+.studio-builder__templates {
+    @apply grid grid-cols-2 gap-3 max-md:grid-cols-1;
+}
+
+.studio-builder__template {
+    @apply flex cursor-pointer flex-col gap-1 rounded-xl border border-adm-line bg-adm-panel p-4 text-left hover:border-adm-accent hover:bg-adm-hover;
+}
+
+.studio-builder__template strong {
+    @apply text-sm text-adm-ink;
+}
+
+.studio-builder__template span {
+    @apply text-xs leading-relaxed text-adm-muted;
+}
+
+.studio-builder__step {
+    @apply flex w-full flex-col gap-1.5 rounded-md bg-adm-bg/40 p-1.5;
+}
+
+.studio-builder__params {
+    @apply flex flex-wrap items-center gap-1.5 pl-2;
+}
+
+.studio-builder__rule-head {
+    @apply flex items-center justify-between gap-2;
+}
+
+.studio-builder__rule-title {
+    @apply text-sm font-bold text-adm-ink;
+}
+
+.studio-builder__delete {
+    @apply flex h-8 cursor-pointer items-center gap-1 rounded-md border border-danger/40 bg-danger/10 px-2.5 text-xs font-semibold text-[#FF8A9C] hover:border-danger hover:bg-danger/20;
+}
+
+.studio-builder__add {
+    @apply flex h-11 w-full shrink-0 cursor-pointer items-center justify-center rounded-lg border border-dashed border-adm-accent/60 bg-adm-accent-soft text-sm font-bold text-adm-accent hover:border-adm-accent hover:bg-adm-accent/20;
+}
+
+.studio-builder__library {
+    @apply flex flex-col gap-1;
+}
+
+.studio-builder__saved {
+    @apply flex items-center gap-1 rounded-md border border-adm-line bg-adm-panel;
+}
+
+.studio-builder__saved-name {
+    @apply min-w-0 flex-1 cursor-pointer truncate bg-transparent px-2.5 py-2 text-left text-xs font-semibold text-adm-accent hover:text-adm-ink;
+}
+
+.studio-builder__element-actions {
+    @apply flex flex-wrap gap-2 border-t border-adm-line pt-3;
+}
+
+.studio-builder__code {
+    @apply h-auto resize-y py-2 font-mono text-[11px] leading-relaxed;
+}
+
+.studio-builder__mock--choices {
+    @apply grid gap-2;
+    grid-template-columns: repeat(var(--columns, 2), minmax(0, 1fr));
+}
+
+.studio-builder__mock-choice {
+    @apply rounded-xl border border-[#2E3456] bg-[#10142A] px-3 py-2.5 text-sm;
+}
+
+.studio-builder__mock-image {
+    @apply mx-auto block max-h-40 max-w-full rounded-xl object-contain;
+}
+
+.studio-builder__mock-placeholder {
+    @apply flex min-h-12 items-center justify-center rounded-lg border border-dashed border-[#2E3456] text-xs text-[#9AA0BF];
+}
+
+.studio-builder__mock--icon {
+    @apply text-4xl leading-tight;
+}
+
+.studio-builder__mock--icon.studio-builder__mock--big {
+    @apply text-6xl;
+}
+
+.studio-builder__mock--icon.studio-builder__mock--small {
+    @apply text-2xl;
+}
+
+.studio-builder__mock-divider {
+    @apply m-0 h-px border-0 bg-[#2E3456];
+}
+
+.studio-builder__mock--box {
+    @apply flex flex-col gap-2.5 rounded-2xl border border-solid border-[#262B45] bg-[rgba(18,21,36,0.85)] p-3 text-left;
+}
+
+.studio-builder__mock--box.studio-builder__mock--active {
+    @apply border-[#FFC94A];
+}
+
+.studio-builder__mock-title {
+    @apply font-display text-xs tracking-widest text-[#9AA0BF] uppercase;
+}
+
+.studio-builder__dialog-actions {
+    @apply flex flex-wrap gap-2 pt-1;
+}

@@ -1,0 +1,71 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% set active = 'rooms' %}
+{% set locked = room and room.protected %}
+
+{% block title %}{{ 'site.room.join.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="room-join">
+        <section class="room-join__card{{ locked ? ' room-join__card--locked' }}" aria-labelledby="room-join-title">
+            <div class="room-join__head">
+                <span class="room-join__icon">
+                    <svg class="room-join__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="{{ locked ? 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5zM12 15v2' : 'M4 20h16M6 20V4h12v16M14 12h.01' }}"/>
+                    </svg>
+                </span>
+                <div class="room-join__intro">
+                    <span class="room-join__kicker">{{ (locked ? 'site.room.join.protected' : 'site.room.join.kicker')|trans }}</span>
+                    <h1 id="room-join-title" class="room-join__title">{{ room ? room.name : 'site.room.join.title'|trans }}</h1>
+                </div>
+            </div>
+
+            {% if summary %}
+                <div class="room-join__tags">
+                    <span class="room-join__tag">{{ 'site.room.join.host'|trans({ name: room.host ? room.host.username : '—' }) }}</span>
+                    <span class="room-join__tag">{{ 'site.room.count'|trans({ count: summary.present, max: room.maxPlayers }) }}</span>
+                    <span class="room-join__tag">{{ room.status.translate() }}</span>
+                </div>
+            {% endif %}
+
+            <form class="room-join__form" method="post" action="{{ path('site_room_join') }}">
+                {% if guest %}
+                    <div class="field field--form">
+                        {{ form_label(guest.username, 'site.room.join.pseudo'|trans, { label_attr: { class: 'field__label' } }) }}
+                        {{ form_widget(guest.username, { attr: { class: 'field__input field__input--large' ~ (guest.username.errors is empty ? '' : ' field__input--invalid'), maxlength: 30, autocomplete: 'nickname', placeholder: 'site.auth.guest_placeholder'|trans } }) }}
+                        <span class="field__help">{{ 'site.room.join.pseudo_help'|trans }}</span>
+                        {{ form_errors(guest.username) }}
+                    </div>
+                    {{ form_rest(guest) }}
+                {% endif %}
+
+                <div class="field field--form">
+                    <label class="field__label" for="room-code">{{ 'site.room.join.code'|trans }}</label>
+                    <input id="room-code" class="field__input field__input--large field__input--code{{ error == 'site.room.join.not_found' ? ' field__input--invalid' }}" name="code" value="{{ code }}" maxlength="7" autocomplete="off" required>
+                    <span class="field__help">{{ 'site.room.join.code_help'|trans }}</span>
+                </div>
+
+                {% if locked %}
+                    <div class="field field--form">
+                        <label class="field__label" for="room-password">{{ 'site.room.join.password'|trans }}</label>
+                        <input id="room-password" class="field__input field__input--large{{ error and error != 'site.room.join.not_found' ? ' field__input--invalid' }}" type="password" name="password" autocomplete="off" aria-describedby="room-password-help" required autofocus>
+                        <span id="room-password-help" class="field__help">{{ 'site.room.join.attempts'|trans({ count: attempts }) }}</span>
+                    </div>
+                {% endif %}
+
+                {% if error %}
+                    <p class="room-join__error" role="alert">{{ error|trans }}</p>
+                {% endif %}
+
+                <button type="submit" class="room-join__submit{{ locked ? ' room-join__submit--locked' }}">{{ 'site.room.join.submit'|trans }}</button>
+            </form>
+
+            <div class="room-join__foot">
+                <a href="{{ path('site_room_index') }}" class="room-join__back">{{ 'site.room.join.back'|trans }}</a>
+                {% if locked %}
+                    <span>{{ 'site.room.join.password_help'|trans }}</span>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+{% endblock %}

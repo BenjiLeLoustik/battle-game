@@ -1,0 +1,207 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/social.html.twig' as social %}
+
+{% set active = 'chat' %}
+{% set viewer = app_user() %}
+{% set member = viewer and not viewer.guest %}
+{% set title = channel ? '#' ~ channel|localize('name') : partner.username %}
+{% set labels = {
+    today: 'site.chat.today'|trans,
+    typing: 'site.chat.typing'|trans,
+    staff: 'site.chat.staff'|trans,
+    invite: 'site.chat.invite_title'|trans,
+    invite_meta: 'site.chat.invite_meta'|trans,
+    join: 'site.chat.join'|trans,
+} %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="chat" data-component="Chat"
+         data-key="{{ key }}"
+         data-url="{{ partner ? mercure('users/' ~ viewer.id, { subscribe: true }) : (channel.public ? mercure(topic) : mercure(topic, { subscribe: true })) }}"
+         data-post="{{ path('site_chat_post', { key: key }) }}"
+         data-read="{{ path('site_chat_read', { key: key }) }}"
+         data-typing="{{ path('site_chat_typing', { key: key }) }}"
+         data-room-url="{{ path('site_room_show', { code: 'XXX-XXX' }) }}"
+         data-token="{{ member ? csrf_token('chat') }}"
+         data-player="{{ member ? viewer.id }}"
+         data-labels="{{ labels|json_encode }}"
+         data-messages="{{ messages|json_encode }}">
+
+        <nav class="chat__nav" aria-label="{{ 'site.chat.nav'|trans }}">
+            <section class="chat__section" aria-labelledby="chat-channels">
+                <header class="chat__section-head">
+                    <svg class="chat__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/></svg>
+                    <h2 id="chat-channels" class="chat__caption">{{ 'site.chat.channels'|trans }}</h2>
+                </header>
+                <div class="chat__list">
+                    {% for item in channels %}
+                        {% set current = item.slug == key %}
+                        <a href="{{ path('site_chat_channel', { channel: item.slug }) }}" class="chat__channel{{ current ? ' chat__channel--active' }}"{% if current %} aria-current="page"{% endif %}>
+                            <span class="chat__hash" aria-hidden="true">#</span>
+                            <span class="chat__channel-name">{{ item|localize('name') }}</span>
+                            {% if not current and unread[item.slug] is defined %}
+                                <span class="chat__badge">{{ min(99, unread[item.slug]) }}</span>
+                            {% endif %}
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+
+            {% if member %}
+                <section class="chat__section" aria-labelledby="chat-direct">
+                    <header class="chat__section-head">
+                        <svg class="chat__section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+                        <h2 id="chat-direct" class="chat__caption">{{ 'site.chat.direct'|trans }}</h2>
+                        <a href="{{ path('site_friend_index') }}" class="chat__section-action" title="{{ 'site.chat.new_message'|trans }}" aria-label="{{ 'site.chat.new_message'|trans }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20h8M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+                        </a>
+                    </header>
+                    <div class="chat__list">
+                        {% for conversation in conversations %}
+                            {% set current = conversation.key == key %}
+                            <a href="{{ path('site_chat_dm', { username: conversation.user.username }) }}" class="chat__direct{{ current ? ' chat__channel--active' }}"{% if current %} aria-current="page"{% endif %}>
+                                <span class="chat__avatar">
+                                    {{ ui.avatar(conversation.user, 'sm') }}
+                                    {% if conversation.online %}<span class="chat__dot" aria-label="{{ 'site.presence.online'|trans }}"></span>{% endif %}
+                                </span>
+                                <span class="chat__direct-text">
+                                    <span class="chat__direct-name">{{ conversation.user.username }}</span>
+                                    <span class="chat__direct-last">{{ conversation.last.text ?: 'site.chat.invite_title'|trans({name: conversation.last.room.name}) }}</span>
+                                </span>
+                                {% if not current and unread[conversation.key] is defined %}
+                                    <span class="chat__badge">{{ min(99, unread[conversation.key]) }}</span>
+                                {% endif %}
+                            </a>
+                        {% else %}
+                            <span class="chat__hint">{{ 'site.chat.no_direct'|trans }}</span>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+        </nav>
+
+        <section class="chat__main" aria-label="{{ title }}">
+            <div class="chat__head">
+                {% if partner %}
+                    {{ ui.avatar(partner, 'base') }}
+                    <div class="chat__head-text">
+                        <a href="{{ path('site_profile_show', { username: partner.username }) }}" class="chat__head-title">{{ partner.username }}</a>
+                        <span class="chat__head-sub">{{ social.status(partnerStatus) }}</span>
+                    </div>
+                {% else %}
+                    <span class="chat__head-hash" aria-hidden="true">#</span>
+                    <div class="chat__head-text">
+                        <strong class="chat__head-title">{{ channel|localize('name') }}</strong>
+                        {% if channel.description %}
+                            <span class="chat__head-sub">{{ channel|localize('description') }}</span>
+                        {% endif %}
+                    </div>
+                    <span class="chat__online">{{ 'site.chat.online'|trans({ count: onlineCount }) }}</span>
+                {% endif %}
+            </div>
+
+            <div class="chat__messages" aria-live="polite">
+                {% if messages is empty %}
+                    <p class="chat__empty">{{ 'site.chat.empty'|trans }}</p>
+                {% endif %}
+            </div>
+            <span class="chat__typing" aria-live="polite"></span>
+
+            {% if canWrite %}
+                <form class="chat__form">
+                    {% if room %}
+                        <button type="button" class="chat__invite" data-invite title="{{ 'site.chat.invite_action'|trans({ room: room.name }) }}" aria-label="{{ 'site.chat.invite_action'|trans({ room: room.name }) }}">
+                            <svg class="chat__invite-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                        </button>
+                    {% endif %}
+                    <input class="chat__input" name="text" maxlength="1000" autocomplete="off" aria-label="{{ 'site.chat.message_label'|trans({ title: title }) }}" placeholder="{{ 'site.chat.placeholder'|trans({ title: title }) }}">
+                    <button type="submit" class="chat__send" disabled>{{ 'site.chat.send'|trans }}</button>
+                </form>
+            {% else %}
+                <p class="chat__locked">
+                    {% if not member %}
+                        {{ 'site.chat.locked.guest'|trans }}
+                        <a href="{{ path('site_security_register') }}" class="chat__locked-link">{{ 'site.auth.register'|trans }}</a>
+                    {% elseif partner %}
+                        {{ 'site.chat.locked.direct'|trans({ name: partner.username }) }}
+                    {% else %}
+                        {{ ('site.chat.locked.' ~ (channel.writeAccess.value == 'staff' ? 'staff' : 'readonly'))|trans }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </section>
+
+        <aside class="chat__members" aria-label="{{ 'site.chat.people'|trans }}">
+            {% if partner %}
+                <section class="chat__profile">
+                    {{ ui.avatar(partner, 'lg') }}
+                    <a href="{{ path('site_profile_show', { username: partner.username }) }}" class="chat__profile-name">{{ partner.username }}</a>
+                    <span class="chat__profile-handle">{{ partner.handle }}</span>
+                    <span class="chat__profile-status chat__profile-status--{{ partnerStatus.state }}">{{ social.status(partnerStatus) }}</span>
+                    <a href="{{ path('site_profile_show', { username: partner.username }) }}" class="chat__profile-link">{{ 'site.chat.view_profile'|trans }}</a>
+                </section>
+            {% endif %}
+
+            {% if member %}
+                <section class="chat__section" aria-labelledby="chat-friends">
+                    <header class="chat__section-head">
+                        <h2 id="chat-friends" class="chat__caption">{{ 'site.chat.friends_online'|trans({ count: onlineFriends|length }) }}</h2>
+                    </header>
+                    <div class="chat__list">
+                        {% for item in onlineFriends %}
+                            <div class="chat__member">
+                                <a href="{{ path('site_profile_show', { username: item.user.username }) }}" class="chat__avatar">
+                                    {{ ui.avatar(item.user, 'sm') }}
+                                    <span class="chat__dot" aria-hidden="true"></span>
+                                </a>
+                                <a href="{{ path('site_profile_show', { username: item.user.username }) }}" class="chat__member-text">
+                                    <span class="chat__member-name">{{ item.user.username }}</span>
+                                    <span class="chat__member-activity">{{ social.status(item.status) }}</span>
+                                </a>
+                                {% if not partner or partner.id != item.user.id %}
+                                    <a href="{{ path('site_chat_dm', { username: item.user.username }) }}" class="chat__write" title="{{ 'site.chat.write_to'|trans({ name: item.user.username }) }}" aria-label="{{ 'site.chat.write_to'|trans({ name: item.user.username }) }}">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>
+                                    </a>
+                                {% endif %}
+                            </div>
+                        {% else %}
+                            <p class="chat__hint">
+                                {{ 'site.chat.no_friends_online'|trans }}
+                                <a href="{{ path('site_friend_index') }}" class="chat__locked-link">{{ 'site.chat.find_friends'|trans }}</a>
+                            </p>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if not partner %}
+                <section class="chat__section" aria-labelledby="chat-online">
+                    <header class="chat__section-head">
+                        <h2 id="chat-online" class="chat__caption">{{ 'site.chat.players_online'|trans({ count: othersCount }) }}</h2>
+                    </header>
+                    <div class="chat__list">
+                        {% for item in online %}
+                            <a href="{{ path('site_profile_show', { username: item.user.username }) }}" class="chat__member">
+                                <span class="chat__avatar">{{ ui.avatar(item.user, 'sm') }}</span>
+                                <span class="chat__member-text">
+                                    <span class="chat__member-name">{{ item.user.username }}</span>
+                                    <span class="chat__member-activity">{{ social.status(item.status) }}</span>
+                                </span>
+                            </a>
+                        {% else %}
+                            <p class="chat__hint">{{ 'site.chat.nobody_online'|trans }}</p>
+                        {% endfor %}
+                    </div>
+                </section>
+            {% endif %}
+
+            {% if not member %}
+                <p class="chat__notice">{{ 'site.chat.notice'|trans }}</p>
+            {% endif %}
+        </aside>
+    </div>
+{% endblock %}

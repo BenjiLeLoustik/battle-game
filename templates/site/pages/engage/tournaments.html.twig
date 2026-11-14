@@ -1,0 +1,38 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/icon.html.twig' as icon %}
+
+{% set active = 'tournaments' %}
+
+{% block title %}{{ 'site.tournaments.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage">
+        <div class="engage__head">
+            <div class="engage__intro">
+                <h1 class="engage__title">{{ 'site.tournaments.title'|trans }}</h1>
+                <p class="engage__subtitle">{{ 'site.tournaments.subtitle'|trans }}</p>
+            </div>
+        </div>
+        {% if tournaments is empty %}
+            <p class="engage-empty">{{ 'site.tournaments.empty'|trans }}</p>
+        {% else %}
+            <div class="tournament-grid">
+                {% for item in tournaments %}
+                    {% set t = item.tournament %}
+                    <a href="{{ path('site_tournament_show', { id: t.id }) }}" class="tournament-card tournament-card--{{ t.state }}" style="--game-color: {{ t.game.color }}">
+                        <span class="tournament-card__state">{{ ('site.tournaments.states.' ~ t.state)|trans }}</span>
+                        <strong class="tournament-card__name">{{ t.name }}</strong>
+                        <span class="tournament-card__game">{{ t.game.name }}</span>
+                        <span class="tournament-card__dates">{{ t.startsAt|date('d/m H:i') }} → {{ t.endsAt|date('d/m H:i') }}</span>
+                        <span class="tournament-card__meta">
+                            <span>{{ 'site.tournaments.players'|trans({ count: item.count }) }}{{ t.maxPlayers ? ' / ' ~ t.maxPlayers }}</span>
+                            {% if item.first %}<span class="tournament-card__prize">{{ icon.svg('trophy') }}{{ item.first }}</span>{% endif %}
+                        </span>
+                        {% if item.joined %}<span class="tournament-card__joined">{{ 'site.tournaments.joined'|trans }}</span>{% endif %}
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

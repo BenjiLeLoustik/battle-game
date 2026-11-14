@@ -1,0 +1,247 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'maintenance' %}
+{% set editing = maintenance.id is not null %}
+{% set labels = {
+    site: 'admin.maintenance.preview.site'|trans({}, 'admin'),
+    games: 'admin.maintenance.preview.games'|trans({}, 'admin'),
+    features: 'admin.maintenance.preview.features'|trans({}, 'admin'),
+    none: 'admin.maintenance.preview.none'|trans({}, 'admin'),
+} %}
+
+{% macro error(errors, key) %}
+    {% if errors[key] is defined %}
+        <span class="admin-field__error">
+            {{ errors[key]|trans({}, 'validators') }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% block title %}{{ (editing ? 'admin.maintenance.edit_title' : 'admin.maintenance.new')|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_maintenance_index') }}" class="admin-crumbs__link">
+                {{ 'admin.maintenance.title'|trans({}, 'admin') }}
+            </a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">
+                {{ editing ? maintenance.title : 'admin.maintenance.new'|trans({}, 'admin') }}
+            </span>
+        </nav>
+
+        <div class="admin-page__intro">
+            <h1 class="admin-page__title">
+                {% if editing %}
+                    {{ 'admin.maintenance.edit_title'|trans({}, 'admin') }}
+                {% elseif preset %}
+                    {{ 'admin.maintenance.preset_title'|trans({ name: preset }, 'admin') }}
+                {% else %}
+                    {{ 'admin.maintenance.new'|trans({}, 'admin') }}
+                {% endif %}
+            </h1>
+            <span class="admin-page__subtitle">
+                {{ 'admin.maintenance.team_access'|trans({}, 'admin') }}
+            </span>
+        </div>
+
+        {% if preset and not editing %}
+            <div class="maintenance-form__preset">
+                <span>
+                    {{ 'admin.maintenance.preset_help'|trans({ name: preset }, 'admin')|raw }}
+                </span>
+                {{ admin_ui.link(path('admin_studio_index'), 'admin.studio.title'|trans({}, 'admin'), 'back') }}
+            </div>
+        {% endif %}
+
+        <form class="maintenance-form" method="post" data-component="MaintenanceForm" data-labels="{{ labels|json_encode }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('maintenance') }}">
+
+            <section class="admin-panel">
+                <label class="admin-field">
+                    {{ 'admin.maintenance.internal_title'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="title" value="{{ data.title }}" maxlength="120" required>
+                    {{ _self.error(errors, 'title') }}
+                </label>
+            </section>
+
+            <section class="admin-panel" aria-labelledby="maintenance-target">
+                <h2 id="maintenance-target" class="admin-panel__title">
+                    {{ 'admin.maintenance.step_target'|trans({}, 'admin') }}
+                </h2>
+                <div class="maintenance-form__targets" role="radiogroup" aria-labelledby="maintenance-target">
+                    {% for target in targets %}
+                        <label class="maintenance-form__target">
+                            <input class="maintenance-form__radio" type="radio" name="target" value="{{ target.value }}"{{ data.target == target ? ' checked' }}>
+                            <strong>
+                                {{ target.translate() }}
+                            </strong>
+                            <span class="maintenance-form__help">
+                                {{ ('admin.maintenance.target_help.' ~ target.value)|trans({}, 'admin') }}
+                            </span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="maintenance-form__chips" data-for-target="games">
+                    {% for game in games %}
+                        <label class="maintenance-form__chip">
+                            <input class="maintenance-form__chip-input" type="checkbox" name="games[]" value="{{ game.id }}" data-label="{{ game.name }}"{{ game.id in data.games ? ' checked' }}>
+                            {{ game.name }}
+                        </label>
+                    {% endfor %}
+                    {{ _self.error(errors, 'games') }}
+                </div>
+                <div class="maintenance-form__checks" data-for-target="features">
+                    {% for feature in features %}
+                        <label class="maintenance-form__check">
+                            <input type="checkbox" name="features[]" value="{{ feature.value }}" data-label="{{ feature.translate() }}"{{ feature.value in data.features ? ' checked' }}>
+                            {{ feature.translate() }}
+                        </label>
+                    {% endfor %}
+                    {{ _self.error(errors, 'features') }}
+                </div>
+            </section>
+
+            <section class="admin-panel" aria-labelledby="maintenance-when">
+                <h2 id="maintenance-when" class="admin-panel__title">
+                    {{ 'admin.maintenance.step_when'|trans({}, 'admin') }}
+                </h2>
+                <div class="maintenance-form__grid">
+                    <label class="admin-field">
+                        {{ 'admin.maintenance.starts_at'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="datetime-local" name="starts_at" value="{{ data.startsAt }}" required>
+                        {{ _self.error(errors, 'starts_at') }}
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.maintenance.ends_at_field'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="datetime-local" name="ends_at" value="{{ data.endsAt }}" required>
+                        {{ _self.error(errors, 'ends_at') }}
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.maintenance.policy'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="match_policy">
+                            {% for policy in policies %}
+                                <option value="{{ policy.value }}"{{ data.matchPolicy == policy ? ' selected' }}>
+                                    {{ policy.translate() }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                </div>
+                <label class="maintenance-form__check">
+                    <input type="checkbox" name="block_before"{{ data.blockBefore ? ' checked' }}>
+                    {{ 'admin.maintenance.block_before'|trans({ minutes: constant('App\\Entity\\Maintenance::BLOCK_BEFORE_MINUTES') }, 'admin') }}
+                </label>
+            </section>
+
+            <section class="admin-panel" aria-labelledby="maintenance-pages" data-for-target="site">
+                <div class="admin-panel__intro">
+                    <h2 id="maintenance-pages" class="admin-panel__title">
+                        {{ 'admin.maintenance.step_pages'|trans({}, 'admin') }}
+                    </h2>
+                    <span class="admin-panel__help">
+                        {{ 'admin.maintenance.pages_help'|trans({}, 'admin') }}
+                    </span>
+                </div>
+                <div class="maintenance-form__pages">
+                    {% for locked in ['maintenance', 'admin', 'login'] %}
+                        <label class="maintenance-form__page maintenance-form__page--locked">
+                            <input type="checkbox" checked disabled>
+                            <span class="maintenance-form__page-text">
+                                <span>
+                                    {{ ('admin.maintenance.locked.' ~ locked)|trans({}, 'admin') }}
+                                </span>
+                                <span class="maintenance-form__path">
+                                    {{ ('admin.maintenance.locked_path.' ~ locked)|trans({}, 'admin') }}
+                                </span>
+                            </span>
+                        </label>
+                    {% endfor %}
+                    {% for page in pages %}
+                        <label class="maintenance-form__page">
+                            <input type="checkbox" name="pages[]" value="{{ page.value }}"{{ page.value in data.pages ? ' checked' }}>
+                            <span class="maintenance-form__page-text">
+                                <span>
+                                    {{ page.translate() }}
+                                </span>
+                                <span class="maintenance-form__path">
+                                    {{ page.path }}
+                                </span>
+                            </span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.maintenance.paths'|trans({}, 'admin') }}
+                    <textarea class="admin-field__input admin-field__input--area" name="paths" rows="2">
+                        {{ data.paths }}
+                    </textarea>
+                </label>
+            </section>
+
+            <section class="admin-panel" aria-labelledby="maintenance-notice">
+                <h2 id="maintenance-notice" class="admin-panel__title">
+                    <span class="maintenance-form__notice-step">
+                        4
+                    </span>
+                    · {{ 'admin.maintenance.step_notice'|trans({}, 'admin') }}
+                </h2>
+                <div class="maintenance-form__notice">
+                    <div class="maintenance-form__notice-fields">
+                        <label class="admin-field">
+                            {{ 'admin.maintenance.announce'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="notice">
+                                {% for notice in notices %}
+                                    <option value="{{ notice }}"{{ data.notice == notice ? ' selected' }}>
+                                        {{ ('admin.maintenance.notice_option.' ~ notice)|trans({}, 'admin') }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.maintenance.message'|trans({}, 'admin') }}
+                            <textarea class="admin-field__input admin-field__input--area" name="message" rows="3" required>{{ data.message }}</textarea>
+                            {{ _self.error(errors, 'message') }}
+                        </label>
+                    </div>
+                    <div class="maintenance-form__preview">
+                        <span class="maintenance-form__preview-label">
+                            {{ 'admin.maintenance.preview.label'|trans({}, 'admin') }}
+                        </span>
+                        <div class="maintenance-form__preview-card">
+                            <span class="maintenance-form__preview-tag">
+                                {{ 'admin.maintenance.preview.tag'|trans({}, 'admin') }}
+                            </span>
+                            <strong class="maintenance-form__preview-title"></strong>
+                            <span class="maintenance-form__preview-message"></span>
+                            <span class="maintenance-form__preview-when"></span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {{ admin_ui.translations(maintenance) }}
+
+            <div class="admin-actions maintenance-form__actions">
+                <a href="{{ path('admin_maintenance_index') }}" class="admin-btn admin-btn--ghost admin-btn--large">
+                    {{ 'admin.maintenance.back'|trans({}, 'admin') }}
+                </a>
+                <button type="submit" class="admin-btn admin-btn--primary admin-btn--large">
+                    {{ (editing ? 'admin.maintenance.save' : 'admin.maintenance.schedule')|trans({}, 'admin') }}
+                </button>
+            </div>
+        </form>
+
+        {% if editing and maintenance.status.value == 'planned' %}
+            <form method="post" action="{{ path('admin_maintenance_cancel', { id: maintenance.id }) }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('maintenance') }}">
+                <button type="submit" class="admin-btn admin-btn--danger">
+                    {{ 'admin.maintenance.cancel_this'|trans({}, 'admin') }}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

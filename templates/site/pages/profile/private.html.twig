@@ -1,0 +1,13 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% block title %}{{ user.username }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <section class="profile-private">
+        {{ ui.avatar(user, '2xl') }}
+        <h1 class="profile-private__name">{{ user.username }}</h1>
+        <p class="profile-private__text">{{ 'site.profile.private'|trans }}</p>
+    </section>
+{% endblock %}

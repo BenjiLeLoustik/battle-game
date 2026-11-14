@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block body_class %}site-layout{% endblock %}
+
+{% block body %}
+    {% include '@site/components/partials/header.html.twig' %}
+    {% include '@site/components/partials/banner.html.twig' %}
+    <div class="site-layout__scroll">
+        <main id="content" class="site-layout__main site-layout__main--center">
+            {% block content %}{% endblock %}
+        </main>
+        {% include '@site/components/partials/footer.html.twig' %}
+    </div>
+{% endblock %}

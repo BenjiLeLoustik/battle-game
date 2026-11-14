@@ -1,0 +1,30 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.auth.discord_step.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="auth-card auth-card--narrow">
+        <section class="auth-card__main">
+            <span class="auth-card__badge">
+                {{ 'site.auth.discord_step.badge'|trans }}
+            </span>
+            <h1 class="auth-card__heading">
+                {{ 'site.auth.discord_step.title'|trans }}
+            </h1>
+            <p class="auth-card__lead">
+                {{ 'site.auth.discord_step.intro'|trans({ name: name }) }}
+            </p>
+            {{ form_start(form, {attr: {class: 'auth-card__form'}}) }}
+                {{ form_errors(form) }}
+                {{ form_row(form.username) }}
+                {{ form_row(form.agreeTerms) }}
+                <button type="submit" class="btn btn--primary btn--large btn--block">
+                    {{ 'site.auth.submit_register'|trans }}
+                </button>
+            {{ form_end(form) }}
+            <a href="{{ path('site_security_login') }}" class="auth-card__link auth-card__link--center">
+                {{ 'site.auth.discord_step.cancel'|trans }}
+            </a>
+        </section>
+    </div>
+{% endblock %}

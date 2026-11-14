@@ -1,0 +1,131 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% import '@site/components/macros/form.html.twig' as form_ui %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/badge.html.twig' as badges_ui %}
+
+{% block settings %}
+    <section class="settings-card settings-card--row" aria-labelledby="settings-avatar">
+        {{ ui.avatar(user, '2xl') }}
+        <div class="settings-card__body">
+            <h2 id="settings-avatar" class="settings-card__title">{{ 'site.settings.profile.avatar'|trans }}</h2>
+            <div class="settings-card__buttons">
+                <form method="post" action="{{ path('site_settings_avatar') }}" enctype="multipart/form-data" data-component="AvatarUpload">
+                    <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                    <input type="hidden" name="mode" value="upload">
+                    <label class="settings-button">
+                        {{ 'site.settings.profile.upload'|trans }}
+                        <input type="file" name="avatar" class="settings-button__file" accept="image/png,image/jpeg,image/webp">
+                    </label>
+                </form>
+                {% if user.discordAvatar %}
+                    <form method="post" action="{{ path('site_settings_avatar') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                        <input type="hidden" name="mode" value="discord">
+                        <button type="submit" class="settings-button settings-button--discord">{{ 'site.settings.profile.discord_avatar'|trans }}</button>
+                    </form>
+                {% endif %}
+                {% if user.avatar %}
+                    <form method="post" action="{{ path('site_settings_avatar') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                        <input type="hidden" name="mode" value="remove">
+                        <button type="submit" class="settings-button settings-button--ghost">{{ 'site.settings.profile.remove'|trans }}</button>
+                    </form>
+                {% endif %}
+            </div>
+            <span class="settings-card__hint">{{ 'site.settings.profile.avatar_help'|trans }}</span>
+        </div>
+    </section>
+
+    <form class="settings__form" method="post" action="{{ path('site_settings_profile') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+        <section class="settings-card" aria-labelledby="settings-public">
+            <h2 id="settings-public" class="settings-card__title">{{ 'site.settings.profile.public'|trans }}</h2>
+            <div class="settings-card__grid">
+                <div class="field field--form">
+                    <label class="field__label" for="settings-username">{{ 'site.settings.profile.username'|trans }}</label>
+                    <input id="settings-username" class="field__input field__input--large{{ errors.username is defined ? ' field__input--invalid' }}" name="username" value="{{ user.username }}" maxlength="30" required{{ renameAt ? ' readonly' }}>
+                    <span class="field__help">
+                        {{ renameAt ? 'site.settings.profile.username_locked'|trans({ date: renameAt|date('d/m/Y') }) : 'site.settings.profile.username_help'|trans }}
+                    </span>
+                    {{ form_ui.error(errors, 'username') }}
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="settings-country">{{ 'site.settings.profile.country'|trans }}</label>
+                    <select id="settings-country" class="field__input field__input--large" name="country">
+                        {% for country in countries %}
+                            <option value="{{ country.code }}"{{ user.country == country.code ? ' selected' }}>{{ country|localize('name') }}</option>
+                        {% endfor %}
+                        <option value=""{{ user.country is null ? ' selected' }}>{{ 'site.settings.countries.none'|trans }}</option>
+                    </select>
+                </div>
+                <div class="field field--form settings-card__wide">
+                    <label class="field__label" for="settings-bio">{{ 'site.settings.profile.bio'|trans }}</label>
+                    <textarea id="settings-bio" class="field__input field__input--area" name="bio" rows="3" maxlength="160">{{ user.bio }}</textarea>
+                    <span class="field__help">{{ 'site.settings.profile.bio_help'|trans }}</span>
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="settings-game">{{ 'site.settings.profile.favorite'|trans }}</label>
+                    <select id="settings-game" class="field__input field__input--large" name="favorite_game">
+                        <option value="">{{ 'site.settings.profile.favorite_none'|trans }}</option>
+                        {% for game in games %}
+                            <option value="{{ game.id }}"{{ user.favoriteGame and user.favoriteGame.id == game.id ? ' selected' }}>{{ game.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="settings-badge">{{ 'site.settings.profile.featured_badge'|trans }}</label>
+                    <select id="settings-badge" class="field__input field__input--large" name="featured_badge">
+                        <option value="">{{ badges is empty ? 'site.settings.profile.no_badge'|trans : 'site.settings.profile.auto_badge'|trans }}</option>
+                        {% for badge in badges %}
+                            <option value="{{ badge.id }}"{{ user.featuredBadge and user.featuredBadge.id == badge.id ? ' selected' }}>{{ badge.name }}{{ badge.game ? ' · ' ~ badge.game }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </section>
+        <div class="settings__actions">
+            <a href="{{ path('site_settings_profile') }}" class="settings-button settings-button--ghost settings-button--large">{{ 'site.settings.cancel'|trans }}</a>
+            <button type="submit" class="settings-button settings-button--primary settings-button--large">{{ 'site.settings.save'|trans }}</button>
+        </div>
+    </form>
+    <section class="settings-card" aria-labelledby="settings-showcase">
+        <form class="showcase" method="post" action="{{ path('site_settings_showcase') }}" data-component="ShowcaseLimit" data-max="3">
+            <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+            <div class="settings-card__head">
+                <div class="settings-card__intro">
+                    <h2 id="settings-showcase" class="settings-card__title">{{ 'site.settings.showcase.title'|trans }}</h2>
+                    <span class="settings-card__hint">{{ 'site.settings.showcase.help'|trans }}</span>
+                </div>
+                {% if badges is not empty %}
+                    <span class="showcase__counter"><strong data-showcase-count>{{ user.showcase|length }}</strong>/3</span>
+                {% endif %}
+            </div>
+            {% if badges is empty %}
+                <div class="showcase__empty">
+                    <span class="showcase__empty-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3h8l-2 6h-4L8 3zM12 9a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg></span>
+                    <span class="showcase__empty-text">
+                        <strong>{{ 'site.settings.showcase.empty'|trans }}</strong>
+                        <span>{{ 'site.settings.showcase.empty_help'|trans }}</span>
+                    </span>
+                    <a href="{{ path('site_home_index') }}" class="settings-button settings-button--ghost">{{ 'site.settings.showcase.play'|trans }}</a>
+                </div>
+            {% else %}
+                <div class="showcase__grid">
+                    {% for badge in badges %}
+                        <label class="showcase__item" style="{% if badge.design.color %}--badge-color: {{ badge.design.color }};{% endif %}">
+                            <input type="checkbox" class="showcase__input" name="badges[]" value="{{ badge.id }}"{{ badge.id in user.showcase ? ' checked' }}>
+                            <span class="showcase__check" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg></span>
+                            {{ badges_ui.shape(badge, 52) }}
+                            <span class="showcase__name">{{ badge.name }}</span>
+                            <span class="showcase__meta">{{ badge.game ?? 'site.badges.general'|trans }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+                <div class="settings__actions">
+                    <button type="submit" class="settings-button settings-button--primary">{{ 'site.settings.showcase.save'|trans }}</button>
+                </div>
+            {% endif %}
+        </form>
+    </section>
+{% endblock %}

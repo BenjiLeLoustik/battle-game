@@ -1,0 +1,226 @@
+builder:
+    title: "Créateur no-code · {name}"
+    badge: No-code
+    open: Créateur no-code
+    save: Enregistrer le brouillon
+    generate: Générer le jeu
+    publish: Générer et publier
+    design: Apparence
+    code: Éditeur de code
+    blocks: Blocs
+    screen: Écran du jeu
+    preview: Aperçu de l'écran
+    preview_help: Clique sur un bloc pour le modifier. L'apparence fine se règle ensuite dans « Apparence ».
+    empty_screen: Ajoute des blocs depuis la palette.
+    tabs:
+        element: Bloc
+        rules: Règles
+        variables: Variables
+        settings: Réglages
+    choose:
+        title: Par quoi veux-tu commencer ?
+        help: Choisis un modèle, tu pourras tout modifier ensuite.
+    locked:
+        title: Ce jeu est codé à la main
+        text: "Le créateur no-code ne peut pas modifier un jeu existant : générer remplacerait tout son code."
+        help: "Il est réservé aux nouveaux jeux (créés dans l'Atelier puis ouverts directement ici) et aux jeux déjà créés en no-code. Pour ce jeu, utilise « Apparence » pour le style et l'éditeur de code pour les règles."
+    templates:
+        blank: Jeu vide
+        blank_help: Un bouton qui rapporte un point. Idéal pour partir de zéro.
+        quiz: Quiz en manches
+        quiz_help: Une question par manche, tout le monde répond en même temps.
+        grid: Grille tour par tour
+        grid_help: Chacun pose son symbole à son tour. Aligne-en trois pour gagner.
+        race: Course au clic
+        race_help: Le premier qui atteint l'objectif gagne.
+    elements:
+        text: Texte
+        counter: Compteur
+        button: Bouton
+        grid: Grille
+        input: Réponse
+        timer: Chrono
+        scores: Scores
+        message: Message
+        choices: Choix (QCM)
+        image: Image
+        icon: Icône
+        divider: Séparateur
+        box: Boîte
+        custom: Bloc code
+    variants:
+        normal: Normal
+        title: Titre
+        big: Grand
+        small: Petit
+        hint: Étiquette
+    fields:
+        text: Texte affiché
+        text_button: Libellé du bouton
+        text_input: Libellé du bouton Valider
+        text_counter: Libellé
+        variant: Style
+        inline: Sur la même ligne que le bloc précédent
+        variable: Valeur affichée
+        board: Plateau
+        columns: Colonnes
+        placeholders: "Valeurs dynamiques :"
+        no_options: Ce bloc n'a pas d'options, son apparence se règle dans « Apparence ».
+        text_box: Titre de la boîte (facultatif)
+        text_image: Texte alternatif (pour l'accessibilité)
+        text_icon: Symbole ou emoji
+        text_choices: Question (facultatif, non affichée)
+        options: "Choix proposés (un par ligne, 8 maximum)"
+        options_help: "Le choix cliqué est envoyé comme réponse : utilise l'événement « un joueur répond dans » et compare « la réponse donnée »."
+        src: "Adresse de l'image (https://… ou /uploads/…)"
+        parent: Placer dans la boîte
+        none: Aucune (écran principal)
+        html: HTML du bloc
+        html_help: "Valeurs dynamiques possibles ({score}, {var.nom}…). Un élément avec data-click déclenche « un joueur clique sur », data-answer=\"valeur\" envoie une réponse."
+        css: CSS du bloc
+        css_help: "Cible ton bloc avec la classe .nocode__el--{id} pour ne pas toucher au reste du jeu."
+        script: Comportement (JavaScript, facultatif)
+        script_help: "Appelé à chaque mise à jour avec node (ton bloc) et api : api.state, api.me, api.active, api.click(), api.answer(valeur), api.sound(nom)."
+        save_block: Enregistrer comme bloc perso
+        select_block: Sélectionne un bloc dans l'écran pour le modifier.
+        delete: Supprimer le bloc
+        up: Monter
+        down: Descendre
+    library:
+        title: Mes blocs perso
+        empty: "Aucun bloc perso. Sélectionne un bloc (ou une boîte) puis « Enregistrer comme bloc perso »."
+        prompt: "Nom du bloc perso (il sera réutilisable dans tous les jeux) :"
+        saved: "Bloc perso « {name} » enregistré"
+        inserted: "Bloc « {name} » ajouté avec ses règles"
+        delete: Supprimer ce bloc perso
+        delete_confirm: "Supprimer le bloc perso « {name} » de la bibliothèque ? Les jeux qui l'utilisent déjà ne changent pas."
+        by: "par {name}"
+    rules:
+        add: Ajouter une règle
+        when: Quand
+        if: Si
+        then: Alors
+        and: et
+        add_condition: Ajouter une condition
+        add_action: Ajouter une action
+        delete: Supprimer
+        delete_rule: Supprimer la règle
+        delete_confirm: "Supprimer la règle {number} ? Ses conditions et actions seront perdues."
+        number: "Règle {number}"
+        empty: "Aucune règle : ajoute-en une pour donner vie au jeu."
+        always: toujours
+        help: "Les règles s'exécutent dans l'ordre, côté serveur. Plusieurs règles peuvent réagir au même événement."
+        on: sur
+    events:
+        game_start: la partie commence
+        round_start: une manche commence
+        click: un joueur clique sur
+        cell: un joueur choisit une case de
+        answer: un joueur répond dans
+        timeout: le temps est écoulé
+    checks:
+        compare: Comparer
+        empty: la case choisie est vide
+        line: le joueur aligne
+        full: le plateau est plein
+    line_length: symboles sur
+    ops:
+        "==": est égal à
+        "!=": est différent de
+        ">": est supérieur à
+        "<": est inférieur à
+        ">=": est au moins
+        "<=": est au plus
+        contains: contient
+    operands:
+        number: un nombre
+        text: un texte
+        var: la variable
+        my: ma variable
+        score: mon score
+        answer: la réponse donnée
+        cell: le numéro de case
+        cellvalue: le contenu de la case
+        round: la manche
+        random: un nombre au hasard
+        mark: mon symbole
+        players: le nombre de joueurs
+    targets:
+        var: la variable
+        my: ma variable
+        score: mon score
+    actions:
+        set: Mettre
+        add: Ajouter à
+        random: Tirer au hasard
+        set_cell: Poser dans la case
+        clear_board: Vider le plateau
+        message: Afficher le message
+        done: Le joueur a fini sa manche
+        next_turn: Passer au joueur suivant
+        end_round: Terminer la manche
+        finish: Terminer la partie
+        sound: Jouer le son
+    words:
+        to: à
+        value: la valeur
+        between: entre
+        and: et
+        for: pour
+        me: le joueur
+        all: tout le monde
+        board: plateau
+    sounds:
+        click: Clic
+        correct: Bonne réponse
+        wrong: Erreur
+        gain: Points
+        pop: Pop
+        place: Pion posé
+        capture: Capture
+        flip: Carte
+        roll: Dés
+        shoot: Tir
+        hit: Impact
+        goal: But
+        win: Victoire
+        lose: Défaite
+    variables:
+        add: Ajouter une variable
+        key: Nom
+        scope: Portée
+        scopes:
+            game: commune
+            player: par joueur
+        type: Type
+        types:
+            number: Nombre
+            text: Texte
+            board: Plateau
+        initial: Valeur de départ
+        size: Cases
+        reset: Remise à zéro à chaque manche
+        hidden: Cachée pendant la manche
+        empty: "Aucune variable. Les variables servent à retenir des valeurs (réponse, vies, objectif…)."
+        help: "Nom en minuscules sans espace (ex. vies, objectif). Affiche-la avec {var.nom} ou {my.nom}."
+        delete: Supprimer
+    settings:
+        mode: Déroulement
+        modes:
+            simultaneous: Tout le monde joue en même temps
+            turns: Chacun son tour
+        rounds: Nombre de manches
+        time: "Temps (secondes) par manche ou par tour"
+        reveal: "Pause entre deux manches (secondes)"
+        turns_help: "En tour par tour, la manche se termine avec l'action « Terminer la manche » ; un tour expiré passe au joueur suivant. Il faut au moins 2 joueurs."
+    status:
+        ready: Prêt.
+        unsaved: Modifications non enregistrées
+        saving: Enregistrement…
+        saved: Brouillon enregistré
+        generating: Génération du jeu…
+        generated: "Jeu généré ({count} fichiers). Teste-le après publication."
+        published: "Jeu généré et publié en version {version}."
+        invalid: "Jeu généré mais invalide :"
+        error: Une erreur est survenue.
+        dropped: "Certains éléments incomplets ont été ignorés (règle sans action, valeur manquante…)."

@@ -1,0 +1,66 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% set active = 'rooms' %}
+{% set message = 'site.room.invite.message'|trans({ name: room.name, link: link, code: room.code })
+    ~ (room.protected ? ' ' ~ 'site.room.invite.message_password'|trans({ password: room.password }) : '')
+    ~ (room.allowsGuests ? ' ' ~ 'site.room.invite.message_guests'|trans : '') %}
+
+{% block title %}{{ 'site.room.form.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="room-form">
+        <h1 class="room-form__title">{{ 'site.room.form.title'|trans }}</h1>
+
+        {% include '@site/components/partials/room-steps.html.twig' with { step: 2 } %}
+
+        <section class="room-invite" aria-labelledby="room-ready">
+            <div class="room-invite__head">
+                <span class="room-invite__check">
+                    <svg class="room-invite__check-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10"/></svg>
+                </span>
+                <span class="room-invite__intro">
+                    <h2 id="room-ready" class="room-invite__title">{{ 'site.room.invite.ready'|trans({ name: room.name }) }}</h2>
+                    <span class="room-invite__summary">{{ 'site.room.invite.summary'|trans({ visibility: room.visibility.translate(), max: room.maxPlayers }) }}</span>
+                </span>
+            </div>
+
+            <div class="room-invite__block">
+                <span class="room-invite__label">{{ 'site.room.invite.link'|trans }}</span>
+                <div class="room-invite__row">
+                    <span class="room-invite__link">{{ link }}</span>
+                    <button type="button" class="room-invite__copy room-invite__copy--primary" data-component="CopyButton" data-text="{{ link }}" data-done="{{ 'site.room.invite.copied_link'|trans }}">{{ 'site.room.invite.copy_link'|trans }}</button>
+                </div>
+            </div>
+
+            <div class="room-invite__codes">
+                <div class="room-invite__code-card">
+                    <span class="room-invite__caption">{{ 'site.room.invite.code'|trans }}</span>
+                    <strong class="room-invite__code">{{ room.code }}</strong>
+                    <span class="room-invite__hint">{{ 'site.room.invite.code_help'|trans }}</span>
+                </div>
+                {% if room.protected %}
+                    <div class="room-invite__code-card room-invite__code-card--password">
+                        <span class="room-invite__caption">{{ 'site.room.invite.password'|trans }}</span>
+                        <strong class="room-invite__code room-invite__code--password">{{ room.password }}</strong>
+                        <span class="room-invite__hint">{{ 'site.room.invite.password_help'|trans }}</span>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="room-invite__block">
+                <span class="room-invite__label">{{ 'site.room.invite.message_label'|trans }}</span>
+                <div class="room-invite__message">{{ message }}</div>
+                <div class="room-invite__row">
+                    <button type="button" class="room-invite__copy" data-component="CopyButton" data-text="{{ message }}" data-done="{{ 'site.room.invite.copied_message'|trans }}">{{ 'site.room.invite.copy_message'|trans }}</button>
+                    {% if discord_url() %}
+                        <a href="{{ discord_url() }}" class="btn btn--discord" target="_blank" rel="noopener">{{ 'site.room.invite.discord'|trans }}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <div class="room-form__foot">
+            <a href="{{ path('site_room_show', { code: room.code }) }}" class="room-form__submit">{{ 'site.room.invite.lobby'|trans }}</a>
+        </div>
+    </div>
+{% endblock %}

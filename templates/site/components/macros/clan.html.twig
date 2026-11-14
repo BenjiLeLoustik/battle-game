@@ -1,0 +1,26 @@
+{% macro emblem(tag, color, size = null) %}
+    <span class="clan-emblem{{ size ? ' clan-emblem--' ~ size }}" style="--clan-color: {{ color }}" aria-hidden="true">
+        <svg class="clan-emblem__shield" viewBox="0 0 48 54"><path d="M24 2 45 9v17c0 13.5-9 22-21 26C12 48 3 39.5 3 26V9z"/></svg>
+        <span class="clan-emblem__tag">{{ tag }}</span>
+    </span>
+{% endmacro %}
+
+{% macro colors(name, value) %}
+    {% set presets = ['#2EE6D6', '#7C5CFF', '#FF3DCB', '#FF5470', '#FF9F43', '#FFC94A', '#4ADE80', '#60A5FA'] %}
+    {% set value = value|upper %}
+    {% set custom = value not in presets %}
+    <div class="clan-colors" role="radiogroup">
+        {% for color in presets %}
+            <label class="clan-colors__item" style="--swatch: {{ color }}" title="{{ color }}">
+                <input type="radio" class="clan-colors__input" name="{{ name }}" value="{{ color }}"{{ value == color ? ' checked' }}>
+                <span class="clan-colors__swatch"></span>
+            </label>
+        {% endfor %}
+        <label class="clan-colors__item clan-colors__item--custom" style="--swatch: {{ custom ? value : '#FFFFFF' }}" title="{{ 'site.clans.form.custom'|trans }}">
+            <input type="radio" class="clan-colors__input" name="{{ name }}" value="{{ custom ? value : '#FFFFFF' }}" data-custom-radio{{ custom ? ' checked' }}>
+            <span class="clan-colors__swatch clan-colors__swatch--custom">
+                <input type="color" class="clan-colors__picker" value="{{ custom ? value : '#FFFFFF' }}" data-custom-color aria-label="{{ 'site.clans.form.custom'|trans }}">
+            </span>
+        </label>
+    </div>
+{% endmacro %}

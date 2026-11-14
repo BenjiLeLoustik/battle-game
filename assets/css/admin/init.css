@@ -1,0 +1,21 @@
+@import "./components/admin-layout.css";
+@import "./components/admin-topbar.css";
+@import "./components/admin-sidebar.css";
+@import "./components/admin-ui.css";
+
+@import "./pages/studio.css";
+@import "./pages/studio-editor.css";
+@import "./pages/studio-design.css";
+@import "./pages/studio-builder.css";
+@import "./pages/docs.css";
+@import "./pages/maintenance.css";
+@import "./pages/dashboard.css";
+@import "./pages/moderation.css";
+@import "./pages/badges.css";
+@import "./pages/banners.css";
+@import "./pages/emails.css";
+@import "./pages/games.css";
+@import "./pages/shop.css";
+@import "./pages/reset.css";
+@import "./pages/security.css";
+@import "./pages/engage.css";

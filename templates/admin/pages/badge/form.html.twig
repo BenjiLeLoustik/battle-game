@@ -1,0 +1,163 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'badges' %}
+{% set title = badge.id ? badge.name : 'admin.badges.new'|trans({}, 'admin') %}
+{% set code = badge.code|split('.')|last %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-badges') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_badge_index') }}" class="admin-crumbs__link">{{ 'admin.badges.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <div class="badge-editor">
+            <div class="badge-editor__main">
+                <section class="admin-panel">
+                    <div class="admin-panel__intro">
+                        <h2 class="admin-panel__title">{{ 'admin.badges.scope'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.badges.scope_help'|trans({}, 'admin') }}</span>
+                    </div>
+                    <nav class="admin-segment">
+                        {% for scope in ['general', 'game'] %}
+                            <label class="admin-segment__item{{ (badge.game ? 'game' : 'general') == scope ? ' admin-segment__item--active' }}">
+                                <input type="radio" class="sr-only" name="scope" value="{{ scope }}"{{ (badge.game ? 'game' : 'general') == scope ? ' checked' }}>
+                                {{ ('admin.badges.scopes.' ~ scope)|trans({}, 'admin') }}
+                            </label>
+                        {% endfor %}
+                    </nav>
+                    <label class="admin-field" data-component="FieldReveal" data-field="scope" data-values="game"{{ not badge.game ? ' hidden' }}>
+                        {{ 'admin.badges.game'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="game">
+                            {% for game in games %}
+                                <option value="{{ game.id }}"{{ badge.game and badge.game.id == game.id ? ' selected' }}>{{ game.name }}</option>
+                            {% endfor %}
+                        </select>
+                        {{ admin_ui.error(errors, 'game') }}
+                    </label>
+                </section>
+
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.badges.info'|trans({}, 'admin') }}</h2>
+                    <div class="admin-form-grid">
+                        <label class="admin-field">
+                            {{ 'admin.badges.name'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="name" value="{{ badge.name }}" maxlength="80" required data-badge-name>
+                            {% if errors.name is defined %}<span class="admin-field__error">{{ errors.name|trans({}, 'admin') }}</span>{% endif %}
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.badges.code'|trans({}, 'admin') }}
+                            <input class="admin-field__input admin-table__cell--mono" name="code" value="{{ code }}" maxlength="60" placeholder="first_game">
+                            {% if errors.code is defined %}<span class="admin-field__error">{{ errors.code|trans({}, 'admin') }}</span>{% endif %}
+                        </label>
+                        <label class="admin-field admin-field--wide">
+                            {{ 'admin.badges.description'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="description" value="{{ badge.description }}" maxlength="160">
+                        </label>
+                    </div>
+                    <label class="admin-check"><input type="checkbox" class="admin-check__input" name="active"{{ badge.active ? ' checked' }}> {{ 'admin.badges.active'|trans({}, 'admin') }}</label>
+                    <label class="admin-check"><input type="checkbox" class="admin-check__input" name="secret"{{ badge.secret ? ' checked' }}> {{ 'admin.badges.secret_help'|trans({}, 'admin') }}</label>
+                    <label class="admin-check"><input type="checkbox" class="admin-check__input" name="award"{{ not badge.id ? ' checked' }}> {{ 'admin.badges.award'|trans({}, 'admin') }}</label>
+                </section>
+
+                <section class="admin-panel">
+                    <div class="admin-panel__intro">
+                        <h2 class="admin-panel__title">{{ 'admin.badges.rule'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.badges.rule_help'|trans({}, 'admin') }}</span>
+                    </div>
+                    <div class="admin-form-grid">
+                        <label class="admin-field">
+                            {{ 'admin.badges.rule'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="rule">
+                                {% for name, rule in rules %}
+                                    <option value="{{ name }}"{{ badge.rule == name ? ' selected' }}>{{ name }} · {{ ('admin.badges.rules.' ~ name)|trans({}, 'admin') }}</option>
+                                {% endfor %}
+                                {% if rules[badge.rule] is not defined and badge.rule %}
+                                    <option value="{{ badge.rule }}" selected>{{ badge.rule }}</option>
+                                {% endif %}
+                            </select>
+                            {% if errors.rule is defined %}<span class="admin-field__error">{{ errors.rule|trans({}, 'admin') }}</span>{% endif %}
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.badges.params'|trans({}, 'admin') }}
+                            <textarea class="admin-field__input admin-field__input--area admin-table__cell--mono" name="params" rows="3">{{ badge.params ? badge.params|json_encode : '{}' }}</textarea>
+                            {% if errors.params is defined %}<span class="admin-field__error">{{ errors.params|trans({}, 'admin') }}</span>{% endif %}
+                        </label>
+                    </div>
+                </section>
+
+                <section class="admin-panel" data-component="BadgeEditor" data-icons="{{ icons|json_encode }}">
+                    <div class="admin-panel__intro">
+                        <h2 class="admin-panel__title">{{ 'admin.badges.design'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.badges.design_help'|trans({}, 'admin') }}</span>
+                    </div>
+                    <div class="admin-form-grid">
+                        {% for field, options in { shape: shapes, rarity: rarities, frame: frames } %}
+                            <label class="admin-field">
+                                {{ ('admin.badges.fields.' ~ field)|trans({}, 'admin') }}
+                                <select class="admin-field__input" name="design[{{ field }}]">
+                                    {% for option in options %}
+                                        <option value="{{ option }}"{{ (badge.design[field] ?? (field == 'frame' ? 'auto' : design[field])) == option ? ' selected' }}>{{ ('admin.badges.options.' ~ field ~ '.' ~ option)|trans({}, 'admin') }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        {% endfor %}
+                        <label class="admin-field">
+                            {{ 'admin.badges.fields.icon'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="design[icon]">
+                                {% for icon in icons|keys %}
+                                    <option value="{{ icon }}"{{ design.icon == icon ? ' selected' }}>{{ icon }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.badges.fields.label'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="design[label]" value="{{ design.label }}" maxlength="6">
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.badges.fields.glow'|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="range" name="design[glow]" min="0" max="1.5" step="0.1" value="{{ design.glow }}">
+                        </label>
+                        <div class="admin-field admin-field--wide">
+                            <label class="admin-check"><input type="checkbox" class="admin-check__input" name="design[color_enabled]"{{ badge.design.color ?? false ? ' checked' }}> {{ 'admin.badges.fields.color'|trans({}, 'admin') }}</label>
+                            {{ admin_ui.color('design[color]', design.color ?? '#2EE6D6', 'admin.badges.fields.color'|trans({}, 'admin')) }}
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <aside class="badge-editor__preview admin-panel">
+                <span class="admin-panel__help">{{ 'admin.badges.preview'|trans({}, 'admin') }}</span>
+                <div class="badge-editor__big" data-badge-preview="140"></div>
+                <div class="badge-editor__sizes">
+                    {% for size in [96, 64, 40, 24] %}
+                        <span class="badge-editor__size"><span data-badge-preview="{{ size }}"></span><span>{{ size }} px</span></span>
+                    {% endfor %}
+                </div>
+                {% if badge.id %}
+                    <span class="admin-panel__help">{{ 'admin.badges.owners'|trans({ count: owners }, 'admin') }}</span>
+                {% endif %}
+            </aside>
+        </div>
+
+        {{ admin_ui.translations(badge) }}
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_badge_index') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ (badge.id ? 'admin.save' : 'admin.badges.create')|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+
+    {% if badge.id and owners == 0 %}
+        <div class="admin-page admin-page--danger">
+            {{ admin_ui.post('admin_badge_delete', { id: badge.id }, 'admin.badges.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger', 'admin-badges', 'admin.badges.delete_confirm'|trans({ name: badge.name }, 'admin')) }}
+        </div>
+    {% endif %}
+{% endblock %}

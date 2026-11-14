@@ -1,0 +1,30 @@
+.error-page {
+    @apply flex min-h-screen flex-col items-center justify-center gap-4 bg-bg p-6 text-center font-body text-ink max-sm:p-3.5;
+}
+
+.error-page--admin {
+    @apply bg-adm-bg text-adm-ink;
+}
+
+.error-page__status {
+    @apply font-display text-7xl font-bold text-cyan;
+}
+
+.error-page--admin .error-page__status {
+    @apply text-adm-accent;
+}
+
+.error-page__message {
+    @apply max-w-lg text-xl font-semibold;
+}
+
+.error-page__link {
+    @apply font-semibold text-cyan hover:underline;
+}
+
+.error-page--admin .error-page__link {
+    @apply text-adm-accent-soft;
+}
+.error-page__detail {
+    @apply max-w-lg text-sm text-muted-2;
+}

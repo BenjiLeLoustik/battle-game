@@ -1,0 +1,401 @@
+{% extends 'base.html.twig' %}
+
+{% set labels = {
+    you: 'game.you'|trans,
+    search_tag: 'game.search.tag'|trans,
+    search_full: 'game.search.full'|trans,
+    search_title: 'game.search.title'|trans,
+    search_found: 'game.search.found'|trans,
+    search_count: 'game.search.count'|trans,
+    search_help: 'game.search.help'|trans,
+    search_fill: 'game.search.fill'|trans,
+    search_launch: 'game.search.launch'|trans,
+    search_enter: 'game.search.enter'|trans,
+    search_looking: 'game.search.looking'|trans,
+    results_points: 'game.results.points'|trans,
+    vote_help: (match.room ? 'game.results.vote_help_room' : 'game.results.vote_help')|trans,
+    vote_count: 'game.results.vote_count'|trans,
+    vote_majority: 'game.results.vote_majority'|trans,
+    vote_ends: 'game.results.vote_ends'|trans,
+    vote_done: 'game.results.vote_done'|trans,
+    vote_relaunch: 'game.results.vote_relaunch'|trans,
+    vote_yes: 'game.results.vote_yes'|trans,
+    vote_no: 'game.results.vote_no'|trans,
+    vote_wait: 'game.results.vote_wait'|trans,
+    rewards_general: 'game.rewards.general'|trans,
+    rewards_wallet: 'game.rewards.wallet'|trans,
+    rewards_coins: 'game.rewards.coins'|trans,
+    rewards_lives: 'game.rewards.lives'|trans,
+    rewards_lives_unlimited: 'game.rewards.lives_unlimited'|trans,
+    rewards_rating: 'game.rewards.rating'|trans,
+    rewards_boost: 'game.rewards.boost'|trans,
+    rewards_game: 'game.rewards.game'|trans({ game: game.name }),
+    rewards_level: 'game.rewards.level'|trans,
+    rewards_level_up: 'game.rewards.level_up'|trans,
+    rewards_xp: 'game.rewards.xp'|trans,
+    rewards_badge: 'game.rewards.badge'|trans,
+    rewards_badge_game: 'game.rewards.badge_game'|trans({ game: game.name }),
+    ping: 'game.stage.ping'|trans,
+    sound_effects_on: 'game.stage.effects_on'|trans,
+    sound_effects_off: 'game.stage.effects_off'|trans,
+    sound_music_on: 'game.stage.music_on'|trans,
+    sound_music_off: 'game.stage.music_off'|trans,
+    maintenance_at: 'game.maintenance.at'|trans,
+    maintenance_now: 'game.maintenance.now'|trans,
+    maintenance_site: 'game.maintenance.site'|trans,
+    maintenance_finish: 'game.maintenance.finish'|trans,
+    maintenance_stop: 'game.maintenance.stop'|trans,
+    maintenance_running: 'game.maintenance.running'|trans,
+    maintenance_minutes: 'game.maintenance.minutes'|trans,
+    maintenance_soon: 'game.maintenance.soon'|trans,
+    maintenance_cut: 'game.maintenance.cut'|trans,
+    maintenance_cut_round: 'game.maintenance.cut_round'|trans,
+    maintenance_back: 'game.maintenance.back'|trans,
+} %}
+
+{% set alert %}
+    <div class="game-alert" role="status" hidden>
+        <span class="game-alert__tag"></span>
+        <span class="game-alert__text"></span>
+        <a href="{{ path('site_maintenance_show') }}" class="game-alert__link">{{ 'game.maintenance.details'|trans }}</a>
+    </div>
+{% endset %}
+
+{% set emotes = { thumbs: 'M7 10v12M15 5.9 14 10h5.8a2 2 0 0 1 2 2.3l-1.4 8a2 2 0 0 1-2 1.7H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.8a2 2 0 0 0 1.8-1.1L12 2a3.1 3.1 0 0 1 3 3.9z', laugh: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM18 13a6 6 0 0 1-12 0h12zM9 9h.01M15 9h.01', wow: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM12 13a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM9 9h.01M15 9h.01', angry: 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zM16 16s-1.5-2-4-2-4 2-4 2M7.5 8 10 9M14 9l2.5-1M9 10h.01M15 10h.01', fire: 'M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.4-.5-2-1-3-1.1-2.1-.2-4 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.2.4-2.3 1-3a2.5 2.5 0 0 0 2.5 2.5z', gg: '' } %}
+
+{% block title %}{{ game.name }} · {{ parent() }}{% endblock %}
+
+{% block space %}game{% endblock %}
+
+{% block head %}
+    {% if game.style %}
+        <link rel="stylesheet" href="{{ game.style }}">
+    {% endif %}
+    {% set design = game_design(game) %}
+    {% if design %}
+        <link rel="stylesheet" href="{{ design }}" data-design>
+    {% endif %}
+{% endblock %}
+
+{% block body %}
+    <div class="game-stage" data-component="GameStage"
+         data-client="{{ game.client }}"
+         data-url="{{ mercure(topic) }}"
+         data-action="{{ path('site_play_action', { code: match.code }) }}"
+         data-clock="{{ path('site_play_clock') }}"
+         data-ready="{{ path('site_play_ready', { code: match.code }) }}"
+         data-vote="{{ path('site_play_vote', { code: match.code }) }}"
+         data-match-url="{{ path('site_play_show', { code: '__code__' }) }}"
+         data-game-url="{{ match.room ? path('site_room_show', { code: match.room.code }) : path('site_game_show', { slug: game.slug }) }}"
+         data-maintenance-url="{{ path('site_maintenance_show') }}"
+         data-game-name="{{ game.name }}"
+         data-slug="{{ game.slug }}"
+         data-locale="{{ app.locale }}"
+         data-languages="{{ languages|json_encode }}"
+         data-token="{{ csrf_token('game-match-' ~ match.code) }}"
+         data-player="{{ app_user().id }}"
+         data-settings="{{ app_user().preferences.section('game')|json_encode }}"
+         data-labels="{{ labels|json_encode }}"
+         data-secret-url="{{ path('site_play_secret', { code: match.code }) }}"
+         data-secret="{{ secret|json_encode }}"
+         data-emote="{{ path('site_play_emote', { code: match.code }) }}"
+         data-emote-icons="{{ emotes|json_encode }}"
+         data-snapshot="{{ snapshot|json_encode }}">
+
+        <section class="game-search" hidden>
+            <header class="game-search__bar">
+                <span class="game-stage__mark">BG</span>
+                <span class="game-search__title">
+                    <strong class="game-search__name">
+                        {{ 'game.search.quick'|trans({ name: game.name }) }}
+                    </strong>
+                    <span class="game-search__meta">
+                        {{ 'site.game.players'|trans({ players: game.players }) }}
+                    </span>
+                </span>
+                <form class="game-search__leave" method="post" action="{{ path('site_play_leave', { code: match.code }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('game-match-' ~ match.code) }}">
+                    <button type="submit" class="game-search__cancel">
+                        {{ 'game.search.cancel'|trans }}
+                    </button>
+                </form>
+            </header>
+            {{ alert }}
+            <div class="game-search__main">
+                <div class="game-search__status">
+                    <div class="game-search__clock">
+                        <span class="game-search__ring" aria-hidden="true"></span>
+                        <span class="game-search__clock-text">
+                            <span class="game-search__clock-label">
+                                {{ 'game.search.clock'|trans }}
+                            </span>
+                            <strong class="game-search__clock-value">
+                                0:00
+                            </strong>
+                        </span>
+                    </div>
+                    <div class="game-search__info">
+                        <span class="game-search__tag"></span>
+                        <h1 class="game-search__headline"></h1>
+                        <span class="game-search__count"></span>
+                        <div class="game-search__track" role="progressbar" aria-valuemin="0" aria-label="{{ 'game.search.progress'|trans }}">
+                            <div class="game-search__fill"></div>
+                        </div>
+                        <span class="game-search__sub"></span>
+                    </div>
+                </div>
+                <ul class="game-search__slots" aria-label="{{ 'game.search.slots'|trans }}"></ul>
+                <span class="game-search__launch" hidden></span>
+            </div>
+        </section>
+
+
+        {% if languages|length > 1 %}
+            <section class="game-language" role="dialog" aria-modal="true" aria-labelledby="game-language-title" hidden>
+                <div class="game-language__card">
+                    <span class="game-language__kicker">{{ game.name|upper }}</span>
+                    <h2 id="game-language-title" class="game-language__title">{{ 'game.language.title'|trans }}</h2>
+                    <p class="game-language__help">{{ 'game.language.help'|trans }}</p>
+                    <div class="game-language__list">
+                        {% for locale in languages|keys %}
+                            <button type="button" class="game-language__option" data-locale="{{ locale }}">
+                                <span class="game-language__code">{{ locale|upper }}</span>
+                                <span class="game-language__name">{{ locale|language_name }}</span>
+                            </button>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="game-countdown" hidden>
+            <span class="game-countdown__kicker">
+                {{ match.mode.translate()|upper }} · {{ game.name|upper }}
+            </span>
+            <strong class="game-countdown__value" aria-live="assertive">
+                3
+            </strong>
+            <span class="game-countdown__hint">
+                {{ 'game.countdown.hint'|trans }}
+            </span>
+        </section>
+
+        <div class="game-stage__play" hidden>
+            <header class="game-stage__bar">
+                {% if preview %}
+                    <span class="game-stage__mark">
+                        BG
+                    </span>
+                {% else %}
+                    <a href="{{ path('site_home_index') }}" class="game-stage__mark" aria-label="{{ 'site.header.home'|trans }}">
+                        BG
+                    </a>
+                {% endif %}
+                <span class="game-stage__title">
+                    <strong class="game-stage__name">
+                        {{ game.name }}
+                    </strong>
+                    <span class="game-stage__meta">
+                        {{ match.mode.translate() }} · {{ match.code }}
+                    </span>
+                </span>
+                <span class="game-stage__ping" hidden></span>
+                <div class="game-stage__progress" hidden>
+                    <span class="game-stage__progress-label">
+                        {{ 'game.stage.round'|trans|upper }}
+                    </span>
+                    <div class="game-stage__dots"></div>
+                    <strong class="game-stage__count"></strong>
+                </div>
+                {% if match.hasPlayer(app_user()) %}
+                    <div class="game-emote" data-emote-picker>
+                        <button type="button" class="game-stage__icon-btn" data-emote-toggle aria-expanded="false" aria-label="{{ 'game.emotes.open'|trans }}" title="{{ 'game.emotes.open'|trans }}">
+                            <svg class="game-stage__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM8.5 14a4 4 0 0 0 7 0M9 9.5h.01M15 9.5h.01"/></svg>
+                        </button>
+                        <div class="game-emote__menu" hidden>
+                            {% for key, path in emotes %}
+                                <button type="button" class="game-emote__item" data-emote-key="{{ key }}" title="{{ ('game.emotes.' ~ key)|trans }}" aria-label="{{ ('game.emotes.' ~ key)|trans }}">{% if path %}<svg class="game-emote__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ path }}"/></svg>{% else %}GG{% endif %}</button>
+                            {% endfor %}
+                        </div>
+                    </div>
+                {% elseif match.status.value == 'playing' %}
+                    <span class="game-stage__spectator">{{ 'game.spectator'|trans }}</span>
+                {% endif %}
+                <div class="game-stage__sound">
+                    <button type="button" class="game-stage__icon-btn" data-sound="effects" aria-pressed="true" aria-label="{{ 'game.stage.effects'|trans }}" title="{{ 'game.stage.effects'|trans }}">
+                        <svg class="game-stage__icon game-stage__icon--on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM16 9a4 4 0 0 1 0 6M19 6a8 8 0 0 1 0 12"/></svg>
+                        <svg class="game-stage__icon game-stage__icon--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9zM17 9l5 6M22 9l-5 6"/></svg>
+                    </button>
+                    <button type="button" class="game-stage__icon-btn" data-sound="music" aria-pressed="true" aria-label="{{ 'game.stage.music'|trans }}" title="{{ 'game.stage.music'|trans }}">
+                        <svg class="game-stage__icon game-stage__icon--on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/></svg>
+                        <svg class="game-stage__icon game-stage__icon--off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18V5l11-2v13M9 18a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM20 16a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM3 3l18 18"/></svg>
+                    </button>
+                </div>
+                {% if not preview %}
+                    <div class="game-stage__actions">
+                        <button type="button" class="game-stage__icon-btn game-stage__fullscreen" aria-label="{{ 'game.stage.fullscreen'|trans }}" title="{{ 'game.stage.fullscreen'|trans }}">
+                            <svg class="game-stage__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg>
+                        </button>
+                        <a href="{{ match.room ? path('site_room_show', { code: match.room.code }) : path('site_game_show', { slug: game.slug }) }}" class="game-stage__quit">
+                            {{ 'game.stage.quit'|trans }}
+                        </a>
+                    </div>
+                {% endif %}
+            </header>
+            {{ alert }}
+            <div class="game-stage__body">
+                <div class="game-stage__screen"></div>
+                <aside class="game-stage__aside" aria-labelledby="game-stage-live">
+                    <h2 id="game-stage-live" class="game-stage__aside-title">
+                        {{ 'game.stage.live'|trans }}
+                    </h2>
+                    <ol class="game-stage__ranking"></ol>
+                </aside>
+            </div>
+        </div>
+
+        <section class="game-cut" role="alertdialog" aria-modal="true" aria-labelledby="game-cut-title" hidden>
+            <div class="game-cut__card">
+                <span class="game-cut__icon">
+                    <svg class="game-cut__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/></svg>
+                </span>
+                <span class="game-cut__kicker">{{ 'game.maintenance.cut_kicker'|trans }}</span>
+                <h2 id="game-cut-title" class="game-cut__title">{{ 'game.maintenance.cut_title'|trans }}</h2>
+                <p class="game-cut__text">
+                    <span class="game-cut__reason"></span>
+                    <strong class="game-cut__lost">{{ 'game.maintenance.cut_lost'|trans }}</strong>
+                </p>
+                <span class="game-cut__back"></span>
+                <div class="game-cut__actions">
+                    <a href="{{ path('site_maintenance_show') }}" class="game-cut__follow">{{ 'game.maintenance.follow'|trans }}</a>
+                    <a href="{{ path('site_home_index') }}" class="game-cut__home">{{ 'game.maintenance.home'|trans }}</a>
+                </div>
+            </div>
+        </section>
+
+        <section class="game-results" hidden>
+            <span class="game-results__backdrop" aria-hidden="true">
+                <span class="game-results__grid"></span>
+            </span>
+            {% if not preview %}
+                <div class="game-results__head">
+                    <span class="game-results__kicker">
+                        {{ game.name|upper }} · {{ 'game.results.finished'|trans }}{{ match.room ? ' · ' ~ match.room.name|upper }}
+                    </span>
+                    <h1 class="game-results__title">
+                        {% if preview %}
+                            {{ 'game.results.preview_title'|trans }}
+                        {% elseif match.solo %}
+                            {{ 'game.results.solo_title'|trans }}
+                        {% else %}
+                            <span class="game-results__winner"></span>
+                            {{ 'game.results.wins'|trans }}
+                        {% endif %}
+                    </h1>
+                </div>
+            {% endif %}
+            <div class="game-results__body">
+                {% if not preview %}
+                    <div class="game-results__main">
+                        <div class="game-results__podium"></div>
+                        <div class="game-rewards" hidden></div>
+                    </div>
+                {% endif %}
+                {% if preview %}
+                    <section class="game-results__vote game-results__vote--wide">
+                        <h2 class="game-results__vote-title">
+                            {{ 'game.results.preview_heading'|trans }}
+                        </h2>
+                        <span class="game-results__help">
+                            {{ 'game.results.preview_help'|trans }}
+                        </span>
+                        <pre class="game-results__dump"></pre>
+                        <div class="game-results__actions">
+                            <a href="{{ path('site_play_solo', { slug: game.slug, preview: 1 }) }}" class="game-results__replay game-results__replay--link">
+                                {{ 'game.results.preview_replay'|trans }}
+                            </a>
+                        </div>
+                    </section>
+                {% elseif match.solo %}
+                    <section class="game-results__vote">
+                        <h2 class="game-results__vote-title">
+                            {{ 'game.results.solo_heading'|trans }}
+                        </h2>
+                        <span class="game-results__help">
+                            {{ 'game.results.solo_help'|trans }}
+                        </span>
+                        <div class="game-results__actions">
+                            <a href="{{ path('site_play_solo', { slug: game.slug, preview: preview ? 1 : null }) }}" class="game-results__replay game-results__replay--link">
+                                {{ 'game.results.replay'|trans }}
+                            </a>
+                        </div>
+                    </section>
+                {% else %}
+                    <section class="game-results__vote" aria-labelledby="game-results-vote">
+                        <div class="game-results__vote-head">
+                            <h2 id="game-results-vote" class="game-results__vote-title">
+                                {{ 'game.results.vote_title'|trans }}
+                            </h2>
+                            <span class="game-results__timer"></span>
+                        </div>
+                        <span class="game-results__help"></span>
+                        <div class="game-results__tally">
+                        <span class="game-results__tally-text">
+                            <strong class="game-results__yes"></strong>
+                            <span class="game-results__needed"></span>
+                        </span>
+                            <div class="game-results__track">
+                                <div class="game-results__fill"></div>
+                                <span class="game-results__mark" aria-hidden="true"></span>
+                            </div>
+                        </div>
+                        <ul class="game-results__voters"></ul>
+                        <div class="game-results__actions">
+                            <button type="button" class="game-results__replay" data-replay="1">
+                                {{ 'game.results.replay'|trans }}
+                            </button>
+                            <button type="button" class="game-results__decline" data-replay="0">
+                                {{ 'game.results.decline'|trans }}
+                            </button>
+                        </div>
+                        <strong class="game-results__relaunch" hidden></strong>
+                        <div class="game-results__declined" hidden>
+                        <span>
+                            {{ (match.room ? 'game.results.declined_room' : 'game.results.declined')|trans }}
+                        </span>
+                            <button type="button" class="game-results__change">
+                                {{ 'game.results.change'|trans }}
+                            </button>
+                        </div>
+                    </section>
+                {% endif %}
+            </div>
+            {% if not preview %}
+                <div class="game-results__foot">
+                    {% if app_user().guest %}
+                        <span class="game-results__guest">
+                            {{ 'game.results.guest'|trans({ name: app_user().username }) }}
+                            <a href="{{ path('site_security_register') }}" class="game-results__guest-link">{{ 'site.auth.register'|trans }}</a>
+                        </span>
+                    {% endif %}
+                    {% if match.room %}
+                        <a href="{{ path('site_room_show', { code: match.room.code }) }}" class="btn btn--ghost">
+                            {{ 'game.results.back_lobby'|trans }}
+                        </a>
+                        <form method="post" action="{{ path('site_room_leave', { code: match.room.code }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('room-' ~ match.room.code) }}">
+                            <button type="submit" class="btn btn--ghost">{{ 'game.results.quit_room'|trans }}</button>
+                        </form>
+                    {% else %}
+                        <a href="{{ path('site_game_show', { slug: game.slug }) }}" class="btn btn--ghost">
+                            {{ 'game.results.back'|trans }}
+                        </a>
+                        <a href="{{ path('site_home_index') }}" class="btn btn--ghost">
+                            {{ 'game.results.quit'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

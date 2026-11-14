@@ -1,0 +1,141 @@
+.game-search {
+    @apply flex min-h-0 flex-1 flex-col overflow-y-auto
+    bg-[radial-gradient(circle_at_50%_40%,#121838,var(--color-stage)_70%)];
+}
+
+.game-search__bar {
+    @apply flex h-16 shrink-0 items-center gap-4 border-b border-stage-line bg-header/85 px-6 max-md:gap-2.5 max-md:px-3;
+}
+
+.game-search__title {
+    @apply flex min-w-0 flex-col leading-[1.25];
+}
+
+.game-search__name {
+    @apply truncate font-display text-base max-md:text-sm;
+}
+
+.game-search__meta {
+    @apply text-xs text-muted-2;
+}
+
+.game-search__leave {
+    @apply ml-auto shrink-0;
+}
+
+.game-search__cancel {
+    @apply flex h-10 cursor-pointer items-center rounded-[10px] border
+    border-danger/40 bg-transparent px-4 text-sm font-semibold whitespace-nowrap text-danger hover:bg-danger/10
+    max-md:h-9 max-md:px-3 max-md:text-xs;
+}
+
+.game-search__main {
+    @apply flex flex-1 flex-col items-center justify-center gap-[30px] p-6 max-md:justify-start max-md:gap-6 max-md:px-4 max-md:py-6;
+}
+
+.game-search__status {
+    @apply flex w-full flex-wrap items-center justify-center gap-9 max-md:flex-col max-md:gap-5;
+}
+
+.game-search__clock {
+    @apply relative flex size-[190px] shrink-0 items-center justify-center max-md:size-[120px];
+}
+
+.game-search__ring {
+    @apply absolute inset-0 animate-spin rounded-full border-4
+    border-line-soft border-t-cyan [animation-duration:2.4s] motion-reduce:animate-none;
+}
+
+.game-search--found .game-search__ring {
+    @apply animate-none border-success shadow-[0_0_40px_rgba(74,222,128,0.4)];
+}
+
+.game-search__clock-text {
+    @apply flex flex-col items-center gap-0.5;
+}
+
+.game-search__clock-label {
+    @apply text-xs tracking-[0.14em] text-muted-2;
+}
+
+.game-search__clock-value {
+    @apply font-display text-[46px] leading-none max-md:text-3xl;
+}
+
+.game-search__info {
+    @apply flex w-full max-w-[520px] min-w-0 flex-col gap-2.5 max-md:items-center max-md:text-center;
+}
+
+.game-search__tag {
+    @apply self-start rounded-md bg-cyan/15 max-md:self-center px-2.5 py-[5px] font-display text-xs font-bold tracking-[0.14em] text-cyan;
+}
+
+.game-search--found .game-search__tag {
+    @apply bg-success text-[#06210F];
+}
+
+.game-search__headline {
+    @apply font-display text-[38px] leading-[1.1] font-bold max-md:text-2xl;
+}
+
+.game-search__count {
+    @apply text-[15px] text-ink-soft;
+}
+
+.game-search__track {
+    @apply h-2.5 w-full overflow-hidden rounded-[5px] bg-line-soft;
+}
+
+.game-search__fill {
+    @apply h-full bg-cyan transition-[width] duration-[400ms];
+}
+
+.game-search--found .game-search__fill {
+    @apply bg-success;
+}
+
+.game-search__sub {
+    @apply text-[13px] text-muted-2;
+}
+
+.game-search--found .game-search__sub {
+    @apply text-success;
+}
+
+.game-search__slots {
+    @apply grid w-full max-w-[1100px] grid-cols-[repeat(auto-fit,minmax(min(150px,100%),170px))] justify-center gap-3.5
+    max-md:grid-cols-2 max-md:gap-2.5;
+}
+
+.game-search__slot {
+    @apply flex h-[170px] min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-line bg-surface/95 max-md:h-[120px] max-md:gap-1.5;
+}
+
+.game-search__slot--me {
+    @apply border-cyan;
+}
+
+.game-search__slot--empty {
+    @apply border-dashed bg-surface/40;
+}
+
+.game-search__unknown {
+    @apply flex size-16 max-md:size-12 max-md:text-xl animate-pulse items-center justify-center rounded-[18px]
+    border-2 border-dashed border-ghost text-[26px] text-muted motion-reduce:animate-none;
+}
+
+.game-search__looking {
+    @apply animate-pulse text-[13px] text-muted motion-reduce:animate-none;
+}
+
+.game-search__player {
+    @apply max-w-full truncate px-2 text-[15px] max-md:text-[13px];
+}
+
+.game-search__launch {
+    @apply flex h-[52px] items-center rounded-xl bg-cyan px-7 text-center font-display text-[17px] max-md:h-auto max-md:px-4 max-md:py-3 max-md:text-sm
+    font-bold tracking-[0.06em] text-on-cyan shadow-[0_0_30px_rgba(46,230,214,0.4)];
+}
+.game-search__slot .avatar {
+    @apply max-md:size-12 max-md:text-lg max-md:[--avatar-radius:14px];
+}

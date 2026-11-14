@@ -1,0 +1,11 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.auth.register'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% embed '@site/components/embeds/auth-card.html.twig' with { tab: 'register' } %}
+        {% block form %}
+            <p class="auth-card__alert" role="status">{{ 'site.auth.registration_closed'|trans }}</p>
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

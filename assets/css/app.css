@@ -1,0 +1,8 @@
+@import "tailwindcss";
+
+@import "./themes.css";
+@import "./site/init.css";
+@import "./admin/init.css";
+@import "./game/init.css";
+
+@source "../../templates";

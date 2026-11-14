@@ -1,0 +1,19 @@
+<div class="admin-page__head">
+    <div class="admin-page__intro">
+        <h1 class="admin-page__title">{{ 'admin.emails.title'|trans({}, 'admin') }}</h1>
+        <span class="admin-page__subtitle">{{ 'admin.emails.subtitle'|trans({}, 'admin') }}</span>
+    </div>
+    {% if tab == 'campaigns' %}
+        <a href="{{ path('admin_email_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.emails.new'|trans({}, 'admin') }}</a>
+    {% elseif tab == 'lists' %}
+        <a href="{{ path('admin_email_list_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.emails.lists.new'|trans({}, 'admin') }}</a>
+    {% endif %}
+</div>
+
+<nav class="admin-tabs" aria-label="{{ 'admin.emails.title'|trans({}, 'admin') }}">
+    {% for item, route in { campaigns: 'admin_email_index', lists: 'admin_email_lists', layout: 'admin_email_layout' } %}
+        <a href="{{ path(route) }}" class="admin-tabs__tab{{ item == tab ? ' admin-tabs__tab--active' }}"{% if item == tab %} aria-current="page"{% endif %}>
+            {{ ('admin.emails.tabs.' ~ item)|trans({}, 'admin') }}
+        </a>
+    {% endfor %}
+</nav>

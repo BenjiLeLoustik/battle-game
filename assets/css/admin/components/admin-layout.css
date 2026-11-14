@@ -1,0 +1,49 @@
+.admin-layout {
+    @apply flex h-dvh flex-col overflow-hidden bg-adm-bg font-body text-adm-ink antialiased;
+}
+
+.admin-layout__body {
+    @apply flex min-h-0 flex-1;
+}
+
+.admin-layout__aside {
+    @apply w-60 shrink-0 overflow-x-hidden overflow-y-auto border-r border-adm-line bg-adm-side
+    max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:w-[min(260px,85vw)] max-lg:-translate-x-full
+    max-lg:shadow-[0_0_40px_rgba(0,0,0,.6)] max-lg:transition-transform;
+}
+
+.admin-layout__aside--open {
+    @apply max-lg:translate-x-0;
+}
+
+.admin-layout__backdrop {
+    @apply fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden;
+}
+
+.admin-layout__main {
+    @apply relative min-w-0 flex-1 overflow-y-auto p-7 max-md:p-4;
+}
+
+.admin-flashes {
+    @apply pointer-events-none fixed top-20 right-6 z-50 flex w-[min(380px,calc(100vw-32px))] flex-col gap-2 max-md:right-4;
+}
+
+.admin-flash {
+    @apply pointer-events-auto flex items-start gap-3 rounded-lg border border-success/40 bg-adm-panel px-4 py-3 text-sm text-success shadow-[0_12px_32px_rgba(0,0,0,.45)] transition duration-300 starting:translate-x-6 starting:opacity-0;
+}
+
+.admin-flash--error {
+    @apply border-danger/40 text-[#FF8A9C];
+}
+
+.admin-flash--hidden {
+    @apply translate-x-6 opacity-0;
+}
+
+.admin-flash__text {
+    @apply flex-1;
+}
+
+.admin-flash__close {
+    @apply cursor-pointer text-adm-muted hover:text-adm-ink;
+}

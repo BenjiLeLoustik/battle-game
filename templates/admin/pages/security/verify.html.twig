@@ -1,0 +1,19 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% set active = 'security' %}
+
+{% block title %}{{ 'admin.twofa.verify_title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="twofa-verify">
+        <form class="admin-panel twofa-verify__card" method="post" action="{{ path('admin_twofa_verify', { to: target }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-2fa') }}">
+            <span class="twofa-verify__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4"/></svg></span>
+            <h1 class="twofa-verify__title">{{ 'admin.twofa.verify_title'|trans({}, 'admin') }}</h1>
+            <p class="admin-panel__help">{{ 'admin.twofa.verify_help'|trans({}, 'admin') }}</p>
+            <input class="admin-field__input twofa-verify__input" name="code" autocomplete="one-time-code" maxlength="9" required autofocus placeholder="123456" aria-label="{{ 'admin.twofa.code_label'|trans({}, 'admin') }}">
+            {% if error %}<span class="admin-field__error">{{ error|trans({}, 'admin') }}</span>{% endif %}
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.twofa.verify_submit'|trans({}, 'admin') }}</button>
+        </form>
+    </div>
+{% endblock %}

@@ -1,0 +1,1234 @@
+.engage {
+    @apply flex flex-col gap-5;
+}
+
+.engage--narrow {
+    @apply mx-auto w-full max-w-xl;
+}
+
+.engage__head {
+    @apply flex flex-wrap items-end justify-between gap-4;
+}
+
+.engage__intro {
+    @apply flex min-w-0 flex-col gap-1.5;
+}
+
+.engage__title {
+    @apply flex items-center gap-2.5 font-display text-[32px] font-bold max-sm:text-2xl;
+}
+
+.engage__subtitle {
+    @apply max-w-2xl text-sm text-muted-2;
+}
+
+.engage__crumbs {
+    @apply text-xs text-muted;
+}
+
+.engage__crumbs a {
+    @apply text-cyan hover:underline;
+}
+
+.engage__filters {
+    @apply flex gap-2;
+}
+
+.engage-select {
+    @apply h-10 rounded-[10px] border border-line bg-field px-3 text-sm text-ink;
+}
+
+.engage-flash {
+    @apply rounded-xl border border-success/40 bg-success/10 px-4 py-3 text-sm text-success;
+}
+
+.engage-flash--error {
+    @apply border-danger/40 bg-danger/10 text-[#FF7A8F];
+}
+
+.engage-empty {
+    @apply rounded-xl border border-dashed border-line px-4 py-6 text-center text-sm text-muted;
+}
+
+.engage-help {
+    @apply text-xs leading-relaxed text-muted;
+}
+
+.engage-grid {
+    @apply grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px];
+}
+
+.engage-panel {
+    @apply flex flex-col gap-3 rounded-2xl border border-line bg-panel p-5 max-sm:p-3.5;
+}
+
+.engage-panel--side {
+    @apply lg:sticky lg:top-4;
+}
+
+.engage-panel__title {
+    @apply font-display text-lg font-bold;
+}
+
+.engage-list {
+    @apply flex flex-col divide-y divide-line-soft;
+}
+
+.engage-list__row {
+    @apply flex flex-wrap items-center gap-3 py-2.5;
+}
+
+.engage-list__rank {
+    @apply w-6 text-center font-display font-bold text-muted-2;
+}
+
+.engage-list__name {
+    @apply min-w-0 flex-1 truncate text-sm font-semibold hover:underline;
+}
+
+.engage-list__meta {
+    @apply text-xs text-muted;
+}
+
+.engage-list__score {
+    @apply ml-auto font-display text-sm text-cyan;
+}
+
+.engage-list__actions {
+    @apply flex w-full justify-end gap-1.5 sm:w-auto;
+}
+
+.engage-big {
+    @apply font-display text-4xl font-bold;
+}
+
+.engage-mini {
+    @apply cursor-pointer rounded-md border border-line px-2 py-1 text-[11px] font-semibold text-muted-2 hover:border-cyan hover:text-ink;
+}
+
+.engage-mini--danger {
+    @apply hover:border-danger hover:text-danger;
+}
+
+.engage-form {
+    @apply flex flex-col gap-3;
+}
+
+.engage-form__tag {
+    @apply font-mono uppercase;
+}
+
+.engage-form__color {
+    @apply h-10 w-20 cursor-pointer rounded-lg border border-line bg-field;
+}
+
+.engage-check {
+    @apply flex items-center gap-2 text-sm text-ink-soft;
+}
+
+.event-strip {
+    @apply flex flex-col gap-2;
+}
+
+.event-strip__item {
+    @apply flex flex-wrap items-center gap-3 rounded-[14px] border border-(--event-color)/50 bg-(--event-color)/8 px-4 py-3;
+}
+
+.event-strip__badge {
+    @apply animate-pulse rounded-md bg-(--event-color) px-2 py-0.5 font-display text-[10px] font-bold tracking-widest text-bg uppercase motion-reduce:animate-none;
+}
+
+.event-strip__text {
+    @apply flex min-w-0 flex-1 flex-col text-sm;
+}
+
+.event-strip__text span {
+    @apply text-xs text-muted-2;
+}
+
+.event-strip__boosts {
+    @apply flex gap-1.5;
+}
+
+.event-strip__boosts span {
+    @apply rounded-md bg-(--event-color)/20 px-2 py-1 font-display text-xs font-bold text-(--event-color);
+}
+
+.event-strip__end {
+    @apply text-xs text-muted;
+}
+
+.event-strip__cta {
+    @apply h-9 text-xs;
+}
+
+.game-card__event {
+    @apply absolute right-2.5 bottom-2.5 rounded-md bg-(--event-color) px-2 py-1 font-display text-[10px] font-bold tracking-wide text-bg uppercase;
+}
+
+.game-event {
+    @apply flex flex-col gap-0.5 rounded-[10px] border border-(--event-color)/50 bg-(--event-color)/10 px-3 py-2 text-[13px];
+}
+
+.game-event span {
+    @apply text-xs text-muted-2;
+}
+
+.game-page__action--ranked {
+    @apply border-violet/60 text-[#B7A6FF];
+}
+
+.pass-hero {
+    @apply grid items-center gap-5 rounded-2xl border border-violet/40 bg-panel p-5 lg:grid-cols-[auto_minmax(0,1fr)_auto] max-sm:p-3.5;
+}
+
+.pass-hero__level {
+    @apply flex flex-col items-center rounded-xl bg-violet/15 px-5 py-3 text-[#B7A6FF];
+}
+
+.pass-hero__label {
+    @apply text-[10px] font-semibold tracking-widest uppercase;
+}
+
+.pass-hero__value {
+    @apply font-display text-4xl font-bold text-ink;
+}
+
+.pass-hero__value small {
+    @apply text-base text-muted;
+}
+
+.pass-hero__progress {
+    @apply flex flex-col gap-2;
+}
+
+.pass-hero__row {
+    @apply flex flex-wrap justify-between gap-2 text-sm;
+}
+
+.pass-hero__row span {
+    @apply text-muted-2;
+}
+
+.pass-hero__track {
+    @apply h-3 overflow-hidden rounded-full bg-line-soft;
+}
+
+.pass-hero__fill {
+    @apply block h-full rounded-full bg-gradient-to-r from-violet to-magenta;
+}
+
+.pass-hero__help {
+    @apply text-xs text-muted;
+}
+
+.pass-hero__premium {
+    @apply flex flex-col items-center gap-2 rounded-xl border border-yellow/40 bg-yellow/8 px-4 py-3 text-center text-sm;
+}
+
+.pass-hero__premium--on {
+    @apply border-success/40 bg-success/10 text-success;
+}
+
+.pass-hero__tracks {
+    @apply flex flex-wrap justify-center gap-1.5;
+}
+
+.pass-hero__chip {
+    @apply rounded-md border border-line px-2 py-0.5 text-xs font-semibold text-muted;
+}
+
+.pass-hero__chip--on {
+    @apply border-(--track)/50 bg-(--track)/12 text-(--track);
+}
+
+.pass-track {
+    @apply flex flex-col gap-2;
+}
+
+.pass-track {
+    @apply overflow-x-auto pb-1;
+}
+
+.pass-track__legend,
+.pass-tier {
+    @apply grid items-stretch gap-2;
+    grid-template-columns: 72px repeat(var(--tracks, 2), minmax(150px, 1fr));
+}
+
+.pass-track__name {
+    @apply flex items-center gap-1.5;
+}
+
+.pass-track__name::before {
+    @apply inline-block size-2 rounded-full bg-(--track) content-[''];
+}
+
+.pass-track__legend {
+    @apply px-1 text-[11px] font-semibold tracking-wider text-muted uppercase;
+}
+
+.pass-tier__number {
+    @apply flex flex-col items-center justify-center rounded-xl border border-line bg-surface py-2;
+}
+
+.pass-tier__number strong {
+    @apply font-display text-lg;
+}
+
+.pass-tier__number span {
+    @apply text-[10px] text-muted;
+}
+
+.pass-tier--unlocked .pass-tier__number {
+    @apply border-violet bg-violet/15 text-[#B7A6FF];
+}
+
+.pass-reward {
+    @apply flex items-center gap-2.5 rounded-xl border border-line bg-surface px-3 py-2.5 text-[13px] max-sm:gap-1.5 max-sm:px-2;
+}
+
+.pass-reward--paid {
+    @apply border-(--track)/30;
+}
+
+.pass-reward--ready {
+    @apply border-yellow bg-yellow/10;
+}
+
+.pass-reward--claimed {
+    @apply opacity-55;
+}
+
+.pass-reward--locked {
+    @apply opacity-60;
+}
+
+.pass-reward--empty {
+    @apply border-dashed bg-transparent;
+}
+
+.pass-reward__icon {
+    @apply flex size-8 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted-2 max-sm:size-7;
+}
+
+.pass-reward--paid .pass-reward__icon {
+    @apply bg-(--track)/15 text-(--track);
+}
+
+.pass-reward__label {
+    @apply min-w-0 flex-1 truncate font-semibold max-sm:text-xs;
+}
+
+.pass-reward__state {
+    @apply text-sm text-success;
+}
+
+.pass-reward__visual {
+    @apply ml-auto flex h-12 min-w-12 shrink-0 items-center justify-center gap-1 overflow-hidden rounded-xl border border-line-soft bg-surface-2 px-2 [&_svg]:size-5 max-sm:h-10 max-sm:min-w-10;
+}
+
+.pass-reward__visual strong {
+    @apply font-display text-sm;
+}
+
+.pass-reward__visual--coins {
+    @apply border-yellow/30 bg-yellow/10 text-yellow;
+}
+
+.pass-reward__visual--lives {
+    @apply border-danger/30 bg-danger/10 text-[#FF7A8F];
+}
+
+.pass-reward__visual--banner {
+    @apply w-20 p-0 max-sm:w-16;
+}
+
+.pass-reward__visual--banner .profile-banner-sample {
+    @apply h-full w-full rounded-none border-0;
+}
+
+.pass-reward__visual--victory {
+    @apply p-0;
+}
+
+.pass-reward__visual--victory .victory-sample {
+    @apply size-12 rounded-none bg-transparent max-sm:size-10;
+}
+
+.pass-reward__visual--frame {
+    @apply overflow-visible border-0 bg-transparent px-1.5;
+}
+
+.pass-reward__visual--title {
+    @apply border-0 bg-transparent px-0;
+}
+
+.pass-reward__image {
+    @apply h-full w-auto max-w-20 rounded-lg object-cover;
+}
+
+.pass-reward__color {
+    @apply font-display text-lg font-bold;
+    color: var(--name-color);
+}
+
+.pass-reward__claim {
+    @apply cursor-pointer rounded-md bg-yellow px-2.5 py-1 font-display text-xs font-bold text-on-cyan hover:brightness-110;
+}
+
+.ranked-tiers {
+    @apply flex flex-wrap gap-2;
+}
+
+.ranked-tier {
+    @apply flex items-center gap-2 rounded-lg border border-line bg-surface px-2.5 py-1.5 text-xs text-muted;
+}
+
+.rank-badge {
+    @apply inline-flex w-fit items-center rounded-md bg-(--rank-color,#8A93B5)/15 px-2 py-0.5 font-display text-[11px] font-bold tracking-wide whitespace-nowrap text-(--rank-color,#8A93B5) uppercase;
+}
+
+.ranked-tier--more {
+    @apply border-dashed;
+}
+
+.rank-next {
+    @apply flex flex-col gap-1.5 rounded-xl border border-line bg-surface p-3;
+}
+
+.rank-next__row {
+    @apply flex flex-wrap justify-between gap-2 text-xs text-muted-2;
+}
+
+.rank-next__row strong {
+    @apply text-(--rank-color);
+}
+
+.rank-next__bar {
+    @apply block h-1.5 overflow-hidden rounded-full bg-surface-2;
+}
+
+.rank-next__bar span {
+    @apply block h-full rounded-full bg-(--rank-color);
+}
+
+.rank-badge--lg {
+    @apply w-fit px-3 py-1 text-sm;
+}
+
+.tournament-grid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(260px,1fr))] gap-4;
+}
+
+.tournament-card {
+    @apply relative flex flex-col gap-1.5 rounded-2xl border border-line bg-panel p-4 transition hover:border-(--game-color);
+}
+
+.tournament-card--finished {
+    @apply opacity-70;
+}
+
+.tournament-card__state {
+    @apply w-fit rounded-md bg-(--game-color)/15 px-2 py-0.5 text-[10px] font-bold tracking-widest text-(--game-color) uppercase;
+}
+
+.tournament-card__name {
+    @apply font-display text-lg;
+}
+
+.tournament-card__game,
+.tournament-card__dates {
+    @apply text-xs text-muted-2;
+}
+
+.tournament-card__meta {
+    @apply mt-1 flex justify-between text-xs text-muted;
+}
+
+.tournament-card__prize {
+    @apply font-semibold text-yellow;
+}
+
+.tournament-card__joined {
+    @apply w-fit rounded-md bg-success/15 px-2 py-0.5 text-[11px] font-semibold text-success;
+}
+
+.tournament-prizes {
+    @apply flex flex-col gap-1.5;
+}
+
+.tourney-hero {
+    @apply relative overflow-hidden rounded-2xl border border-(--game-color)/40 bg-panel;
+}
+
+.tourney-hero__cover {
+    @apply absolute inset-0 size-full scale-110 object-cover opacity-35 blur-sm;
+}
+
+.tourney-hero__shade {
+    @apply absolute inset-0 bg-[linear-gradient(115deg,#0B0F1E_15%,color-mix(in_srgb,var(--game-color)_35%,#0B0F1E)_60%,color-mix(in_srgb,var(--game-color)_18%,transparent))] opacity-95;
+}
+
+.tourney-hero__body {
+    @apply relative flex flex-wrap items-end gap-5 p-6 max-sm:p-4;
+}
+
+.tourney-hero__main {
+    @apply flex min-w-0 flex-1 flex-col items-start gap-2.5;
+}
+
+.tourney-state {
+    @apply inline-flex items-center gap-1.5 rounded-md bg-surface-2 px-2.5 py-1 text-[11px] font-bold tracking-widest text-muted-2 uppercase;
+}
+
+.tourney-state--live {
+    @apply bg-danger/20 text-[#FF7A8F];
+}
+
+.tourney-state--upcoming {
+    @apply bg-(--game-color)/20 text-(--game-color);
+}
+
+.tourney-state__dot {
+    @apply size-2 animate-pulse rounded-full bg-danger motion-reduce:animate-none;
+}
+
+.tourney-hero__title {
+    @apply font-display text-[40px] leading-none font-bold max-sm:text-[28px];
+}
+
+.tourney-hero__game {
+    @apply inline-flex items-center gap-2 rounded-full border border-line bg-surface/70 py-1 pr-3 pl-1 text-sm font-semibold hover:border-(--game-color);
+}
+
+.tourney-hero__icon {
+    @apply size-6 rounded-full object-cover;
+}
+
+.tourney-hero__desc {
+    @apply max-w-2xl text-sm leading-relaxed text-ink-soft;
+}
+
+.tourney-hero__card {
+    @apply flex w-72 flex-col gap-2 rounded-xl border border-line bg-[#0B0F1E]/70 p-4 backdrop-blur max-sm:w-full;
+}
+
+.tourney-hero__label {
+    @apply text-[11px] font-bold tracking-widest text-muted uppercase;
+}
+
+.tourney-hero__clock {
+    @apply font-display text-3xl font-bold tabular-nums;
+}
+
+.tourney-hero__actions {
+    @apply mt-1 flex flex-col gap-2 [&_.btn]:w-full [&_form]:w-full;
+}
+
+.tourney-joined {
+    @apply flex items-center gap-2 rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-sm font-semibold text-success;
+}
+
+.tourney-joined .ui-icon {
+    @apply size-4;
+}
+
+.tourney-joined--full {
+    @apply border-line bg-surface-2 text-muted;
+}
+
+.tourney-stats {
+    @apply relative grid grid-cols-4 border-t border-line-soft bg-[#0B0F1E]/50 max-sm:grid-cols-2;
+}
+
+.tourney-stats__item {
+    @apply flex flex-col gap-1 px-5 py-3 not-last:border-r not-last:border-line-soft max-sm:px-4 max-sm:nth-2:border-r-0 max-sm:nth-[-n+2]:border-b max-sm:nth-[-n+2]:border-line-soft;
+}
+
+.tourney-stats__item dt {
+    @apply text-[11px] font-bold tracking-widest text-muted uppercase;
+}
+
+.tourney-stats__item dd {
+    @apply font-display text-xl font-bold;
+}
+
+.tourney-stats__item small {
+    @apply text-sm text-muted;
+}
+
+.tourney-stats__coins {
+    @apply text-yellow;
+}
+
+.tourney-stats__bar {
+    @apply block h-1 overflow-hidden rounded-full bg-surface-2;
+}
+
+.tourney-stats__bar span {
+    @apply block h-full rounded-full bg-(--game-color);
+}
+
+.tourney-podium {
+    @apply grid grid-cols-3 items-end gap-3 max-sm:gap-1.5;
+}
+
+.tourney-podium__step {
+    @apply relative flex flex-col items-center gap-1.5 rounded-xl border border-line bg-surface px-2 pt-5 pb-3 text-center transition-colors hover:border-cyan;
+}
+
+.tourney-podium__step--1 {
+    @apply border-yellow/50 bg-yellow/8 pb-6;
+}
+
+.tourney-podium__step--2 {
+    @apply border-[#C9D2E3]/40;
+}
+
+.tourney-podium__step--3 {
+    @apply border-[#E2A36B]/40;
+}
+
+.tourney-podium__medal {
+    @apply absolute -top-3 flex size-7 items-center justify-center rounded-full bg-[#C9D2E3] font-display text-sm font-bold text-[#0B0F1E];
+}
+
+.tourney-podium__step--1 .tourney-podium__medal {
+    @apply size-8 bg-yellow;
+}
+
+.tourney-podium__step--3 .tourney-podium__medal {
+    @apply bg-[#E2A36B];
+}
+
+.tourney-podium__name {
+    @apply max-w-full truncate text-sm font-semibold;
+}
+
+.tourney-podium__points {
+    @apply font-display text-sm text-cyan;
+}
+
+.tourney-podium__prize,
+.tourney-table__prize {
+    @apply inline-flex shrink-0 items-center gap-1 rounded-md bg-yellow/12 px-1.5 py-0.5 text-[11px] font-semibold text-yellow;
+}
+
+.tourney-table__prize .ui-icon {
+    @apply size-3;
+}
+
+.tourney-table {
+    @apply flex flex-col gap-1;
+}
+
+.tourney-table__head,
+.tourney-table__row {
+    @apply grid grid-cols-[40px_minmax(0,1fr)_84px_84px_96px] items-center gap-3 px-3 max-sm:grid-cols-[28px_minmax(0,1fr)_56px_64px] max-sm:gap-2 max-sm:px-2;
+}
+
+.tourney-table__head {
+    @apply border-b border-line-soft pb-2 text-[10px] font-bold tracking-wider text-muted uppercase;
+}
+
+.tourney-table__head .tourney-table__num {
+    @apply text-[10px] text-muted;
+}
+
+.tourney-table__head span:nth-child(4),
+.tourney-table__row > :nth-child(4) {
+    @apply max-sm:hidden;
+}
+
+.tourney-table__row {
+    @apply rounded-xl py-2.5 transition-colors hover:bg-surface;
+}
+
+.tourney-table__row--me {
+    @apply bg-cyan/8 ring-1 ring-cyan/40;
+}
+
+.tourney-table__rank {
+    @apply text-center font-display font-bold text-muted-2;
+}
+
+.tourney-table__rank--1 {
+    @apply text-yellow;
+}
+
+.tourney-table__rank--2 {
+    @apply text-[#C9D2E3];
+}
+
+.tourney-table__rank--3 {
+    @apply text-[#E2A36B];
+}
+
+.tourney-table__player {
+    @apply flex min-w-0 items-center gap-2;
+}
+
+.tourney-table__name {
+    @apply min-w-0 truncate text-sm font-semibold hover:underline;
+}
+
+.tourney-table__num {
+    @apply text-right text-sm text-muted-2 tabular-nums;
+}
+
+.tourney-table__points {
+    @apply font-display text-cyan;
+}
+
+.tourney-me {
+    @apply border-(--game-color)/50;
+}
+
+.tourney-me__rank {
+    @apply font-display text-4xl font-bold;
+}
+
+.tourney-me__rank small {
+    @apply text-base text-muted;
+}
+
+.tourney-prizes {
+    @apply flex flex-col gap-1.5;
+}
+
+.tourney-prizes__item {
+    @apply flex items-center gap-3 rounded-xl bg-surface px-3 py-2;
+}
+
+.tourney-prizes__place {
+    @apply flex size-7 items-center justify-center rounded-full bg-surface-2 font-display text-xs font-bold text-muted-2;
+}
+
+.tourney-prizes__item--1 .tourney-prizes__place {
+    @apply bg-yellow text-[#0B0F1E];
+}
+
+.tourney-prizes__item--2 .tourney-prizes__place {
+    @apply bg-[#C9D2E3] text-[#0B0F1E];
+}
+
+.tourney-prizes__item--3 .tourney-prizes__place {
+    @apply bg-[#E2A36B] text-[#0B0F1E];
+}
+
+.tourney-prizes__list {
+    @apply flex min-w-0 flex-1 flex-wrap gap-1.5;
+}
+
+.tourney-prizes__reward {
+    @apply rounded-md bg-surface-2 px-2 py-0.5 text-xs font-semibold text-ink-soft;
+}
+
+.tourney-prizes__reward--coins,
+.tourney-prizes__reward--giftcard {
+    @apply bg-yellow/12 text-yellow;
+}
+
+.tourney-prizes__reward--subscription,
+.tourney-prizes__reward--product {
+    @apply bg-violet/15 text-[#C4B5FD];
+}
+
+.tourney-prizes__reward--lives {
+    @apply bg-danger/12 text-[#FF7A8F];
+}
+
+.tourney-table__prize {
+    @apply max-w-48;
+}
+
+.tourney-table__prize-text {
+    @apply truncate;
+}
+
+.tourney-qualif__state {
+    @apply flex items-center gap-2 rounded-lg border border-line bg-surface-2 px-3 py-2 text-sm font-semibold text-muted-2;
+}
+
+.tourney-qualif__state--ok {
+    @apply border-success/30 bg-success/10 text-success;
+}
+
+.tourney-qualif__list {
+    @apply flex flex-col gap-1 text-sm;
+}
+
+.tourney-qualif__row {
+    @apply flex items-center gap-2 rounded-lg px-2 py-1;
+}
+
+.tourney-qualif__row span {
+    @apply w-5 text-center font-display text-xs text-muted;
+}
+
+.tourney-qualif__row small {
+    @apply ml-auto text-xs text-muted;
+}
+
+.tourney-qualif__row--me {
+    @apply bg-cyan/8 text-cyan;
+}
+
+.tournament-card__prize {
+    @apply inline-flex min-w-0 items-center gap-1 truncate;
+}
+
+.tourney-steps {
+    @apply flex list-none flex-col gap-2 [counter-reset:step];
+}
+
+.tourney-steps li {
+    @apply relative pl-9 text-sm text-ink-soft [counter-increment:step] before:absolute before:top-0 before:left-0 before:flex before:size-6 before:items-center before:justify-center before:rounded-full before:bg-cyan/15 before:font-display before:text-xs before:font-bold before:text-cyan before:content-[counter(step)];
+}
+
+.clan-tag {
+    @apply inline-flex items-center rounded-md border border-(--clan-color)/50 bg-(--clan-color)/12 px-1.5 py-0.5 font-mono text-[11px] font-bold text-(--clan-color);
+}
+
+.clan-emblem {
+    @apply relative inline-flex size-12 shrink-0 items-center justify-center;
+}
+
+.clan-emblem--md {
+    @apply size-14;
+}
+
+.clan-emblem--xl {
+    @apply size-24 max-sm:size-[72px];
+}
+
+.clan-emblem__shield {
+    @apply absolute inset-0 size-full drop-shadow-[0_6px_16px_rgb(0_0_0/.45)];
+    fill: color-mix(in srgb, var(--clan-color) 22%, #0B0F1E);
+    stroke: var(--clan-color);
+    stroke-width: 2.5;
+}
+
+.clan-emblem__tag {
+    @apply relative -mt-1 font-mono text-[11px] font-black tracking-wide text-(--clan-color);
+}
+
+.clan-emblem--md .clan-emblem__tag {
+    @apply text-xs;
+}
+
+.clan-emblem--xl .clan-emblem__tag {
+    @apply text-xl max-sm:text-base;
+}
+
+.clan-role {
+    @apply inline-flex w-fit items-center rounded-md bg-surface-2 px-2 py-0.5 text-[11px] font-semibold text-muted-2;
+}
+
+.clan-role--owner {
+    @apply bg-yellow/15 text-yellow;
+}
+
+.clan-role--officer {
+    @apply bg-violet/15 text-[#B7A6FF];
+}
+
+.clan-toolbar {
+    @apply flex flex-wrap items-baseline justify-between gap-2;
+}
+
+.clan-mine {
+    @apply flex items-center gap-4 rounded-2xl border border-(--clan-color)/45 bg-[linear-gradient(110deg,color-mix(in_srgb,var(--clan-color)_16%,transparent),transparent_65%)] p-4 transition-colors hover:border-(--clan-color) max-sm:gap-3 max-sm:p-3;
+}
+
+.clan-mine__text {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.clan-mine__label {
+    @apply text-[11px] font-bold tracking-widest text-muted uppercase;
+}
+
+.clan-mine__name {
+    @apply truncate font-display text-xl;
+}
+
+.clan-mine__go {
+    @apply text-xl text-(--clan-color) max-sm:hidden;
+}
+
+.clan-cta {
+    @apply flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-dashed border-cyan/40 bg-cyan/5 p-4;
+}
+
+.clan-cta__text {
+    @apply flex flex-col gap-0.5;
+}
+
+.clan-cta__title {
+    @apply font-display text-lg;
+}
+
+.clan-cta__help {
+    @apply text-sm text-muted-2;
+}
+
+.clan-grid {
+    @apply grid gap-3 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.clan-card {
+    @apply relative flex flex-col gap-3 overflow-hidden rounded-2xl border border-line bg-panel p-4 transition hover:-translate-y-0.5 hover:border-(--clan-color)/70 motion-reduce:hover:translate-y-0;
+}
+
+.clan-card::before {
+    @apply pointer-events-none absolute inset-x-0 top-0 h-20 bg-[linear-gradient(180deg,color-mix(in_srgb,var(--clan-color)_14%,transparent),transparent)] content-[''];
+}
+
+.clan-card--mine {
+    @apply border-(--clan-color)/60;
+}
+
+.clan-card__rank {
+    @apply absolute top-3 right-3 font-display text-sm font-bold text-muted;
+}
+
+.clan-card--top-1 .clan-card__rank {
+    @apply text-yellow;
+}
+
+.clan-card--top-2 .clan-card__rank {
+    @apply text-[#C9D2E3];
+}
+
+.clan-card--top-3 .clan-card__rank {
+    @apply text-[#E2A36B];
+}
+
+.clan-card__head {
+    @apply relative flex items-center gap-3 pr-8;
+}
+
+.clan-card__title {
+    @apply flex min-w-0 flex-col gap-1;
+}
+
+.clan-card__name {
+    @apply truncate font-display text-lg;
+}
+
+.clan-card__access {
+    @apply w-fit rounded-md px-2 py-0.5 text-[11px] font-semibold;
+}
+
+.clan-card__access--open {
+    @apply bg-success/12 text-success;
+}
+
+.clan-card__access--closed {
+    @apply bg-yellow/12 text-yellow;
+}
+
+.clan-card__access--full {
+    @apply bg-surface-2 text-muted;
+}
+
+.clan-card__desc {
+    @apply line-clamp-2 min-h-10 text-sm text-muted-2;
+}
+
+.clan-card__stats {
+    @apply flex justify-between gap-2 text-xs text-muted;
+}
+
+.clan-card__stat strong {
+    @apply font-display text-sm text-ink;
+}
+
+.clan-card__bar,
+.clan-member__share {
+    @apply block h-1 overflow-hidden rounded-full bg-surface-2;
+}
+
+.clan-card__bar span,
+.clan-member__share span {
+    @apply block h-full rounded-full bg-(--clan-color,var(--color-cyan));
+}
+
+.clan-hero {
+    @apply relative overflow-hidden rounded-2xl border border-(--clan-color)/40 bg-panel;
+}
+
+.clan-hero__banner {
+    @apply h-28 bg-[radial-gradient(circle_at_20%_120%,color-mix(in_srgb,var(--clan-color)_55%,transparent),transparent_60%),linear-gradient(120deg,color-mix(in_srgb,var(--clan-color)_30%,#0B0F1E),#0B0F1E_70%)] max-sm:h-20;
+}
+
+.clan-hero__body {
+    @apply -mt-12 flex flex-wrap items-end gap-4 px-5 max-sm:-mt-9 max-sm:gap-3 max-sm:px-3.5;
+}
+
+.clan-hero__text {
+    @apply flex min-w-0 flex-1 flex-col gap-1 pb-1;
+}
+
+.clan-hero__name {
+    @apply font-display text-[32px] leading-tight font-bold max-sm:text-2xl;
+}
+
+.clan-hero__desc {
+    @apply max-w-2xl text-sm text-muted-2;
+}
+
+.clan-hero__actions {
+    @apply flex items-center gap-2 pb-1 max-sm:w-full;
+}
+
+.clan-pending {
+    @apply rounded-lg border border-yellow/40 bg-yellow/10 px-3 py-2 text-sm text-yellow;
+}
+
+.clan-stats {
+    @apply mt-4 grid grid-cols-4 border-t border-line-soft max-sm:grid-cols-2;
+}
+
+.clan-stats__item {
+    @apply flex flex-col gap-0.5 px-5 py-3 not-last:border-r not-last:border-line-soft max-sm:px-3.5 max-sm:nth-2:border-r-0 max-sm:nth-[-n+2]:border-b max-sm:nth-[-n+2]:border-line-soft;
+}
+
+.clan-stats__item dt {
+    @apply text-[11px] font-bold tracking-widest text-muted uppercase;
+}
+
+.clan-stats__item dd {
+    @apply font-display text-xl font-bold;
+}
+
+.clan-stats__item small {
+    @apply text-sm text-muted;
+}
+
+.clan-stats__access {
+    @apply text-(--clan-color);
+}
+
+.clan-roster {
+    @apply flex flex-col gap-1.5;
+}
+
+.clan-member {
+    @apply flex items-center gap-3 rounded-xl px-2.5 py-2 hover:bg-surface max-sm:flex-wrap;
+}
+
+.clan-member--me {
+    @apply bg-(--clan-color,var(--color-cyan))/8;
+}
+
+.clan-member__info {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.clan-member__name {
+    @apply truncate text-sm font-semibold hover:underline;
+}
+
+.clan-member__score {
+    @apply flex w-28 flex-col items-end gap-1 font-display text-sm text-cyan;
+}
+
+.clan-member__score .clan-member__share {
+    @apply w-full;
+}
+
+.clan-member__actions,
+.clan-inline {
+    @apply flex gap-1;
+}
+
+.clan-member__actions {
+    @apply max-sm:w-full max-sm:justify-end;
+}
+
+.clan-icon-btn {
+    @apply flex size-8 cursor-pointer items-center justify-center rounded-lg border border-line text-xs text-muted-2 transition-colors hover:border-cyan hover:text-ink;
+}
+
+.clan-icon-btn--ok {
+    @apply hover:border-success hover:text-success;
+}
+
+.clan-icon-btn--danger {
+    @apply hover:border-danger hover:text-danger;
+}
+
+.clan-side {
+    @apply flex flex-col gap-4 lg:sticky lg:top-4;
+}
+
+.clan-count {
+    @apply ml-1 rounded-full bg-danger px-2 py-0.5 align-middle font-sans text-xs text-white;
+}
+
+.clan-requests {
+    @apply flex flex-col gap-2;
+}
+
+.clan-request {
+    @apply flex items-center gap-2;
+}
+
+.clan-request__name {
+    @apply min-w-0 flex-1 truncate text-sm font-semibold hover:underline;
+}
+
+.clan-danger {
+    @apply mt-1 border-t border-line-soft pt-3;
+}
+
+.clan-danger__btn {
+    @apply w-full cursor-pointer rounded-lg border border-danger/40 px-3 py-2 text-sm font-semibold text-[#FF7A8F] transition-colors hover:bg-danger/10;
+}
+
+.clan-form {
+    @apply flex flex-col gap-4;
+}
+
+.clan-form__row {
+    @apply grid grid-cols-[minmax(0,1fr)_120px] gap-3 max-sm:grid-cols-1;
+}
+
+.clan-form__actions {
+    @apply flex justify-end gap-2 border-t border-line-soft pt-4;
+}
+
+.clan-preview {
+    @apply flex flex-col gap-2 rounded-xl border border-(--clan-color)/40 bg-[linear-gradient(110deg,color-mix(in_srgb,var(--clan-color)_14%,transparent),transparent_70%)] p-4 transition-colors;
+}
+
+.clan-preview__label {
+    @apply text-[11px] font-bold tracking-widest text-muted uppercase;
+}
+
+.clan-preview__card {
+    @apply flex items-center gap-3;
+}
+
+.clan-preview__text {
+    @apply flex min-w-0 flex-col gap-1;
+}
+
+.clan-preview__name {
+    @apply truncate font-display text-xl;
+}
+
+.clan-preview__player {
+    @apply text-sm;
+}
+
+.clan-colors {
+    @apply flex flex-wrap gap-2;
+}
+
+.clan-colors__item {
+    @apply relative cursor-pointer;
+}
+
+.clan-colors__input {
+    @apply sr-only;
+}
+
+.clan-colors__swatch {
+    @apply relative block size-10 rounded-xl border-[3px] border-transparent bg-(--swatch) transition-shadow;
+}
+
+.clan-colors__input:checked + .clan-colors__swatch {
+    @apply border-ink shadow-[0_0_16px_var(--swatch)];
+}
+
+.clan-colors__input:focus-visible + .clan-colors__swatch {
+    @apply outline-2 outline-offset-2 outline-cyan;
+}
+
+.clan-colors__swatch--custom {
+    @apply overflow-hidden bg-[conic-gradient(#FF5470,#FFC94A,#4ADE80,#2EE6D6,#60A5FA,#7C5CFF,#FF3DCB,#FF5470)];
+}
+
+.clan-colors__input:checked + .clan-colors__swatch--custom {
+    @apply bg-(--swatch);
+}
+
+.clan-colors__picker {
+    @apply absolute inset-0 size-full cursor-pointer opacity-0;
+}
+
+.clan-switch {
+    @apply flex cursor-pointer items-center justify-between gap-4 rounded-xl border border-line bg-surface px-4 py-3;
+}
+
+.clan-switch__text {
+    @apply flex flex-col gap-0.5;
+}
+
+.clan-switch__label {
+    @apply text-sm font-semibold;
+}
+
+.clan-switch__help {
+    @apply text-xs text-muted-2;
+}
+
+.live-dot {
+    @apply inline-block size-3 animate-pulse rounded-full bg-danger shadow-[0_0_12px_var(--color-danger)] motion-reduce:animate-none;
+}
+
+.live-card {
+    @apply flex flex-col gap-3 rounded-2xl border border-line bg-panel p-4 transition hover:border-(--game-color);
+}
+
+.live-card__head {
+    @apply flex items-center justify-between gap-2;
+}
+
+.live-card__mode {
+    @apply rounded-md bg-danger/15 px-2 py-0.5 text-[10px] font-bold tracking-widest text-danger uppercase;
+}
+
+.live-card__players {
+    @apply flex flex-wrap gap-2;
+}
+
+.live-card__player {
+    @apply flex items-center gap-1.5 text-xs text-muted-2;
+}
+
+.live-card__watch {
+    @apply text-xs font-semibold text-cyan;
+}
+
+.referral-link {
+    @apply flex flex-wrap gap-2;
+}
+
+.referral-link__input {
+    @apply min-w-0 flex-1 font-mono text-xs;
+}
+
+.referral-stats {
+    @apply grid grid-cols-3 gap-2;
+}
+
+.referral-stats div {
+    @apply flex flex-col items-center rounded-xl border border-line bg-surface py-3;
+}
+
+.referral-stats strong {
+    @apply font-display text-2xl;
+}
+
+.referral-stats span {
+    @apply text-center text-xs text-muted;
+}
+
+.user-clan {
+    @apply mr-1 font-mono text-[0.8em] font-bold text-(--clan-color);
+}

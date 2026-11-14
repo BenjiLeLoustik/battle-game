@@ -1,0 +1,78 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'shop_products' %}
+
+{% block title %}{{ 'admin.shop.products.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.shop.products.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.shop.products.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <span class="admin-actions">
+                <a href="{{ path('site_shop_index') }}" class="admin-btn admin-btn--ghost" target="_blank" rel="noopener">{{ 'admin.shop.see_shop'|trans({}, 'admin') }}</a>
+                <a href="{{ path('admin_shop_product_new', type ? { type: type.value } : {}) }}" class="admin-btn admin-btn--primary">+ {{ 'admin.shop.products.new'|trans({}, 'admin') }}</a>
+            </span>
+        </div>
+
+        {% include '@admin/pages/shop/_kpis.html.twig' %}
+
+        <nav class="admin-tabs" aria-label="{{ 'admin.shop.products.title'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_shop_products') }}" class="admin-tabs__tab{{ type is null ? ' admin-tabs__tab--active' }}">{{ 'admin.shop.all'|trans({}, 'admin') }}</a>
+            {% for item in types %}
+                <a href="{{ path('admin_shop_products', { type: item.value }) }}" class="admin-tabs__tab{{ type == item ? ' admin-tabs__tab--active' }}">{{ item.translate() }}</a>
+            {% endfor %}
+        </nav>
+
+        <section class="admin-panel admin-panel--flush">
+            {% if products is empty %}
+                <p class="admin-empty">{{ 'admin.shop.products.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(products, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['product', 'type', 'price', 'stock', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.shop.products.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for product in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="shop-admin-product">
+                                            <span class="shop-admin-product__thumb shop-admin-product__thumb--{{ product.type.value }}">
+                                                {% if product.image %}<img src="{{ product.image }}" alt="">{% else %}{{ product.name|slice(0, 1)|upper }}{% endif %}
+                                            </span>
+                                            <span class="admin-user__text">
+                                                <span class="admin-user__name">{{ product.name }}</span>
+                                                <span class="admin-user__meta">/{{ product.slug }} · #{{ product.position }}</span>
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ product.type.translate() }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            {% if product.priceCents is not null %}<span class="admin-user__name">{{ (product.priceCents / 100)|number_format(2, ',', ' ') }} €{{ product.type.value == 'subscription' ? ' / ' ~ 'admin.shop.month'|trans({}, 'admin') }}</span>{% endif %}
+                                            {% if product.priceCoins is not null %}<span class="admin-user__meta">{{ 'admin.shop.coins'|trans({ count: product.priceCoins }, 'admin') }}</span>{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ product.stock ?? '∞' }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ product.available ? ' admin-pill--ok' : '' }}">{{ (product.active ? (product.available ? 'admin.shop.products.on' : 'admin.shop.products.out') : 'admin.shop.products.off')|trans({}, 'admin') }}</span></td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_shop_product_edit', { id: product.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_shop_product_toggle', { id: product.id }, (product.active ? 'admin.shop.products.disable' : 'admin.shop.products.enable')|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-shop') }}
+                                            {{ admin_ui.post('admin_shop_product_delete', { id: product.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-shop', 'admin.shop.products.delete_confirm'|trans({ name: product.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

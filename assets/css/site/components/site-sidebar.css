@@ -1,0 +1,173 @@
+.site-sidebar {
+    @apply flex w-[248px] flex-none flex-col gap-5 overflow-y-auto bg-sidebar px-3 py-4
+    shadow-[inset_-1px_0_0_rgba(46,230,214,0.18)] transition-[width] duration-200;
+    background-image: repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 4px);
+}
+
+.site-sidebar {
+    @apply max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:w-[min(280px,85vw)] max-lg:-translate-x-full
+    max-lg:shadow-[0_0_40px_rgba(0,0,0,.6)] max-lg:transition-transform;
+}
+
+.site-sidebar--open {
+    @apply max-lg:translate-x-0;
+}
+
+.site-sidebar--collapsed {
+    @apply w-[76px] px-2.5;
+}
+
+.site-sidebar__head {
+    @apply flex items-center justify-between pr-0.5 pl-3;
+}
+
+.site-sidebar--collapsed .site-sidebar__head {
+    @apply justify-center p-0;
+}
+
+.site-sidebar__caption {
+    @apply font-display text-[11px] font-semibold tracking-[0.22em] text-caption;
+}
+
+.site-sidebar__group .site-sidebar__caption {
+    @apply px-3 pb-1.5;
+}
+
+.site-sidebar__toggle {
+    @apply clip-corner-xs flex size-8 shrink-0 items-center justify-center border border-line
+    bg-header text-muted-2 hover:text-ink;
+}
+
+.site-sidebar__toggle-icon {
+    @apply size-4 transition-transform;
+}
+
+.site-sidebar--collapsed .site-sidebar__toggle-icon {
+    @apply rotate-180;
+}
+
+.site-sidebar__group {
+    @apply flex flex-col gap-0.5;
+}
+
+.site-sidebar__link {
+    @apply relative flex min-h-[46px] items-center gap-3 pr-2.5 pl-3.5 font-display
+    text-[13px] font-semibold tracking-[0.08em] text-muted uppercase hover:text-ink;
+}
+
+.site-sidebar--collapsed .site-sidebar__link {
+    @apply justify-center p-0;
+}
+
+.site-sidebar__link--active {
+    @apply bg-linear-to-r from-cyan/16 to-cyan/0 to-85% text-ink;
+}
+
+.site-sidebar__bar {
+    @apply absolute top-2 bottom-2 left-0 w-[3px];
+}
+
+.site-sidebar__link--active .site-sidebar__bar {
+    @apply bg-cyan shadow-[0_0_10px_var(--color-cyan)];
+}
+
+.site-sidebar__icon-box {
+    @apply clip-corner-sm flex size-8 shrink-0 items-center justify-center bg-surface
+    text-muted-2 shadow-[inset_0_0_0_1px_var(--color-line-soft)];
+}
+
+.site-sidebar__link--active .site-sidebar__icon-box {
+    @apply bg-cyan/14 text-cyan shadow-[inset_0_0_0_1px_var(--color-cyan)];
+}
+
+.site-sidebar__icon {
+    @apply size-[18px];
+}
+
+.site-sidebar__text {
+    @apply flex-1;
+}
+
+.site-sidebar__cta {
+    @apply clip-corner flex h-[46px] items-center justify-center gap-2 bg-cyan
+    font-display text-[13px] font-bold tracking-[0.1em] text-on-cyan shadow-[0_0_22px_rgba(46,230,214,0.25)]
+    hover:brightness-110;
+}
+
+.site-sidebar__footer {
+    @apply mt-auto flex flex-col gap-2.5;
+}
+
+.site-sidebar__guest {
+    @apply clip-corner-sm flex flex-col gap-2.5 bg-panel p-3 shadow-[inset_0_0_0_1px_#2B3A55];
+}
+
+.site-sidebar__guest-text {
+    @apply text-xs leading-[1.45] text-muted-2;
+}
+
+.site-sidebar__guest-cta {
+    @apply clip-corner-sm flex h-[38px] items-center justify-center bg-magenta font-display
+    text-xs font-bold tracking-[0.1em] text-on-magenta hover:brightness-110;
+}
+
+.site-sidebar__guest-link {
+    @apply text-center text-xs text-cyan hover:underline;
+}
+
+.site-sidebar__guest-mini {
+    @apply clip-corner-sm hidden size-10 items-center justify-center self-center bg-magenta text-on-magenta;
+}
+
+.site-sidebar--collapsed .site-sidebar__caption,
+.site-sidebar--collapsed .site-sidebar__text,
+.site-sidebar--collapsed .site-sidebar__guest {
+    @apply hidden;
+}
+
+.site-sidebar--collapsed .site-sidebar__guest-mini {
+    @apply flex;
+}
+
+.site-sidebar__head,
+.site-sidebar__group,
+.site-sidebar__cta,
+.site-sidebar__footer {
+    @apply shrink-0;
+}
+
+.site-sidebar__cta .site-sidebar__text {
+    @apply flex-none;
+}
+
+.site-sidebar__link--button {
+    @apply w-full cursor-pointer text-left;
+}
+
+.site-sidebar__member {
+    @apply clip-corner-sm flex shrink-0 items-center gap-2.5 bg-panel p-2.5
+    shadow-[inset_0_0_0_1px_var(--color-line-soft)];
+}
+
+.site-sidebar__member-text {
+    @apply flex min-w-0 flex-1 flex-col gap-0.5 text-[13px];
+}
+
+.site-sidebar__member-name {
+    @apply truncate text-ink;
+}
+
+.site-sidebar__member-handle {
+    @apply truncate text-xs text-muted-2;
+}
+
+.site-sidebar--collapsed .site-sidebar__member {
+    @apply justify-center bg-transparent p-0 shadow-none;
+}
+
+.site-sidebar--collapsed .site-sidebar__member-text {
+    @apply hidden;
+}
+.site-sidebar__guest-name {
+    @apply text-ink;
+}

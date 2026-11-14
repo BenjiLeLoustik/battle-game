@@ -1,0 +1,304 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'studio' %}
+{% set manifest = game.manifest %}
+{% set token = csrf_token('studio-' ~ game.slug) %}
+
+{% block title %}{{ game.name }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_studio_index') }}" class="admin-crumbs__link">
+                {{ 'admin.studio.title'|trans({}, 'admin') }}
+            </a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">
+                {{ game.name }}
+            </span>
+        </nav>
+
+        <section class="studio-hero" style="--game-color: {{ game.color }}">
+            <span class="studio-hero__thumb">
+                <svg class="studio-hero__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z"/></svg>
+            </span>
+            <div class="studio-hero__intro">
+                <span class="studio-hero__heading">
+                    <h1 class="studio-hero__title">
+                        {{ game.name }}
+                    </h1>
+                    <span class="admin-badge admin-badge--{{ game.status.value }}">
+                        {{ game.status.translate() }}
+                    </span>
+                </span>
+                <span class="studio-hero__meta">
+                    <span class="studio-hero__slug">
+                        {{ game.slug }}
+                    </span>
+                    · v{{ game.version }} · {{ 'admin.studio.created'|trans({ date: game.createdAt|date('d/m/Y') }, 'admin') }}
+                </span>
+            </div>
+            <div class="studio-hero__actions">
+                {% if game.playableBy(true) %}
+                    <a href="{{ path('site_game_show', { slug: game.slug }) }}" class="admin-btn admin-btn--ghost">
+                        {{ 'admin.studio.player_view'|trans({}, 'admin') }}
+                    </a>
+                {% endif %}
+                <a href="{{ path('admin_maintenance_new', { game: game.slug }) }}" class="admin-btn admin-btn--warning">
+                    {{ 'admin.studio.to_maintenance'|trans({}, 'admin') }}
+                </a>
+                {% if members|filter(member => member.user.id == app_user().id and member.role.value != 'tester') is not empty %}
+                    {% if nocode %}
+                    <a href="{{ path('admin_studio_builder_index', { slug: game.slug }) }}" class="admin-btn admin-btn--secondary">
+                        {{ 'builder.open'|trans({}, 'builder') }}
+                    </a>
+                    {% endif %}
+                    <a href="{{ path('admin_studio_design_index', { slug: game.slug }) }}" class="admin-btn admin-btn--secondary">
+                        {{ 'admin.design.open'|trans({}, 'admin') }}
+                    </a>
+                    <a href="{{ path('admin_studio_editor_index', { slug: game.slug }) }}" class="admin-btn admin-btn--primary">
+                        {{ 'admin.studio.edit'|trans({}, 'admin') }}
+                    </a>
+                {% endif %}
+            </div>
+        </section>
+
+        {% include '@admin/components/partials/studio-review.html.twig' %}
+
+        {% if lead %}
+            <section class="admin-panel admin-panel--danger" aria-labelledby="studio-delete">
+                <div class="admin-panel__intro">
+                    <h2 id="studio-delete" class="admin-panel__title admin-panel__title--danger">
+                        {{ 'admin.studio.delete'|trans({}, 'admin') }}
+                    </h2>
+                    <span class="admin-panel__help">
+                        {{ 'admin.studio.delete_help'|trans({ directory: game.directory }, 'admin') }}
+                    </span>
+                </div>
+                <form class="studio-sheet__inline" method="post" action="{{ path('admin_studio_delete', { slug: game.slug }) }}">
+                    <input type="hidden" name="_token" value="{{ token }}">
+                    <input class="admin-field__input studio-sheet__grow" name="confirm" required autocomplete="off"
+                           data-component="ConfirmMatch"
+                           data-expected="{{ game.name }}"
+                           placeholder="{{ game.name }}"
+                           aria-label="{{ 'admin.studio.delete_confirm'|trans({ name: game.name }, 'admin') }}"
+                           title="{{ 'admin.studio.delete_confirm'|trans({ name: game.name }, 'admin') }}"
+                    >
+                    <button type="submit" class="admin-btn admin-btn--danger">
+                        {{ 'admin.studio.delete_submit'|trans({}, 'admin') }}
+                    </button>
+                </form>
+            </section>
+        {% endif %}
+
+        <div class="studio-sheet">
+            <section class="admin-panel admin-panel--flush studio-sheet__config" aria-labelledby="studio-config" data-component="Tabs">
+                <div class="admin-panel__bar">
+                    <div class="admin-panel__intro">
+                        <h2 id="studio-config" class="admin-panel__title">
+                            {{ 'admin.studio.config'|trans({}, 'admin') }}
+                        </h2>
+                        <span class="admin-panel__help">
+                            {{ 'admin.studio.config_help'|trans({}, 'admin') }}
+                        </span>
+                    </div>
+                    <div class="admin-tabs" role="tablist" aria-label="{{ 'admin.studio.display'|trans({}, 'admin') }}">
+                        <button type="button" class="admin-tabs__tab admin-tabs__tab--active" role="tab" aria-selected="true" aria-controls="studio-view">
+                            {{ 'admin.studio.view'|trans({}, 'admin') }}
+                        </button>
+                        <button type="button" class="admin-tabs__tab" role="tab" aria-selected="false" aria-controls="studio-raw">
+                            {{ 'admin.studio.raw'|trans({}, 'admin') }}
+                        </button>
+                    </div>
+                </div>
+                <div id="studio-view" class="studio-sheet__view" role="tabpanel">
+                    <dl class="studio-sheet__fields">
+                        {% for label, value in {
+                            slug: manifest.slug,
+                            version: manifest.version,
+                            category: game.category ? game.category.name : '—',
+                            players: game.players,
+                            duration: manifest.duration ?? '—',
+                            solo: game.solo ? 'admin.yes'|trans({}, 'admin') : 'admin.no'|trans({}, 'admin'),
+                            points: (manifest.points ?? [])|join(' · '),
+                            manager: manifest.manager,
+                            server: manifest.server,
+                            client: manifest.client,
+                        } %}
+                            <dt class="studio-sheet__key">
+                                {{ ('admin.studio.field.' ~ label)|trans({}, 'admin') }}
+                            </dt>
+                            <dd class="studio-sheet__value">
+                                {{ value }}
+                            </dd>
+                        {% endfor %}
+                    </dl>
+                    {% if manifest.settings is defined and manifest.settings is not empty %}
+                        <div class="studio-sheet__settings">
+                            <h3 class="studio-sheet__subtitle">
+                                {{ 'admin.studio.settings'|trans({}, 'admin') }}
+                            </h3>
+                            <div class="admin-table-wrap">
+                                <table class="admin-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="admin-table__th">
+                                            {{ 'admin.studio.setting.key'|trans({}, 'admin') }}
+                                        </th>
+                                        <th class="admin-table__th">
+                                            {{ 'admin.studio.setting.type'|trans({}, 'admin') }}
+                                        </th>
+                                        <th class="admin-table__th">
+                                            {{ 'admin.studio.setting.default'|trans({}, 'admin') }}
+                                        </th>
+                                        <th class="admin-table__th">
+                                            {{ 'admin.studio.setting.values'|trans({}, 'admin') }}
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% for setting in manifest.settings %}
+                                        <tr class="admin-table__row">
+                                            <td class="admin-table__cell admin-table__cell--mono">
+                                                {{ setting.name }}
+                                            </td>
+                                            <td class="admin-table__cell">
+                                                {{ setting.type }}
+                                            </td>
+                                            <td class="admin-table__cell">
+                                                {{ setting.default }}
+                                            </td>
+                                            <td class="admin-table__cell">
+                                                {{ (setting.choices ?? [])|join(', ') }}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <div class="studio-sheet__check{{ error ? ' studio-sheet__check--error' }}">
+                        <span aria-hidden="true">
+                            {{ error ? '✕' : '✓' }}
+                        </span>
+                        <span>
+                            {{ error ? 'admin.studio.invalid'|trans({ reason: error }, 'admin') : 'admin.studio.valid'|trans({ sdk: game.sdk, platform: constant('App\\Sdk\\AbstractSdk::VERSION') }, 'admin') }}
+                        </span>
+                    </div>
+                </div>
+                <pre id="studio-raw" class="studio-sheet__raw" role="tabpanel" hidden>
+                    {{ manifest|json_encode(constant('JSON_PRETTY_PRINT') b-or constant('JSON_UNESCAPED_SLASHES') b-or constant('JSON_UNESCAPED_UNICODE')) }}
+                </pre>
+            </section>
+
+            <div class="studio-sheet__side">
+                <section class="admin-panel" aria-labelledby="studio-status">
+                    <h2 id="studio-status" class="admin-panel__title">
+                        {{ 'admin.studio.status'|trans({}, 'admin') }}
+                    </h2>
+                    <form class="studio-sheet__inline" method="post" action="{{ path('admin_studio_status', { slug: game.slug }) }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <select class="admin-field__input studio-sheet__grow" name="status" aria-label="{{ 'admin.studio.new_status'|trans({}, 'admin') }}">
+                            {% for item in statuses %}
+                                <option value="{{ item.value }}"{{ item == game.status ? ' selected' }}>
+                                    {{ item.translate() }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="admin-btn admin-btn--secondary">
+                            {{ 'admin.apply'|trans({}, 'admin') }}
+                        </button>
+                    </form>
+                    <ol class="admin-history">
+                        {% for entry in game.history %}
+                            <li class="admin-history__item">
+                                <span class="admin-history__dot admin-history__dot--{{ entry.status }}" aria-hidden="true"></span>
+                                <span class="admin-history__text">
+                                    <strong>
+                                        {{ enum('App\\Shared\\Game\\Enum\\GameStatusEnum').from(entry.status).translate() }}
+                                    </strong>
+                                    <span class="admin-history__meta">
+                                        {{ entry.at|date('d/m/Y H:i') }}{{ entry.user ? ' · ' ~ entry.user }}
+                                    </span>
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                </section>
+                {% include '@admin/components/partials/studio-tasks.html.twig' %}
+            </div>
+            <section class="admin-panel" aria-labelledby="studio-members">
+                <div class="admin-panel__bar">
+                    <h2 id="studio-members" class="admin-panel__title">
+                        {{ 'admin.studio.team'|trans({}, 'admin') }}
+                    </h2>
+                    <span class="admin-panel__help">
+                        {{ 'admin.studio.team_note'|trans({}, 'admin') }}
+                    </span>
+                </div>
+                {% for member in members %}
+                    <div class="studio-member">
+                        {{ ui.avatar(member.user, 'round') }}
+                        <span class="studio-member__info">
+                            <strong class="studio-member__name">
+                                {{ member.user.username }}
+                            </strong>
+                            <span class="studio-member__meta">
+                                {{ member.user.email }}
+                            </span>
+                        </span>
+                        <span class="admin-tag">
+                            {{ member.role.translate() }}
+                        </span>
+                        <form method="post" action="{{ path('admin_studio_member_remove', { slug: game.slug, id: member.id }) }}">
+                            <input type="hidden" name="_token" value="{{ token }}">
+                            <button type="submit" class="admin-btn admin-btn--danger admin-btn--small"{{ member.lead ? ' disabled' }} aria-label="{{ 'admin.studio.remove_member'|trans({ name: member.user.username }, 'admin') }}">
+                                {{ 'admin.remove'|trans({}, 'admin') }}
+                            </button>
+                        </form>
+                    </div>
+                {% endfor %}
+                {% if candidates %}
+                    <form class="studio-sheet__inline" method="post" action="{{ path('admin_studio_member_add', { slug: game.slug }) }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <select class="admin-field__input studio-sheet__grow" name="user" aria-label="{{ 'admin.studio.member_to_add'|trans({}, 'admin') }}">
+                            {% for candidate in candidates %}
+                                <option value="{{ candidate.id }}">
+                                    {{ candidate.username }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <select class="admin-field__input admin-field__input--auto" name="role" aria-label="{{ 'admin.studio.member_role'|trans({}, 'admin') }}">
+                            {% for role in roles %}
+                                <option value="{{ role.value }}">
+                                    {{ role.translate() }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="admin-btn admin-btn--secondary">
+                            {{ 'admin.add'|trans({}, 'admin') }}
+                        </button>
+                    </form>
+                {% endif %}
+                {% if can_transfer %}
+                    {% set lead_ids = members|filter(member => member.lead)|map(member => member.user.id) %}
+                    <form class="studio-sheet__inline studio-lead" method="post" action="{{ path('admin_studio_lead', { slug: game.slug }) }}" data-component="ConfirmSubmit" data-message="{{ 'admin.studio.lead_confirm'|trans({ game: game.name }, 'admin') }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <span class="studio-lead__label">{{ 'admin.studio.lead_change'|trans({}, 'admin') }}</span>
+                        <select class="admin-field__input studio-sheet__grow" name="user" aria-label="{{ 'admin.studio.lead_change'|trans({}, 'admin') }}">
+                            {% for admin in admins|filter(admin => admin.id not in lead_ids) %}
+                                <option value="{{ admin.id }}">{{ admin.username }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="admin-btn admin-btn--secondary">
+                            {{ 'admin.studio.lead_submit'|trans({}, 'admin') }}
+                        </button>
+                    </form>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

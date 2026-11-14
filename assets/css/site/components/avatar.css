@@ -1,0 +1,317 @@
+.avatar {
+    @apply flex size-9 shrink-0 items-center justify-center overflow-hidden rounded-(--avatar-radius) bg-violet [--avatar-radius:10px]
+    text-sm font-bold text-white;
+}
+
+.avatar--cut {
+    @apply relative isolate rounded-none bg-transparent [--avatar-radius:0px];
+}
+
+.avatar--cut::after {
+    @apply absolute inset-0 -z-10 clip-corner-sm bg-violet content-[''];
+}
+
+.avatar--cut .avatar__image {
+    @apply clip-corner-sm rounded-none;
+}
+
+.avatar__image {
+    @apply size-full object-cover;
+}
+
+.avatar--sm {
+    @apply size-[30px] text-xs [--avatar-radius:9px];
+}
+
+.avatar--md {
+    @apply size-16 text-[26px] [--avatar-radius:18px];
+}
+
+.avatar--lg {
+    @apply size-[70px] text-[27px] [--avatar-radius:19px];
+}
+
+.avatar--xl {
+    @apply size-[84px] text-[32px] [--avatar-radius:23px];
+}
+
+.avatar--round {
+    @apply size-[34px] text-[13px] [--avatar-radius:9999px];
+}
+
+.avatar--stack {
+    @apply -ml-2 size-7 border-2 [--avatar-radius:9999px] border-adm-panel text-xs first:ml-0;
+}
+.avatar--base {
+    @apply size-10 text-base [--avatar-radius:12px];
+}
+
+.avatar--2xl {
+    @apply size-24 text-[40px] [--avatar-radius:24px];
+}
+
+.avatar--3xl {
+    @apply size-[108px] border-4 [--avatar-radius:28px] border-panel text-[44px] shadow-[0_0_40px_rgb(124_92_255/0.5)];
+}
+
+.avatar--frame {
+    @apply overflow-visible outline-2 outline-offset-2;
+}
+
+.avatar--frame .avatar__image {
+    @apply rounded-[inherit];
+}
+
+.avatar--frame-neon {
+    @apply outline-cyan shadow-[0_0_14px_rgb(46_230_214/0.6)];
+}
+
+.avatar--frame-gold {
+    @apply outline-yellow shadow-[0_0_14px_rgb(255_201_74/0.55)];
+}
+
+.avatar--frame-flame {
+    @apply outline-orange shadow-[0_0_16px_rgb(255_84_112/0.6)];
+}
+
+.avatar--frame-ice {
+    @apply outline-[#9BE7FF] shadow-[0_0_14px_rgb(155_231_255/0.55)];
+}
+
+.avatar--frame-magenta {
+    @apply outline-magenta shadow-[0_0_14px_rgb(255_61_203/0.55)];
+}
+
+.avatar--frame-rainbow {
+    @apply outline-violet;
+    animation: avatar-rainbow 4s linear infinite;
+}
+
+.avatar--plan {
+    @apply relative overflow-visible;
+}
+
+.avatar--plan .avatar__image {
+    @apply rounded-[inherit];
+}
+
+.plan-badge {
+    @apply inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-(--plan-color) text-bg
+    shadow-[0_0_10px_color-mix(in_srgb,var(--plan-color)_55%,transparent)];
+}
+
+.plan-badge--avatar {
+    @apply absolute -right-1.5 -bottom-1.5 size-[max(16px,34%)] border-2 border-bg;
+}
+
+.plan-badge--lg {
+    @apply size-9;
+}
+
+.plan-icon {
+    @apply size-[62%];
+}
+
+.user-name[style*="--name-color"] {
+    color: var(--name-color);
+}
+
+.user-title {
+    @apply inline-flex w-fit items-center rounded-md border border-yellow/40 bg-yellow/10 px-2 py-0.5 font-display text-[11px]
+    font-bold tracking-wider text-yellow uppercase;
+}
+
+@keyframes avatar-rainbow {
+    0% { outline-color: #2EE6D6; box-shadow: 0 0 14px rgb(46 230 214 / 0.6); }
+    33% { outline-color: #FF3DCB; box-shadow: 0 0 14px rgb(255 61 203 / 0.6); }
+    66% { outline-color: #FFC94A; box-shadow: 0 0 14px rgb(255 201 74 / 0.6); }
+    100% { outline-color: #2EE6D6; box-shadow: 0 0 14px rgb(46 230 214 / 0.6); }
+}
+
+.room-slot__title {
+    @apply text-[9px];
+}
+
+.avatar--frame-aurora {
+    @apply outline-[#4ADE80];
+    animation: avatar-aurora 5s linear infinite;
+}
+
+.avatar--frame-pulse {
+    @apply outline-magenta;
+    animation: avatar-pulse 1.6s ease-in-out infinite;
+}
+
+.avatar--frame-ember {
+    @apply outline-[#FF5470];
+    animation: avatar-ember 2.4s ease-in-out infinite;
+}
+
+@keyframes avatar-aurora {
+    0% { outline-color: #4ADE80; box-shadow: 0 0 16px rgb(74 222 128 / .6); }
+    50% { outline-color: #2EE6D6; box-shadow: 0 0 22px rgb(46 230 214 / .6); }
+    100% { outline-color: #4ADE80; box-shadow: 0 0 16px rgb(74 222 128 / .6); }
+}
+
+@keyframes avatar-pulse {
+    0%, 100% { box-shadow: 0 0 6px rgb(255 61 203 / .4); }
+    50% { box-shadow: 0 0 24px rgb(255 61 203 / .9); }
+}
+
+@keyframes avatar-ember {
+    0%, 100% { outline-color: #FF5470; box-shadow: 0 0 12px rgb(255 84 112 / .6); }
+    50% { outline-color: #FF9F43; box-shadow: 0 0 20px rgb(255 159 67 / .7); }
+}
+
+.profile-banner--sunset {
+    background: linear-gradient(120deg,#FF3DCB,#FF9F43 55%,#FFC94A);
+}
+
+.profile-banner--ocean {
+    background: linear-gradient(120deg,#0EA5E9,#2EE6D6 60%,#7C5CFF);
+}
+
+.profile-banner--galaxy {
+    background: radial-gradient(circle at 20% 30%,#7C5CFF,transparent 45%),radial-gradient(circle at 80% 70%,#FF3DCB,transparent 40%),#0B0D17;
+}
+
+.profile-banner--forest {
+    background: linear-gradient(120deg,#064E3B,#4ADE80 70%,#A3E635);
+}
+
+.profile-banner--gold {
+    background: linear-gradient(120deg,#78350F,#FFC94A 50%,#FDE68A);
+}
+
+.profile-banner--neon {
+    background: repeating-linear-gradient(90deg,#2EE6D6 0 2px,transparent 2px 28px),linear-gradient(120deg,#0B0D17,#1F2540);
+}
+
+.profile-banner-sample {
+    @apply block h-12 w-20 rounded-lg border border-line;
+}
+
+.profile-banner-sample--wide {
+    @apply h-full w-full rounded-none border-0;
+}
+
+.victory-sample {
+    @apply relative flex size-12 items-center justify-center overflow-hidden rounded-xl bg-surface-2;
+}
+
+.victory-sample--lg {
+    @apply size-20;
+}
+
+.victory-sample__piece {
+    @apply absolute flex;
+}
+
+.victory-sample__piece--1 {
+    @apply top-[12%] left-[10%] -rotate-12;
+}
+
+.victory-sample__piece--2 {
+    @apply z-10 scale-125;
+}
+
+.victory-sample__piece--3 {
+    @apply right-[10%] bottom-[10%] rotate-12;
+}
+
+@property --frame-angle {
+    syntax: '<angle>';
+    inherits: false;
+    initial-value: 0deg;
+}
+
+.avatar--frame-custom {
+    --frame-paint: var(--frame-a);
+    @apply relative outline-0;
+    box-shadow: 0 0 var(--frame-glow, 0) color-mix(in srgb, var(--frame-a) 70%, transparent);
+}
+
+.avatar--frame-custom::before {
+    content: '';
+    position: absolute;
+    --frame-offset: calc(var(--frame-width, 3px) + 2px);
+    inset: calc(var(--frame-offset) * -1);
+    padding: var(--frame-width, 3px);
+    border-radius: calc(var(--avatar-radius, 10px) + var(--frame-offset));
+    background: var(--frame-paint);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    pointer-events: none;
+}
+
+.avatar--frame-paint-gradient::before {
+    background: linear-gradient(calc(135deg + var(--frame-angle)), var(--frame-a), var(--frame-b), var(--frame-c));
+}
+
+.avatar--frame-paint-conic::before {
+    background: conic-gradient(from var(--frame-angle), var(--frame-a), var(--frame-b), var(--frame-c), var(--frame-a));
+}
+
+.avatar--frame-anim-spin::before {
+    animation: frame-spin 4s linear infinite;
+}
+
+.avatar--frame-anim-pulse {
+    animation: frame-pulse 1.8s ease-in-out infinite;
+}
+
+.avatar--frame-anim-shimmer::before {
+    animation: frame-shimmer 3s linear infinite, frame-spin 6s linear infinite;
+}
+
+@keyframes frame-spin {
+    to { --frame-angle: 360deg; }
+}
+
+@keyframes frame-pulse {
+    0%, 100% { box-shadow: 0 0 calc(var(--frame-glow, 8px) * .4) color-mix(in srgb, var(--frame-a) 50%, transparent); }
+    50% { box-shadow: 0 0 calc(var(--frame-glow, 8px) * 1.6 + 6px) color-mix(in srgb, var(--frame-b) 85%, transparent); }
+}
+
+@keyframes frame-shimmer {
+    to { filter: hue-rotate(360deg); }
+}
+
+.profile-banner--custom {
+    background: var(--banner-image, linear-gradient(var(--banner-angle, 120deg), var(--banner-a), var(--banner-b) 55%, var(--banner-c)));
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.profile-banner--custom::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: .35;
+}
+
+.profile-banner--pattern-dots::after {
+    background: radial-gradient(circle, rgb(255 255 255 / .55) 1.5px, transparent 2px) 0 0 / 16px 16px;
+}
+
+.profile-banner--pattern-stripes::after {
+    background: repeating-linear-gradient(45deg, rgb(255 255 255 / .35) 0 2px, transparent 2px 14px);
+}
+
+.profile-banner--pattern-grid::after {
+    background: linear-gradient(rgb(255 255 255 / .3) 1px, transparent 1px) 0 0 / 24px 24px, linear-gradient(90deg, rgb(255 255 255 / .3) 1px, transparent 1px) 0 0 / 24px 24px;
+}
+
+.profile-banner--pattern-waves::after {
+    background: radial-gradient(circle at 50% 120%, transparent 38%, rgb(255 255 255 / .35) 39%, rgb(255 255 255 / .35) 41%, transparent 42%) 0 0 / 40px 20px;
+}
+
+
+
+.plan-icon--line {
+    fill: none;
+}

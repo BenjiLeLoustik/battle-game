@@ -1,0 +1,199 @@
+game_match_status:
+    waiting: En attente
+    playing: En cours
+    finished: Terminée
+    cancelled: Interrompue
+
+game_match_mode:
+    quick: Partie rapide
+    solo: Entraînement
+    room: Room
+    ranked: "Partie classée"
+
+room_visibility:
+    code: Privée avec code
+    password: Privée avec mot de passe
+    public: Publique
+
+room_status:
+    waiting: En attente
+    voting: Vote en cours
+    configuring: Choix des règles
+    launching: Lancement
+    playing: En partie
+    
+leaderboard_period:
+    week: Semaine
+    month: Mois
+    season: Saison
+    all: Tout temps
+    
+game_status:
+    idea: Idée
+    dev: En développement
+    test: En test
+    live: En ligne
+    maintenance: Maintenance
+    archived: Archivé
+    
+game_task_status:
+    todo: À faire
+    doing: En cours
+    done: Terminée
+game_review_status:
+    pending: En attente
+    approved: Validée
+    rejected: Refusée
+game_member_role:
+    lead: Responsable
+    developer: Développeur
+    tester: Testeur
+    
+maintenance_target:
+    site: Site entier
+    games: Un ou plusieurs jeux
+    features: Des fonctionnalités
+    
+maintenance_status:
+    planned: Planifiée
+    running: En cours
+    done: Terminée
+    cancelled: Annulée
+    
+maintenance_match_policy:
+    finish: Les laisser se terminer
+    stop: Arrêter immédiatement
+    
+maintenance_feature:
+    leaderboard: Classement
+    registration: Inscriptions
+    discord: Connexion Discord
+    
+maintenance_page:
+    leaderboard: Classement (lecture)
+    games: Fiches des jeux (lecture)
+
+chat_access:
+    everyone: Tout le monde (visiteurs compris)
+    members: Joueurs inscrits
+    staff: Équipe uniquement
+    nobody: Personne (lecture seule)
+
+report_reason:
+    cheating: Triche
+    abuse: Propos insultants
+    profile: Pseudo ou avatar inapproprié
+    other: Autre
+
+report_status:
+    open: Ouvert
+    resolved: Traité
+    dismissed: Classé sans suite
+
+friendship_status:
+    pending: En attente
+    accepted: Acceptée
+
+mailing_audience:
+    all: Tous les joueurs inscrits
+    admins: Équipe (administrateurs)
+    country: Joueurs d'un pays
+    game: Joueurs d'un jeu
+
+notification_type:
+    friend_request: Demande d'ami
+    friend_accepted: Ami accepté
+    room_invite: Invitation en room
+    message: Message privé
+    email_changed: Email modifié
+    password_changed: Mot de passe modifié
+    game_released: Nouveau jeu
+    season_started: Nouvelle saison
+    maintenance_planned: Maintenance prévue
+    studio_review: Demande de validation
+    studio_approved: Jeu validé
+    studio_rejected: Validation refusée
+    studio_lead: Nouveau responsable
+    shop_paid: Commande confirmée
+    shop_shipped: Commande expédiée
+    shop_refunded: Commande remboursée
+    season_reward: Récompense de saison
+    referral_reward: "Récompense de parrainage"
+    tournament_reward: "Récompense de tournoi"
+    tournament_qualified: "Qualification à un tournoi"
+
+sanction_type:
+    warning: Avertissement
+    mute: Interdiction de discuter
+    suspension: Suspension
+    ban: Bannissement
+
+banner_type:
+    info: Info
+    event: Événement
+    news: Nouveauté
+    warning: Alerte
+
+banner_audience:
+    all: Tout le monde
+    members: Membres
+    guests: Invités
+
+banner_pages:
+    all: Toutes les pages
+    home: Accueil
+    games: Pages de jeux
+
+page_format:
+    markdown: Markdown
+    html: HTML + CSS
+
+page_footer:
+    none: Aucun lien
+    play: Colonne « Jouer »
+    developers: Colonne « Développeurs »
+    info: Colonne « Infos »
+
+shop_product_type:
+    coins: Pièces
+    subscription: Abonnement
+    badge: Badge
+    cosmetic: Cosmétique
+    physical: Goodies
+    lives: Vies
+    gift: Carte cadeau
+
+shop_order_status:
+    pending: En attente
+    paid: Payée
+    shipped: Expédiée
+    cancelled: Annulée
+    refunded: Remboursée
+
+shop_payment:
+    card: Carte bancaire
+    coins: Pièces
+
+subscription_status:
+    active: Actif
+    cancelled: Résilié
+    expired: Expiré
+
+voucher_kind:
+    promo: Code promo
+    gift: Code cadeau
+
+invoice_kind:
+    invoice: Facture
+    credit: Avoir
+
+cosmetic_kind:
+    frame: Cadre d'avatar
+    color: Couleur de pseudo
+    title: Titre
+    banner: "Bannière de profil"
+    victory: "Effet de victoire"
+clan_role:
+    owner: "Chef"
+    officer: "Officier"
+    member: "Membre"

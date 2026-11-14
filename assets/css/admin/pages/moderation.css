@@ -1,0 +1,107 @@
+.moderation__context {
+    @apply flex flex-col gap-2 rounded-lg bg-adm-bg p-3;
+}
+
+.moderation__message {
+    @apply flex items-baseline gap-3 text-sm leading-relaxed;
+}
+
+.moderation__message--system {
+    @apply text-adm-muted italic;
+}
+
+.moderation__time {
+    @apply w-10 shrink-0 font-mono text-xs text-adm-muted not-italic;
+}
+
+.moderation__where {
+    @apply max-w-36 shrink-0 truncate text-xs font-semibold text-adm-accent-soft not-italic;
+}
+
+.moderation__text {
+    @apply min-w-0 flex-1 break-words text-adm-ink-soft;
+}
+
+.moderation__message--system .moderation__text {
+    @apply text-adm-muted;
+}
+
+.moderation-filters {
+    @apply flex-wrap gap-2.5;
+}
+
+.moderation-cases__row {
+    @apply cursor-pointer;
+}
+
+.moderation-cases__link {
+    @apply block text-adm-ink;
+}
+
+.moderation-cases__reasons {
+    @apply flex flex-wrap gap-1.5;
+}
+
+.moderation-cases__count {
+    @apply font-mono text-sm text-adm-ink;
+}
+
+.moderation-cases__count--high {
+    @apply text-[#FF8A9C];
+}
+
+.moderation-cases__reporters {
+    @apply max-w-[220px] truncate text-adm-muted;
+}
+
+.moderation-case__head {
+    @apply flex flex-wrap items-center gap-4;
+}
+
+.moderation-case__identity {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.moderation-case__badges {
+    @apply mt-1 flex flex-wrap gap-1.5;
+}
+
+.moderation-case {
+    @apply grid grid-cols-[minmax(0,1fr)_340px] items-start gap-4 max-xl:grid-cols-1;
+}
+
+.moderation-case__main {
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.moderation-case__aside {
+    @apply sticky top-0 max-xl:static;
+}
+
+.moderation-case__reports {
+    @apply flex flex-col gap-2;
+}
+
+.moderation-case__report {
+    @apply flex flex-col gap-1.5 rounded-lg border border-adm-line bg-adm-bg px-3.5 py-3;
+}
+
+.moderation-case__report--open {
+    @apply border-[#5B2333] bg-[#1A1016];
+}
+
+.moderation-case__report-head {
+    @apply flex flex-wrap items-center gap-2 text-sm;
+}
+
+.moderation-case__date {
+    @apply ml-auto font-mono text-xs text-adm-muted;
+}
+
+.moderation-case__comment {
+    @apply text-sm text-adm-ink-soft;
+}
+
+.moderation-case__messages {
+    @apply max-h-[420px] overflow-y-auto;
+}

@@ -1,0 +1,131 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'banners' %}
+
+{% block title %}{{ 'admin.banners.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.banners.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.banners.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            {% if list %}
+                <a href="{{ path('admin_banner_new', { list: list.id }) }}" class="admin-btn admin-btn--primary">+ {{ 'admin.banners.new'|trans({}, 'admin') }}</a>
+            {% endif %}
+        </div>
+
+        <section class="admin-panel">
+            <span class="admin-panel__help">{{ live ? 'admin.banners.live'|trans({ name: live.name }, 'admin') : 'admin.banners.no_live'|trans({}, 'admin') }}</span>
+            <div class="banner-preview">
+                <span class="banner-preview__tag">{{ 'site.banner.live'|trans }}</span>
+                {% for maintenance in maintenances %}
+                    <span class="banner-preview__item"><span class="banner-preview__dot banner-preview__dot--maintenance"></span>{{ maintenance.title }}</span>
+                {% endfor %}
+                {% for banner in liveBanners %}
+                    <span class="banner-preview__item"><span class="banner-preview__dot banner-preview__dot--{{ banner.type.value }}"></span>{{ banner.text }}{% if banner.cta %} <strong>{{ banner.cta }} →</strong>{% endif %}</span>
+                {% else %}
+                    {% if maintenances is empty %}<span class="banner-preview__item">{{ 'admin.banners.empty_live'|trans({}, 'admin') }}</span>{% endif %}
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="banner-layout">
+            <section class="admin-panel" aria-labelledby="banner-lists">
+                <h2 id="banner-lists" class="admin-panel__title">{{ 'admin.banners.lists'|trans({}, 'admin') }}</h2>
+                <ul class="banner-lists">
+                    {% for item in lists %}
+                        <li class="banner-lists__item{{ list and list.id == item.list.id ? ' banner-lists__item--active' }}">
+                            <a href="{{ path('admin_banner_index', { list: item.list.id }) }}" class="banner-lists__link">
+                                <strong>{{ item.list.name }}</strong>
+                                {% if item.list.live %}<span class="admin-pill admin-pill--ok">{{ 'admin.banners.on_air'|trans({}, 'admin') }}</span>{% endif %}
+                                {% if item.list.scheduledAt %}<span class="admin-pill admin-pill--warn">{{ 'admin.banners.scheduled_at'|trans({ date: item.list.scheduledAt|date('d/m H:i') }, 'admin') }}</span>{% endif %}
+                                <span class="admin-user__meta">{{ 'admin.banners.count'|trans({ count: item.count }, 'admin') }}</span>
+                            </a>
+                            {% if not item.list.live %}
+                                <span class="admin-actions">
+                                    {{ admin_ui.post('admin_banner_list_live', { id: item.list.id }, 'admin.banners.publish_list'|trans({}, 'admin'), 'admin-btn admin-btn--secondary admin-btn--small', 'admin-banners') }}
+                                    {{ admin_ui.post('admin_banner_list_delete', { id: item.list.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-banners', 'admin.banners.delete_list'|trans({ name: item.list.name }, 'admin')) }}
+                                </span>
+                                <form class="banner-schedule" method="post" action="{{ path('admin_banner_list_schedule', { id: item.list.id }) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('admin-banners') }}">
+                                    {% if item.list.scheduledAt %}
+                                        <span class="admin-user__meta">{{ 'admin.banners.schedule_info'|trans({ date: item.list.scheduledAt|date('d/m/Y à H:i') }, 'admin') }}</span>
+                                        <button type="submit" name="cancel" value="1" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.banners.schedule_cancel'|trans({}, 'admin') }}</button>
+                                    {% else %}
+                                        <input class="admin-field__input banner-schedule__date" type="datetime-local" name="scheduled_at" min="{{ 'now'|date('Y-m-d\\TH:i') }}" required aria-label="{{ 'admin.banners.schedule_label'|trans({}, 'admin') }}">
+                                        <button type="submit" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.banners.schedule'|trans({}, 'admin') }}</button>
+                                    {% endif %}
+                                </form>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                <form class="admin-actions" method="post" action="{{ path('admin_banner_list_new') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-banners') }}">
+                    <input class="admin-field__input" name="name" maxlength="60" required placeholder="{{ 'admin.banners.list_name'|trans({}, 'admin') }}" aria-label="{{ 'admin.banners.list_name'|trans({}, 'admin') }}">
+                    <button type="submit" class="admin-btn admin-btn--secondary admin-btn--small">+ {{ 'admin.banners.new_list'|trans({}, 'admin') }}</button>
+                </form>
+            </section>
+
+            <section class="admin-panel admin-panel--flush" aria-labelledby="banner-rows">
+                <div class="admin-panel__bar"><h2 id="banner-rows" class="admin-panel__title">{{ 'admin.banners.rows'|trans({ name: list ? list.name : '—' }, 'admin') }}</h2></div>
+                {% if rows is empty %}
+                    <p class="admin-empty">{{ 'admin.banners.empty'|trans({}, 'admin') }}</p>
+                {% else %}
+                    {% set pager = paginate(rows) %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr>{% for column in ['order', 'banner', 'type', 'period', 'audience', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.banners.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                            <tbody>
+                                {% for banner in pager.items %}
+                                    {% set state = not banner.active ? 'off' : (banner.startsAt and banner.startsAt > now ? 'scheduled' : (banner.endsAt and banner.endsAt <= now ? 'expired' : 'live')) %}
+                                    <tr class="admin-table__row">
+                                        <td class="admin-table__cell">
+                                            <span class="banner-order">
+                                                <span class="banner-order__index">{{ pager.offset + loop.index }}</span>
+                                                {% if pager.offset + loop.index0 > 0 %}{{ admin_ui.post('admin_banner_move', { id: banner.id, direction: 'up' }, '↑', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-banners') }}{% endif %}
+                                                {% if pager.offset + loop.index < pager.total %}{{ admin_ui.post('admin_banner_move', { id: banner.id, direction: 'down' }, '↓', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-banners') }}{% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="admin-table__cell">
+                                            <span class="admin-user__text banner-text">
+                                                <span class="admin-user__name">{{ banner.text }}</span>
+                                                {% if banner.url %}<span class="admin-user__meta">{{ 'admin.banners.button'|trans({ cta: banner.cta ?: 'site.banner.cta'|trans, url: banner.url }, 'admin') }}</span>{% endif %}
+                                            </span>
+                                        </td>
+                                        <td class="admin-table__cell">{{ banner.type.translate() }}</td>
+                                        <td class="admin-table__cell">
+                                            <span class="banner-period">
+                                                <span>{{ banner.startsAt ? banner.startsAt|date('d/m H:i') : '…' }}</span>
+                                                <span class="banner-period__end">→ {{ banner.endsAt ? banner.endsAt|date('d/m H:i') : '…' }}</span>
+                                            </span>
+                                        </td>
+                                        <td class="admin-table__cell">
+                                            <span class="admin-user__text">
+                                                <span class="admin-user__name">{{ banner.audience.translate() }}</span>
+                                                <span class="admin-user__meta">{{ banner.pages.translate() }}</span>
+                                            </span>
+                                        </td>
+                                        <td class="admin-table__cell"><span class="admin-pill{{ { live: ' admin-pill--ok', scheduled: ' admin-pill--warn', expired: '', off: '' }[state] }}">{{ ('admin.banners.states.' ~ state)|trans({}, 'admin') }}</span></td>
+                                        <td class="admin-table__cell">
+                                            <span class="admin-actions admin-actions--nowrap">
+                                                <a href="{{ path('admin_banner_edit', { id: banner.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                                {{ admin_ui.post('admin_banner_toggle', { id: banner.id }, (banner.active ? 'admin.banners.disable' : 'admin.banners.enable')|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-banners') }}
+                                                {{ admin_ui.post('admin_banner_delete', { id: banner.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-banners', 'admin.banners.delete_confirm'|trans({}, 'admin')) }}
+                                            </span>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ admin_ui.pagination(pager) }}
+                {% endif %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

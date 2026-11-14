@@ -1,0 +1,23 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Sdk\AbstractSdk;
+
+class {{class}}Manager extends AbstractSdk
+{
+    public function __construct()
+    {
+        $this->setLanguage('fr', 'translations/game.fr.yaml');
+    }
+
+    public function init(array $players, array $settings, int $startsAt): array
+    {
+        return [
+            'players' => $players,
+            'target' => $settings['target'],
+            'scores' => array_fill_keys($players, 0),
+            'finished' => false,
+        ];
+    }
+}

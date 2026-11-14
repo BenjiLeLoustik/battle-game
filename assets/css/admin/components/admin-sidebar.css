@@ -1,0 +1,43 @@
+.admin-sidebar {
+    @apply flex flex-col gap-[18px] px-3 py-[18px];
+}
+
+.admin-sidebar__group {
+    @apply flex flex-col gap-0.5;
+}
+
+.admin-sidebar__title {
+    @apply px-3 pb-1.5 text-[11px] font-bold tracking-[0.12em] text-adm-muted uppercase;
+}
+
+.admin-sidebar__link {
+    @apply flex min-h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-adm-ink-soft hover:bg-adm-hover;
+}
+
+.admin-sidebar__link--active {
+    @apply bg-[#26224A] text-adm-accent-soft hover:bg-[#26224A];
+}
+
+.admin-sidebar__icon {
+    @apply size-[18px] shrink-0;
+}
+
+.admin-sidebar__label {
+    @apply flex-1;
+}
+
+.admin-sidebar__footer {
+    @apply mt-auto flex items-center gap-1 border-t border-adm-line px-1 pt-4 font-mono text-[10px] text-adm-muted;
+}
+
+.admin-sidebar__brand {
+    @apply mr-auto flex items-center gap-2 font-body text-xs font-semibold text-adm-ink-soft;
+}
+
+.admin-sidebar__dot {
+    @apply size-1.5 rounded-full bg-success shadow-[0_0_6px_var(--color-success)];
+}
+
+.admin-sidebar__chip {
+    @apply shrink-0 rounded-md border border-adm-line px-1.5 py-1 leading-none whitespace-nowrap;
+}

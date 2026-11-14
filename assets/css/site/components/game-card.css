@@ -1,0 +1,55 @@
+.game-card {
+    @apply flex flex-col overflow-hidden rounded-[14px] border border-line bg-surface
+    text-ink transition hover:border-[var(--game-color)];
+}
+
+.game-card[hidden] {
+    @apply hidden;
+}
+
+.game-card__thumb {
+    @apply relative flex aspect-video items-center justify-center bg-[#0F1226];
+    background-image:
+            repeating-linear-gradient(0deg, transparent 0 23px, rgba(255, 255, 255, 0.05) 23px 24px),
+            repeating-linear-gradient(90deg, transparent 0 23px, rgba(255, 255, 255, 0.05) 23px 24px),
+            radial-gradient(circle at 70% 30%, color-mix(in srgb, var(--game-color) 40%, transparent), transparent 60%),
+            radial-gradient(circle at 15% 95%, color-mix(in srgb, var(--game-color-alt) 33%, transparent), transparent 55%);
+}
+
+.game-card__icon {
+    @apply size-14 drop-shadow-[0_0_12px_var(--game-color)];
+}
+
+.game-card__category {
+    @apply absolute top-2.5 left-2.5 rounded-md bg-bg/80 px-2 py-1 text-[11px]
+    font-semibold tracking-[0.06em] text-ink uppercase;
+}
+
+.game-card__body {
+    @apply flex flex-1 flex-col gap-2 p-3.5;
+}
+
+.game-card__name {
+    @apply font-display text-[17px] font-bold tracking-[0.02em];
+}
+
+.game-card__pitch {
+    @apply line-clamp-3 min-h-[calc(3*1.4em)] text-[13px] leading-[1.4] text-muted-2;
+}
+
+.game-card__meta {
+    @apply mt-auto flex justify-between text-xs text-muted-2;
+}
+
+.game-card__online {
+    @apply text-success;
+}
+
+.game-card__play {
+    @apply mt-1 flex h-[38px] items-center justify-center rounded-lg bg-cyan text-sm font-bold text-on-cyan;
+}
+
+.game-card__early {
+    @apply absolute top-2.5 right-2.5 rounded-md bg-yellow px-2 py-1 font-display text-[10px] font-bold tracking-[0.08em] text-on-cyan uppercase
+    shadow-[0_0_14px_rgb(255_201_74/0.45)];
+}

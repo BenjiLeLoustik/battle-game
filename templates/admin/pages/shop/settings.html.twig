@@ -1,0 +1,153 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'shop_settings' %}
+
+{% block title %}{{ 'admin.shop.settings.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page admin-page--narrow">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.shop.settings.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.shop.settings.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+        </div>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.shop.settings.stripe'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.shop.settings.stripe_help'|trans({}, 'admin') }}</span>
+            </div>
+            <dl class="admin-dl">
+                <dt class="admin-dl__term">STRIPE_SECRET_KEY</dt>
+                <dd class="admin-dl__value"><span class="admin-pill{{ stripe.configured ? ' admin-pill--ok' : ' admin-pill--danger' }}">{{ stripe.configured ? (stripe.test ? 'admin.shop.settings.test' : 'admin.shop.settings.live')|trans({}, 'admin') : 'admin.shop.settings.missing'|trans({}, 'admin') }}</span></dd>
+                <dt class="admin-dl__term">STRIPE_WEBHOOK_SECRET</dt>
+                <dd class="admin-dl__value"><span class="admin-pill{{ stripe.webhook ? ' admin-pill--ok' : ' admin-pill--danger' }}">{{ (stripe.webhook ? 'admin.shop.settings.ok' : 'admin.shop.settings.missing')|trans({}, 'admin') }}</span></dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.settings.webhook_url'|trans({}, 'admin') }}</dt>
+                <dd class="admin-dl__value"><code class="shop-admin-code">{{ webhook }}</code></dd>
+                <dt class="admin-dl__term">{{ 'admin.shop.settings.events'|trans({}, 'admin') }}</dt>
+                <dd class="admin-dl__value"><code class="shop-admin-code">checkout.session.completed, checkout.session.async_payment_succeeded, invoice.paid, customer.subscription.updated, customer.subscription.deleted</code></dd>
+            </dl>
+        </section>
+
+        <form class="shop-form__stack" method="post">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.settings.general'|trans({}, 'admin') }}</h2>
+                </div>
+                <label class="admin-check"><input type="checkbox" class="admin-check__input" name="shop_enabled" value="1"{{ values.shop_enabled ? ' checked' }}> {{ 'admin.shop.settings.enabled'|trans({}, 'admin') }}</label>
+            </section>
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.settings.legal'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.legal_help'|trans({}, 'admin') }}</span>
+                </div>
+                <div class="admin-form-grid">
+                    {% for key in ['legal_name', 'legal_form', 'legal_siret', 'legal_vat_number', 'legal_email'] %}
+                        <label class="admin-field">
+                            {{ ('admin.shop.settings.' ~ key)|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="{{ key }}" value="{{ legal[key] }}" maxlength="120"{{ key == 'legal_email' ? ' type=email' }}>
+                        </label>
+                    {% endfor %}
+                    <label class="admin-field">
+                        {{ 'admin.shop.settings.vat_rate'|trans({}, 'admin') }}
+                        <input class="admin-field__input" name="vat_rate" inputmode="decimal" value="{{ legal.vat_rate|number_format(1, ',', '')|replace({ ',0': '' }) }}">
+                    </label>
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.shop.settings.legal_address'|trans({}, 'admin') }}
+                    <textarea class="admin-field__input admin-field__input--area" name="legal_address" rows="3" maxlength="300">{{ legal.legal_address }}</textarea>
+                </label>
+                <label class="admin-check"><input type="checkbox" class="admin-check__input" name="vat_exempt" value="1"{{ legal.vat_exempt ? ' checked' }}> {{ 'admin.shop.settings.vat_exempt'|trans({}, 'admin') }}</label>
+            </section>
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.settings.coins'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.coins_help'|trans({}, 'admin') }}</span>
+                </div>
+                <div class="admin-form-grid">
+                    {% for key in ['coins_per_match', 'coins_per_win'] %}
+                        <label class="admin-field">
+                            {{ ('admin.shop.settings.' ~ key)|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="0" name="{{ key }}" value="{{ values[key] }}">
+                        </label>
+                    {% endfor %}
+                </div>
+            </section>
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.settings.rewards'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.rewards_help'|trans({}, 'admin') }}</span>
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.shop.settings.daily_rewards'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="daily_rewards" value="{{ lists.daily_rewards }}" placeholder="10, 15, 20, 25, 30, 40, 60">
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.daily_rewards_help'|trans({}, 'admin') }}</span>
+                </label>
+                <div class="admin-form-grid">
+                    {% for key in ['challenge_play', 'challenge_win', 'challenge_variety', 'referral_referrer', 'referral_referee'] %}
+                        <label class="admin-field">
+                            {{ ('admin.shop.settings.' ~ key)|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="0" name="{{ key }}" value="{{ values[key] }}">
+                        </label>
+                    {% endfor %}
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.shop.settings.season_rewards'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="season_rewards" value="{{ lists.season_rewards }}" placeholder="1000, 600, 400">
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.season_rewards_help'|trans({}, 'admin') }}</span>
+                </label>
+            </section>
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.settings.lives'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.shop.settings.lives_help'|trans({}, 'admin') }}</span>
+                </div>
+                <div class="admin-form-grid">
+                    {% for key in ['lives_free'] %}
+                        <label class="admin-field">
+                            {{ ('admin.shop.settings.' ~ key)|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="0" name="{{ key }}" value="{{ values[key] }}">
+                        </label>
+                    {% endfor %}
+                </div>
+            </section>
+            <div class="admin-actions admin-actions--end">
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+            </div>
+        </form>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.shop.settings.adjust'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.shop.settings.adjust_help'|trans({}, 'admin') }}</span>
+            </div>
+            <form class="shop-adjust" method="post" action="{{ path('admin_shop_coins') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+                <label class="admin-field shop-adjust__player">
+                    {{ 'admin.shop.settings.player'|trans({}, 'admin') }}
+                    {{ admin_ui.player('username', path('admin_shop_players'), 'admin.shop.settings.player_search'|trans({}, 'admin')) }}
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.settings.operation'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="operation">
+                        <option value="add">{{ 'admin.shop.settings.add'|trans({}, 'admin') }}</option>
+                        <option value="remove">{{ 'admin.shop.settings.remove'|trans({}, 'admin') }}</option>
+                    </select>
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.settings.amount'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" name="amount" min="1" max="1000000" required placeholder="100">
+                </label>
+                <label class="admin-field shop-adjust__reason">
+                    {{ 'admin.shop.settings.reason'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="label" maxlength="160" placeholder="{{ 'admin.shop.settings.reason_placeholder'|trans({}, 'admin') }}">
+                </label>
+                <button type="submit" class="admin-btn admin-btn--primary shop-adjust__submit">{{ 'admin.shop.settings.adjust_submit'|trans({}, 'admin') }}</button>
+            </form>
+        </section>
+    </div>
+{% endblock %}

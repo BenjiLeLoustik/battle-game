@@ -1,0 +1,50 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_tournaments' %}
+
+{% block title %}{{ 'admin.engage.tournaments.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.tournaments.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.tournaments.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_engage_tournament_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.engage.tournaments.new'|trans({}, 'admin') }}</a>
+        </div>
+        <section class="admin-panel admin-panel--flush">
+            {% if tournaments is empty %}
+                <p class="admin-empty">{{ 'admin.engage.tournaments.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(tournaments, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['name', 'game', 'period', 'players', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.engage.tournaments.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for item in pager.items %}
+                                {% set t = item.tournament %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><a class="admin-link" href="{{ path('site_tournament_show', { id: t.id }) }}" target="_blank" rel="noopener">{{ t.name }}</a>{% if not t.published %} <span class="admin-pill">{{ 'admin.engage.tournaments.draft'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell">{{ t.game.name }}</td>
+                                    <td class="admin-table__cell">{{ t.startsAt|date('d/m H:i') }} → {{ t.endsAt|date('d/m H:i') }}</td>
+                                    <td class="admin-table__cell">{{ item.count }}{{ t.maxPlayers ? ' / ' ~ t.maxPlayers }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ t.state == 'live' ? ' admin-pill--ok' : (t.state == 'upcoming' ? ' admin-pill--warn' : '') }}">{{ ('site.tournaments.states.' ~ t.state)|trans }}</span>{% if t.rewardedAt %} <span class="admin-pill admin-pill--accent">{{ 'admin.engage.tournaments.rewarded'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_engage_tournament_edit', { id: t.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_engage_tournament_delete', { id: t.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-engage', 'admin.engage.delete_confirm'|trans({ name: t.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/game.html.twig' as games_ui %}
+
+{% set active = 'home' %}
+{% set user = app_user() %}
+
+{% block title %}{{ game.name }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="game-page" style="--game-color: {{ game.color }}; --game-color-alt: {{ game.colorAlt }}">
+        <nav class="game-page__crumbs" aria-label="{{ 'site.game_page.breadcrumb'|trans }}">
+            <a href="{{ path('site_home_index') }}" class="game-page__crumb-link">{{ 'site.game_page.games'|trans }}</a>
+            <span aria-hidden="true">/</span>
+            <span>{{ game.category|localize('name') }}</span>
+            <span aria-hidden="true">/</span>
+            <span class="game-page__current">{{ game.name }}</span>
+        </nav>
+
+        {% if down or maintenance %}
+            {% set today = 'now'|date('d/m') %}
+            {% set starts = maintenance ? (maintenance.startsAt / 1000)|date((maintenance.startsAt / 1000)|date('d/m') == today ? 'H:i' : 'd/m H:i') : null %}
+            {% set ends = maintenance ? (maintenance.endsAt / 1000)|date((maintenance.endsAt / 1000)|date('d/m') == today ? 'H:i' : 'd/m H:i') : null %}
+            <section class="game-page__notice{{ down ? ' game-page__notice--down' }}" role="status">
+                <span class="game-page__notice-icon">
+                    <svg class="game-page__notice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z"/></svg>
+                </span>
+                <div class="game-page__notice-text">
+                    <strong class="game-page__notice-title">
+                        {% if down %}
+                            {{ 'site.game_page.maintenance.down_title'|trans({ name: game.name }) }}
+                        {% elseif blocked %}
+                            {{ 'site.game_page.maintenance.blocked_title'|trans({ time: starts }) }}
+                        {% else %}
+                            {{ 'site.game_page.maintenance.planned_title'|trans({ time: starts }) }}
+                        {% endif %}
+                    </strong>
+                    <span class="game-page__notice-message">
+                        {% if maintenance and maintenance.message %}
+                            {{ maintenance.message }}
+                        {% elseif down %}
+                            {{ 'site.game_page.maintenance.down_message'|trans({ name: game.name }) }}
+                        {% endif %}
+                        {% if blocked and not down %}
+                            {{ 'site.game_page.maintenance.blocked_message'|trans }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% if maintenance %}
+                    <div class="game-page__notice-side">
+                        <span class="game-page__notice-label">{{ (down ? 'site.game_page.maintenance.back' : 'site.game_page.maintenance.window')|trans }}</span>
+                        <strong class="game-page__notice-time">{{ down ? ends : starts ~ ' → ' ~ ends }}</strong>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="game-page__hero">
+            <div class="game-page__cover{{ down ? ' game-page__cover--down' }}">
+                {% if down %}
+                    <span class="game-page__cover-badge">{{ 'site.game_page.maintenance.badge'|trans }}</span>
+                {% endif %}
+                {% if game.cover %}
+                    <img class="game-page__cover-image" src="{{ game.cover }}" alt="">
+                {% else %}
+                    <svg class="game-page__cover-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                {% endif %}
+            </div>
+            <div class="game-page__intro">
+                <div class="game-page__tags">
+                    <span class="game-page__tag game-page__tag--category">{{ game.category|localize('name') }}</span>
+                    {% if game.earlyAccess %}<span class="game-page__tag game-page__tag--early">{{ 'site.game.early'|trans }}</span>{% endif %}
+                    <span class="game-page__tag">{{ 'site.game.players'|trans({ players: game.players }) }}</span>
+                    <span class="game-page__tag">{{ 'site.game.duration'|trans({ minutes: game.duration }) }}</span>
+                </div>
+                <h1 class="game-page__title">{{ game.name }}</h1>
+                <p class="game-page__description">{{ game|localize('description') }}</p>
+                <div class="game-page__stats">
+                    <div class="game-page__stat">
+                        <span class="game-page__stat-label">{{ 'site.game_page.playing'|trans }}</span>
+                        <strong class="game-page__stat-value game-page__stat-value--live">{{ online }}</strong>
+                    </div>
+                    {% if stats.board %}
+                        <div class="game-page__stat">
+                            <span class="game-page__stat-label">{{ 'site.game_page.record'|trans }}</span>
+                            <strong class="game-page__stat-value game-page__stat-value--accent">{{ games_ui.stat(stats.board, stats.record) }}</strong>
+                        </div>
+                        <div class="game-page__stat">
+                            <span class="game-page__stat-label">{{ 'site.game_page.best'|trans }}</span>
+                            <strong class="game-page__stat-value">{{ games_ui.stat(stats.board, stats.best) }}</strong>
+                        </div>
+                    {% endif %}
+                </div>
+                {% for event in game_events(game) %}
+                    <div class="game-event" style="--event-color: {{ event.color }}">
+                        <strong>{{ event.name }}</strong>
+                        <span>{% if event.xpMultiplier > 1 %}XP ×{{ event.xpMultiplier|number_format(1, ',')|replace({ ',0': '' }) }}{% endif %}{% if event.coinsMultiplier > 1 %} · {{ 'site.events.coins'|trans({ x: event.coinsMultiplier|number_format(1, ',')|replace({ ',0': '' }) }) }}{% endif %} · {{ 'site.events.until'|trans({ date: event.endsAt|date('d/m H:i') }) }}</span>
+                    </div>
+                {% endfor %}
+                {% set purse = wallet() %}
+                {% if purse and not purse.unlimited and not locked %}
+                    {% set lives = purse.left + purse.bonus %}
+                    <div class="game-lives{{ lives == 0 ? ' game-lives--empty' }}">
+                        <svg class="game-lives__icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></svg>
+                        <span class="game-lives__text">
+                            {% if lives == 0 %}
+                                {{ 'site.game_page.lives.empty'|trans({ time: purse.resetAt|date('H:i') }) }}
+                            {% else %}
+                                {{ 'site.game_page.lives.left'|trans({ left: purse.left, max: purse.max }) }}{% if purse.bonus > 0 %} · {{ 'site.game_page.lives.bonus'|trans({ count: purse.bonus }) }}{% endif %}
+                            {% endif %}
+                        </span>
+                        <a href="{{ path('site_shop_index', { tab: 'lives' }) }}" class="game-lives__link">{{ 'site.game_page.lives.more'|trans }}</a>
+                    </div>
+                {% endif %}
+                <div class="game-page__actions">
+                    {% if locked %}
+                        <a href="{{ path('site_shop_index', { tab: 'subscription' }) }}" class="btn btn--xl game-page__action game-page__action--early">
+                            {{ 'site.game.early_unlock'|trans }}
+                        </a>
+                    {% elseif blocked %}
+                        <button type="button" class="game-page__action game-page__action--disabled" disabled>
+                            {{ 'site.game_page.maintenance.unavailable'|trans({ action: 'site.game_page.quick_play'|trans }) }}
+                        </button>
+                    {% else %}
+                        <a href="{{ path('site_play_quick', { slug: game.slug }) }}" class="btn btn--primary btn--xl game-page__action">
+                            {{ 'site.game_page.quick_play'|trans }}
+                        </a>
+                        {% if game.maxPlayers >= 2 and app_user() and not app_user().guest %}
+                            <a href="{{ path('site_play_ranked', { slug: game.slug }) }}" class="btn btn--ghost btn--xl game-page__action game-page__action--secondary game-page__action--ranked">
+                                {{ 'site.ranked.play'|trans }}
+                            </a>
+                        {% endif %}
+                        {% if game.solo %}
+                            <a href="{{ path('site_play_solo', { slug: game.slug }) }}" class="btn btn--ghost btn--xl game-page__action game-page__action--secondary">
+                                {{ 'site.game_page.solo'|trans }}
+                            </a>
+                        {% endif %}
+                    {% endif %}
+                </div>
+                {% if down and maintenance %}
+                    <span class="game-page__note">
+                        {{ (maintenance.policy == 'stop' ? 'site.game_page.maintenance.note_stop' : 'site.game_page.maintenance.note_finish')|trans({ time: starts }) }}
+                    </span>
+                {% endif %}
+            </div>
+        </section>
+
+        {% if alternatives %}
+            <section class="game-page__section" aria-labelledby="game-alternatives">
+                <h2 id="game-alternatives" class="game-page__heading">{{ 'site.game_page.maintenance.alternatives'|trans }}</h2>
+                <div class="game-page__alternatives">
+                    {% for alternative in alternatives %}
+                        {% set other = alternative.game %}
+                        <a href="{{ path('site_game_show', { slug: other.slug }) }}" class="game-page__alternative" style="--game-color: {{ other.color }}">
+                            <span class="game-page__alternative-thumb">
+                                {% if other.icon %}
+                                    <img class="game-page__alternative-icon" src="{{ other.icon }}" alt="">
+                                {% else %}
+                                    <svg class="game-page__alternative-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                {% endif %}
+                            </span>
+                            <span class="game-page__alternative-text">
+                                <strong class="game-page__alternative-name">{{ other.name }}</strong>
+                                <span class="game-page__alternative-meta">{{ other.category|localize('name') }} · {{ 'site.game_page.maintenance.playing'|trans({ count: alternative.online }) }}</span>
+                            </span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if game.rules and not down %}
+            <section class="game-page__section" aria-labelledby="game-rules">
+                <h2 id="game-rules" class="game-page__heading">{{ 'site.game_page.how_to'|trans }}</h2>
+                <div class="game-page__cards">
+                    {% for rule in game|localize('rules') %}
+                        <div class="game-page__card">
+                            <span class="game-page__step">{{ '%02d'|format(loop.index) }}</span>
+                            <strong class="game-page__card-title">{{ rule.title }}</strong>
+                            <span class="game-page__card-text">{{ rule.description }}</span>
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        <aside class="game-page__aside"{{ down ? ' hidden' }}>
+            {% if stats.board %}
+                <section class="game-page__panel" aria-labelledby="game-board">
+                    <h2 id="game-board" class="game-page__panel-title">{{ stats.board.leaderboard }}</h2>
+                    {% if stats.leaderboard %}
+                        <ol class="game-page__board">
+                            {% for row in stats.leaderboard %}
+                                {% set mine = user and row.id == user.id %}
+                                <li class="game-page__row{{ mine ? ' game-page__row--me' }}">
+                                    <span class="game-page__row-rank">{{ loop.index }}</span>
+                                    <span class="game-page__row-name">{{ row.username }}{{ mine ? 'site.game_page.you'|trans }}</span>
+                                    <span class="game-page__row-value">{{ games_ui.stat(stats.board, row.best) }}</span>
+                                </li>
+                            {% endfor %}
+                            {% if stats.me %}
+                                <li class="game-page__row game-page__row--me">
+                                    <span class="game-page__row-rank">{{ stats.me.rank }}</span>
+                                    <span class="game-page__row-name">{{ stats.me.username }}{{ 'site.game_page.you'|trans }}</span>
+                                    <span class="game-page__row-value">{{ games_ui.stat(stats.board, stats.me.best) }}</span>
+                                </li>
+                            {% endif %}
+                        </ol>
+                    {% else %}
+                        <p class="game-page__empty">{{ 'site.game_page.no_results'|trans }}</p>
+                    {% endif %}
+                </section>
+            {% endif %}
+
+            <section class="game-page__panel" aria-labelledby="game-mine">
+                <h2 id="game-mine" class="game-page__panel-title">{{ 'site.game_page.my_stats'|trans }}</h2>
+                {% if stats.summary is null %}
+                    <p class="game-page__empty">
+                        <a href="{{ path('site_security_login') }}" class="game-page__crumb-link">{{ 'site.game_page.login'|trans }}</a>
+                        {{ 'site.game_page.login_help'|trans }}
+                    </p>
+                {% elseif stats.summary.played == 0 %}
+                    <p class="game-page__empty">{{ 'site.game_page.no_games'|trans }}</p>
+                {% else %}
+                    {% set won = stats.summary.won|default(0) %}
+                    <div class="game-page__figures">
+                        <div class="game-page__figure">
+                            <span class="game-page__figure-label">{{ 'site.game_page.games_played'|trans }}</span>
+                            <strong class="game-page__figure-value">{{ stats.summary.played }}</strong>
+                        </div>
+                        <div class="game-page__figure">
+                            <span class="game-page__figure-label">{{ 'site.game_page.wins'|trans }}</span>
+                            <strong class="game-page__figure-value">
+                                {{ won }} <span class="game-page__figure-rate">{{ (won / stats.summary.played * 100)|round }} %</span>
+                            </strong>
+                        </div>
+                        {% for stat in stats.details %}
+                            <div class="game-page__figure">
+                                <span class="game-page__figure-label">{{ stat.label }}</span>
+                                <strong class="game-page__figure-value">{{ games_ui.stat(stat, stats.summary[stat.key]) }}</strong>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="game-page__panel" aria-labelledby="game-infos">
+                <h2 id="game-infos" class="game-page__panel-title">{{ 'site.game_page.infos'|trans }}</h2>
+                <dl class="game-page__infos">
+                    <dt class="game-page__info-label">{{ 'site.game_page.author'|trans }}</dt>
+                    <dd class="game-page__info-value">{{ game.author }}</dd>
+                    <dt class="game-page__info-label">{{ 'site.game_page.updated'|trans }}</dt>
+                    <dd class="game-page__info-value">{{ game.updatedAt|date('d/m/Y') }}</dd>
+                </dl>
+            </section>
+        </aside>
+    </div>
+{% endblock %}

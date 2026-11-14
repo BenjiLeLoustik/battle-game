@@ -1,0 +1,49 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'emails' %}
+
+{% block title %}{{ 'admin.emails.tabs.layout'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        {% include '@admin/components/partials/email-tabs.html.twig' %}
+
+        <div class="email-editor" data-component="EmailLayout" data-preview="{{ path('admin_email_layout_preview') }}" data-token="{{ csrf_token('admin-emails') }}">
+            <form class="email-editor__form" method="post">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-emails') }}">
+                <section class="admin-panel">
+                    <div class="admin-panel__bar">
+                        <div class="admin-panel__intro">
+                            <h2 class="admin-panel__title">{{ 'admin.emails.layout.title'|trans({}, 'admin') }}</h2>
+                            <span class="admin-panel__help">{{ 'admin.emails.layout.help'|trans({}, 'admin') }}</span>
+                        </div>
+                        <span class="admin-pill{{ custom ? ' admin-pill--accent' : '' }}">{{ (custom ? 'admin.emails.layout.custom' : 'admin.emails.layout.default')|trans({}, 'admin') }}</span>
+                    </div>
+                    <div class="email-editor__tokens">
+                        {% for token in tokens %}
+                            <code class="email-editor__token" title="{{ ('admin.emails.layout.tokens.' ~ token)|trans({}, 'admin') }}">{{ '{' ~ token ~ '}' }}</code>
+                        {% endfor %}
+                    </div>
+                    <textarea class="admin-field__input admin-field__input--area admin-field__input--code email-editor__code" name="layout" rows="24" spellcheck="false" aria-label="{{ 'admin.emails.layout.title'|trans({}, 'admin') }}">{{ layout }}</textarea>
+                </section>
+                <div class="admin-actions admin-actions--end">
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+                </div>
+            </form>
+
+            <aside class="email-editor__side">
+                <section class="admin-panel admin-panel--flush email-editor__preview">
+                    <div class="admin-panel__bar">
+                        <h2 class="admin-panel__title">{{ 'admin.emails.preview'|trans({}, 'admin') }}</h2>
+                    </div>
+                    <iframe class="email-editor__frame" title="{{ 'admin.emails.preview'|trans({}, 'admin') }}" sandbox></iframe>
+                </section>
+                {% if custom %}
+                    {{ admin_ui.post('admin_email_layout', {}, 'admin.emails.layout.reset'|trans({}, 'admin'), 'admin-btn admin-btn--ghost', 'admin-emails', 'admin.emails.layout.reset_confirm'|trans({}, 'admin')) }}
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+{% endblock %}

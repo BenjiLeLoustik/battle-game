@@ -1,0 +1,66 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% import '@site/components/macros/form.html.twig' as form_ui %}
+
+{% set game = preferences.section('game') %}
+
+{% block settings %}
+    <form class="settings__form" method="post" action="{{ path('site_settings_game') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+
+        <section class="settings-card" aria-labelledby="settings-sound">
+            <h2 id="settings-sound" class="settings-card__title">{{ 'site.settings.game.sound'|trans }}</h2>
+            <div class="settings-card__grid">
+                {% for key in ['sound', 'music'] %}
+                    <label class="settings-range" data-component="RangeLabel">
+                        <span class="settings-range__label">{{ ('site.settings.game.' ~ key)|trans }} · <span class="settings-range__value">{{ game[key] }}</span> %</span>
+                        <input type="range" class="settings-range__input" name="{{ key }}" min="0" max="100" step="5" value="{{ game[key] }}">
+                    </label>
+                {% endfor %}
+            </div>
+            <span class="settings-card__hint">{{ 'site.settings.game.sound_help'|trans }}</span>
+        </section>
+
+        <section class="settings-card" aria-labelledby="settings-play">
+            <h2 id="settings-play" class="settings-card__title">{{ 'site.settings.game.play'|trans }}</h2>
+            <div class="settings-card__list">
+                {% for key in ['fullscreen', 'ping', 'vibrations', 'stay_in_room'] %}
+                    {{ form_ui.switch(key, game[key], ('site.settings.game.' ~ key ~ '.title')|trans, ('site.settings.game.' ~ key ~ '.help')|trans) }}
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="settings-card" aria-labelledby="settings-look">
+            <h2 id="settings-look" class="settings-card__title">{{ 'site.settings.game.look'|trans }}</h2>
+            <fieldset class="settings-accents">
+                <legend class="settings-accents__legend">{{ 'site.settings.game.accent'|trans }}</legend>
+                <div class="settings-accents__list">
+                    {% for key, color in accents %}
+                        <label class="settings-accents__item" style="--accent: {{ color }}" title="{{ ('site.settings.game.accents.' ~ key)|trans }}">
+                            <input type="radio" class="settings-accents__input" name="accent" value="{{ key }}"{{ game.accent == key ? ' checked' }}>
+                            <span class="settings-accents__swatch" aria-hidden="true"></span>
+                            <span class="settings-accents__name">{{ ('site.settings.game.accents.' ~ key)|trans }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <div class="settings-card__list">
+                {% for key in ['reduce_motion', 'contrast'] %}
+                    {{ form_ui.switch(key, game[key], ('site.settings.game.' ~ key ~ '.title')|trans, ('site.settings.game.' ~ key ~ '.help')|trans) }}
+                {% endfor %}
+            </div>
+            <label class="settings-select">
+                <span class="settings-select__label">{{ 'site.settings.game.language'|trans }}</span>
+                <select class="field__input settings-select__input" name="locale">
+                    {% for locale in locales %}
+                        <option value="{{ locale }}"{{ locale == app.locale ? ' selected' }}>{{ locale|language_name }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+        </section>
+
+        <div class="settings__actions">
+            <button type="submit" class="settings-button settings-button--primary settings-button--large">{{ 'site.settings.save'|trans }}</button>
+        </div>
+    </form>
+{% endblock %}

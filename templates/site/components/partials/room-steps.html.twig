@@ -1,0 +1,17 @@
+{% set steps = ['room', 'invite'] %}
+
+<ol class="room-steps" aria-label="{{ 'site.room.steps.label'|trans }}">
+    {% for id in steps %}
+        {% set number = loop.index %}
+        {% set state = number < step ? 'done' : (number == step ? 'current' : 'next') %}
+        <li class="room-steps__item">
+            <span class="room-steps__step"{% if state == 'current' %} aria-current="step"{% endif %}>
+                <span class="room-steps__dot room-steps__dot--{{ state }}">{{ state == 'done' ? '✓' : number }}</span>
+                <span class="room-steps__label room-steps__label--{{ state }}">{{ ('site.room.steps.' ~ id)|trans }}</span>
+            </span>
+            {% if not loop.last %}
+                <span class="room-steps__bar{{ number < step ? ' room-steps__bar--done' }}" aria-hidden="true"></span>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ol>

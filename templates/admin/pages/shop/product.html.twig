@@ -1,0 +1,472 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set subscription = product.type.value == 'subscription' %}
+{% set active = subscription ? 'shop_subscriptions' : 'shop_products' %}
+{% set back = subscription ? path('admin_shop_subscriptions') : path('admin_shop_products') %}
+{% set title = product.id ? 'admin.shop.products.edit'|trans({}, 'admin') : 'admin.shop.products.new'|trans({}, 'admin') %}
+{% set icons = {
+    coins: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v10M9 9.5c0-1 1.3-1.5 3-1.5s3 .7 3 1.8c0 2.7-6 1.4-6 4.2 0 1.1 1.3 2 3 2s3-.6 3-1.6',
+    subscription: 'M5 16l-2-9 5 4 4-7 4 7 5-4-2 9H5zM5 20h14',
+    badge: 'M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z',
+    cosmetic: 'M12 3a9 9 0 0 0 0 18c1.1 0 2-.9 2-2 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 21 9.8C21 6 17 3 12 3zM7.5 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM12 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+    physical: 'M3 8l9-5 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8',
+    gift: 'M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8S10 3 7.5 3a2.5 2.5 0 0 0 0 5H12zM12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5H12z',
+    lives: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+} %}
+
+{% macro swatches(name, colors) %}
+    <div class="designer__swatches">
+        {% for index in 0..2 %}
+            <label class="designer__swatch" style="--swatch: {{ colors[index] }}">
+                <input type="color" class="designer__swatch-input" name="{{ name }}" value="{{ colors[index] }}" aria-label="{{ 'admin.shop.design.color_n'|trans({ n: index + 1 }, 'admin') }}">
+                <span class="designer__swatch-chip"></span>
+                <span class="designer__swatch-text"><strong>{{ 'admin.shop.design.color_n'|trans({ n: index + 1 }, 'admin') }}</strong><span data-swatch-hex>{{ colors[index]|upper }}</span></span>
+            </label>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro choices(name, items, current, prefix, modifier = '') %}
+    <div class="designer__choices{{ modifier ? ' designer__choices--' ~ modifier }}" role="radiogroup">
+        {% for item in items %}
+            <label class="designer__choice designer__choice--{{ item }}">
+                <input type="radio" class="sr-only" name="{{ name }}" value="{{ item }}"{{ current == item ? ' checked' }}>
+                <span class="designer__choice-sample" aria-hidden="true"></span>
+                <span class="designer__choice-label">{{ (prefix ~ item)|trans({}, 'admin') }}</span>
+            </label>
+        {% endfor %}
+    </div>
+{% endmacro %}
+{% macro range(name, label, min, max, value, unit, step = 1) %}
+    <label class="designer__group designer__range">
+        <span class="designer__label">{{ label }} <output class="designer__output" data-range-output>{{ value }}{{ unit }}</output></span>
+        <input type="range" min="{{ min }}" max="{{ max }}" step="{{ step }}" name="{{ name }}" value="{{ value }}" data-unit="{{ unit }}">
+    </label>
+{% endmacro %}
+
+{% macro error(errors, key) %}
+    {% if errors[key] is defined %}<span class="admin-field__error">{{ errors[key]|trans({}, 'admin') }}</span>{% endif %}
+{% endmacro %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post" enctype="multipart/form-data" data-component="ShopProductForm">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ back }}" class="admin-crumbs__link">{{ (subscription ? 'admin.shop.subscriptions.title' : 'admin.shop.products.title')|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ product.id ? product.name : title }}</h1>
+            <span class="admin-actions">
+                <a href="{{ back }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+            </span>
+        </div>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.shop.products.type'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.shop.products.type_help'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="shop-types">
+                {% for item in types %}
+                    <label class="shop-type">
+                        <input type="radio" class="shop-type__input" name="type" value="{{ item.value }}" data-coins="{{ item.allowsCoins ? 1 : 0 }}"{{ product.type == item ? ' checked' }}>
+                        <span class="shop-type__icon shop-type__icon--{{ item.value }}">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icons[item.value] }}"/></svg>
+                        </span>
+                        <span class="shop-type__text">
+                            <strong class="shop-type__name">{{ item.translate() }}</strong>
+                            <span class="shop-type__help">{{ ('admin.shop.products.types.' ~ item.value)|trans({}, 'admin') }}</span>
+                        </span>
+                    </label>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="shop-form">
+            <div class="shop-form__main">
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.products.content'|trans({}, 'admin') }}</h2>
+                    <div class="shop-form__row">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.name'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="name" value="{{ product.name }}" maxlength="80" required>
+                            {{ _self.error(errors, 'name') }}
+                        </label>
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.slug'|trans({}, 'admin') }}
+                            <span class="shop-slug">
+                                <span class="shop-slug__prefix">/shop/</span>
+                                <input class="admin-field__input shop-slug__input" name="slug" value="{{ product.slug }}" maxlength="100" pattern="[a-z0-9\-]*" placeholder="{{ 'admin.shop.products.slug_auto'|trans({}, 'admin') }}">
+                            </span>
+                            {{ _self.error(errors, 'slug') }}
+                        </label>
+                    </div>
+                    <label class="admin-field">
+                        {{ 'admin.shop.products.description'|trans({}, 'admin') }}
+                        <textarea class="admin-field__input admin-field__input--area" name="description" rows="4" maxlength="2000">{{ product.description }}</textarea>
+                    </label>
+                </section>
+
+                <section class="admin-panel">
+                    <div class="admin-panel__intro">
+                        <h2 class="admin-panel__title">{{ 'admin.shop.products.price'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.shop.products.price_help'|trans({}, 'admin') }}</span>
+                    </div>
+                    {% if not card %}
+                        <p class="admin-note"><span class="admin-note__icon">i</span>{{ 'admin.shop.products.stripe_off'|trans({}, 'admin') }}</p>
+                    {% endif %}
+                    <div class="shop-form__row">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.price_euros'|trans({}, 'admin') }}
+                            <span class="shop-affix">
+                                <input class="admin-field__input" name="price_euros" inputmode="decimal" value="{{ product.priceCents is not null ? (product.priceCents / 100)|number_format(2, ',', '') }}" placeholder="4,99">
+                                <span class="shop-affix__unit">{{ subscription ? '€ / ' ~ 'admin.shop.month'|trans({}, 'admin') : '€' }}</span>
+                            </span>
+                        </label>
+                        <label class="admin-field" data-coins-field>
+                            {{ 'admin.shop.products.price_coins'|trans({}, 'admin') }}
+                            <span class="shop-affix">
+                                <input class="admin-field__input" type="number" min="1" name="price_coins" value="{{ product.priceCoins }}" placeholder="300">
+                                <span class="shop-affix__unit">{{ 'admin.shop.coins_unit'|trans({}, 'admin') }}</span>
+                            </span>
+                        </label>
+                    </div>
+                    {{ _self.error(errors, 'price') }}
+                </section>
+
+                <section class="admin-panel">
+                    <div class="admin-panel__intro">
+                        <h2 class="admin-panel__title">{{ 'admin.shop.products.delivery'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.shop.products.delivery_help'|trans({}, 'admin') }}</span>
+                    </div>
+
+                    <div class="shop-form__row" data-for="coins">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.coins_amount'|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="1" name="coins" value="{{ product.option('coins') }}">
+                            {{ _self.error(errors, 'coins') }}
+                        </label>
+                    </div>
+
+                    <div class="shop-form__row" data-for="lives">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.lives_amount'|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="1" name="lives" value="{{ product.option('lives') }}">
+                            {{ _self.error(errors, 'lives') }}
+                        </label>
+                    </div>
+
+                    <div class="shop-form__stack" data-for="subscription">
+                        <div class="shop-form__row">
+                            <label class="admin-field">
+                                {{ 'admin.shop.products.plan_lives'|trans({}, 'admin') }}
+                                <input class="admin-field__input" type="number" min="1" name="plan_lives" value="{{ product.option('lives', 0) > 0 ? product.option('lives') : 10 }}" data-plan-lives>
+                                <span class="admin-panel__help">{{ 'admin.shop.products.plan_lives_help'|trans({}, 'admin') }}</span>
+                            </label>
+                            <label class="admin-check shop-form__check">
+                                <input type="checkbox" class="admin-check__input" name="unlimited" value="1" data-plan-unlimited{{ product.id and product.option('lives', 0) <= 0 ? ' checked' }}>
+                                {{ 'admin.shop.products.plan_unlimited'|trans({}, 'admin') }}
+                            </label>
+                        </div>
+                        <div class="shop-badge-editor" data-badge-editor>
+                            <div class="shop-badge-editor__preview">
+                                <span class="avatar avatar--lg avatar--plan">BG{{ ui.plan(product.badge, 'avatar') }}</span>
+                                <span class="shop-badge-editor__caption">{{ 'admin.shop.products.badge_preview'|trans({}, 'admin') }}</span>
+                            </div>
+                            <div class="shop-form__stack">
+                                <div class="admin-field lucide-field" data-component="LucidePicker" data-cdn="https://unpkg.com/lucide-static@0.460.0/icons/">
+                                    {{ 'admin.shop.products.plan_icon'|trans({}, 'admin') }}
+                                    <div class="lucide-field__row">
+                                        <span class="lucide-field__preview" data-lucide-preview>
+                                            {% if product.badge.svg %}<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{{ product.badge.svg|raw }}</svg>{% else %}{{ ui.plan_icon(product.badge.icon) }}{% endif %}
+                                        </span>
+                                        <input class="admin-field__input lucide-field__input" name="icon" value="{{ product.badge.icon }}" placeholder="crown, gem, rocket…" autocomplete="off" spellcheck="false" data-lucide-name>
+                                        <input type="hidden" name="icon_svg" value="{{ product.badge.svg }}" data-lucide-svg>
+                                    </div>
+                                    <span class="lucide-field__status" data-lucide-status data-loading="{{ 'admin.shop.products.icon_loading'|trans({}, 'admin') }}" data-missing="{{ 'admin.shop.products.icon_missing'|trans({}, 'admin') }}" data-ok="{{ 'admin.shop.products.icon_ok'|trans({}, 'admin') }}"></span>
+                                    <div class="lucide-field__chips">
+                                        {% for name in ['crown', 'gem', 'star', 'rocket', 'zap', 'flame', 'shield', 'heart', 'trophy', 'sparkles', 'swords', 'ghost'] %}
+                                            <button type="button" class="lucide-field__chip" data-lucide-pick="{{ name }}">{{ name }}</button>
+                                        {% endfor %}
+                                    </div>
+                                    <span class="admin-panel__help">{{ 'admin.shop.products.icon_help'|trans({}, 'admin') }} <a class="admin-link" href="https://lucide.dev/icons/" target="_blank" rel="noopener noreferrer">lucide.dev/icons</a></span>
+                                </div>
+                                <div class="admin-field">
+                                    {{ 'admin.shop.products.plan_color'|trans({}, 'admin') }}
+                                    {{ admin_ui.color('color', product.option('color', '#7C5CFF'), 'admin.shop.products.plan_color'|trans({}, 'admin'), ['#7C5CFF', '#FFC94A', '#2EE6D6', '#FF3DCB', '#4ADE80', '#FF9F43', '#60A5FA', '#FF5470']) }}
+                                    <span class="admin-panel__help">{{ 'admin.shop.products.plan_color_help'|trans({}, 'admin') }}</span>
+                                </div>
+                                <label class="admin-field">
+                                    {{ 'admin.shop.products.plan_label'|trans({}, 'admin') }}
+                                    <input class="admin-field__input" name="label" maxlength="30" value="{{ product.option('label') }}" placeholder="{{ product.name ?: 'VIP' }}">
+                                    <span class="admin-panel__help">{{ 'admin.shop.products.plan_label_help'|trans({}, 'admin') }}</span>
+                                </label>
+                            </div>
+                        </div>
+                        <label class="shop-switch">
+                            <input type="checkbox" class="shop-switch__input" name="early_access" value="1"{{ product.earlyAccess ? ' checked' }}>
+                            <span class="shop-switch__track" aria-hidden="true"></span>
+                            <span class="shop-switch__label">{{ 'admin.shop.products.early_access'|trans({}, 'admin') }}</span>
+                        </label>
+                        {% set chosen = product.option('pass_tracks', product.option('season_pass') == true ? ['premium'] : []) %}
+                        <div class="shop-tracks">
+                            <span class="shop-tracks__label">{{ 'admin.shop.products.pass_tracks'|trans({}, 'admin') }}</span>
+                            {% if pass_tracks is empty %}
+                                <span class="admin-panel__help">{{ 'admin.shop.products.pass_tracks_none'|trans({}, 'admin') }} <a class="admin-link" href="{{ path('admin_engage_pass') }}">{{ 'admin.engage.pass.title'|trans({}, 'admin') }}</a></span>
+                            {% else %}
+                                <div class="shop-tracks__list">
+                                    {% for track in pass_tracks %}
+                                        <label class="shop-tracks__item" style="--track: {{ track.color ?? '#FFC94A' }}">
+                                            <input type="checkbox" name="pass_tracks[]" value="{{ track.key }}"{{ track.key in chosen ? ' checked' }}>
+                                            <span class="shop-tracks__dot" aria-hidden="true"></span>
+                                            {{ track.name }}
+                                        </label>
+                                    {% endfor %}
+                                </div>
+                                <span class="admin-panel__help">{{ 'admin.shop.products.pass_tracks_help'|trans({}, 'admin') }}</span>
+                            {% endif %}
+                        </div>
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.perks'|trans({}, 'admin') }}
+                            <textarea class="admin-field__input admin-field__input--area" name="perks" rows="4" placeholder="{{ 'admin.shop.products.perks_placeholder'|trans({}, 'admin') }}">{{ product.perks }}</textarea>
+                            <span class="admin-panel__help">{{ 'admin.shop.products.perks_help'|trans({}, 'admin') }}</span>
+                        </label>
+                    </div>
+
+                    <div class="shop-form__row" data-for="badge">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.badge'|trans({}, 'admin') }}
+                            <select class="admin-field__input" name="badge">
+                                <option value="">—</option>
+                                {% for badge in badges %}
+                                    <option value="{{ badge.id }}"{{ product.option('badge') == badge.id ? ' selected' }}>{{ badge.name }}{{ badge.game ? ' · ' ~ badge.game.name }}</option>
+                                {% endfor %}
+                            </select>
+                            <span class="admin-panel__help">{{ 'admin.shop.products.badge_help'|trans({}, 'admin') }}</span>
+                            {{ _self.error(errors, 'badge') }}
+                        </label>
+                    </div>
+
+                    <div class="shop-form__stack" data-for="cosmetic">
+                        <div class="admin-segment shop-form__segment" role="radiogroup" aria-label="{{ 'admin.shop.products.kind'|trans({}, 'admin') }}">
+                            {% for kind in kinds %}
+                                <label class="admin-segment__item shop-kind">
+                                    <input type="radio" class="sr-only" name="kind" value="{{ kind.value }}"{{ product.option('kind', 'frame') == kind.value ? ' checked' }}>
+                                    {{ kind.translate() }}
+                                </label>
+                            {% endfor %}
+                        </div>
+                        {% set saved = product.option('design', {}) %}
+                        {% set frame = product.option('kind') == 'frame' and saved is not empty ? saved : { colors: ['#2EE6D6', '#7C5CFF', '#FF3DCB'], paint: 'gradient', animation: 'spin', width: 3, glow: 12 } %}
+                        {% set banner = product.option('kind') == 'banner' and saved is not empty ? saved : { mode: 'gradient', colors: ['#7C5CFF', '#FF3DCB', '#FFC94A'], angle: 120, pattern: 'none' } %}
+                        {% set victory = product.option('kind') == 'victory' and saved is not empty ? saved : { shape: 'circle', icon: 'star', rarity: 'rare', color: '#FFC94A', animation: 'rain', count: 30 } %}
+                        <div class="cosmetic-designer" data-component="CosmeticDesigner" data-icons="{{ design.icons|json_encode }}">
+                            <div class="designer" data-kind="frame">
+                                <div class="designer__stage designer__stage--frame">
+                                    <div class="designer__showcase">
+                                        <span class="avatar avatar--md avatar--frame avatar--frame-custom" data-frame-preview>BG</span>
+                                        <span class="avatar avatar--xl avatar--frame avatar--frame-custom" data-frame-preview>BG</span>
+                                        <span class="avatar avatar--3xl avatar--frame avatar--frame-custom designer__hero-avatar" data-frame-preview>BG</span>
+                                    </div>
+                                    <div class="designer__presets">
+                                        <span class="designer__presets-label">{{ 'admin.shop.design.presets_label'|trans({}, 'admin') }}</span>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#2EE6D6&quot;, &quot;#7C5CFF&quot;, &quot;#2EE6D6&quot;], &quot;design[frame][paint]&quot;: &quot;conic&quot;, &quot;design[frame][animation]&quot;: &quot;spin&quot;, &quot;design[frame][width]&quot;: 3, &quot;design[frame][glow]&quot;: 14}" style="--p-a: #2EE6D6; --p-b: #7C5CFF; --p-c: #2EE6D6"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.neon'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#FFC94A&quot;, &quot;#FF9F43&quot;, &quot;#FDE68A&quot;], &quot;design[frame][paint]&quot;: &quot;gradient&quot;, &quot;design[frame][animation]&quot;: &quot;shimmer&quot;, &quot;design[frame][width]&quot;: 3, &quot;design[frame][glow]&quot;: 12}" style="--p-a: #FFC94A; --p-b: #FF9F43; --p-c: #FDE68A"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.gold'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#FF5470&quot;, &quot;#FF9F43&quot;, &quot;#FFC94A&quot;], &quot;design[frame][paint]&quot;: &quot;conic&quot;, &quot;design[frame][animation]&quot;: &quot;spin&quot;, &quot;design[frame][width]&quot;: 4, &quot;design[frame][glow]&quot;: 16}" style="--p-a: #FF5470; --p-b: #FF9F43; --p-c: #FFC94A"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.fire'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#9BE7FF&quot;, &quot;#60A5FA&quot;, &quot;#E0F2FE&quot;], &quot;design[frame][paint]&quot;: &quot;gradient&quot;, &quot;design[frame][animation]&quot;: &quot;pulse&quot;, &quot;design[frame][width]&quot;: 3, &quot;design[frame][glow]&quot;: 12}" style="--p-a: #9BE7FF; --p-b: #60A5FA; --p-c: #E0F2FE"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.ice'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#FF3DCB&quot;, &quot;#FFC94A&quot;, &quot;#2EE6D6&quot;], &quot;design[frame][paint]&quot;: &quot;conic&quot;, &quot;design[frame][animation]&quot;: &quot;spin&quot;, &quot;design[frame][width]&quot;: 3, &quot;design[frame][glow]&quot;: 10}" style="--p-a: #FF3DCB; --p-b: #FFC94A; --p-c: #2EE6D6"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.rainbow'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[frame][colors][]&quot;: [&quot;#4ADE80&quot;, &quot;#A3E635&quot;, &quot;#22D3EE&quot;], &quot;design[frame][paint]&quot;: &quot;gradient&quot;, &quot;design[frame][animation]&quot;: &quot;pulse&quot;, &quot;design[frame][width]&quot;: 3, &quot;design[frame][glow]&quot;: 14}" style="--p-a: #4ADE80; --p-b: #A3E635; --p-c: #22D3EE"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.toxic'|trans({}, 'admin') }}</button>
+                                    </div>
+                                </div>
+                                <div class="designer__controls">
+                                    <div class="designer__group designer__group--wide">
+                                        <span class="designer__label">{{ 'admin.shop.design.colors'|trans({}, 'admin') }}</span>
+                                        {{ _self.swatches('design[frame][colors][]', frame.colors) }}
+                                    </div>
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.paint'|trans({}, 'admin') }}</span>
+                                        {{ _self.choices('design[frame][paint]', design.paints, frame.paint, 'admin.shop.design.paints.', 'paint') }}
+                                    </div>
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.animation'|trans({}, 'admin') }}</span>
+                                        {{ _self.choices('design[frame][animation]', design.animations, frame.animation, 'admin.shop.design.animations.', 'chips') }}
+                                    </div>
+                                    {{ _self.range('design[frame][width]', 'admin.shop.design.width'|trans({}, 'admin'), 2, 6, frame.width, ' px') }}
+                                    {{ _self.range('design[frame][glow]', 'admin.shop.design.glow'|trans({}, 'admin'), 0, 28, frame.glow, ' px') }}
+                                </div>
+                            </div>
+
+                            <div class="designer" data-kind="banner">
+                                <div class="designer__stage">
+                                    <div class="designer__profile">
+                                        <span class="designer__profile-banner profile-banner--custom" data-banner-preview data-image="{{ product.image }}"></span>
+                                        <span class="designer__profile-identity">
+                                            <span class="avatar avatar--3xl">BG</span>
+                                            <span class="designer__profile-text"><strong>BattleGamer</strong><span>{{ 'admin.shop.design.profile_sample'|trans({}, 'admin') }}</span></span>
+                                        </span>
+                                    </div>
+                                    <div class="designer__presets">
+                                        <span class="designer__presets-label">{{ 'admin.shop.design.presets_label'|trans({}, 'admin') }}</span>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#FF3DCB&quot;, &quot;#FF9F43&quot;, &quot;#FFC94A&quot;], &quot;design[banner][angle]&quot;: 120, &quot;design[banner][pattern]&quot;: &quot;none&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #FF3DCB; --p-b: #FF9F43; --p-c: #FFC94A"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.sunset'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#0EA5E9&quot;, &quot;#2EE6D6&quot;, &quot;#7C5CFF&quot;], &quot;design[banner][angle]&quot;: 120, &quot;design[banner][pattern]&quot;: &quot;waves&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #0EA5E9; --p-b: #2EE6D6; --p-c: #7C5CFF"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.ocean'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#1E1B4B&quot;, &quot;#7C5CFF&quot;, &quot;#FF3DCB&quot;], &quot;design[banner][angle]&quot;: 160, &quot;design[banner][pattern]&quot;: &quot;dots&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #1E1B4B; --p-b: #7C5CFF; --p-c: #FF3DCB"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.galaxy'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#064E3B&quot;, &quot;#4ADE80&quot;, &quot;#A3E635&quot;], &quot;design[banner][angle]&quot;: 120, &quot;design[banner][pattern]&quot;: &quot;none&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #064E3B; --p-b: #4ADE80; --p-c: #A3E635"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.forest'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#0B0D17&quot;, &quot;#1F2540&quot;, &quot;#2EE6D6&quot;], &quot;design[banner][angle]&quot;: 90, &quot;design[banner][pattern]&quot;: &quot;grid&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #0B0D17; --p-b: #1F2540; --p-c: #2EE6D6"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.neon'|trans({}, 'admin') }}</button>
+                                        <button type="button" class="designer__preset" data-preset="{&quot;design[banner][colors][]&quot;: [&quot;#78350F&quot;, &quot;#FFC94A&quot;, &quot;#FDE68A&quot;], &quot;design[banner][angle]&quot;: 120, &quot;design[banner][pattern]&quot;: &quot;stripes&quot;, &quot;design[banner][mode]&quot;: &quot;gradient&quot;}" style="--p-a: #78350F; --p-b: #FFC94A; --p-c: #FDE68A"><span class="designer__preset-dot"></span>{{ 'admin.shop.design.presets.gold'|trans({}, 'admin') }}</button>
+                                    </div>
+                                </div>
+                                <div class="designer__controls">
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.mode'|trans({}, 'admin') }}</span>
+                                        {{ _self.choices('design[banner][mode]', ['gradient', 'image'], banner.mode, 'admin.shop.design.modes.', 'segment') }}
+                                    </div>
+                                    <div class="designer__group" data-banner-mode="gradient">
+                                        {{ _self.range('design[banner][angle]', 'admin.shop.design.angle'|trans({}, 'admin'), 0, 360, banner.angle, '°', 5) }}
+                                    </div>
+                                    <div class="designer__group" data-banner-mode="image">
+                                        <span class="designer__label">{{ 'admin.shop.design.image'|trans({}, 'admin') }}</span>
+                                        <label class="designer__upload{{ product.image ? ' designer__upload--filled' }}" for="product-image" data-banner-upload>
+                                            <img class="designer__upload-thumb" src="{{ product.image ?? '' }}" alt=""{{ product.image ? '' : ' hidden' }} data-banner-thumb>
+                                            <span class="designer__upload-icon" aria-hidden="true"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 16V4M7 9l5-5 5 5M4 20h16"/></svg></span>
+                                            <span class="designer__upload-text">
+                                                <strong data-upload-pick="{{ 'admin.shop.design.image_pick'|trans({}, 'admin') }}" data-upload-change="{{ 'admin.shop.design.image_change'|trans({}, 'admin') }}">{{ (product.image ? 'admin.shop.design.image_change' : 'admin.shop.design.image_pick')|trans({}, 'admin') }}</strong>
+                                                <span data-upload-name>{{ 'admin.shop.design.image_formats'|trans({}, 'admin') }}</span>
+                                            </span>
+                                        </label>
+                                    </div>
+                                    <div class="designer__group designer__group--wide" data-banner-mode="gradient">
+                                        <span class="designer__label">{{ 'admin.shop.design.colors'|trans({}, 'admin') }}</span>
+                                        {{ _self.swatches('design[banner][colors][]', banner.colors) }}
+                                    </div>
+                                    <div class="designer__group designer__group--wide">
+                                        <span class="designer__label">{{ 'admin.shop.design.pattern'|trans({}, 'admin') }}</span>
+                                        {{ _self.choices('design[banner][pattern]', design.patterns, banner.pattern, 'admin.shop.design.patterns.', 'pattern') }}
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="designer" data-kind="victory">
+                                <div class="designer__stage designer__stage--victory" data-victory-stage>
+                                    <span class="designer__victory-badge" data-victory-preview></span>
+                                    <button type="button" class="admin-btn admin-btn--primary designer__play" data-victory-play>
+                                        <svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 4l13 8-13 8V4z"/></svg>
+                                        {{ 'admin.shop.design.play'|trans({}, 'admin') }}
+                                    </button>
+                                </div>
+                                <div class="designer__controls">
+                                    <div class="designer__group designer__group--wide">
+                                        <span class="designer__label">{{ 'admin.shop.design.icon'|trans({}, 'admin') }}</span>
+                                        <div class="designer__icons" role="radiogroup">
+                                            {% for key, path in design.icons %}
+                                                <label class="designer__icon" title="{{ key }}">
+                                                    <input type="radio" class="sr-only" name="design[victory][icon]" value="{{ key }}"{{ victory.icon == key ? ' checked' }}>
+                                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ path }}"/></svg>
+                                                </label>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.shape'|trans({}, 'admin') }}</span>
+                                        <select class="admin-field__input" name="design[victory][shape]">{% for item in design.shapes %}<option value="{{ item }}"{{ victory.shape == item ? ' selected' }}>{{ ('admin.badges.options.shape.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}</select>
+                                    </div>
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.rarity'|trans({}, 'admin') }}</span>
+                                        <select class="admin-field__input" name="design[victory][rarity]">{% for item in design.rarities %}<option value="{{ item }}"{{ victory.rarity == item ? ' selected' }}>{{ ('admin.badges.options.rarity.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}</select>
+                                    </div>
+                                    <div class="designer__group">
+                                        <span class="designer__label">{{ 'admin.shop.design.color'|trans({}, 'admin') }}</span>
+                                        <label class="designer__swatch designer__swatch--single" style="--swatch: {{ victory.color ?? '#FFC94A' }}">
+                                            <input type="color" class="designer__swatch-input" name="design[victory][color]" value="{{ victory.color ?? '#FFC94A' }}" aria-label="{{ 'admin.shop.design.color'|trans({}, 'admin') }}">
+                                            <span class="designer__swatch-chip"></span>
+                                            <span class="designer__swatch-text"><span data-swatch-hex>{{ (victory.color ?? '#FFC94A')|upper }}</span></span>
+                                        </label>
+                                    </div>
+                                    {{ _self.range('design[victory][count]', 'admin.shop.design.count'|trans({}, 'admin'), 8, 60, victory.count, '') }}
+                                    <div class="designer__group designer__group--wide">
+                                        <span class="designer__label">{{ 'admin.shop.design.effect'|trans({}, 'admin') }}</span>
+                                        {{ _self.choices('design[victory][animation]', design.effects, victory.animation, 'admin.shop.design.effects.', 'chips') }}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="admin-field" data-kind="color">
+                            {{ 'admin.shop.products.color'|trans({}, 'admin') }}
+                            {{ admin_ui.color('value_color', product.option('kind') == 'color' ? product.option('value') : '#FF3DCB', 'admin.shop.products.color'|trans({}, 'admin')) }}
+                        </div>
+                        <label class="admin-field" data-kind="title">
+                            {{ 'admin.shop.products.title_value'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="value_title" maxlength="30" value="{{ product.option('kind') == 'title' ? product.option('value') }}" placeholder="Stratège">
+                        </label>
+                        {{ _self.error(errors, 'value') }}
+                    </div>
+
+                    <div class="shop-form__row" data-for="gift">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.gift_coins'|trans({}, 'admin') }}
+                            <input class="admin-field__input" type="number" min="1" name="gift_coins" value="{{ product.option('coins') }}">
+                            <span class="admin-panel__help">{{ 'admin.shop.products.gift_help'|trans({}, 'admin') }}</span>
+                            {{ _self.error(errors, 'coins') }}
+                        </label>
+                    </div>
+
+                    <div class="shop-form__row" data-for="physical">
+                        <label class="admin-field">
+                            {{ 'admin.shop.products.sizes'|trans({}, 'admin') }}
+                            <input class="admin-field__input" name="sizes" maxlength="120" value="{{ product.option('sizes') }}" placeholder="S, M, L, XL">
+                            <span class="admin-panel__help">{{ 'admin.shop.products.physical_help'|trans({}, 'admin') }}</span>
+                        </label>
+                    </div>
+                </section>
+
+                {% if product.id %}
+                    {{ admin_ui.translations(product) }}
+                {% else %}
+                    <p class="admin-note"><span class="admin-note__icon">i</span>{{ 'admin.shop.products.translations_later'|trans({}, 'admin') }}</p>
+                {% endif %}
+            </div>
+
+            <aside class="shop-form__side">
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.products.publication'|trans({}, 'admin') }}</h2>
+                    <label class="shop-switch">
+                        <input type="checkbox" class="shop-switch__input" name="active" value="1"{{ product.active ? ' checked' }}>
+                        <span class="shop-switch__track" aria-hidden="true"></span>
+                        <span class="shop-switch__label">{{ 'admin.shop.products.active'|trans({}, 'admin') }}</span>
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.shop.products.stock'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="number" min="0" name="stock" value="{{ product.stock }}" placeholder="{{ 'admin.shop.products.stock_unlimited'|trans({}, 'admin') }}">
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.shop.products.position'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="number" min="0" name="position" value="{{ product.position }}">
+                    </label>
+                </section>
+
+                <section class="admin-panel">
+                    <h2 class="admin-panel__title">{{ 'admin.shop.products.image'|trans({}, 'admin') }}</h2>
+                    <label class="shop-drop{{ product.image ? ' shop-drop--filled' }}">
+                        <input type="file" class="sr-only" id="product-image" name="image" accept="image/png,image/jpeg,image/webp" data-image-input>
+                        <img class="shop-drop__preview" src="{{ product.image ?? '' }}" alt=""{{ product.image ? '' : ' hidden' }} data-image-preview>
+                        <span class="shop-drop__empty">
+                            <svg class="shop-drop__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 16l4-4 4 4 3-3 5 5M4 4h16v16H4zM15 8h.01"/></svg>
+                            <strong>{{ 'admin.shop.products.image_pick'|trans({}, 'admin') }}</strong>
+                            <span>{{ 'admin.shop.products.image_help'|trans({}, 'admin') }}</span>
+                        </span>
+                    </label>
+                    {{ _self.error(errors, 'image') }}
+                    {% if product.image %}
+                        <label class="admin-check"><input type="checkbox" class="admin-check__input" name="remove_image" value="1"> {{ 'admin.shop.products.remove_image'|trans({}, 'admin') }}</label>
+                    {% endif %}
+                </section>
+            </aside>
+        </div>
+    </form>
+{% endblock %}

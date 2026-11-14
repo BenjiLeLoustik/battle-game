@@ -1,0 +1,190 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/icon.html.twig' as icon %}
+
+{% set active = 'tournaments' %}
+{% set user = app_user() %}
+{% set state = tournament.state %}
+{% set prizes = rewards %}
+{% set full = tournament.maxPlayers and count >= tournament.maxPlayers %}
+{% set mine = standings|filter(row => row.id == me)|first %}
+{% set my_rank = null %}
+{% for row in standings %}{% if row.id == me %}{% set my_rank = loop.index %}{% endif %}{% endfor %}
+
+{% block title %}{{ tournament.name }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage">
+        <nav class="engage__crumbs"><a href="{{ path('site_tournament_index') }}">{{ 'site.tournaments.title'|trans }}</a> / {{ tournament.name }}</nav>
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="engage-flash engage-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}</p>
+            {% endfor %}
+        {% endfor %}
+
+        <section class="tourney-hero tourney-hero--{{ state }}" style="--game-color: {{ tournament.game.color }}">
+            {% if tournament.game.cover %}<img class="tourney-hero__cover" src="{{ tournament.game.cover }}" alt="">{% endif %}
+            <div class="tourney-hero__shade" aria-hidden="true"></div>
+            <div class="tourney-hero__body">
+                <div class="tourney-hero__main">
+                    <span class="tourney-state tourney-state--{{ state }}">{% if state == 'live' %}<span class="tourney-state__dot"></span>{% endif %}{{ ('site.tournaments.states.' ~ state)|trans }}</span>
+                    <h1 class="tourney-hero__title">{{ tournament.name }}</h1>
+                    <a class="tourney-hero__game" href="{{ path('site_game_show', { slug: tournament.game.slug }) }}">
+                        {% if tournament.game.icon %}<img class="tourney-hero__icon" src="{{ tournament.game.icon }}" alt="">{% endif %}
+                        {{ tournament.game.name }}
+                    </a>
+                    {% if tournament.description %}<p class="tourney-hero__desc">{{ tournament.description|nl2br }}</p>{% endif %}
+                </div>
+                <div class="tourney-hero__card">
+                    {% if state == 'finished' %}
+                        <span class="tourney-hero__label">{{ 'site.tournaments.ended_on'|trans }}</span>
+                        <strong class="tourney-hero__clock">{{ tournament.endsAt|date('d/m/Y') }}</strong>
+                    {% else %}
+                        <span class="tourney-hero__label">{{ (state == 'live' ? 'site.tournaments.ends_in' : 'site.tournaments.starts_in')|trans }}</span>
+                        <strong class="tourney-hero__clock" data-component="Countdown" data-until="{{ (state == 'live' ? tournament.endsAt : tournament.startsAt)|date('U') }}" data-day="{{ 'site.tournaments.day_short'|trans }}" data-reload="1">--:--:--</strong>
+                    {% endif %}
+                    <div class="tourney-hero__actions">
+                        {% if not user or user.guest %}
+                            {% if state != 'finished' %}<a href="{{ path('site_security_login') }}" class="btn btn--primary">{{ 'site.tournaments.login'|trans }}</a>{% endif %}
+                        {% elseif state != 'finished' %}
+                            {% if joined %}
+                                <span class="tourney-joined">{{ icon.svg('check') }}{{ 'site.tournaments.joined_long'|trans }}</span>
+                                {% if state == 'live' %}<a href="{{ path('site_play_quick', { slug: tournament.game.slug }) }}" class="btn btn--primary">{{ 'site.tournaments.play'|trans }}</a>{% endif %}
+                                {% if state == 'upcoming' %}
+                                    <form method="post" action="{{ path('site_tournament_action', { id: tournament.id, action: 'leave' }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('tournaments') }}">
+                                        <button type="submit" class="btn btn--ghost">{{ 'site.tournaments.leave'|trans }}</button>
+                                    </form>
+                                {% endif %}
+                            {% elseif full %}
+                                <span class="tourney-joined tourney-joined--full">{{ 'site.tournaments.full'|trans }}</span>
+                            {% elseif not eligible %}
+                                <span class="tourney-joined tourney-joined--full">{{ icon.svg('lock') }}{{ 'site.tournaments.not_qualified'|trans }}</span>
+                            {% else %}
+                                <form method="post" action="{{ path('site_tournament_action', { id: tournament.id, action: 'join' }) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('tournaments') }}">
+                                    <button type="submit" class="btn btn--primary">{{ 'site.tournaments.join'|trans }}</button>
+                                </form>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <dl class="tourney-stats">
+                <div class="tourney-stats__item">
+                    <dt>{{ 'site.tournaments.stats.players'|trans }}</dt>
+                    <dd>{{ count }}{% if tournament.maxPlayers %}<small>/{{ tournament.maxPlayers }}</small>{% endif %}</dd>
+                    {% if tournament.maxPlayers %}<span class="tourney-stats__bar"><span style="width: {{ min(100, (count / tournament.maxPlayers * 100)|round) }}%"></span></span>{% endif %}
+                </div>
+                <div class="tourney-stats__item"><dt>{{ 'site.tournaments.stats.pool'|trans }}</dt><dd class="tourney-stats__coins">{{ pool|number_format(0, ',', ' ') }}</dd></div>
+                <div class="tourney-stats__item"><dt>{{ 'site.tournaments.stats.starts'|trans }}</dt><dd>{{ tournament.startsAt|date('d/m') }} <small>{{ tournament.startsAt|date('H:i') }}</small></dd></div>
+                <div class="tourney-stats__item"><dt>{{ 'site.tournaments.stats.ends'|trans }}</dt><dd>{{ tournament.endsAt|date('d/m') }} <small>{{ tournament.endsAt|date('H:i') }}</small></dd></div>
+            </dl>
+        </section>
+
+        <div class="engage-grid">
+            <section class="engage-panel">
+                <div class="clan-toolbar">
+                    <h2 class="engage-panel__title">{{ 'site.tournaments.standings'|trans }}</h2>
+                    {% if state == 'live' %}<span class="engage-list__meta">{{ 'site.tournaments.live_hint'|trans }}</span>{% endif %}
+                </div>
+                {% if standings is empty %}
+                    <p class="engage-empty">{{ 'site.tournaments.no_players'|trans }}</p>
+                {% else %}
+                    {% set podium = standings|slice(0, 3) %}
+                    {% if podium|length >= 1 and podium[0].points > 0 %}
+                        <div class="tourney-podium">
+                            {% for index in [1, 0, 2] %}
+                                {% if podium[index] is defined %}
+                                    {% set row = podium[index] %}
+                                    <a class="tourney-podium__step tourney-podium__step--{{ index + 1 }}" href="{{ path('site_profile_show', { username: row.username }) }}">
+                                        <span class="tourney-podium__medal">{{ index + 1 }}</span>
+                                        {{ ui.avatar(row, 'lg') }}
+                                        <span class="tourney-podium__name">{{ ui.name(row) }}</span>
+                                        <strong class="tourney-podium__points">{{ row.points|number_format(0, ',', ' ') }} pts</strong>
+                                        {% if prizes[index + 1] is defined %}<span class="tourney-podium__prize">{{ icon.svg('trophy') }}{{ prizes[index + 1]|map(r => r.label)|join(' + ') }}</span>{% endif %}
+                                    </a>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                    <ol class="tourney-table">
+                        <li class="tourney-table__head" aria-hidden="true">
+                            <span>#</span>
+                            <span>{{ 'site.tournaments.player'|trans }}</span>
+                            <span class="tourney-table__num">{{ 'site.tournaments.games_short'|trans }}</span>
+                            <span class="tourney-table__num">{{ 'site.tournaments.wins_short'|trans }}</span>
+                            <span class="tourney-table__num">{{ 'site.tournaments.points'|trans }}</span>
+                        </li>
+                        {% for row in standings %}
+                            <li class="tourney-table__row{{ row.id == me ? ' tourney-table__row--me' }}{{ loop.index <= 3 ? ' tourney-table__row--top' }}">
+                                <span class="tourney-table__rank tourney-table__rank--{{ loop.index }}">{{ loop.index }}</span>
+                                <span class="tourney-table__player">
+                                    {{ ui.avatar(row, 'sm') }}
+                                    <a class="tourney-table__name" href="{{ path('site_profile_show', { username: row.username }) }}">{{ ui.name(row) }}</a>
+                                    {% if prizes[loop.index] is defined %}{% set label = prizes[loop.index]|map(r => r.label)|join(' + ') %}<span class="tourney-table__prize" title="{{ 'site.tournaments.prize_hint'|trans }} : {{ label }}">{{ icon.svg('trophy') }}<span class="tourney-table__prize-text">{{ label }}</span></span>{% endif %}
+                                </span>
+                                <span class="tourney-table__num">{{ row.games }}</span>
+                                <span class="tourney-table__num">{{ row.wins }}</span>
+                                <strong class="tourney-table__num tourney-table__points">{{ row.points|number_format(0, ',', ' ') }}</strong>
+                            </li>
+                        {% endfor %}
+                    </ol>
+                {% endif %}
+            </section>
+
+            <aside class="clan-side">
+                {% if joined and my_rank %}
+                    <section class="engage-panel tourney-me" style="--game-color: {{ tournament.game.color }}">
+                        <span class="tourney-hero__label">{{ 'site.tournaments.your_rank'|trans }}</span>
+                        <strong class="tourney-me__rank">#{{ my_rank }}<small>/{{ standings|length }}</small></strong>
+                        <span class="engage-list__meta">{{ 'site.tournaments.your_stats'|trans({ points: mine.points, games: mine.games }) }}</span>
+                    </section>
+                {% endif %}
+                <section class="engage-panel">
+                    <h2 class="engage-panel__title">{{ 'site.tournaments.prizes'|trans }}</h2>
+                    {% if prizes is empty %}
+                        <p class="engage-empty">{{ 'site.tournaments.no_prizes'|trans }}</p>
+                    {% else %}
+                        <ol class="tourney-prizes">
+                            {% for place, items in prizes %}
+                                <li class="tourney-prizes__item tourney-prizes__item--{{ place }}">
+                                    <span class="tourney-prizes__place">{{ place }}</span>
+                                    <span class="tourney-prizes__list">
+                                        {% for item in items %}<span class="tourney-prizes__reward tourney-prizes__reward--{{ item.type }}">{{ item.label }}</span>{% endfor %}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </section>
+                {% if tournament.restricted %}
+                    <section class="engage-panel tourney-qualif">
+                        <h2 class="engage-panel__title">{{ 'site.tournaments.qualification'|trans }}</h2>
+                        <p class="engage-help">{{ ('site.tournaments.qualifier.' ~ tournament.qualifier)|trans({ count: tournament.qualifierCount, game: tournament.game.name, period: ('leaderboard_period.' ~ tournament.qualifierPeriod)|trans({}, 'enums')|lower }) }}</p>
+                        {% if user and not user.guest %}
+                            <span class="tourney-qualif__state{{ eligible ? ' tourney-qualif__state--ok' }}">{{ icon.svg(eligible ? 'check' : 'lock') }}{{ (eligible ? 'site.tournaments.qualified_yes' : 'site.tournaments.qualified_no')|trans }}</span>
+                        {% endif %}
+                        {% if qualified is not empty %}
+                            <ol class="tourney-qualif__list">
+                                {% for row in qualified|slice(0, 10) %}
+                                    <li class="tourney-qualif__row{{ row.id == me ? ' tourney-qualif__row--me' }}"><span>{{ row.rank }}</span>{{ row.username }}<small>{{ row.points }} pts</small></li>
+                                {% endfor %}
+                            </ol>
+                        {% endif %}
+                    </section>
+                {% endif %}
+                <section class="engage-panel">
+                    <h2 class="engage-panel__title">{{ 'site.tournaments.how'|trans }}</h2>
+                    <ol class="tourney-steps">
+                        <li>{{ 'site.tournaments.steps.join'|trans }}</li>
+                        <li>{{ 'site.tournaments.steps.play'|trans({ game: tournament.game.name }) }}</li>
+                        <li>{{ 'site.tournaments.steps.win'|trans }}</li>
+                    </ol>
+                    <p class="engage-help">{{ 'site.tournaments.rules'|trans }}</p>
+                </section>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

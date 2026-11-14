@@ -1,0 +1,40 @@
+.btn {
+    @apply inline-flex h-11 items-center justify-center gap-2 rounded-[10px]
+    px-4 text-sm font-semibold whitespace-nowrap transition;
+}
+
+.btn--primary {
+    @apply bg-cyan font-bold text-on-cyan hover:brightness-110;
+}
+
+.btn--cyan-outline {
+    @apply border border-cyan text-cyan hover:bg-cyan/10;
+}
+
+.btn--ghost {
+    @apply border border-ghost text-ink hover:border-cyan;
+}
+
+.btn--magenta {
+    @apply bg-magenta font-bold text-on-magenta hover:brightness-110;
+}
+
+.btn--discord {
+    @apply bg-discord font-semibold text-white hover:brightness-110;
+}
+
+.btn--large {
+    @apply h-12 px-[22px] text-[15px];
+}
+
+.btn--block {
+    @apply w-full;
+}
+
+.btn--xl {
+    @apply h-[50px] gap-2.5 rounded-xl text-[15px] font-bold;
+}
+
+.btn__icon {
+    @apply size-[22px] shrink-0;
+}

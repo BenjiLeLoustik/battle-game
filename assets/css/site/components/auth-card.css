@@ -1,0 +1,144 @@
+.auth-card {
+    @apply flex w-full max-w-[1080px] flex-wrap overflow-hidden rounded-[20px] border border-line bg-surface;
+}
+
+.auth-card__aside {
+    @apply relative flex flex-[1_1_380px] flex-col gap-[22px] overflow-hidden bg-panel p-11 max-sm:p-6 max-sm:gap-3.5;
+}
+
+.auth-card__grid {
+    @apply pointer-events-none absolute -right-[20%] -bottom-[45%] -left-[20%] h-[80%] origin-top;
+    background-image: repeating-linear-gradient(0deg, transparent 0 39px, rgb(255 61 203 / 0.22) 39px 40px), repeating-linear-gradient(90deg, transparent 0 39px, rgb(255 61 203 / 0.22) 39px 40px);
+    transform: perspective(500px) rotateX(62deg);
+}
+
+.auth-card__mark {
+    @apply clip-logo relative flex size-16 items-center justify-center self-start bg-cyan font-display
+    text-[26px] font-bold text-on-cyan;
+}
+
+.auth-card__title {
+    @apply relative font-display text-[38px] leading-[1.1] font-bold;
+}
+
+.auth-card__accent {
+    @apply text-cyan;
+}
+
+.auth-card__intro {
+    @apply relative max-w-[400px] text-[15px] leading-[1.6] text-ink-soft;
+}
+
+.auth-card__perks {
+    @apply relative flex flex-col gap-3.5;
+}
+
+.auth-card__perk {
+    @apply flex items-start gap-3;
+}
+
+.auth-card__check {
+    @apply flex size-7 shrink-0 items-center justify-center rounded-lg bg-cyan/14 text-cyan;
+}
+
+.auth-card__check-icon {
+    @apply size-4;
+}
+
+.auth-card__perk-text {
+    @apply flex flex-col gap-0.5;
+}
+
+.auth-card__perk-title {
+    @apply text-sm font-bold;
+}
+
+.auth-card__perk-desc {
+    @apply text-[13px] text-muted-2;
+}
+
+.auth-card__main {
+    @apply flex flex-[1_1_400px] flex-col gap-5 p-11 max-sm:p-6 max-sm:gap-3;
+}
+
+.auth-card__tabs {
+    @apply flex rounded-xl border border-line bg-bg p-1;
+}
+
+.auth-card__tab {
+    @apply flex h-[42px] flex-1 items-center justify-center rounded-[9px] text-sm
+    font-bold text-muted-2 hover:text-ink;
+}
+
+.auth-card__tab--active {
+    @apply bg-surface-3 text-cyan hover:text-cyan;
+}
+
+.auth-card__divider {
+    @apply flex items-center gap-3 text-xs tracking-[0.12em] text-muted uppercase;
+}
+
+.auth-card__divider::before,
+.auth-card__divider::after {
+    @apply h-px flex-1 bg-line;
+    content: '';
+}
+
+.auth-card__form {
+    @apply flex flex-col gap-3.5;
+}
+
+.auth-card__pair {
+    @apply grid grid-cols-2 gap-3 max-sm:grid-cols-1;
+}
+
+.auth-card__row {
+    @apply flex items-center justify-between gap-3 text-[13px];
+}
+
+.auth-card__link {
+    @apply text-cyan hover:underline;
+}
+
+.auth-card__alert {
+    @apply rounded-[10px] border border-danger/40 bg-danger/10 px-3.5 py-2.5 text-[13px] text-danger;
+}
+
+.auth-card__guest {
+    @apply mt-1.5 flex flex-wrap items-end gap-3 rounded-xl border border-dashed border-ghost bg-bg p-4;
+}
+
+.auth-card__guest-field {
+    @apply flex-[1_1_180px];
+}
+
+.auth-card__guest-help {
+    @apply basis-full text-xs text-muted;
+}
+
+.auth-card--narrow {
+    @apply max-w-[480px];
+}
+
+.auth-card__badge {
+    @apply self-start rounded-full border border-discord/50 bg-discord/15 px-3 py-1 text-xs font-semibold text-ink;
+}
+
+.auth-card__heading {
+    @apply font-display text-[28px] leading-tight font-bold;
+}
+
+.auth-card__lead {
+    @apply text-sm leading-[1.6] text-ink-soft;
+}
+
+.auth-card__link--center {
+    @apply self-center text-[13px];
+}
+.auth-card__alert--success {
+    @apply border-success/40 bg-success/10 text-success;
+}
+
+.auth-card__hint {
+    @apply text-sm leading-normal text-muted-2;
+}

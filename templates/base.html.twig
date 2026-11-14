@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="{{ app.locale }}">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}{{ config('framework.app.name') }}{% endblock %}</title>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+        <link rel="stylesheet" href="{{ asset('css/app.css') }}">
+        {{ importmap() }}
+        <script type="module">import 'app';</script>
+        {% block head %}{% endblock %}
+    </head>
+    {% set viewer = app_user() %}
+    {% set look = viewer and not viewer.guest ? viewer.preferences : null %}
+    <body class="{% block body_class %}{% endblock %}" data-space="{% block space %}site{% endblock %}"
+          {%- if look %} style="--color-cyan: {{ look.accent }}"{% if look.get('game', 'reduce_motion') and block('space')|trim != 'admin' %} data-motion="reduced"{% endif %}{% if look.get('game', 'contrast') %} data-contrast="high"{% endif %}{% endif %}>
+        {% block body %}{% endblock %}
+    </body>
+</html>

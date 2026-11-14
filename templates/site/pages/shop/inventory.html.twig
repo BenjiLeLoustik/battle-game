@@ -1,0 +1,83 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+
+{% set active = 'shop' %}
+{% set user = app_user() %}
+
+{% block title %}{{ 'site.shop.nav.inventory'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="shop">
+        <div class="shop__head">
+            <div class="shop__intro">
+                <h1 class="shop__title">{{ 'site.shop.nav.inventory'|trans }}</h1>
+                {% include '@site/pages/shop/_nav.html.twig' with { page: 'inventory' } %}
+            </div>
+        </div>
+
+        {{ shop.flashes() }}
+
+        <section class="shop-panel">
+            <h2 class="shop-panel__title">{{ 'site.shop.inventory.subscription'|trans }}</h2>
+            {% if subscription %}
+                <div class="shop-sub" style="--plan-color: {{ subscription.color }}">
+                    <span class="shop-sub__icon">{{ shop.icon('subscription') }}</span>
+                    <span class="shop-list__main">
+                        <strong class="shop-list__name">{{ subscription.product ? subscription.product|localize('name') : subscription.name }} · {{ subscription.status.translate }}</strong>
+                        <span class="shop-list__meta">
+                            {{ (subscription.status.value == 'cancelled' ? 'site.shop.inventory.ends' : 'site.shop.inventory.renews')|trans({ date: subscription.endsAt|date('d/m/Y') }) }}
+                        </span>
+                    </span>
+                    {% if subscription.status.value == 'active' %}
+                        <form method="post" action="{{ path('site_shop_unsubscribe') }}" data-confirm="{{ 'site.shop.inventory.cancel_confirm'|trans }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('shop') }}">
+                            <button type="submit" class="btn btn--ghost">{{ 'site.shop.inventory.cancel'|trans }}</button>
+                        </form>
+                    {% endif %}
+                </div>
+            {% else %}
+                <p class="shop-empty">
+                    {{ 'site.shop.inventory.no_subscription'|trans }}
+                    <a href="{{ path('site_shop_index', { tab: 'subscription' }) }}" class="shop-link">{{ 'site.shop.inventory.see_plans'|trans }}</a>
+                </p>
+            {% endif %}
+        </section>
+
+        <section class="shop-panel">
+            <h2 class="shop-panel__title">{{ 'site.shop.inventory.cosmetics'|trans }}</h2>
+            {% if items is not empty %}
+                <div class="shop-items">
+                    {% for item in items %}
+                        {% set product = item.product %}
+                        {% set kind = product.option('kind') %}
+                        <article class="shop-item{{ item.equipped ? ' shop-item--equipped' }}">
+                            <div class="shop-item__preview">
+                                {% if kind in ['frame', 'banner', 'victory'] %}
+                                    {{ shop.cosmetic(product, user.initials, 'md') }}
+                                {% elseif kind == 'color' %}
+                                    <span class="shop-card__sample" style="color: {{ product.option('value') }}">{{ user.username }}</span>
+                                {% else %}
+                                    <span class="shop-card__title-sample">{{ product.option('value') }}</span>
+                                {% endif %}
+                            </div>
+                            <strong class="shop-item__name">{{ product|localize('name') }}</strong>
+                            <span class="shop-item__kind">{{ ('cosmetic_kind.' ~ kind)|trans({}, 'enums') }}</span>
+                            <form method="post" action="{{ path('site_shop_equip', { id: item.id }) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('shop') }}">
+                                <button type="submit" class="btn {{ item.equipped ? 'btn--ghost' : 'btn--primary' }} btn--block">
+                                    {{ item.equipped ? 'site.shop.inventory.unequip'|trans : 'site.shop.inventory.equip'|trans }}
+                                </button>
+                            </form>
+                        </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="shop-empty">
+                    {{ 'site.shop.inventory.no_items'|trans }}
+                    <a href="{{ path('site_shop_index', { tab: 'cosmetic' }) }}" class="shop-link">{{ 'site.shop.inventory.see_cosmetics'|trans }}</a>
+                </p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

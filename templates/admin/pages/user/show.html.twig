@@ -1,0 +1,125 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'users' %}
+
+{% block title %}{{ user.username }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_user_index') }}" class="admin-crumbs__link">{{ 'admin.users.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ user.username }}</span>
+        </nav>
+
+        <section class="admin-panel admin-user-head">
+            {{ ui.avatar(user, 'lg') }}
+            <div class="admin-user-head__text">
+                <h1 class="admin-user-head__name">
+                    {{ user.username }}
+                    {{ admin_ui.status(status) }}
+                    {% if lockout and lockout.endsAt %}
+                        <span class="admin-user-head__until">{{ 'admin.users.until'|trans({ date: lockout.endsAt|date('d/m H:i') }, 'admin') }}</span>
+                    {% endif %}
+                </h1>
+                <span class="admin-page__subtitle">{{ user.email }} · {{ 'admin.users.joined'|trans({ date: user.createdAt ? user.createdAt|date('d/m/Y') : '—' }, 'admin') }} · ID {{ user.id }}</span>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ path('admin_user_edit', { id: user.id }) }}" class="admin-btn admin-btn--secondary">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                {{ admin_ui.post('admin_user_reset', { id: user.id }, 'admin.users.reset'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-user') }}
+                {{ admin_ui.post('admin_user_logout', { id: user.id }, 'admin.users.logout'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-user') }}
+                {% if lockout %}
+                    {{ admin_ui.post('admin_user_lift', { id: user.id }, 'admin.users.lift'|trans({}, 'admin'), 'admin-btn admin-btn--warning', 'admin-user') }}
+                {% endif %}
+                <a href="{{ path('site_profile_show', { username: user.username }) }}" class="admin-btn admin-btn--ghost" target="_blank" rel="noopener">{{ 'admin.users.profile'|trans({}, 'admin') }}</a>
+            </div>
+        </section>
+
+        <div class="admin-kpis">
+            {% for key, value in stats %}
+                <div class="admin-kpi">
+                    <span class="admin-kpi__label">{{ ('admin.users.stats.' ~ key)|trans({}, 'admin') }}</span>
+                    <strong class="admin-kpi__value">{{ value }}</strong>
+                </div>
+            {% endfor %}
+        </div>
+
+        {% if user.adminNote %}
+            <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">!</span>{{ user.adminNote }}</p>
+        {% endif %}
+
+        <section class="admin-panel admin-panel--flush" aria-labelledby="user-sanctions">
+            <div class="admin-panel__bar"><h2 id="user-sanctions" class="admin-panel__title">{{ 'admin.users.sanctions'|trans({}, 'admin') }}</h2></div>
+            {% if sanctions is empty %}
+                <p class="admin-empty">{{ 'admin.users.no_sanctions'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set sanctions_pager = paginate(sanctions, 'sanctions_page') %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['date', 'type', 'reason', 'by', 'end'] %}<th class="admin-table__th">{{ ('admin.users.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for sanction in sanctions_pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">{{ sanction.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td class="admin-table__cell">{{ admin_ui.status(sanction.type.value) }}</td>
+                                    <td class="admin-table__cell">{{ sanction.reason.translate() }}{% if sanction.message %} · {{ sanction.message }}{% endif %}</td>
+                                    <td class="admin-table__cell">{{ sanction.author ? sanction.author.username : '—' }}</td>
+                                    <td class="admin-table__cell">
+                                        {% if sanction.revokedAt %}{{ 'admin.users.revoked'|trans({ date: sanction.revokedAt|date('d/m H:i') }, 'admin') }}
+                                        {% elseif sanction.endsAt %}{{ sanction.endsAt|date('d/m/Y H:i') }}
+                                        {% else %}—{% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(sanctions_pager) }}
+            {% endif %}
+        </section>
+
+        <div class="admin-grid">
+            <section class="admin-panel admin-panel--flush" aria-labelledby="user-games">
+                <div class="admin-panel__bar"><h2 id="user-games" class="admin-panel__title">{{ 'admin.users.games'|trans({}, 'admin') }}</h2></div>
+                {% if recent is empty %}
+                    <p class="admin-empty">{{ 'admin.users.no_games'|trans({}, 'admin') }}</p>
+                {% else %}
+                    {% set recent_pager = paginate(recent, 'results_page') %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead><tr>{% for column in ['date', 'game', 'room', 'result'] %}<th class="admin-table__th">{{ ('admin.users.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                            <tbody>
+                                {% for result in recent_pager.items %}
+                                    <tr class="admin-table__row">
+                                        <td class="admin-table__cell">{{ result.createdAt|date('d/m H:i') }}</td>
+                                        <td class="admin-table__cell">{{ result.game.name }}</td>
+                                        <td class="admin-table__cell admin-table__cell--mono">{{ result.match.room ? result.match.room.code : '—' }}</td>
+                                        <td class="admin-table__cell">{{ result.position }}e · +{{ result.points }} XP</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ admin_ui.pagination(recent_pager) }}
+                {% endif %}
+            </section>
+
+            <section class="admin-panel" aria-labelledby="user-devices">
+                <h2 id="user-devices" class="admin-panel__title">{{ 'admin.users.devices'|trans({}, 'admin') }}</h2>
+                {% if devices is empty %}
+                    <p class="admin-panel__help">{{ 'admin.users.no_devices'|trans({}, 'admin') }}</p>
+                {% else %}
+                    <dl class="admin-dl">
+                        {% for device in devices %}
+                            <dt class="admin-dl__term">{{ device.lastUsed|date('d/m H:i') }}</dt>
+                            <dd class="admin-dl__value">{{ device.device }} · {{ device.ip }}</dd>
+                        {% endfor %}
+                    </dl>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

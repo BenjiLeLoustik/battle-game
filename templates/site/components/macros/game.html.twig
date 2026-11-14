@@ -1,0 +1,41 @@
+{% macro card(game, online = 0) %}
+    <a href="{{ path('site_game_show', { slug: game.slug }) }}" class="game-card" data-category="{{ game.category ? game.category.slug }}" style="--game-color: {{ game.color }}; --game-color-alt: {{ game.colorAlt }}">
+        <span class="game-card__thumb">
+            {% if game.icon %}
+                <img class="game-card__icon" src="{{ game.icon }}" alt="">
+            {% endif %}
+            <span class="game-card__category">
+                {{ game.category|localize('name') }}
+            </span>
+            {% if game.earlyAccess %}
+                <span class="game-card__early">{{ 'site.game.early'|trans }}</span>
+            {% endif %}
+            {% for event in game_events(game)|slice(0, 1) %}
+                <span class="game-card__event" style="--event-color: {{ event.color }}">{{ event.xpMultiplier > 1 ? 'XP ×' ~ event.xpMultiplier|number_format(1, ',')|replace({ ',0': '' }) : 'site.events.live'|trans }}</span>
+            {% endfor %}
+        </span>
+        <span class="game-card__body">
+            <strong class="game-card__name">
+                {{ game.name }}
+            </strong>
+            <span class="game-card__pitch" title="{{ game|localize('description') }}">
+                {{ game|localize('description') }}
+            </span>
+            <span class="game-card__meta">
+                <span>
+                    {{ 'site.game.players'|trans({ players: game.players }) }} · {{ 'site.game.duration'|trans({ minutes: game.duration }) }}
+                </span>
+                <span class="game-card__online">
+                    {{ 'site.game.online'|trans({ count: online }) }}
+                </span>
+            </span>
+            <span class="game-card__play">
+                {{ 'site.game.play'|trans }}
+            </span>
+        </span>
+    </a>
+{% endmacro %}
+
+{% macro stat(stat, value) %}
+    {{- value is null ? '—' : (stat.format ?? '{value}')|replace({ '{value}': value|round|number_format(0, ',', ' ') }) -}}
+{% endmacro %}

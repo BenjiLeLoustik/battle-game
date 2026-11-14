@@ -1,0 +1,80 @@
+.banner-preview {
+    @apply flex flex-wrap items-center gap-4 rounded-lg bg-[#0E1120] px-4 py-2.5 text-[13px] text-ink-soft
+    max-md:flex-col max-md:items-start max-md:gap-2.5 max-md:py-3;
+}
+
+.banner-preview__tag {
+    @apply rounded bg-magenta px-2 py-0.5 font-display text-[11px] font-bold tracking-[0.14em] text-on-magenta;
+}
+
+.banner-preview__item {
+    @apply flex items-center gap-2;
+}
+
+.banner-preview__dot {
+    @apply inline-block size-2 shrink-0 rounded-full bg-cyan;
+}
+
+.banner-preview__dot--event {
+    @apply bg-magenta;
+}
+
+.banner-preview__dot--news {
+    @apply bg-violet;
+}
+
+.banner-preview__dot--warning {
+    @apply bg-orange;
+}
+
+.banner-preview__dot--maintenance {
+    @apply bg-yellow;
+}
+
+.banner-layout {
+    @apply grid grid-cols-[minmax(240px,300px)_1fr] items-start gap-4 max-2xl:grid-cols-1;
+}
+
+.banner-lists {
+    @apply flex flex-col gap-2;
+}
+
+.banner-lists__item {
+    @apply flex flex-col gap-2 rounded-lg border border-adm-line p-3;
+}
+
+.banner-lists__item--active {
+    @apply border-adm-accent bg-adm-accent/8;
+}
+
+.banner-lists__link {
+    @apply flex flex-wrap items-center gap-2 text-sm text-adm-ink;
+}
+
+.banner-order {
+    @apply flex items-center gap-1;
+}
+
+.banner-order__index {
+    @apply w-5 font-mono text-xs text-adm-muted;
+}
+
+.banner-period {
+    @apply flex flex-col font-mono text-xs whitespace-nowrap text-adm-ink-soft;
+}
+
+.banner-period__end {
+    @apply text-adm-muted;
+}
+
+.banner-text {
+    @apply min-w-44 [&>span]:whitespace-normal;
+}
+
+.banner-schedule {
+    @apply flex flex-wrap items-center gap-2 border-t border-adm-line pt-2;
+}
+
+.banner-schedule__date {
+    @apply h-8 w-auto min-w-0 flex-1 py-1 text-xs;
+}

@@ -1,0 +1,20 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% block title %}{{ page|localize('title') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <article class="custom-page">
+        <header class="custom-page__head">
+            <h1 class="custom-page__title">{{ page|localize('title') }}</h1>
+            {% if page|localize('description') %}
+                <p class="custom-page__lead">{{ page|localize('description') }}</p>
+            {% endif %}
+        </header>
+        {% if style %}
+            <style>{{ style|raw }}</style>
+        {% endif %}
+        <div class="custom-page__body custom-page__body--{{ page.format.value }}">
+            {{ html|raw }}
+        </div>
+    </article>
+{% endblock %}

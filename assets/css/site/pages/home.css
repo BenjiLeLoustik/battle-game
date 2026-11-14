@@ -1,0 +1,381 @@
+.home {
+    @apply flex flex-col gap-7 max-sm:gap-4;
+}
+
+.home__title {
+    @apply sr-only;
+}
+
+.home__featured {
+    @apply relative flex min-h-[340px] flex-wrap items-stretch overflow-hidden
+    rounded-[18px] border border-line bg-panel;
+}
+
+.home__featured-grid {
+    @apply absolute -right-[10%] -bottom-[40%] -left-[10%] h-[90%] origin-top;
+    background-image:
+            repeating-linear-gradient(0deg, transparent 0 39px, rgba(46, 230, 214, 0.18) 39px 40px),
+            repeating-linear-gradient(90deg, transparent 0 39px, rgba(46, 230, 214, 0.18) 39px 40px);
+    transform: perspective(500px) rotateX(62deg);
+}
+
+.home__featured-glow {
+    @apply absolute -top-[30%] right-[8%] size-[420px] rounded-full
+    bg-[radial-gradient(circle,rgba(255,61,203,0.30),transparent_65%)];
+}
+
+.home__featured-content {
+    @apply relative flex flex-[3_1_340px] flex-col justify-center gap-4 p-9 max-sm:p-5.5;
+}
+
+.featured {
+    @apply flex flex-col gap-3;
+}
+
+.featured__track {
+    @apply flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain rounded-[18px] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden;
+}
+
+.featured__slide {
+    @apply w-full shrink-0 snap-start snap-always;
+}
+
+.featured__slide .home__featured-glow {
+    background: radial-gradient(circle, color-mix(in srgb, var(--game-color) 32%, transparent), transparent 65%);
+}
+
+.featured__visual {
+    @apply relative flex flex-[2_1_220px] items-center justify-center p-8 max-md:hidden max-sm:p-5;
+}
+
+.featured__image {
+    @apply max-h-[260px] max-w-full rounded-2xl object-contain drop-shadow-[0_0_40px_var(--game-color)];
+}
+
+.featured__controls {
+    @apply flex items-center justify-center gap-2;
+}
+
+.featured__dots {
+    @apply flex items-center px-1;
+}
+
+.featured__dot {
+    @apply flex h-8 cursor-pointer items-center px-1.5
+    before:block before:h-2 before:w-2 before:rounded-full before:bg-ghost before:transition-all before:content-['']
+    hover:before:bg-muted aria-[current=true]:before:w-6 aria-[current=true]:before:bg-cyan;
+}
+
+.featured__arrow {
+    @apply flex size-9 cursor-pointer items-center justify-center rounded-full border border-line bg-surface text-ink-soft
+    transition-colors hover:border-cyan hover:text-cyan focus-visible:border-cyan;
+}
+
+.featured__arrow--toggle {
+    @apply ml-2;
+}
+
+.featured__icon {
+    @apply size-4 fill-none stroke-current stroke-2 [stroke-linecap:round] [stroke-linejoin:round];
+}
+
+.featured__arrow--toggle[aria-pressed="false"] .featured__icon--play,
+.featured__arrow--toggle[aria-pressed="true"] .featured__icon--pause {
+    @apply hidden;
+}
+
+.featured__icon--play {
+    @apply fill-current;
+}
+
+.home__featured-tag {
+    @apply self-start rounded-md bg-cyan/12 px-2.5 py-1.5 font-display text-xs font-semibold
+    tracking-[0.16em] text-cyan uppercase;
+}
+
+.home__featured-name {
+    @apply font-display text-[52px] leading-none font-bold tracking-[0.02em];
+}
+
+.home__featured-pitch {
+    @apply max-w-[460px] text-base leading-[1.55] text-ink-soft;
+}
+
+.home__featured-stats {
+    @apply flex flex-wrap gap-[18px] text-[13px] text-muted-2 max-sm:gap-2.5;
+}
+
+.home__stat {
+    @apply text-ink;
+}
+
+.home__stat--online {
+    @apply text-success;
+}
+
+.home__featured-actions {
+    @apply mt-1.5 flex flex-wrap gap-3;
+}
+
+.home__join {
+    @apply flex flex-wrap items-center gap-4 rounded-[14px] border border-line bg-surface px-[22px] py-[18px] max-sm:px-3.5 max-sm:py-2.5;
+}
+
+.home__join-text {
+    @apply flex flex-[1_1_260px] flex-col gap-1;
+}
+
+.home__join-title {
+    @apply text-[15px] font-semibold;
+}
+
+.home__join-help {
+    @apply text-[13px] text-muted-2;
+}
+
+.home__join-form {
+    @apply contents;
+}
+
+.home__join-pseudo {
+    @apply w-40;
+}
+
+.home__join-code {
+    @apply w-[140px];
+}
+
+.home__join-submit {
+    @apply self-end;
+}
+
+.home__games {
+    @apply flex flex-col gap-[18px] max-sm:gap-2.5;
+}
+
+.home__games-head {
+    @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.home__heading {
+    @apply font-display text-2xl font-bold tracking-[0.04em];
+}
+
+.home__chips {
+    @apply flex flex-wrap gap-2;
+}
+
+.home__chip {
+    @apply h-[34px] rounded-full border border-line bg-surface px-3.5 text-[13px] font-semibold
+    text-ink-soft hover:border-cyan;
+}
+
+.home__chip--active {
+    @apply border-cyan bg-cyan/12 text-cyan;
+}
+
+.home__grid {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-5 max-sm:gap-3;
+}
+
+.home__empty {
+    @apply rounded-[14px] border border-dashed border-line p-8 text-center text-sm text-muted-2 max-sm:p-5;
+}
+
+.home__empty[hidden],
+.home__more[hidden],
+.home__retry[hidden] {
+    @apply hidden;
+}
+
+.home__more {
+    @apply flex justify-center py-6 max-sm:py-3.5;
+}
+
+.home__loader {
+    @apply size-8 animate-spin rounded-full border-2 border-line border-t-cyan;
+}
+
+.home__retry {
+    @apply mx-auto mt-4 flex;
+}
+
+.rewards {
+    @apply flex flex-col gap-4 rounded-[14px] border border-line bg-surface p-5 max-sm:p-3.5;
+}
+
+.rewards__top {
+    @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.rewards__heading {
+    @apply flex flex-col gap-0.5;
+}
+
+.rewards__title {
+    @apply font-display text-lg font-bold;
+}
+
+.rewards__summary {
+    @apply text-xs text-muted-2;
+}
+
+.rewards__timer {
+    @apply flex items-center gap-1.5 rounded-full border border-line bg-bg/60 px-3 py-1.5 text-xs text-muted-2;
+}
+
+.rewards__timer svg {
+    @apply size-3.5;
+}
+
+.rewards__grid {
+    @apply grid gap-3 lg:grid-cols-2;
+}
+
+.rewards__panel {
+    @apply flex flex-col gap-3 rounded-xl border border-line-soft bg-bg/40 p-4 max-sm:p-3;
+}
+
+.rewards__panel-head {
+    @apply flex items-center justify-between gap-2;
+}
+
+.rewards__subtitle {
+    @apply text-sm font-semibold text-ink;
+}
+
+.rewards__streak {
+    @apply flex items-center gap-1 text-xs font-semibold text-orange;
+}
+
+.rewards__streak svg {
+    @apply size-3.5;
+}
+
+.rewards__count {
+    @apply rounded-md bg-surface-2 px-2 py-0.5 text-xs font-semibold text-muted-2;
+}
+
+.rewards__days {
+    @apply grid grid-cols-7 gap-1.5;
+}
+
+.rewards__day {
+    @apply flex aspect-[4/5] flex-col items-center justify-center gap-1 rounded-lg border border-line bg-surface text-muted max-sm:aspect-auto max-sm:py-2;
+}
+
+.rewards__day--done {
+    @apply border-success/30 bg-success/10 text-success;
+}
+
+.rewards__day--today {
+    @apply border-yellow bg-yellow/15 text-yellow shadow-[0_0_14px_rgb(255_201_74/0.3)];
+}
+
+.rewards__day--next {
+    @apply border-dashed border-yellow/60 text-yellow;
+}
+
+.rewards__day-label {
+    @apply text-[10px] font-semibold tracking-wide uppercase;
+}
+
+.rewards__day-coins {
+    @apply font-display text-base text-ink max-sm:text-sm;
+}
+
+.rewards__day--later .rewards__day-coins {
+    @apply text-muted-2;
+}
+
+.rewards__day-check {
+    @apply size-5;
+}
+
+.rewards__claim {
+    @apply w-full bg-yellow font-bold text-on-cyan hover:brightness-110;
+}
+
+.rewards__note {
+    @apply rounded-lg bg-surface px-3 py-2.5 text-center text-[13px] text-muted-2;
+}
+
+.rewards__list {
+    @apply flex flex-col gap-2;
+}
+
+.rewards__challenge {
+    @apply flex items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2.5;
+}
+
+.rewards__challenge--ready {
+    @apply border-yellow/60 bg-yellow/8;
+}
+
+.rewards__challenge--claimed {
+    @apply border-transparent bg-transparent;
+}
+
+.rewards__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-surface-2 text-muted-2;
+}
+
+.rewards__challenge--ready .rewards__icon {
+    @apply bg-yellow/15 text-yellow;
+}
+
+.rewards__challenge--claimed .rewards__icon {
+    @apply bg-success/10 text-success;
+}
+
+.rewards__icon svg {
+    @apply size-[18px];
+}
+
+.rewards__challenge-text {
+    @apply flex min-w-0 flex-1 flex-col gap-1.5;
+}
+
+.rewards__challenge-name {
+    @apply text-[13px] font-medium text-ink-soft;
+}
+
+.rewards__challenge--claimed .rewards__challenge-name {
+    @apply text-muted;
+}
+
+.rewards__challenge-meta {
+    @apply text-xs text-muted;
+}
+
+.rewards__challenge--ready .rewards__challenge-meta {
+    @apply text-yellow;
+}
+
+.rewards__track {
+    @apply h-1.5 overflow-hidden rounded-full bg-line-soft;
+}
+
+.rewards__fill {
+    @apply block h-full rounded-full bg-yellow;
+}
+
+.rewards__progress {
+    @apply flex shrink-0 flex-col items-end text-xs font-semibold text-ink-soft;
+}
+
+.rewards__progress small {
+    @apply text-[11px] font-normal text-muted;
+}
+
+.rewards__take {
+    @apply cursor-pointer rounded-lg bg-yellow px-3 py-1.5 font-display text-sm font-bold text-on-cyan hover:brightness-110;
+}
+
+.rewards__done {
+    @apply flex size-7 shrink-0 items-center justify-center rounded-full bg-success/15 text-success;
+}
+
+.rewards__done svg {
+    @apply size-4;
+}

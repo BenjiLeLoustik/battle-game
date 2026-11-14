@@ -1,0 +1,119 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+{% import '@site/components/macros/icon.html.twig' as icon %}
+
+{% set active = 'pass' %}
+
+{% block title %}{{ 'site.pass.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% macro reward(item, tier, track, color) %}
+    {% import '@site/components/macros/shop.html.twig' as shop %}
+    {% import '@site/components/macros/icon.html.twig' as icon %}
+    {% if item %}
+        <div class="pass-reward{{ track != 'free' ? ' pass-reward--paid' }}{{ item.claimed ? ' pass-reward--claimed' : (item.available ? ' pass-reward--ready' : '') }}{{ not item.owned ? ' pass-reward--locked' }}" style="--track: {{ color }}">
+            <span class="pass-reward__icon">{{ shop.icon(item.type == 'product' ? (item.product ? item.product.type.value : 'cosmetic') : item.type) }}</span>
+            <span class="pass-reward__label">
+                {% if item.type == 'coins' %}{{ 'site.pass.coins'|trans({ count: item.value }) }}
+                {% elseif item.type == 'lives' %}{{ 'site.pass.lives'|trans({ count: item.value }) }}
+                {% else %}{{ item.product ? item.product|localize('name') : '—' }}{% endif %}
+            </span>
+            {% if item.claimed %}
+                <span class="pass-reward__state">{{ icon.svg('check') }}</span>
+            {% elseif item.available %}
+                <form method="post" action="{{ path('site_pass_claim', { tier: tier.number, track: track }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('pass') }}">
+                    <button type="submit" class="pass-reward__claim">{{ 'site.pass.claim'|trans }}</button>
+                </form>
+            {% elseif not item.owned %}
+                <span class="pass-reward__state pass-reward__state--lock">{{ icon.svg('lock') }}</span>
+            {% endif %}
+            {% set product = item.product %}
+            <span class="pass-reward__visual pass-reward__visual--{{ item.type == 'product' ? (product ? product.type.value ~ ' pass-reward__visual--' ~ product.option('kind', 'item') : 'none') : item.type }}" aria-hidden="true">
+                {% if item.type == 'coins' %}
+                    {{ shop.icon('coins') }}<strong>{{ item.value }}</strong>
+                {% elseif item.type == 'lives' %}
+                    {{ shop.icon('lives') }}<strong>×{{ item.value }}</strong>
+                {% elseif product and product.image %}
+                    <img class="pass-reward__image" src="{{ product.image }}" alt="" loading="lazy">
+                {% elseif product and product.option('kind') in ['frame', 'banner', 'victory'] %}
+                    {{ shop.cosmetic(product, app_user() ? app_user().initials : 'BG', 'sm') }}
+                {% elseif product and product.option('kind') == 'color' %}
+                    <span class="pass-reward__color" style="--name-color: {{ product.option('value') }}">Aa</span>
+                {% elseif product and product.option('kind') == 'title' %}
+                    <span class="user-title">{{ product.option('value') }}</span>
+                {% elseif product %}
+                    {{ shop.icon(product.type.value) }}
+                {% endif %}
+            </span>
+        </div>
+    {% else %}
+        <div class="pass-reward pass-reward--empty"></div>
+    {% endif %}
+{% endmacro %}
+
+{% block content %}
+    <div class="engage">
+        <div class="engage__head">
+            <div class="engage__intro">
+                <h1 class="engage__title">{{ 'site.pass.title'|trans }}</h1>
+                <p class="engage__subtitle">{{ 'site.pass.subtitle'|trans }}</p>
+            </div>
+        </div>
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="engage-flash engage-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}</p>
+            {% endfor %}
+        {% endfor %}
+        {% if pass is null %}
+            <p class="engage-empty">{{ 'site.pass.no_season'|trans }}</p>
+        {% elseif pass.tiers is empty %}
+            <p class="engage-empty">{{ 'site.pass.no_tiers'|trans }}</p>
+        {% else %}
+            <section class="pass-hero">
+                <div class="pass-hero__level">
+                    <span class="pass-hero__label">{{ 'site.pass.level'|trans }}</span>
+                    <strong class="pass-hero__value">{{ pass.level }}<small>/{{ pass.tiers|length }}</small></strong>
+                </div>
+                <div class="pass-hero__progress">
+                    <div class="pass-hero__row">
+                        <strong>{{ pass.season.name }}</strong>
+                        <span>{{ pass.next ? 'site.pass.next'|trans({ xp: pass.xp, need: pass.next.xp }) : 'site.pass.complete'|trans }}</span>
+                    </div>
+                    <div class="pass-hero__track"><span class="pass-hero__fill" style="width: {{ pass.progress }}%"></span></div>
+                    <span class="pass-hero__help">{{ 'site.pass.help'|trans({ date: pass.season.endsAt|date('d/m/Y') }) }}</span>
+                </div>
+                <div class="pass-hero__premium{{ not pass.locked ? ' pass-hero__premium--on' : '' }}">
+                    <ul class="pass-hero__tracks">
+                        {% for track in pass.tracks %}
+                            <li class="pass-hero__chip{{ track.owned ? ' pass-hero__chip--on' }}" style="--track: {{ track.color }}">{{ icon.svg(track.owned ? 'check' : 'lock') }}{{ track.name }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if pass.locked %}
+                        <a href="{{ path('site_shop_index', { tab: 'subscription' }) }}" class="btn btn--primary">{{ 'site.pass.unlock'|trans }}</a>
+                    {% else %}
+                        <strong>{{ 'site.pass.premium_on'|trans }}</strong>
+                    {% endif %}
+                </div>
+            </section>
+
+            <section class="pass-track" aria-label="{{ 'site.pass.title'|trans }}" style="--tracks: {{ pass.tracks|length + 1 }}">
+                <div class="pass-track__legend">
+                    <span>{{ 'site.pass.tier'|trans }}</span>
+                    <span class="pass-track__name" style="--track: #2EE6D6">{{ 'site.pass.free'|trans }}</span>
+                    {% for track in pass.tracks %}<span class="pass-track__name" style="--track: {{ track.color }}">{{ track.name }}</span>{% endfor %}
+                </div>
+                {% for tier in pass.tiers %}
+                    <div class="pass-tier{{ tier.unlocked ? ' pass-tier--unlocked' }}">
+                        <div class="pass-tier__number">
+                            <strong>{{ tier.number }}</strong>
+                            <span>{{ tier.xp }} XP</span>
+                        </div>
+                        {{ _self.reward(tier.rewards.free, tier, 'free', '#2EE6D6') }}
+                        {% for track in pass.tracks %}{{ _self.reward(tier.rewards[track.key] ?? null, tier, track.key, track.color) }}{% endfor %}
+                    </div>
+                {% endfor %}
+            </section>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set opened = app.request.query.get('task') %}
+
+<section id="studio-tasks" class="admin-panel" aria-labelledby="studio-tasks-title">
+    <div class="admin-panel__bar">
+        <h2 id="studio-tasks-title" class="admin-panel__title">
+            {{ 'admin.tasks.title'|trans({}, 'admin') }}
+            <span class="admin-pill">{{ tasks|filter(task => task.status.value != 'done')|length }}</span>
+        </h2>
+        <a href="{{ path('admin_studio_task_new', { slug: game.slug }) }}" class="admin-btn admin-btn--secondary admin-btn--small">
+            {{ 'admin.tasks.new'|trans({}, 'admin') }}
+        </a>
+    </div>
+    {% for task in tasks %}
+        {% set progress = task.progress %}
+        <details id="task-{{ task.id }}" class="studio-task studio-task--{{ task.status.value }}"{{ opened == task.id ? ' open' }}>
+            <summary class="studio-task__summary">
+                <span class="studio-task__main">
+                    <strong class="studio-task__title">{{ task.title }}</strong>
+                    <span class="studio-task__meta">
+                        <span class="admin-pill admin-pill--{{ task.status.tone() }}">{{ task.status.translate() }}</span>
+                        {% if progress.total %}
+                            <span class="studio-task__info">{{ 'admin.tasks.progress'|trans({ done: progress.done, total: progress.total }, 'admin') }}</span>
+                        {% endif %}
+                        {% if task.startAt or task.endAt %}
+                            <span class="studio-task__info{{ task.late ? ' studio-task__info--late' }}">
+                                {{ task.startAt ? task.startAt|date('d/m') : '…' }} → {{ task.endAt ? task.endAt|date('d/m') : '…' }}
+                            </span>
+                        {% endif %}
+                    </span>
+                </span>
+                {% if task.assignees|length %}
+                    <span class="studio-task__people" title="{{ task.assignees.toArray()|map(user => user.username)|join(', ') }}">
+                        {% for user in task.assignees %}
+                            {{ ui.avatar(user, 'stack') }}
+                        {% endfor %}
+                    </span>
+                {% endif %}
+            </summary>
+            <div class="studio-task__body">
+                {% if task.description %}
+                    <p class="studio-task__description">{{ task.description }}</p>
+                {% endif %}
+                {% if task.checklist %}
+                    <ul class="studio-task__checklist">
+                        {% for item in task.checklist %}
+                            <li>
+                                <form method="post" action="{{ path('admin_studio_task_check', { slug: game.slug, id: task.id }) }}">
+                                    <input type="hidden" name="_token" value="{{ token }}">
+                                    <input type="hidden" name="item" value="{{ loop.index0 }}">
+                                    <button type="submit" class="studio-task__item{{ item.done ? ' studio-task__item--done' }}" aria-pressed="{{ item.done ? 'true' : 'false' }}">
+                                        <span class="studio-task__box" aria-hidden="true">{{ item.done ? '✓' }}</span>
+                                        {{ item.label }}
+                                    </button>
+                                </form>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <p class="studio-task__info">
+                    {{ task.assignees|length ? 'admin.tasks.assigned'|trans({ names: task.assignees.toArray()|map(user => user.username)|join(', ') }, 'admin') : 'admin.tasks.unassigned'|trans({}, 'admin') }}
+                    {% if task.author %} · {{ 'admin.tasks.by'|trans({ name: task.author.username }, 'admin') }}{% endif %}
+                </p>
+                <div class="studio-task__actions">
+                    <form method="post" action="{{ path('admin_studio_task_status', { slug: game.slug, id: task.id }) }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <select class="admin-select admin-select--small" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.tasks.status'|trans({}, 'admin') }}">
+                            {% for status in task_statuses %}
+                                <option value="{{ status.value }}"{{ status == task.status ? ' selected' }}>{{ status.translate() }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    <a href="{{ path('admin_studio_task_edit', { slug: game.slug, id: task.id }) }}" class="admin-btn admin-btn--ghost admin-btn--small">
+                        {{ 'admin.edit'|trans({}, 'admin') }}
+                    </a>
+                    <form method="post" action="{{ path('admin_studio_task_delete', { slug: game.slug, id: task.id }) }}" data-component="ConfirmSubmit" data-message="{{ 'admin.tasks.delete_confirm'|trans({}, 'admin') }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">{{ 'admin.delete'|trans({}, 'admin') }}</button>
+                    </form>
+                </div>
+            </div>
+        </details>
+    {% else %}
+        <p class="admin-empty">{{ 'admin.tasks.empty'|trans({}, 'admin') }}</p>
+    {% endfor %}
+</section>

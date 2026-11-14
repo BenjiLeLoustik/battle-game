@@ -1,0 +1,129 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'shop' %}
+{% set user = app_user() %}
+{% set member = user and not user.guest %}
+{% set purse = wallet() %}
+
+{% block title %}{{ 'site.shop.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="shop">
+        <div class="shop__head">
+            <div class="shop__intro">
+                <h1 class="shop__title">
+                    {{ 'site.shop.title'|trans }}
+                </h1>
+                <p class="shop__subtitle">
+                    {{ 'site.shop.subtitle'|trans(rewards) }}
+                </p>
+                {% if member %}
+                    {% include '@site/pages/shop/_nav.html.twig' with { page: 'index' } %}
+                {% endif %}
+            </div>
+            {% if purse %}
+                <div class="shop-purse">
+                    <div class="shop-purse__item shop-purse__item--coins">
+                        {{ shop.icon('coins') }}
+                        <span class="shop-purse__value">{{ purse.coins|number_format(0, ',', ' ') }}</span>
+                        <span class="shop-purse__label">{{ 'site.shop.purse.coins'|trans }}</span>
+                    </div>
+                    <div class="shop-purse__item shop-purse__item--lives">
+                        {{ shop.icon('lives') }}
+                        <span class="shop-purse__value">{{ purse.unlimited ? '∞' : purse.left ~ '/' ~ purse.max }}{% if purse.bonus > 0 %} <small class="shop-purse__bonus">+{{ purse.bonus }}</small>{% endif %}</span>
+                        <span class="shop-purse__label">{{ purse.unlimited ? 'site.shop.purse.unlimited'|trans : 'site.shop.purse.lives'|trans({ time: purse.resetAt|date('H:i') }) }}</span>
+                    </div>
+                    {% if subscription %}
+                        <div class="shop-purse__item shop-purse__item--plan">
+                            {{ shop.icon('subscription') }}
+                            <span class="shop-purse__value">{{ subscription.product ? subscription.product|localize('name') : subscription.name }}</span>
+                            <span class="shop-purse__label">{{ 'site.shop.purse.until'|trans({ date: subscription.endsAt|date('d/m/Y') }) }}</span>
+                        </div>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        {{ shop.flashes() }}
+
+        {% if not card and is_granted('ROLE_ADMIN') %}
+            <p class="shop-flash shop-flash--info">
+                {{ 'site.shop.card_admin'|trans }}
+            </p>
+        {% endif %}
+
+        <nav class="shop-tabs" aria-label="{{ 'site.shop.categories'|trans }}">
+            {% for item in tabs %}
+                <a href="{{ path('site_shop_index', item == 'all' ? {} : { tab: item }) }}" class="shop-tabs__tab{{ tab == item ? ' shop-tabs__tab--active' }}" style="--type-color: {{ shop.color(item) }}"{% if tab == item %} aria-current="page"{% endif %}>
+                    {{ shop.icon(item) }}
+                    {{ ('site.shop.tabs.' ~ item)|trans }}
+                </a>
+            {% endfor %}
+        </nav>
+
+        {% if plans is not empty %}
+            <section class="shop-plans" aria-label="{{ 'site.shop.tabs.subscription'|trans }}">
+                {% for product in plans %}
+                    <article class="shop-plan" style="--plan-color: {{ product.option('color', '#7C5CFF') }}">
+                        <div class="shop-plan__top">
+                            <span class="shop-plan__head">{{ ui.plan(product.badge, 'lg') }}<span class="shop-plan__tag">{{ 'site.shop.plan.tag'|trans }}</span></span>
+                            <h2 class="shop-plan__name">{{ product|localize('name') }}</h2>
+                            {% if product.priceCents is not null %}
+                                <p class="shop-plan__price">{{ shop.price(product.priceCents) }}<span class="shop-plan__period"> / {{ 'site.shop.month'|trans }}</span></p>
+                            {% endif %}
+                        </div>
+                        <p class="shop-plan__description">{{ product|localize('description') }}</p>
+                        <ul class="shop-plan__perks">
+                            <li class="shop-plan__perk shop-plan__perk--lives">{{ product.unlimited ? 'site.shop.plan.unlimited'|trans : 'site.shop.plan.lives'|trans({ count: product.option('lives') }) }}</li>
+                            {% if product.earlyAccess %}<li class="shop-plan__perk shop-plan__perk--lives">{{ 'site.shop.plan.early'|trans }}</li>{% endif %}
+                            {% set plan_tracks = pass_track_names(product) %}
+                            {% if plan_tracks is not empty %}<li class="shop-plan__perk shop-plan__perk--lives">{{ 'site.shop.plan.pass'|trans({ tracks: plan_tracks|join(', ') }) }}</li>{% endif %}
+                            {% for perk in (product|localize('perks'))|split("\n")|filter(perk => perk|trim != '') %}
+                                <li class="shop-plan__perk">{{ perk }}</li>
+                            {% endfor %}
+                        </ul>
+                        {{ shop.buy(product, owned[product.id] ?? false, card, member) }}
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% if products is not empty %}
+            <section class="shop-grid">
+                {% for product in products %}
+                    <article class="shop-card shop-card--{{ product.type.value }}" style="--type-color: {{ shop.color(product.type.value) }}">
+                        <div class="shop-card__media">
+                            {% if product.image %}
+                                <img class="shop-card__image" src="{{ product.image }}" alt="" loading="lazy">
+                            {% elseif product.type.value == 'cosmetic' and product.option('kind') in ['frame', 'banner', 'victory'] %}
+                                {{ shop.cosmetic(product, member ? user.initials : 'BG', 'lg') }}
+                            {% elseif product.type.value == 'cosmetic' and product.option('kind') == 'title' %}
+                                <span class="shop-card__title-sample">{{ product.option('value') }}</span>
+                            {% else %}
+                                <span class="shop-card__glyph">{{ shop.icon(product.type.value) }}</span>
+                            {% endif %}
+                            <span class="shop-card__type">{{ product.type.translate }}</span>
+                        </div>
+                        <div class="shop-card__body">
+                            <h2 class="shop-card__name">{{ product|localize('name') }}</h2>
+                            <p class="shop-card__description">{{ product|localize('description') }}</p>
+                            {% if product.stock is not null %}
+                                <p class="shop-card__stock{{ product.stock <= 5 ? ' shop-card__stock--low' }}">
+                                    {{ 'site.shop.stock'|trans({ count: product.stock }) }}
+                                </p>
+                            {% endif %}
+                        </div>
+                        {{ shop.buy(product, owned[product.id] ?? false, card, member) }}
+                    </article>
+                {% endfor %}
+            </section>
+        {% elseif plans is empty %}
+            <p class="shop-empty">
+                {{ 'site.shop.empty'|trans }}
+            </p>
+        {% endif %}
+    </div>
+{% endblock %}

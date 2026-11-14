@@ -1,0 +1,125 @@
+{% macro status(status) %}
+    {% set modifier = { active: 'ok', suspension: 'warn', ban: 'danger', mute: 'warn', warning: 'accent' }[status] ?? '' %}
+    <span class="admin-pill{{ modifier ? ' admin-pill--' ~ modifier }}">{{ ('admin.status.' ~ status)|trans({}, 'admin') }}</span>
+{% endmacro %}
+
+{% macro user(user, meta = null) %}
+    {% import '@site/components/macros/user.html.twig' as ui %}
+    <span class="admin-user">
+        {{ ui.avatar(user, 'round') }}
+        <span class="admin-user__text">
+            <span class="admin-user__name">{{ user.username }}</span>
+            <span class="admin-user__meta">{{ meta ?? user.email }}</span>
+        </span>
+    </span>
+{% endmacro %}
+
+{% macro error(errors, key) %}
+    {% if errors[key] is defined %}
+        <span class="admin-field__error">{{ errors[key]|trans({}, errors[key] starts with 'admin.' ? 'admin' : 'validators') }}</span>
+    {% endif %}
+{% endmacro %}
+
+{% macro pagination(pager) %}
+    {% if pager.pages > 1 %}
+        {% set query = app.request.query.all %}
+        <nav class="admin-pagination" aria-label="{{ 'admin.pagination_label'|trans({}, 'admin') }}">
+            <span>{{ 'admin.pagination'|trans({ from: pager.from, to: pager.to, total: pager.total|number_format(0, ',', ' ') }, 'admin') }}</span>
+            <span class="admin-pagination__links">
+                {% if pager.page > 1 %}
+                    <a href="?{{ query|merge({ (pager.name): pager.page - 1 })|url_encode }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.previous'|trans({}, 'admin') }}</a>
+                {% endif %}
+                {% for number in 1..pager.pages %}
+                    {% if number == 1 or number == pager.pages or (number - pager.page)|abs <= 1 %}
+                        <a href="?{{ query|merge({ (pager.name): number })|url_encode }}" class="admin-pagination__page{{ number == pager.page ? ' admin-pagination__page--current' }}"{% if number == pager.page %} aria-current="page"{% endif %}>{{ number }}</a>
+                    {% elseif (number - pager.page)|abs == 2 %}
+                        <span class="admin-pagination__gap">…</span>
+                    {% endif %}
+                {% endfor %}
+                {% if pager.page < pager.pages %}
+                    <a href="?{{ query|merge({ (pager.name): pager.page + 1 })|url_encode }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.next'|trans({}, 'admin') }}</a>
+                {% endif %}
+            </span>
+        </nav>
+    {% endif %}
+{% endmacro %}
+
+{% macro link(href, label, direction = 'next') %}
+    <a href="{{ href }}" class="admin-link admin-link--{{ direction }}">
+        {% if direction == 'back' %}
+            <svg class="admin-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M19 12H5M11 18l-6-6 6-6"/></svg>
+        {% endif %}
+        <span>{{ label }}</span>
+        {% if direction == 'next' %}
+            <svg class="admin-link__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        {% endif %}
+    </a>
+{% endmacro %}
+
+{% macro post(route, params, label, class, token, confirm = null) %}
+    <form method="post" action="{{ path(route, params) }}"{% if confirm %} data-component="ConfirmSubmit" data-message="{{ confirm }}"{% endif %}>
+        <input type="hidden" name="_token" value="{{ csrf_token(token) }}">
+        <button type="submit" class="{{ class }}">{{ label }}</button>
+    </form>
+{% endmacro %}
+
+{% macro translations(entity) %}
+    {% set content = content_translations(entity) %}
+    <section class="admin-panel">
+        <div class="admin-panel__intro">
+            <h2 class="admin-panel__title">{{ 'admin.content.title'|trans({}, 'admin') }}</h2>
+            <span class="admin-panel__help">{{ 'admin.content.help'|trans({}, 'admin') }}</span>
+        </div>
+        {% if content.locales is empty %}
+            <p class="admin-panel__help">
+                {{ 'admin.content.none'|trans({}, 'admin') }}
+                <a href="{{ path('admin_language_index') }}" class="content-locale__link">{{ 'admin.content.add_language'|trans({}, 'admin') }}</a>
+            </p>
+        {% else %}
+            {% for locale in content.locales %}
+                {% set values = content.values[locale] ?? {} %}
+                <details class="content-locale"{{ loop.first ? ' open' }}>
+                    <summary class="content-locale__summary">
+                        <span class="content-locale__code">{{ locale|upper }}</span>
+                        <span class="content-locale__name">{{ locale|language_name }}</span>
+                        <span class="content-locale__count{{ values|length == content.fields|length ? ' content-locale__count--done' }}">{{ 'admin.content.count'|trans({ done: values|length, total: content.fields|length }, 'admin') }}</span>
+                    </summary>
+                    <div class="content-locale__fields">
+                        {% for field, type in content.fields %}
+                            <label class="admin-field">
+                                {{ ('admin.content.fields.' ~ field)|trans({}, 'admin') }}
+                                {% if type == 'code' %}
+                                    <textarea class="admin-field__input admin-field__input--area admin-field__input--code" name="translations[{{ locale }}][{{ field }}]" rows="12" spellcheck="false">{{ values[field] ?? '' }}</textarea>
+                                {% elseif type == 'area' %}
+                                    <textarea class="admin-field__input admin-field__input--area" name="translations[{{ locale }}][{{ field }}]" rows="3" placeholder="{{ content.sources[field] }}">{{ values[field] ?? '' }}</textarea>
+                                {% else %}
+                                    <input class="admin-field__input" name="translations[{{ locale }}][{{ field }}]" value="{{ values[field] ?? '' }}" placeholder="{{ content.sources[field] }}">
+                                {% endif %}
+                            </label>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endfor %}
+        {% endif %}
+    </section>
+{% endmacro %}
+
+{% macro player(name, url, placeholder, required = true) %}
+    <div class="player-picker" data-component="PlayerPicker" data-url="{{ url }}" data-empty="{{ 'admin.player_picker.empty'|trans({}, 'admin') }}" data-coins="{{ 'admin.player_picker.coins'|trans({}, 'admin') }}">
+        <svg class="player-picker__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+        <input class="player-picker__input" name="{{ name }}" autocomplete="off" role="combobox" aria-expanded="false" aria-autocomplete="list" placeholder="{{ placeholder }}" aria-label="{{ placeholder }}"{{ required ? ' required' }}>
+        <div class="player-picker__panel" role="listbox" hidden></div>
+    </div>
+{% endmacro %}
+
+{% macro color(name, value, label, presets = ['#2EE6D6', '#A78BFA', '#FF3DCB', '#4ADE80', '#FFC94A', '#FF9F43', '#60A5FA', '#FF5470']) %}
+    <div class="color-picker" role="group" aria-label="{{ label }}" data-component="ColorPicker">
+        {% for preset in presets %}
+            <button type="button" class="color-picker__swatch{{ value|upper == preset|upper ? ' color-picker__swatch--active' }}" style="--chip: {{ preset }}" data-color="{{ preset }}" aria-label="{{ preset }}" aria-pressed="{{ value|upper == preset|upper ? 'true' : 'false' }}"></button>
+        {% endfor %}
+        <label class="color-picker__custom{{ presets|filter(preset => preset|upper == value|upper) is empty ? ' color-picker__swatch--active' }}" style="--chip: {{ value }}" title="{{ 'admin.color.custom'|trans({}, 'admin') }}">
+            <input type="color" class="color-picker__native" value="{{ value }}" aria-label="{{ 'admin.color.custom'|trans({}, 'admin') }}" data-native>
+        </label>
+        <input class="color-picker__hex" name="{{ name }}" value="{{ value|upper }}" maxlength="7" pattern="#[0-9A-Fa-f]{6}" spellcheck="false" aria-label="{{ label }}" data-hex>
+    </div>
+{% endmacro %}

@@ -1,0 +1,39 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_seasons' %}
+{% set title = season.id ? 'admin.engage.seasons.edit'|trans({}, 'admin') : 'admin.engage.seasons.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+        <nav class="admin-crumbs"><a href="{{ path('admin_engage_seasons') }}" class="admin-crumbs__link">{{ 'admin.engage.seasons.title'|trans({}, 'admin') }}</a> <span aria-hidden="true">/</span> <span class="admin-crumbs__current">{{ title }}</span></nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+        {% if error %}<p class="admin-note"><span class="admin-note__icon">!</span>{{ error|trans({}, 'admin') }}</p>{% endif %}
+        <section class="admin-panel">
+            <label class="admin-field">{{ 'admin.engage.seasons.name'|trans({}, 'admin') }}<input class="admin-field__input" name="name" maxlength="80" required value="{{ season.name }}"></label>
+            <div class="admin-form-grid">
+                <label class="admin-field">{{ 'admin.engage.seasons.starts'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="starts_at" required value="{{ season.startsAt|date('Y-m-d\\TH:i') }}"></label>
+                <label class="admin-field">{{ 'admin.engage.seasons.ends'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="ends_at" required value="{{ season.endsAt|date('Y-m-d\\TH:i') }}"></label>
+            </div>
+            <span class="admin-panel__help">{{ 'admin.engage.seasons.dates_help'|trans({}, 'admin') }}</span>
+        </section>
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.engage.seasons.pass'|trans({}, 'admin') }}</h2>
+            <label class="admin-field">{{ 'admin.engage.seasons.pass_select'|trans({}, 'admin') }}
+                <select class="admin-field__input" name="pass">
+                    <option value="">{{ 'admin.engage.seasons.no_pass'|trans({}, 'admin') }}</option>
+                    {% for plan in plans %}<option value="{{ plan.id }}"{{ season.pass and season.pass.id == plan.id ? ' selected' }}>{{ plan.name }} · {{ 'admin.engage.passes.tiers_count'|trans({ count: plan.tiers|length }, 'admin') }}</option>{% endfor %}
+                </select>
+            </label>
+            <span class="admin-panel__help">{{ 'admin.engage.seasons.pass_help'|trans({}, 'admin') }} <a class="admin-link" href="{{ path('admin_engage_pass_new') }}">{{ 'admin.engage.passes.new'|trans({}, 'admin') }}</a></span>
+        </section>
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_engage_seasons') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

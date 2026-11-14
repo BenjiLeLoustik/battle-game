@@ -1,0 +1,4 @@
+{% import '@site/components/macros/game.html.twig' as games_ui %}
+{% for game in games %}
+    {{ games_ui.card(game, online[game.id] ?? 0) }}
+{% endfor %}

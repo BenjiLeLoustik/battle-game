@@ -1,0 +1,145 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% set others = devices|filter(device => not device.current)|length %}
+
+{% block settings %}
+    <section class="settings-card" aria-labelledby="settings-login">
+        <h2 id="settings-login" class="settings-card__title">{{ 'site.settings.account.login'|trans }}</h2>
+
+        <details class="settings-panel">
+            <summary class="settings-panel__summary">
+                <span class="settings-panel__info">
+                    <span class="settings-panel__label">{{ 'site.settings.account.email'|trans }}</span>
+                    <strong class="settings-panel__value">{{ user.email }}</strong>
+                    {% if user.pendingEmail %}
+                        <span class="settings-panel__note">{{ 'site.settings.account.email_pending'|trans({ email: user.pendingEmail }) }}</span>
+                    {% endif %}
+                </span>
+                <span class="settings-button">{{ 'site.settings.edit'|trans }}</span>
+            </summary>
+            <form class="settings-panel__form" method="post" action="{{ path('site_settings_email') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                <div class="field field--form">
+                    <label class="field__label" for="settings-email">{{ 'site.settings.account.new_email'|trans }}</label>
+                    <input id="settings-email" class="field__input field__input--large" type="email" name="email" autocomplete="email" required>
+                </div>
+                {% if user.hasPassword %}
+                    <div class="field field--form">
+                        <label class="field__label" for="settings-email-password">{{ 'site.settings.account.current_password'|trans }}</label>
+                        <input id="settings-email-password" class="field__input field__input--large" type="password" name="password" autocomplete="current-password" required>
+                    </div>
+                {% endif %}
+                <span class="field__help">{{ 'site.settings.account.email_help'|trans }}</span>
+                <button type="submit" class="settings-button settings-button--primary">{{ 'site.settings.update'|trans }}</button>
+            </form>
+        </details>
+
+        <details class="settings-panel">
+            <summary class="settings-panel__summary">
+                <span class="settings-panel__info">
+                    <span class="settings-panel__label">{{ 'site.settings.account.password'|trans }}</span>
+                    <strong class="settings-panel__value">
+                        {% if user.hasPassword %}
+                            ••••••••••
+                            {% if user.passwordChangedAt %}
+                                <span class="settings-panel__note">{{ 'site.settings.account.password_changed'|trans({ date: user.passwordChangedAt|date('d/m/Y') }) }}</span>
+                            {% endif %}
+                        {% else %}
+                            {{ 'site.settings.account.no_password'|trans }}
+                        {% endif %}
+                    </strong>
+                </span>
+                <span class="settings-button">{{ (user.hasPassword ? 'site.settings.edit' : 'site.settings.account.set_password')|trans }}</span>
+            </summary>
+            <form class="settings-panel__form" method="post" action="{{ path('site_settings_password') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                {% if user.hasPassword %}
+                    <div class="field field--form">
+                        <label class="field__label" for="settings-current">{{ 'site.settings.account.current_password'|trans }}</label>
+                        <input id="settings-current" class="field__input field__input--large" type="password" name="current" autocomplete="current-password" required>
+                    </div>
+                {% endif %}
+                <div class="field field--form">
+                    <label class="field__label" for="settings-password">{{ 'site.settings.account.new_password'|trans }}</label>
+                    <input id="settings-password" class="field__input field__input--large" type="password" name="password" autocomplete="new-password" minlength="10" required placeholder="{{ 'site.auth.password_hint'|trans }}">
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="settings-confirmation">{{ 'site.settings.account.confirmation'|trans }}</label>
+                    <input id="settings-confirmation" class="field__input field__input--large" type="password" name="confirmation" autocomplete="new-password" minlength="10" required>
+                </div>
+                <button type="submit" class="settings-button settings-button--primary">{{ 'site.settings.update'|trans }}</button>
+            </form>
+        </details>
+
+        <div class="settings-panel settings-panel--static">
+            <span class="settings-panel__info">
+                <span class="settings-panel__label">{{ 'site.settings.account.discord'|trans }}</span>
+                <strong class="settings-panel__value">{{ (user.discordId ? 'site.settings.account.discord_linked' : 'site.settings.account.discord_unlinked')|trans }}</strong>
+            </span>
+            {% if user.discordId %}
+                <form method="post" action="{{ path('site_settings_discord_unlink') }}" data-component="ConfirmSubmit" data-message="{{ 'site.settings.account.discord_confirm'|trans }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                    <button type="submit" class="settings-button settings-button--discord"{{ not user.hasPassword ? ' disabled title="' ~ 'site.settings.account.discord_password'|trans ~ '"' }}>{{ 'site.settings.account.unlink'|trans }}</button>
+                </form>
+            {% else %}
+                <form method="post" action="{{ path('site_settings_discord_link') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                    <button type="submit" class="settings-button settings-button--discord-solid">{{ 'site.settings.account.link'|trans }}</button>
+                </form>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="settings-card" aria-labelledby="settings-devices">
+        <div class="settings-card__head">
+            <h2 id="settings-devices" class="settings-card__title">{{ 'site.settings.account.devices'|trans }}</h2>
+            {% if others > 0 %}
+                <form method="post" action="{{ path('site_settings_devices_others') }}" data-component="ConfirmSubmit" data-message="{{ 'site.settings.account.devices_confirm'|trans({ count: others }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                    <button type="submit" class="settings-button">{{ 'site.settings.account.logout_others'|trans }}</button>
+                </form>
+            {% endif %}
+        </div>
+        {% if devices is empty %}
+            <p class="settings-card__hint">{{ 'site.settings.account.devices_empty'|trans }}</p>
+        {% else %}
+            <ul class="settings-devices">
+                {% for device in devices %}
+                    <li class="settings-devices__item">
+                        <span class="settings-devices__text">
+                            <strong class="settings-devices__name">{{ device.device }}</strong>
+                            <span class="settings-devices__meta">{{ device.ip }} · {{ device.current ? 'site.settings.account.this_device'|trans : device.lastUsed|date('d/m/Y H:i') }}</span>
+                        </span>
+                        {% if not device.current %}
+                            <form method="post" action="{{ path('site_settings_device_revoke') }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                                <input type="hidden" name="series" value="{{ device.series }}">
+                                <button type="submit" class="settings-button settings-button--ghost">{{ 'site.settings.account.logout'|trans }}</button>
+                            </form>
+                        {% else %}
+                            <span class="settings-devices__current">{{ 'site.settings.account.this_device'|trans }}</span>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </section>
+
+    <section class="settings-card" aria-labelledby="settings-data">
+        <h2 id="settings-data" class="settings-card__title">{{ 'site.settings.account.data'|trans }}</h2>
+        <div class="settings-panel settings-panel--static">
+            <span class="settings-panel__info">
+                <strong class="settings-panel__value">{{ 'site.settings.account.export'|trans }}</strong>
+                <span class="settings-panel__note">{{ 'site.settings.account.export_help'|trans }}</span>
+            </span>
+            <a href="{{ path('site_settings_export') }}" class="settings-button">{{ 'site.settings.account.export_action'|trans }}</a>
+        </div>
+        <div class="settings-panel settings-panel--static settings-panel--danger">
+            <span class="settings-panel__info">
+                <strong class="settings-panel__value">{{ 'site.settings.delete.title'|trans }}</strong>
+                <span class="settings-panel__note">{{ 'site.settings.account.delete_help'|trans }}</span>
+            </span>
+            <a href="{{ path('site_settings_delete') }}" class="settings-button settings-button--danger">{{ 'site.settings.account.delete_action'|trans }}</a>
+        </div>
+    </section>
+{% endblock %}

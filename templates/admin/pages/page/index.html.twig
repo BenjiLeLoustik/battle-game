@@ -1,0 +1,59 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'pages' %}
+
+{% block title %}{{ 'admin.pages.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.pages.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.pages.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_page_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.pages.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            {% if pages is empty %}
+                <p class="admin-empty">{{ 'admin.pages.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(pages) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['page', 'format', 'footer', 'updated', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.pages.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for page in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            <span class="admin-user__name">{{ page.title }}</span>
+                                            <span class="admin-user__meta admin-table__cell--mono">{{ page.url }}</span>
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ page.format.translate() }}</td>
+                                    <td class="admin-table__cell">{{ page.footer.translate() }}</td>
+                                    <td class="admin-table__cell">{{ (page.updatedAt ?? page.createdAt) ? (page.updatedAt ?? page.createdAt)|date('d/m/Y H:i') : '—' }}</td>
+                                    <td class="admin-table__cell">{{ admin_ui.post('admin_page_toggle', { id: page.id }, ('admin.pages.states.' ~ (page.published ? 'published' : 'draft'))|trans({}, 'admin'), 'admin-pill' ~ (page.published ? ' admin-pill--ok' : ''), 'admin-pages') }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_page_edit', { id: page.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {% if page.published %}
+                                                <a href="{{ page.url }}" class="admin-btn admin-btn--ghost admin-btn--small" target="_blank" rel="noopener">{{ 'admin.view'|trans({}, 'admin') }}</a>
+                                            {% endif %}
+                                            {{ admin_ui.post('admin_page_delete', { id: page.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-pages', 'admin.pages.delete_confirm'|trans({ name: page.title }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+        <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.pages.note'|trans({}, 'admin') }}</p>
+    </div>
+{% endblock %}

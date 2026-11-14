@@ -1,0 +1,77 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+
+{% set active = 'shop' %}
+
+{% block title %}{{ 'site.shop.nav.orders'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="shop">
+        <div class="shop__head">
+            <div class="shop__intro">
+                <h1 class="shop__title">{{ 'site.shop.nav.orders'|trans }}</h1>
+                {% include '@site/pages/shop/_nav.html.twig' with { page: 'orders' } %}
+            </div>
+        </div>
+
+        {{ shop.flashes() }}
+
+        <section class="shop-panel">
+            <h2 class="shop-panel__title">{{ 'site.shop.orders.title'|trans }}</h2>
+            {% set pager = paginate(orders, 'page', 10) %}
+            {% if pager.total > 0 %}
+                <ul class="shop-list">
+                    {% for order in pager.items %}
+                        <li class="shop-list__row">
+                            <span class="shop-list__icon">{{ shop.icon(order.type.value) }}</span>
+                            <span class="shop-list__main">
+                                <strong class="shop-list__name">{{ order.productName }}{% if order.variant %} · {{ 'site.shop.size'|trans }} {{ order.variant }}{% endif %}</strong>
+                                <span class="shop-list__meta">{% if gifts[order.id] is defined %}<code class="shop-gift__inline">{{ gifts[order.id].code }}</code>{{ gifts[order.id].uses > 0 ? ' (' ~ 'site.shop.gift.used'|trans ~ ')' }} · {% endif %}{% if order.voucherCode %}{{ 'site.shop.promo_used'|trans({ code: order.voucherCode }) }} · {% endif %}{{ order.reference }} · {{ order.createdAt|date('d/m/Y H:i') }}{% if order.tracking %} · {{ 'site.shop.orders.tracking'|trans({ code: order.tracking }) }}{% endif %}</span>
+                            </span>
+                            <span class="shop-list__amount">
+                                {{ order.payment.value == 'coins' ? 'site.shop.coins_price'|trans({ coins: order.amountCoins }) : shop.price(order.amountCents ?? 0) }}
+                            </span>
+                            <span class="shop-status shop-status--{{ order.status.tone }}">{{ order.status.translate }}</span>
+                            {% if invoices[order.id] is defined %}
+                                <span class="shop-list__docs">
+                                    {% for kind, number in invoices[order.id] %}
+                                        <a href="{{ path('site_shop_invoice', { number: number }) }}" class="shop-link" target="_blank" rel="noopener">{{ ('invoice_kind.' ~ kind)|trans({}, 'enums') }}</a>
+                                    {% endfor %}
+                                </span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+                {% if pager.pages > 1 %}
+                    <nav class="shop-pager">
+                        {% for number in 1..pager.pages %}
+                            <a href="?page={{ number }}" class="shop-pager__link{{ number == pager.page ? ' shop-pager__link--active' }}">{{ number }}</a>
+                        {% endfor %}
+                    </nav>
+                {% endif %}
+            {% else %}
+                <p class="shop-empty">{{ 'site.shop.orders.empty'|trans }}</p>
+            {% endif %}
+        </section>
+
+        <section class="shop-panel">
+            <h2 class="shop-panel__title">{{ 'site.shop.orders.coins'|trans }}</h2>
+            {% if history is not empty %}
+                <ul class="shop-list">
+                    {% for line in history %}
+                        <li class="shop-list__row">
+                            <span class="shop-list__main">
+                                <strong class="shop-list__name">{{ ('site.shop.reason.' ~ line.reason)|trans }}</strong>
+                                <span class="shop-list__meta">{{ line.label }} · {{ line.createdAt|date('d/m/Y H:i') }}</span>
+                            </span>
+                            <span class="shop-list__coins{{ line.amount < 0 ? ' shop-list__coins--minus' }}">{{ line.amount > 0 ? '+' }}{{ line.amount }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="shop-empty">{{ 'site.shop.orders.no_coins'|trans }}</p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

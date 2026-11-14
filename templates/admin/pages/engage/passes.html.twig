@@ -1,0 +1,91 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_pass' %}
+
+{% block title %}{{ 'admin.engage.pass.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% macro trackRow(index, track, offers) %}
+    <li class="pass-admin__track" data-track-row="{{ track.key }}" style="--track: {{ track.color }}">
+        <input type="hidden" name="tracks[{{ index }}][key]" value="{{ track.key }}">
+        <input type="color" class="pass-admin__color" name="tracks[{{ index }}][color]" value="{{ track.color }}" data-track-color aria-label="{{ 'admin.engage.pass.track_color'|trans({}, 'admin') }}">
+        <input class="admin-field__input pass-admin__track-name" name="tracks[{{ index }}][name]" maxlength="40" required value="{{ track.name }}" placeholder="{{ 'admin.engage.pass.track_placeholder'|trans({}, 'admin') }}">
+        <span class="pass-admin__offers">
+            {% if offers is empty %}
+                <span class="admin-user__meta">{{ 'admin.engage.pass.no_offer'|trans({}, 'admin') }}</span>
+            {% else %}
+                {% for offer in offers %}<span class="admin-pill admin-pill--accent">{{ offer }}</span>{% endfor %}
+            {% endif %}
+        </span>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-remove-track>{{ 'admin.delete'|trans({}, 'admin') }}</button>
+    </li>
+{% endmacro %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.pass.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.passes.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_engage_pass_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.engage.passes.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            {% if plans is empty %}
+                <p class="admin-empty">{{ 'admin.engage.passes.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['name', 'tiers', 'seasons', 'actions'] %}<th class="admin-table__th">{{ ('admin.engage.passes.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for plan in plans %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <a class="admin-link" href="{{ path('admin_engage_pass_edit', { id: plan.id }) }}"><strong>{{ plan.name }}</strong></a>
+                                        {% if current and current.pass and current.pass.id == plan.id %} <span class="admin-pill admin-pill--ok">{{ 'admin.engage.passes.active'|trans({}, 'admin') }}</span>{% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">{{ plan.tiers|length }}</td>
+                                    <td class="admin-table__cell">
+                                        {% for season in linked[plan.id] ?? [] %}<span class="admin-pill">{{ season.name }}</span> {% else %}<span class="admin-user__meta">{{ 'admin.engage.passes.unlinked'|trans({}, 'admin') }}</span>{% endfor %}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_engage_pass_edit', { id: plan.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            <a href="{{ path('admin_engage_pass_new', { from: plan.id }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.engage.passes.duplicate'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_engage_pass_delete', { id: plan.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-engage', 'admin.engage.delete_confirm'|trans({ name: plan.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+
+        <form class="admin-panel" method="post" action="{{ path('admin_engage_pass_tracks') }}" data-component="PassEditor">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+            <div class="pass-admin__bar">
+                <div>
+                    <h2 class="admin-panel__title">{{ 'admin.engage.pass.tracks'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.engage.pass.tracks_help'|trans({}, 'admin') }}</span>
+                </div>
+                <button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-add-track>+ {{ 'admin.engage.pass.add_track'|trans({}, 'admin') }}</button>
+            </div>
+            <ul class="pass-admin__tracks" data-tracks>
+                <li class="pass-admin__track pass-admin__track--free" style="--track: #2EE6D6">
+                    <span class="pass-admin__color pass-admin__color--fixed"></span>
+                    <strong class="pass-admin__track-fixed">{{ 'admin.engage.pass.free'|trans({}, 'admin') }}</strong>
+                    <span class="pass-admin__offers"><span class="admin-user__meta">{{ 'admin.engage.pass.everyone'|trans({}, 'admin') }}</span></span>
+                </li>
+                {% for track in tracks %}{{ _self.trackRow(loop.index0, track, offers[track.key] ?? []) }}{% endfor %}
+            </ul>
+            <div class="admin-actions admin-actions--end">
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.engage.pass.save_tracks'|trans({}, 'admin') }}</button>
+            </div>
+            <template data-track-template>{{ _self.trackRow('__INDEX__', { key: '__KEY__', name: '', color: '#7C5CFF' }, []) }}</template>
+        </form>
+    </div>
+{% endblock %}

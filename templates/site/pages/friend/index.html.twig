@@ -1,0 +1,143 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/social.html.twig' as social %}
+
+{% set active = 'friends' %}
+{% set back = path('site_friend_index', { tab: tab }) %}
+
+{% block title %}{{ 'site.friends.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="friends">
+        <div class="friends__main">
+            <div class="friends__head">
+                <h1 class="friends__title">{{ 'site.friends.title'|trans }}</h1>
+                <nav class="friends__tabs" aria-label="{{ 'site.friends.filter'|trans }}">
+                    {% for id in ['online', 'all', 'blocked'] %}
+                        <a href="{{ path('site_friend_index', { tab: id }) }}" class="friends__tab{{ id == tab ? ' friends__tab--active' }}"{% if id == tab %} aria-current="page"{% endif %}>
+                            {{ ('site.friends.tabs.' ~ id)|trans }}{{ counts[id] is defined ? ' · ' ~ counts[id] }}
+                        </a>
+                    {% endfor %}
+                </nav>
+            </div>
+
+            {% for type, messages in flashes() %}
+                {% for message in messages %}
+                    <p class="settings-flash settings-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ type == 'error' ? message|trans({}, 'validators') : message|trans }}</p>
+                {% endfor %}
+            {% endfor %}
+
+            <div class="friends__list">
+                {% if tab == 'blocked' %}
+                    {% for block in blocked %}
+                        <div class="friend-row">
+                            {{ ui.avatar(block.blocked, 'base') }}
+                            <span class="friend-row__text">
+                                <strong class="friend-row__name">{{ block.blocked.username }}</strong>
+                                <span class="friend-row__status">{{ 'site.friends.blocked_since'|trans({ date: block.createdAt|date('d/m/Y') }) }}</span>
+                            </span>
+                            {{ social.action(block.blocked, 'unblock', 'site.friends.actions.unblock'|trans, back, 'friend-row__button') }}
+                        </div>
+                    {% else %}
+                        <p class="friends__empty">{{ 'site.friends.empty.blocked'|trans }}</p>
+                    {% endfor %}
+                {% else %}
+                    {% for row in rows %}
+                        {% set friend = row.user %}
+                        {% set status = row.status %}
+                        <div class="friend-row">
+                            <span class="friend-row__avatar">
+                                {{ ui.avatar(friend, 'base') }}
+                                <span class="friend-row__dot friend-row__dot--{{ status.state }}" aria-hidden="true"></span>
+                            </span>
+                            <a href="{{ path('site_profile_show', { username: friend.username }) }}" class="friend-row__text">
+                                <span class="friend-row__name">{{ ui.name(friend) }} {{ ui.title(friend) }} <span class="friend-row__level">{{ 'site.profile.level_short'|trans({ level: row.level }) }}</span></span>
+                                <span class="friend-row__status friend-row__status--{{ status.state }}">{{ social.status(status) }}</span>
+                            </a>
+                            <div class="friend-row__actions">
+                                {% if status.state == 'playing' %}
+                                    <a href="{{ path('site_play_show', { code: status.match }) }}" class="friend-row__button">{{ 'site.friends.actions.watch'|trans }}</a>
+                                {% elseif status.state == 'room' %}
+                                    <a href="{{ path('site_room_show', { code: status.room.code }) }}" class="friend-row__button">{{ 'site.friends.actions.join'|trans }}</a>
+                                {% elseif room %}
+                                    {{ social.action(friend, 'invite', 'site.friends.actions.invite'|trans, back, 'friend-row__button') }}
+                                {% endif %}
+                                <a href="{{ path('site_chat_dm', { username: friend.username }) }}" class="friend-row__icon" aria-label="{{ 'site.friends.actions.message'|trans }}" title="{{ 'site.friends.actions.message'|trans }}">
+                                    <svg class="friend-row__svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v11H9l-5 4V5z"/></svg>
+                                </a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <p class="friends__empty">{{ ('site.friends.empty.' ~ tab)|trans }}</p>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <aside class="friends__aside">
+            <section class="friend-card" aria-labelledby="friends-add">
+                <h2 id="friends-add" class="friend-card__title">{{ 'site.friends.add.title'|trans }}</h2>
+                <form class="friend-card__form" method="post" action="{{ path('site_friend_add') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                    <input type="hidden" name="_back" value="{{ back }}">
+                    <label class="field">
+                        <span class="field__label">{{ 'site.friends.add.label'|trans }}</span>
+                        <input class="field__input field__input--large" name="username" maxlength="40" required placeholder="{{ 'site.friends.add.placeholder'|trans }}" autocomplete="off">
+                    </label>
+                    <button type="submit" class="friend-card__submit">{{ 'site.friends.add.submit'|trans }}</button>
+                </form>
+                {% if sent is not empty %}
+                    <div class="friend-card__sent">
+                        <span class="friend-card__caption">{{ 'site.friends.sent'|trans }}</span>
+                        {% for other in sent %}
+                            <div class="friend-mini">
+                                {{ ui.avatar(other, 'sm') }}
+                                <span class="friend-mini__name">{{ other.username }}</span>
+                                {{ social.action(other, 'cancel', 'site.friends.actions.cancel'|trans, back, 'friend-mini__button') }}
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="friend-card" aria-labelledby="friends-requests">
+                <h2 id="friends-requests" class="friend-card__title">{{ 'site.friends.requests'|trans({ count: requests|length }) }}</h2>
+                {% for request in requests %}
+                    <div class="friend-mini">
+                        {{ ui.avatar(request.user, 'base') }}
+                        <a href="{{ path('site_profile_show', { username: request.user.username }) }}" class="friend-mini__text">
+                            <span class="friend-mini__name">{{ ui.name(request.user) }}</span>
+                            <span class="friend-mini__meta">{{ request.mutual > 0 ? 'site.friends.mutual'|trans({ count: request.mutual }) : 'site.friends.no_mutual'|trans }}</span>
+                        </a>
+                        {{ social.action(request.user, 'accept', '✓', back, 'friend-mini__accept', 'site.friends.actions.accept'|trans) }}
+                        {{ social.action(request.user, 'decline', '×', back, 'friend-mini__decline', 'site.friends.actions.decline'|trans) }}
+                    </div>
+                {% else %}
+                    <p class="friend-card__empty">{{ 'site.friends.empty.requests'|trans }}</p>
+                {% endfor %}
+            </section>
+
+            <section class="friend-card" aria-labelledby="friends-recent">
+                <h2 id="friends-recent" class="friend-card__title">{{ 'site.friends.recent'|trans }}</h2>
+                {% for item in recent %}
+                    <div class="friend-mini">
+                        {{ ui.avatar(item.user, 'sm') }}
+                        <a href="{{ path('site_profile_show', { username: item.user.username }) }}" class="friend-mini__text">
+                            <span class="friend-mini__name">{{ item.user.username }}</span>
+                            <span class="friend-mini__meta">{{ item.game }} · {{ item.date|date('d/m H:i') }}</span>
+                        </a>
+                        <form method="post" action="{{ path('site_friend_add') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                            <input type="hidden" name="_back" value="{{ back }}">
+                            <input type="hidden" name="username" value="{{ item.user.username }}">
+                            <button type="submit" class="friend-mini__button">{{ 'site.friends.actions.add'|trans }}</button>
+                        </form>
+                    </div>
+                {% else %}
+                    <p class="friend-card__empty">{{ 'site.friends.empty.recent'|trans }}</p>
+                {% endfor %}
+            </section>
+        </aside>
+    </div>
+{% endblock %}

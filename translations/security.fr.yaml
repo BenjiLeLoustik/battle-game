@@ -1,0 +1,6 @@
+"Invalid credentials.": Email ou mot de passe incorrect.
+"Invalid CSRF token.": La session a expiré, réessaie.
+"Too many failed login attempts, please try again in {minutes} minute(s).": Trop de tentatives. Réessaie dans {minutes} minute(s).
+"An authentication exception occurred.": Une erreur est survenue pendant la connexion.
+"The login with {provider} failed.": La connexion avec {provider} a échoué, réessaie.
+"Your Discord email address must be verified.": Vérifie d'abord ton adresse email sur Discord, puis réessaie.

@@ -1,0 +1,128 @@
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% set user = app_user() %}
+{% set member = user and not user.guest %}
+
+{% set main = [
+    { id: 'home', href: path('site_home_index'), icon: 'M3 11l9-8 9 8M5 10v10h14V10' },
+    { id: 'rooms', href: path('site_room_index'), icon: 'M4 20h16M6 20V4h12v16M14 12h.01' },
+    { id: 'leaderboard', href: path('site_leaderboard_index'), icon: 'M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M10 17h4' },
+    { id: 'ranked', href: path('site_ranked_index'), icon: 'M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 15.6 7.1 18.2 8 12.7 4 8.8l5.5-.8L12 3z' },
+    { id: 'tournaments', href: path('site_tournament_index'), icon: 'M4 4h5v4H4zM4 16h5v4H4zM15 10h5v4h-5zM9 6h3v12H9M12 12h3' },
+    { id: 'live', href: path('site_live_index'), icon: 'M2 12h4l3-8 4 16 3-8h6' },
+    { id: 'clans', href: path('site_clan_index'), icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM12 8v8M8 12h8' },
+    { id: 'chat', href: path('site_chat_index'), icon: 'M4 5h16v11H9l-5 4V5z' },
+    { id: 'friends', href: path('site_friend_index'), icon: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3' },
+    { id: 'pass', href: path('site_pass_index'), icon: 'M4 6h16v12H4zM4 10h16M8 14h4' },
+    { id: 'shop', href: path('site_shop_index'), icon: 'M5 8h14l-1.2 11.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9L5 8zM9 8V6a3 3 0 0 1 6 0v2' },
+] %}
+
+{% set account = member ? [
+    { id: 'profile', href: path('site_profile_me'), icon: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0' },
+    { id: 'settings', href: path('site_settings_profile'), icon: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4' },
+] : [
+    { id: 'login', href: path('site_security_login'), icon: 'M15 4h4v16h-4M10 8l4 4-4 4M14 12H4' },
+] %}
+
+{% macro link(item, active) %}
+    {% set label = ('site.nav.' ~ item.id)|trans %}
+    <a href="{{ item.href }}" class="site-sidebar__link{{ item.id == active ? ' site-sidebar__link--active' }}" title="{{ label }}"{% if item.id == active %} aria-current="page"{% endif %}>
+        <span class="site-sidebar__bar" aria-hidden="true"></span>
+        <span class="site-sidebar__icon-box">
+            <svg class="site-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ item.icon }}"/></svg>
+        </span>
+        <span class="site-sidebar__text">
+            {{ label }}
+        </span>
+    </a>
+{% endmacro %}
+
+<nav id="site-sidebar" class="site-sidebar" aria-label="{{ 'site.nav.label'|trans }}" data-component="Sidebar" data-storage-key="battlegame.sidebar.collapsed" data-label-collapse="{{ 'site.nav.collapse'|trans }}" data-label-expand="{{ 'site.nav.expand'|trans }}" data-label-close="{{ 'site.nav.close'|trans }}">
+    <div class="site-sidebar__head">
+        <span class="site-sidebar__caption">
+            {{ 'site.nav.caption_main'|trans }}
+        </span>
+        <button type="button" class="site-sidebar__toggle" aria-expanded="true" aria-label="{{ 'site.nav.collapse'|trans }}" title="{{ 'site.nav.collapse'|trans }}">
+            <svg class="site-sidebar__toggle-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+        </button>
+    </div>
+
+    <div class="site-sidebar__group">
+        {% for item in main %}
+            {{ _self.link(item, active) }}
+        {% endfor %}
+    </div>
+
+    <a href="{{ path('site_room_new') }}" class="site-sidebar__cta" title="{{ 'site.nav.create_room'|trans }}">
+        <svg class="site-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span class="site-sidebar__text">
+            {{ 'site.nav.create_room'|trans|upper }}
+        </span>
+    </a>
+
+    <div class="site-sidebar__group">
+        <span class="site-sidebar__caption">
+            {{ 'site.nav.caption_account'|trans }}
+        </span>
+        {% for item in account %}
+            {{ _self.link(item, active) }}
+        {% endfor %}
+        {% if member %}
+            <form class="site-sidebar__logout" method="post" action="{{ logout_path() }}">
+                <button type="submit" class="site-sidebar__link site-sidebar__link--button" title="{{ 'site.nav.logout'|trans }}">
+                    <span class="site-sidebar__bar" aria-hidden="true"></span>
+                    <span class="site-sidebar__icon-box">
+                        <svg class="site-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 4H5v16h4M14 8l-4 4 4 4M10 12h10"/></svg>
+                    </span>
+                    <span class="site-sidebar__text">
+                        {{ 'site.nav.logout'|trans }}
+                    </span>
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="site-sidebar__footer">
+        {% if member %}
+            <a href="{{ path('site_profile_me') }}" class="site-sidebar__member" title="{{ user.username }}">
+                {{ ui.avatar(user) }}
+                <span class="site-sidebar__member-text">
+                    <strong class="site-sidebar__member-name">
+                        {{ user.firstName }}
+                    </strong>
+                    <span class="site-sidebar__member-handle">
+                        {{ user.handle }}
+                    </span>
+                </span>
+            </a>
+        {% else %}
+            <div class="site-sidebar__guest">
+                <span class="site-sidebar__guest-text">
+                    {% if user %}
+                        {{ 'site.nav.guest_playing'|trans }}
+                        <strong class="site-sidebar__guest-name">{{ user.username }}</strong>.
+                    {% endif %}
+                    {{ 'site.nav.guest_text'|trans }}
+                </span>
+                <a href="{{ path('site_security_register') }}" class="site-sidebar__guest-cta">
+                    {{ 'site.auth.register'|trans|upper }}
+                </a>
+                <a href="{{ path('site_security_login') }}" class="site-sidebar__guest-link">
+                    {{ 'site.auth.have_account'|trans }}
+                </a>
+            </div>
+            <a href="{{ path('site_security_register') }}" class="site-sidebar__guest-mini" aria-label="{{ 'site.auth.register'|trans }}" title="{{ 'site.auth.register'|trans }}">
+                <svg class="site-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0M19 8v6M16 11h6"/></svg>
+            </a>
+        {% endif %}
+    </div>
+</nav>
+
+<script>
+    try {
+        const sidebar = document.getElementById('site-sidebar');
+
+        if (localStorage.getItem(sidebar.dataset.storageKey) === '1') {
+            sidebar.classList.add('site-sidebar--collapsed');
+        }
+    } catch (error) {}
+</script>

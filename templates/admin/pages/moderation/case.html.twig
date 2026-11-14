@@ -1,0 +1,154 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'moderation' %}
+
+{% block title %}{{ 'admin.moderation.case.title'|trans({ name: target.username }, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_moderation_index') }}" class="admin-crumbs__link">{{ 'admin.moderation.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ target.username }}</span>
+        </nav>
+
+        <header class="moderation-case__head">
+            {{ ui.avatar(target, 'lg') }}
+            <div class="moderation-case__identity">
+                <h1 class="admin-page__title">{{ target.username }}</h1>
+                <span class="admin-page__subtitle">{{ target.handle }} · {{ 'admin.users.joined'|trans({ date: target.createdAt|date('d/m/Y') }, 'admin') }}</span>
+                <span class="moderation-case__badges">
+                    {% if open is not empty %}
+                        <span class="admin-pill admin-pill--danger">{{ 'admin.moderation.to_handle'|trans({ count: open|length }, 'admin') }}</span>
+                    {% else %}
+                        <span class="admin-pill">{{ 'admin.moderation.handled'|trans({}, 'admin') }}</span>
+                    {% endif %}
+                    {% for sanction in active %}
+                        <span class="admin-pill admin-pill--warn">{{ sanction.type.translate() }} · {{ sanction.endsAt ? 'admin.users.until'|trans({ date: sanction.endsAt|date('d/m H:i') }, 'admin') : 'admin.moderation.permanent'|trans({}, 'admin') }}</span>
+                    {% endfor %}
+                </span>
+            </div>
+            <a href="{{ path('admin_user_show', { id: target.id }) }}" class="admin-btn admin-btn--secondary">{{ 'admin.moderation.case.user'|trans({}, 'admin') }}</a>
+        </header>
+
+        <div class="moderation-case">
+            <div class="moderation-case__main">
+                <section class="admin-panel" aria-labelledby="case-reports">
+                    <h2 id="case-reports" class="admin-panel__title">{{ 'admin.moderation.case.reports'|trans({ count: reports|length }, 'admin') }}</h2>
+                    {% if reports is empty %}
+                        <p class="admin-panel__help">{{ 'admin.moderation.case.no_reports'|trans({}, 'admin') }}</p>
+                    {% else %}
+                        <ul class="moderation-case__reports">
+                            {% for report in reports %}
+                                <li class="moderation-case__report{{ report.status.value == 'open' ? ' moderation-case__report--open' }}">
+                                    <span class="moderation-case__report-head">
+                                        <strong>{{ report.reporter ? report.reporter.username : '?' }}</strong>
+                                        <span class="admin-pill admin-pill--warn">{{ report.reason.translate() }}</span>
+                                        <span class="admin-pill{{ report.status.value == 'open' ? ' admin-pill--danger' }}">{{ report.status.translate() }}</span>
+                                        <span class="moderation-case__date">{{ report.createdAt|date('d/m/Y H:i') }}</span>
+                                    </span>
+                                    <span class="moderation-case__comment">{{ report.comment ? '« ' ~ report.comment ~ ' »' : 'admin.moderation.no_comment'|trans({}, 'admin') }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </section>
+
+                <section class="admin-panel" aria-labelledby="case-messages">
+                    <div class="admin-panel__intro">
+                        <h2 id="case-messages" class="admin-panel__title">{{ 'admin.moderation.context'|trans({}, 'admin') }}</h2>
+                        <span class="admin-panel__help">{{ 'admin.moderation.case.messages_help'|trans({ count: messages|length }, 'admin') }}</span>
+                    </div>
+                    {% if messages is empty %}
+                        <p class="admin-panel__help">{{ 'admin.moderation.no_context'|trans({}, 'admin') }}</p>
+                    {% else %}
+                        <ul class="moderation__context moderation-case__messages">
+                            {% for message in messages %}
+                                <li class="moderation__message">
+                                    <span class="moderation__time">{{ message.createdAt|date('d/m H:i') }}</span>
+                                    <span class="moderation__where">{{ message.channel is defined ? '#' ~ message.channel : message.room.code }}</span>
+                                    <span class="moderation__text">{{ message.text }}</span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </section>
+
+                <section class="admin-panel admin-panel--flush" aria-labelledby="case-history">
+                    <div class="admin-panel__bar"><h2 id="case-history" class="admin-panel__title">{{ 'admin.users.sanctions'|trans({}, 'admin') }}</h2></div>
+                    {% if history is empty %}
+                        <p class="admin-empty">{{ 'admin.users.no_sanctions'|trans({}, 'admin') }}</p>
+                    {% else %}
+                        {% set pager = paginate(history) %}
+                        <div class="admin-table-wrap">
+                            <table class="admin-table">
+                                <thead><tr>{% for column in ['date', 'type', 'reason', 'by', 'end'] %}<th class="admin-table__th">{{ ('admin.users.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                                <tbody>
+                                    {% for sanction in pager.items %}
+                                        <tr class="admin-table__row">
+                                            <td class="admin-table__cell">{{ sanction.createdAt|date('d/m/Y H:i') }}</td>
+                                            <td class="admin-table__cell">{{ admin_ui.status(sanction.type.value) }}</td>
+                                            <td class="admin-table__cell">{{ sanction.reason.translate() }}</td>
+                                            <td class="admin-table__cell">{{ sanction.author ? sanction.author.username : '—' }}</td>
+                                            <td class="admin-table__cell">
+                                                {% if sanction.revokedAt %}
+                                                    {{ 'admin.users.revoked'|trans({ date: sanction.revokedAt|date('d/m/Y') }, 'admin') }}
+                                                {% else %}
+                                                    {{ sanction.endsAt ? sanction.endsAt|date('d/m/Y H:i') : 'admin.moderation.permanent'|trans({}, 'admin') }}
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {{ admin_ui.pagination(pager) }}
+                    {% endif %}
+                </section>
+            </div>
+
+            <aside class="moderation-case__aside">
+                <form class="admin-panel" method="post" action="{{ path('admin_moderation_sanction', { id: target.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-moderation') }}">
+                    <h2 class="admin-panel__title">{{ 'admin.moderation.case.actions'|trans({}, 'admin') }}</h2>
+                    <label class="admin-field">
+                        {{ 'admin.moderation.sanction'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="type">
+                            {% for type in types %}
+                                <option value="{{ type.value }}">{{ type.translate() }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="admin-field" data-component="FieldReveal" data-field="type" data-values="mute,suspension">
+                        {{ 'admin.users.form.duration'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="duration">
+                            {% for hours in durations %}
+                                <option value="{{ hours }}"{{ hours == 72 ? ' selected' }}>{{ ('admin.durations.' ~ hours)|trans({}, 'admin') }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.users.form.reason'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="reason">
+                            {% for item in reasons %}
+                                <option value="{{ item.value }}"{{ item == reason ? ' selected' }}>{{ item.translate() }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.users.form.message'|trans({}, 'admin') }}
+                        <textarea class="admin-field__input admin-field__input--area" name="message" rows="3" maxlength="500">{{ 'admin.moderation.default_message'|trans({}, 'admin') }}</textarea>
+                    </label>
+                    <button type="submit" class="admin-btn admin-btn--warning">{{ 'admin.moderation.apply'|trans({}, 'admin') }}</button>
+                    {% if open is not empty %}
+                        <button type="submit" class="admin-btn admin-btn--ghost" formaction="{{ path('admin_moderation_dismiss', { id: target.id }) }}">{{ 'admin.moderation.dismiss'|trans({}, 'admin') }}</button>
+                        <p class="admin-panel__help">{{ 'admin.moderation.case.actions_help'|trans({ count: open|length }, 'admin') }}</p>
+                    {% endif %}
+                </form>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

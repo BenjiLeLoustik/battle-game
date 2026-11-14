@@ -1,0 +1,826 @@
+docs:
+    title: Documentation
+    subtitle: "Le guide complet du back-office : à quoi sert chaque page, comment créer un jeu en code ou sans code, et comment tout s'articule."
+    search: "Rechercher un sujet… (touche /)"
+    search_short: Rechercher…
+    toc: Sommaire de la documentation
+    empty: "Aucun résultat. Essaie un autre mot (ex. maintenance, badge, règle, publier)."
+    open: Ouvrir la page
+    home: Toute la documentation
+    eyebrow: Centre d'aide du back-office
+    read: Lire
+    breadcrumb: Fil d'Ariane
+    previous: Précédent
+    next: Suivant
+    group_intros:
+        start: "Les bases du back-office et la gestion des accès de l'équipe."
+        steering: "Suivre l'activité et gérer les jeux, catégories, rooms, bandeaux et badges."
+        studio: "Créer un jeu de A à Z : en code, sans code, son apparence et sa publication."
+        shop: "La boutique : produits, commandes, abonnements, pièces, vies et paiement Stripe."
+        community: "Les joueurs, les salons de discussion et la modération."
+        system: "Les réglages du site : pages, maintenance, langues, emails et temps réel."
+        help: "Les bons réflexes et les solutions aux problèmes courants."
+    groups:
+        start: Bien démarrer
+        steering: Pilotage
+        studio: Atelier de jeux
+        shop: Boutique
+        community: Communauté
+        system: Système
+        help: Bonnes pratiques
+    sections:
+        -
+            id: welcome
+            group: start
+            title: Bienvenue dans le back-office
+            intro: "Le back-office sert à piloter BattleGame : installer et publier les jeux, en créer de nouveaux dans l'Atelier, animer la communauté, modérer et régler le site."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "**Pilotage** : tableau de bord, jeux installés, catégories, Atelier, rooms, bandeaux et badges."
+                        - "**Communauté** : utilisateurs, salons de discussion et modération."
+                        - "**Système** : réglages généraux, pages, maintenance, langues, emails, temps réel, administrateurs et rôles."
+                -
+                    type: p
+                    text: "Le menu de gauche n'affiche que les pages autorisées par ton rôle. Si une page manque, demande à un administrateur de compléter les permissions de ton rôle."
+                -
+                    type: tip
+                    text: "Appuie sur `/` n'importe où sur cette page pour rechercher dans la documentation."
+        -
+            id: roles
+            group: start
+            title: Administrateurs, rôles et permissions
+            page: admins
+            intro: "Un administrateur est un compte joueur existant à qui on donne accès au back-office. Ses droits viennent de son rôle."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Dans **Administrateurs**, clique sur « Ajouter un administrateur » et indique l'email ou le pseudo du compte joueur."
+                        - "Choisis son rôle. Le rôle « Accès complet » (sans rôle attribué) a toutes les permissions."
+                        - "Dans **Rôles & permissions**, crée des rôles sur mesure en cochant les permissions par famille."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Pilotage
+                            text: "Tableau de bord, installation et état des jeux, catégories et badges."
+                        -
+                            term: Atelier de jeux
+                            text: "Voir tous les jeux, créer un jeu, modifier le code, publier une version, gérer les équipes."
+                        -
+                            term: Communauté
+                            text: "Voir, modifier, suspendre ou supprimer des comptes, gérer les rooms et les salons."
+                        -
+                            term: Modération
+                            text: "Voir les signalements, appliquer des sanctions, gérer les mots filtrés."
+                        -
+                            term: Système
+                            text: "Réglages généraux et bandeaux, pages, maintenance, traductions, temps réel, emails, administrateurs."
+                -
+                    type: p
+                    text: "La liste des administrateurs indique, pour chaque membre, le nombre de jeux dont il est responsable, développeur ou testeur (survole le compteur pour voir les noms)."
+                -
+                    type: warn
+                    text: "Retirer l'accès au back-office d'un administrateur le retire aussi des équipes de ses jeux."
+        -
+            id: dashboard
+            group: steering
+            title: Tableau de bord
+            page: dashboard
+            intro: "Une vue d'ensemble de l'activité : joueurs, parties, jeux les plus joués et état des services, sur la période choisie."
+            blocks:
+                -
+                    type: p
+                    text: "Utilise-le pour repérer un pic d'activité, un jeu qui ne décolle pas ou un service en panne (base de données, temps réel)."
+        -
+            id: games
+            group: steering
+            title: Jeux installés et cycle de vie d'un jeu
+            page: games
+            intro: "La liste de tous les jeux de la plateforme, avec leur version, leur statut et leurs statistiques."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Idée
+                            text: "Le jeu existe dans l'Atelier mais n'est pas encore en développement."
+                        -
+                            term: En développement
+                            text: "Seule l'équipe du jeu (et les administrateurs) peut y jouer, en aperçu."
+                        -
+                            term: En test
+                            text: "Les testeurs y jouent pour valider avant la mise en ligne."
+                        -
+                            term: En ligne
+                            text: "Visible et jouable par tous les joueurs. Le passage en ligne prévient tout le monde par une notification « Nouveau jeu »."
+                        -
+                            term: Maintenance
+                            text: "Le jeu reste visible mais on ne peut plus lancer de nouvelle partie."
+                        -
+                            term: Archivé
+                            text: "Le jeu n'est plus proposé aux joueurs."
+                -
+                    type: heading
+                    text: Jeux à la une
+                -
+                    type: p
+                    text: "Le bouton « ★ À la une » ajoute un jeu au carrousel de la page d'accueil. Le panneau « À la une » permet de réordonner les jeux avec les flèches. Seuls les jeux en ligne y sont affichés aux joueurs."
+        -
+            id: categories
+            group: steering
+            title: Catégories
+            page: categories
+            intro: "Les catégories servent de filtres sur l'accueil et dans le catalogue."
+            blocks:
+                -
+                    type: p
+                    text: "Un jeu choisit sa catégorie avec la clé `category` de son `game.json` : c'est le slug de la catégorie (ex. `logique`, `cartes`). L'ordre se règle avec les flèches et une catégorie peut être masquée sans être supprimée."
+        -
+            id: rooms
+            group: steering
+            title: Rooms
+            page: rooms
+            intro: "Les rooms sont les salons de jeu créés par les joueurs (ou officiels) : on y attend des amis avant de lancer une partie."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "Filtre par accès (publiques, privées, avec mot de passe) et ouvre une room pour voir ses membres, ses messages et ses dernières parties."
+                        - "Avec la bonne permission, tu peux créer des rooms officielles, les modifier ou les fermer."
+                        - "Les rooms publiques peuvent être coupées pour tout le site dans **Général**."
+        -
+            id: banners
+            group: steering
+            title: Bandeaux de diffusion
+            page: banners
+            intro: "Messages affichés sous l'en-tête du site public : annonce d'événement, nouveau jeu, info importante."
+            blocks:
+                -
+                    type: p
+                    text: "Chaque bandeau a un type, une période d'affichage facultative et une audience. Les bandeaux actifs tournent dans l'ordre de la liste (flèches ↑ ↓)."
+        -
+            id: badges
+            group: steering
+            title: Badges
+            page: badges
+            intro: "Les badges récompensent les joueurs. Ils sont soit généraux (liés au compte), soit propres à un jeu."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Règle
+                            text: "Chaque badge utilise une règle du registre : parties jouées, victoires, série de victoires, niveau atteint, nombre d'amis, tous les jeux joués ou seuil de score sur une statistique d'un jeu."
+                        -
+                            term: Design
+                            text: "L'icône et les couleurs du badge se dessinent dans l'éditeur visuel du formulaire."
+                        -
+                            term: Badge secret
+                            text: "La condition reste cachée tant que le joueur ne l'a pas obtenu."
+                -
+                    type: tip
+                    text: "Pour un badge de score, la statistique utilisée doit exister dans la liste `stats` du `game.json` du jeu (ex. `score`, `wins`)."
+        -
+            id: studio
+            group: studio
+            title: L'Atelier de jeux
+            page: studio
+            intro: "L'Atelier est l'endroit où l'on crée et fait évoluer les jeux : équipe, tâches, code, apparence, validation et publication."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Clique sur « Créer un jeu » : nom, slug (identifiant dans les adresses), catégorie, nombre de joueurs et équipe de départ."
+                        - "L'Atelier génère un jeu minimal qui fonctionne déjà (un bouton qui rapporte des points), dans `var/games/<Dossier>`."
+                        - "Développe-le, au choix, dans l'**éditeur de code** ou dans le **Créateur no-code** (voir plus bas)."
+                        - "Règle son style dans **Apparence**, puis fais-le valider et publier par le responsable."
+                -
+                    type: heading
+                    text: Équipe d'un jeu
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Responsable
+                            text: "Valide et publie les versions, supprime le jeu, change le responsable. Il y en a un par jeu."
+                        -
+                            term: Développeur
+                            text: "Modifie le code, l'apparence et les blocs no-code, puis demande une validation."
+                        -
+                            term: Testeur
+                            text: "Joue au jeu en développement et en test, sans accès au code."
+                -
+                    type: p
+                    text: "Le responsable (ou un administrateur qui gère les équipes) peut nommer un autre responsable depuis la fiche du jeu : l'ancien devient développeur."
+                -
+                    type: heading
+                    text: Tâches
+                -
+                    type: p
+                    text: "Chaque fiche de jeu a une liste de tâches (titre, description, checklist, dates, personnes assignées, statut À faire / En cours / Terminée). La liste de l'Atelier affiche le nombre de tâches en cours pour chaque jeu."
+        -
+            id: game-structure
+            group: studio
+            title: Structure d'un jeu
+            intro: "Tous les jeux, qu'ils soient codés ou générés en no-code, ont la même structure de fichiers."
+            blocks:
+                -
+                    type: code
+                    title: var/games/MonJeu
+                    text: |
+                        game.json                     manifeste : nom, joueurs, réglages, règles, statistiques
+                        composer.json                 espace de noms PHP du jeu
+                        src/MonJeuManager.php         prépare l'état de départ d'une partie
+                        src/MonJeuServer.php          applique les actions des joueurs (côté serveur)
+                        assets/js/client.js           affiche le jeu et envoie les actions
+                        assets/css/client.css         style du jeu
+                        assets/css/design.css         styles réglés dans « Apparence » (facultatif)
+                        translations/game.fr.yaml     tous les textes du jeu
+                -
+                    type: defs
+                    items:
+                        -
+                            term: "`players`"
+                            text: "Nombre de joueurs min et max. Avec `solo: true`, le jeu peut se jouer seul (entraînement et aperçu de l'Atelier)."
+                        -
+                            term: "`settings`"
+                            text: "Réglages proposés à la création d'une partie (ex. nombre de manches, temps). Chaque réglage a une liste de choix et une valeur par défaut."
+                        -
+                            term: "`rules`"
+                            text: "Les règles affichées aux joueurs sur la fiche du jeu."
+                        -
+                            term: "`stats`"
+                            text: "Les statistiques enregistrées en fin de partie (ex. meilleur score) : elles alimentent le classement et les badges."
+                        -
+                            term: "`points`"
+                            text: "Les points de classement donnés aux 1er, 2e et 3e."
+                -
+                    type: warn
+                    text: "Tous les textes visibles par les joueurs doivent être dans `translations/game.fr.yaml`, jamais écrits en dur dans le code."
+        -
+            id: game-code
+            group: studio
+            title: Créer un jeu en code
+            intro: "Le code d'un jeu se partage entre le serveur (les règles, en PHP) et le client (l'affichage, en JavaScript). Le serveur fait toujours foi : le client ne fait qu'envoyer des actions."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Ouvre le jeu dans l'Atelier puis « Éditer le code »."
+                        - "Dans `MonJeuManager::init()`, construis l'état de départ (joueurs, scores, manche, plateau…)."
+                        - "Dans `MonJeuServer::handle()`, reçois chaque action d'un joueur et renvoie le nouvel état. Vérifie toujours que l'action est autorisée (bon joueur, bon moment)."
+                        - "Dans `client.js`, affiche l'état reçu et envoie les actions avec `context.send()`."
+                        - "Teste avec l'aperçu en direct de l'éditeur (jeu solo) ou le bouton « Tester »."
+                        - "Clique sur « Valider le jeu » pour vérifier le `game.json`, puis demande une validation (ou publie si tu es responsable)."
+                -
+                    type: code
+                    title: src/MonJeuServer.php (extrait)
+                    text: |
+                        public function handle(string $action, array $payload, string $player, array $state): array
+                        {
+                            if ($action !== 'click' || $state['finished']) {
+                                return $state;
+                            }
+
+                            $state['scores'][$player]++;
+                            $state['finished'] = $state['scores'][$player] >= $state['target'];
+
+                            return $state;
+                        }
+                -
+                    type: code
+                    title: assets/js/client.js (extrait)
+                    text: |
+                        export default function mount(element, context) {
+                            const { t, html } = context;
+                            element.innerHTML = html`<button class="clic__button">${t('click')}</button>`;
+                            element.querySelector('button').addEventListener('click', () => context.send('click'));
+                            context.on((snapshot) => {
+                                element.querySelector('button').disabled = snapshot.state.finished;
+                            });
+                        }
+                -
+                    type: tip
+                    text: "Les jeux existants de l'Atelier (Quatro Néon, Dames Néon, Fusion 2048…) sont de bons exemples à lire dans l'éditeur."
+        -
+            id: sdk
+            group: studio
+            title: Référence du SDK
+            intro: "Les méthodes et outils disponibles pour écrire un jeu en code."
+            blocks:
+                -
+                    type: heading
+                    text: Côté serveur (PHP)
+                -
+                    type: defs
+                    items:
+                        -
+                            term: "`Manager::init($players, $settings, $startsAt)`"
+                            text: "Renvoie l'état de départ. `$settings` contient les réglages choisis, `$startsAt` l'heure de début (ms)."
+                        -
+                            term: "`Server::handle($action, $payload, $player, $state)`"
+                            text: "Applique une action et renvoie le nouvel état. L'action `tick` est envoyée par les clients quand un délai est écoulé."
+                        -
+                            term: "`Server::view($state)`"
+                            text: "Ce que tous les joueurs reçoivent. Retire ici ce qui doit rester caché (la bonne réponse, la main adverse…)."
+                        -
+                            term: "`Server::secret($state, $player)`"
+                            text: "Données privées d'un seul joueur (ex. sa main de dominos), reçues dans `context.secret`."
+                        -
+                            term: "`Server::results($state)`"
+                            text: "Classement final et statistiques de chaque joueur (doivent correspondre aux `stats` du manifeste)."
+                        -
+                            term: "`$this->now()`"
+                            text: "L'heure du serveur en millisecondes : utilise-la pour les chronos, jamais l'heure du joueur."
+                -
+                    type: heading
+                    text: Côté client (JavaScript)
+                -
+                    type: defs
+                    items:
+                        -
+                            term: "`context.snapshot`"
+                            text: "L'état visible de la partie (`state`), les joueurs (`players`) et le statut."
+                        -
+                            term: "`context.on(callback)`"
+                            text: "Appelé à chaque nouvel état reçu en temps réel."
+                        -
+                            term: "`context.send(action, payload)`"
+                            text: "Envoie une action au serveur (renvoie une promesse)."
+                        -
+                            term: "`context.t(clé, valeurs)`"
+                            text: "Texte traduit depuis `game.fr.yaml`, avec remplacement de `{valeurs}`."
+                        -
+                            term: "`context.html` et `context.text`"
+                            text: "Gabarit HTML qui échappe automatiquement les valeurs, et écriture d'un texte traduit dans un élément."
+                        -
+                            term: "`context.now()`"
+                            text: "L'heure du serveur, synchronisée : à utiliser pour afficher les chronos."
+                        -
+                            term: "`context.secret` et `context.player`"
+                            text: "Les données privées du joueur et son identifiant."
+                        -
+                            term: "`context.sound.play(nom)`"
+                            text: "Joue un effet sonore : click, move, place, gain, correct, wrong, deal, flip, roll, shoot, hit, pop, capture, bounce, drop, goal, win, lose."
+                -
+                    type: tip
+                    text: "La musique de fond, le compte à rebours et les sons de base (score, manche, tour, victoire) sont gérés automatiquement par la plateforme pour tous les jeux."
+        -
+            id: validation
+            group: studio
+            title: Validation et publication
+            intro: "Une nouvelle version n'est mise en ligne qu'après validation par le responsable du jeu."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Le développeur termine ses modifications et clique sur « Demander une validation » (dans l'éditeur), avec un message expliquant ce qui a changé."
+                        - "Le responsable reçoit une notification. Sur la fiche du jeu, le panneau « Validation du jeu » affiche la demande."
+                        - "Il vérifie le code (bouton « Vérifier le code »), puis clique sur « Valider et publier » ou sur « Refuser et demander une correction » avec un commentaire."
+                        - "Le développeur est prévenu de la décision. L'historique des demandes reste visible sur la fiche."
+                -
+                    type: p
+                    text: "Le responsable peut aussi publier directement depuis l'éditeur (« Publier la version ») : une demande en attente est alors considérée comme validée."
+                -
+                    type: warn
+                    text: "Publier réinstalle le jeu et met ses fichiers en ligne pour les joueurs. Teste toujours avant."
+        -
+            id: design
+            group: studio
+            title: Apparence (éditeur visuel)
+            intro: "Modifie le style de n'importe quel jeu sans écrire de CSS, en cliquant sur les éléments dans l'aperçu."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Depuis la fiche du jeu ou l'éditeur, clique sur « Apparence »."
+                        - "En mode **Sélectionner**, survole et clique un élément du jeu. En mode **Jouer**, avance dans la partie pour atteindre un écran précis."
+                        - "Choisis la cible : toute la classe (ex. toutes les tuiles), une variante (ex. seulement les tuiles 4) et éventuellement l'état « au survol »."
+                        - "Règle la boîte (marges intérieures et extérieures, taille), la disposition, le fond (couleur ou dégradé), la bordure, le texte et les effets."
+                        - "Enregistre (bouton ou Ctrl+S). Les styles vont dans `assets/css/design.css` et sont mis en ligne à la prochaine publication."
+                -
+                    type: tip
+                    text: "La liste « Éléments stylés » récapitule tout ce que tu as modifié : clique un élément pour le retrouver, ou × pour retirer son style."
+                -
+                    type: p
+                    text: "L'aperçu nécessite un jeu jouable en solo (`solo: true`)."
+        -
+            id: nocode
+            group: studio
+            title: Créer un jeu sans code (Créateur no-code)
+            intro: "Le Créateur no-code fabrique un jeu en assemblant des blocs et des règles. Il génère de vrais fichiers de jeu, modifiables ensuite dans l'éditeur de code."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Crée un nouveau jeu dans l'Atelier, puis ouvre tout de suite le « Créateur no-code » (avant de toucher au code)."
+                        - "Choisis un modèle de départ : jeu vide, quiz en manches, grille tour par tour ou course au clic."
+                        - "Compose l'écran avec les **blocs** de la palette, puis donne vie au jeu dans l'onglet **Règles**."
+                        - "Déclare les valeurs à retenir dans **Variables** (vies, objectif, bonne réponse…) et le déroulement dans **Réglages**."
+                        - "Clique sur « Générer le jeu » (puis demande une validation), ou sur « Générer et publier » si tu es responsable."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Blocs
+                            text: "Texte, compteur, bouton, grille, réponse libre, chrono, scores, message, choix multiples (QCM), image, icône, séparateur, boîte (pour regrouper) et bloc code."
+                        -
+                            term: Valeurs dynamiques
+                            text: "Dans les textes : `{round}`, `{rounds}`, `{score}`, `{player}` (joueur dont c'est le tour), `{name}` (auteur d'un message), `{var.nom}` et `{my.nom}`."
+                        -
+                            term: Variables
+                            text: "Nombre, texte ou plateau ; commune ou par joueur ; remise à zéro à chaque manche ; cachée pendant la manche (utile pour une bonne réponse)."
+                        -
+                            term: Réglages
+                            text: "Tout le monde en même temps (jouable seul) ou chacun son tour (2 à 4 joueurs), nombre de manches, temps par manche ou par tour, pause entre deux manches."
+                -
+                    type: warn
+                    text: "Le Créateur no-code est réservé aux nouveaux jeux et aux jeux déjà créés en no-code : il refuse de s'ouvrir sur un jeu codé à la main, pour ne jamais écraser son code."
+        -
+            id: nocode-rules
+            group: studio
+            title: "Règles no-code : Quand, Si, Alors"
+            intro: "Une règle dit ce qui se passe quand un événement arrive. Les règles s'exécutent dans l'ordre, côté serveur (aucune triche possible)."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Quand
+                            text: "La partie commence, une manche commence, un joueur clique sur un bouton (ou un bloc code), choisit une case d'une grille, répond (réponse libre, QCM ou bloc code), le temps est écoulé."
+                        -
+                            term: Si
+                            text: "Comparer deux valeurs (égal, différent, supérieur, inférieur, au moins, au plus, contient), la case choisie est vide, le joueur aligne N symboles, le plateau est plein. Sans condition, la règle s'applique toujours."
+                        -
+                            term: Alors
+                            text: "Mettre ou ajouter une valeur, tirer au hasard, poser dans la case, vider le plateau, afficher un message (au joueur ou à tous), le joueur a fini sa manche, passer au joueur suivant, terminer la manche ou la partie, jouer un son."
+                -
+                    type: heading
+                    text: "Exemple : quiz"
+                -
+                    type: list
+                    items:
+                        - "Quand **une manche commence** → tirer au hasard `a` et `b`, mettre `total` à `a`, ajouter `b` à `total`."
+                        - "Quand **un joueur répond** → si **la réponse donnée** est égale à **la variable total** → ajouter 10 à mon score, message « Bonne réponse », le joueur a fini."
+                        - "Quand **un joueur répond** → si la réponse est différente → message « Raté », le joueur a fini."
+                -
+                    type: tip
+                    text: "Il n'y a pas d'opération directe entre deux variables : pour additionner, enchaîne « Mettre » puis « Ajouter à »."
+        -
+            id: custom-blocks
+            group: studio
+            title: Blocs perso et bloc code
+            intro: "Réutilise tes créations d'un jeu à l'autre, ou écris un bloc entièrement sur mesure."
+            blocks:
+                -
+                    type: heading
+                    text: Blocs perso réutilisables
+                -
+                    type: steps
+                    items:
+                        - "Sélectionne un bloc (ou une boîte avec son contenu) puis « Enregistrer comme bloc perso » et donne-lui un nom."
+                        - "Il est enregistré avec ses règles et ses variables dans « Mes blocs perso », disponible dans tous les jeux."
+                        - "Un clic l'insère dans le jeu ouvert. Les identifiants sont renumérotés et les variables en conflit renommées automatiquement."
+                -
+                    type: heading
+                    text: Bloc code
+                -
+                    type: p
+                    text: "Le bloc code contient ton propre HTML, ton CSS et, si besoin, un comportement en JavaScript. Il se branche aux règles comme les autres blocs."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: "`data-click`"
+                            text: "Un élément avec cet attribut déclenche la règle « un joueur clique sur [bloc] »."
+                        -
+                            term: "`data-answer=\"valeur\"`"
+                            text: "Envoie cette valeur comme réponse (règle « un joueur répond dans [bloc] »)."
+                        -
+                            term: "`api`"
+                            text: "Dans le comportement : `api.state`, `api.me`, `api.active`, `api.click()`, `api.answer(valeur)`, `api.sound(nom)`."
+                -
+                    type: code
+                    title: Exemple de bloc code
+                    text: |
+                        <div class="vies">❤️ {my.vies}</div>
+                        <button type="button" data-click>Utiliser un bonus</button>
+                -
+                    type: warn
+                    text: "Le bloc code s'exécute chez les joueurs : il demande le même niveau de confiance que l'éditeur de code. Cible ton CSS avec la classe `.nocode__el--e7` (l'identifiant du bloc) pour ne pas modifier le reste du jeu."
+        -
+            id: shop
+            group: shop
+            title: Produits de la boutique
+            page: shop_products
+            intro: "La boutique vend six types de produits. Le type décide de ce que le joueur reçoit, automatiquement, dès que le paiement est confirmé."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Pièces
+                            text: "Un pack crédite le portefeuille du joueur. Payable uniquement par carte."
+                        -
+                            term: Abonnement
+                            text: "Offre mensuelle renouvelée par Stripe. Crée autant d'offres que tu veux depuis la page **Abonnements** : chacune a son prix, son nombre de vies par jour (ou illimitées), sa pastille (icône, couleur, libellé) affichée sur l'avatar des abonnés, ses avantages, et peut donner accès aux jeux en **avant-première**."
+                        -
+                            term: Vies
+                            text: "Des vies bonus qui s'ajoutent à la réserve du joueur et ne s'effacent pas à minuit."
+                        -
+                            term: Badge
+                            text: "Débloque un badge existant. Pour un badge exclusif, crée-le d'abord dans Pilotage › Badges avec une règle impossible à atteindre."
+                        -
+                            term: Cosmétique
+                            text: "Cadre d'avatar, couleur de pseudo ou titre. Le joueur l'équipe depuis « Mon inventaire »."
+                        -
+                            term: Goodies
+                            text: "Objet physique. Stripe demande l'adresse et le téléphone ; la commande reste « Payée » jusqu'à ce que tu l'expédies."
+                -
+                    type: tip
+                    text: "Un produit peut avoir un prix en euros, un prix en pièces, ou les deux : le joueur choisit. Les pièces, abonnements et goodies se paient uniquement par carte, pour garder une vraie valeur aux pièces."
+                -
+                    type: p
+                    text: "Un produit déjà acheté ne peut pas être supprimé : il est masqué, pour garder l'historique des commandes intact. Le stock se décrémente à chaque vente ; à 0 le produit passe « Épuisé »."
+        -
+            id: shop-orders
+            group: shop
+            title: Commandes et abonnements
+            page: shop_orders
+            intro: "Chaque achat crée une commande avec une référence unique (BG…). Les commandes par carte restent « En attente » jusqu'à la confirmation de Stripe."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Filtre la liste sur « Payée » et le type « Goodies » pour voir ce qu'il reste à envoyer."
+                        - "Ouvre la commande : l'adresse de livraison reçue de Stripe s'affiche."
+                        - "Saisis le numéro de suivi puis « Marquer comme expédiée ». Le joueur le voit dans « Mes achats »."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Livrer manuellement
+                            text: "Si le webhook Stripe a raté un paiement, vérifie-le sur Stripe puis livre la commande en attente à la main."
+                        -
+                            term: Rembourser
+                            text: "Par carte, le remboursement passe par Stripe. En pièces, le portefeuille est recrédité. Un cosmétique remboursé est retiré de l'inventaire."
+                        -
+                            term: Offrir un abonnement
+                            text: "Page Abonnements : choisis un joueur, l'offre et la durée. Pratique pour un concours ou un partenaire."
+        -
+            id: shop-economy
+            group: shop
+            title: Pièces, vies et paiement
+            page: shop_settings
+            intro: "Les règles de l'économie : ce que rapporte une partie, combien de vies chaque joueur a par jour, et la connexion à Stripe."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Gains de pièces
+                            text: "À la fin de chaque partie en ligne (rapide ou room), chaque joueur avec un compte gagne les pièces « par partie », plus le bonus s'il termine 1er. L'entraînement ne rapporte rien."
+                        -
+                            term: Vies
+                            text: "Chaque défaite en ligne (toute place autre que 1re) retire une vie. À 0, le joueur ne peut plus lancer de partie rapide ni rejoindre une room comme joueur ; il peut regarder en spectateur et s'entraîner. Le compteur repart à minuit, heure de Paris."
+                        -
+                            term: Avant-première
+                            text: "Dans Pilotage › Jeux installés, le bouton « Avant-première » réserve un jeu en ligne aux abonnés dont l'offre l'autorise (et aux admins). Les autres voient le jeu avec un bouton « Débloquer avec un abonnement » ; en room, le jeu n'est proposé que si tous les joueurs y ont accès."
+                        -
+                            term: Ordre de consommation
+                            text: "Les vies du jour partent en premier, puis les vies bonus achetées. Le quota des joueurs sans abonnement se règle ici ; celui des abonnés dans chaque offre."
+                -
+                    type: steps
+                    items:
+                        - "Sur dashboard.stripe.com, récupère la clé secrète (sk_test_… pour tester, sk_live_… en production)."
+                        - "Ajoute `STRIPE_SECRET_KEY=` et `STRIPE_WEBHOOK_SECRET=` dans `.env.local` : jamais dans le dépôt."
+                        - "Crée un webhook Stripe vers l'URL affichée dans les réglages, avec les événements listés, puis copie son secret (whsec_…)."
+                        - "Fais un achat test avec la carte 4242 4242 4242 4242 : la commande doit passer « Payée » toute seule."
+                -
+                    type: warn
+                    text: "Sans webhook, les paiements sont quand même confirmés au retour du joueur sur la page de remerciement, mais les renouvellements et résiliations d'abonnement ne seront pas suivis."
+        -
+            id: shop-billing
+            group: shop
+            title: Facturation, CGV et codes
+            page: shop_vouchers
+            intro: "Factures automatiques, conditions de vente, codes promo, cartes cadeaux et récompenses en pièces."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Factures et avoirs
+                            text: "Une facture (FAC-année-numéro) est émise à chaque paiement par carte, un avoir (AV-…) à chaque remboursement. Renseigne d'abord tes informations légales et la TVA dans Boutique › Réglages. Le joueur les retrouve dans « Mes achats », l'admin sur la fiche de la commande (Imprimer / PDF)."
+                        -
+                            term: CGV
+                            text: "Les pages Mentions légales, CGV, Confidentialité et Cookies sont dans Système › Pages : complète les champs [à compléter]. Le joueur doit cocher l'acceptation des CGV avant de payer par carte (et renoncer à la rétractation pour les contenus numériques)."
+                        -
+                            term: Codes promo
+                            text: "Créés dans Boutique › Codes : « 20% » ou « 5 » (euros), avec utilisations max. et date de fin. Saisis au paiement par carte, hors abonnements, une fois par joueur."
+                        -
+                            term: Cartes cadeaux
+                            text: "Produit de type Carte cadeau : l'acheteur reçoit un code GIFT-… à offrir, utilisable dans « Utiliser un code » pour recevoir les pièces. Tu peux aussi créer des codes cadeaux en lot (concours)."
+                        -
+                            term: Récompenses
+                            text: "Récompense quotidienne en série sur 7 jours, défis du jour et pièces de fin de saison : montants dans Boutique › Réglages."
+        -
+            id: users
+            group: community
+            title: Utilisateurs
+            page: users
+            intro: "Recherche les comptes, consulte leur fiche et agis dessus."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "Filtre par statut (actif, suspendu, banni) et par mode de connexion (email, Discord ou les deux)."
+                        - "La fiche montre les statistiques, les sanctions, les dernières parties et les amis."
+                        - "Avec les bonnes permissions : modifier le profil, suspendre, bannir, supprimer un compte ou exporter la liste en CSV."
+                -
+                    type: warn
+                    text: "La suppression d'un compte est définitive : ses données sont effacées."
+        -
+            id: channels
+            group: community
+            title: Discussions
+            page: channels
+            intro: "Les salons de discussion publics du site, visibles dans la page Discussions."
+            blocks:
+                -
+                    type: p
+                    text: "Pour chaque salon, choisis qui peut le lire et qui peut y écrire (tout le monde, joueurs inscrits…). Tu peux aussi le vider ou le supprimer."
+        -
+            id: moderation
+            group: community
+            title: Modération
+            page: moderation
+            intro: "Traite les signalements des joueurs et applique les sanctions."
+            blocks:
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Signalements
+                            text: "Chaque dossier regroupe les signalements visant un joueur, avec les messages concernés et son historique."
+                        -
+                            term: Sanctions
+                            text: "Avertissement, interdiction de discuter, suspension (durée) ou bannissement. Une sanction peut être levée."
+                        -
+                            term: Mots filtrés
+                            text: "Les mots masqués automatiquement dans les discussions."
+        -
+            id: general
+            group: system
+            title: Général
+            page: general
+            intro: "Les interrupteurs du site et l'état des services."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "**Jouer sans compte** : autorise les invités avec un simple pseudo."
+                        - "**Inscriptions ouvertes** : création de compte par email et Discord."
+                        - "**Rooms publiques** : les joueurs peuvent lister leur room publiquement."
+                        - "État de la connexion Discord, des services et du stockage, bouton « Vider le cache »."
+                        - "**Journal d'audit** : qui a fait quoi dans le back-office, exportable en CSV."
+        -
+            id: pages
+            group: system
+            title: Pages
+            page: pages
+            intro: "Les pages libres du site (FAQ, règles, mentions, blog…) et les liens du pied de page."
+            blocks:
+                -
+                    type: p
+                    text: "Une page peut être écrite en texte ou en HTML (format « custom »). Les textes à traduire de la page apparaissent dans un tableau par langue."
+        -
+            id: maintenance
+            group: system
+            title: Maintenance
+            page: maintenance
+            intro: "Planifie une maintenance du site entier, d'un ou plusieurs jeux, ou de fonctionnalités, et préviens les joueurs à l'avance."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "Choisis la cible, la période et un message pour les joueurs."
+                        - "Décide quoi faire des parties en cours : les laisser se terminer ou les arrêter immédiatement."
+                        - "Pour une maintenance du site, certaines pages peuvent rester consultables (classement, fiches des jeux)."
+                        - "Une maintenance passe de Planifiée à En cours puis Terminée ; elle peut aussi être annulée."
+        -
+            id: languages
+            group: system
+            title: Langues et traductions
+            page: languages
+            intro: "Le français est la langue de référence. Ajoute des langues et traduis les textes du site."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "Ajoute une langue avec son code à 2 lettres, puis « Traduire » pour remplir les textes restants."
+                        - "Un texte non traduit s'affiche en français."
+                        - "Gère aussi la liste des pays proposés dans les profils, avec leur langue par défaut."
+                        - "Les contenus (jeux, catégories, pages…) ont leur propre panneau « Traductions » dans leur formulaire."
+        -
+            id: emails
+            group: system
+            title: Emails
+            page: emails
+            intro: "Les campagnes envoyées aux joueurs, les listes de diffusion et le modèle commun à tous les emails du site."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "**Campagnes** : rédige un email et envoie-le à une liste."
+                        - "**Listes** : cible par audience (tous les joueurs, un pays, les joueurs d'un jeu…)."
+                        - "**Modèle** : l'habillage commun (en-tête, pied de page) avec aperçu en direct."
+                -
+                    type: p
+                    text: "Les joueurs reçoivent aussi des emails automatiques selon leurs préférences de notification (sécurité, amis, événements, Atelier)."
+        -
+            id: realtime
+            group: system
+            title: Temps réel (Mercure)
+            page: realtime
+            intro: "Mercure diffuse en direct l'état des parties, les messages et les notifications."
+            blocks:
+                -
+                    type: p
+                    text: "La page montre l'état du hub, la latence et un flux en direct des messages (filtrable). Tu peux envoyer un message de test pour vérifier que tout fonctionne."
+                -
+                    type: tip
+                    text: "Si les parties ne se mettent plus à jour, vérifie ici que le hub est « connecté »."
+        -
+            id: reset
+            group: system
+            title: Réinitialisation et sauvegardes
+            page: reset
+            intro: "Vider des blocs de données (parties, social, boutique, joueurs…) et revenir en arrière grâce aux sauvegardes SQL."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Coche les blocs à vider : chaque carte indique les tables concernées et leur nombre de lignes."
+                        - "Tape le mot de confirmation, puis lance la réinitialisation."
+                        - "Une sauvegarde complète est créée automatiquement juste avant, dans `var/backups`."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: Toujours conservés
+                            text: "Comptes administrateurs, rôles, jeux installés (équipes, tâches, blocs no-code), catégories, salons de discussion et pays."
+                        -
+                            term: Restaurer
+                            text: "Remplace toute la base par le contenu d'une sauvegarde. L'état actuel est sauvegardé juste avant, pour pouvoir annuler."
+                -
+                    type: warn
+                    text: "Les fichiers ne sont pas concernés par les sauvegardes : seuls les avatars des joueurs supprimés sont effacés. Pense à télécharger les sauvegardes importantes, elles restent sur le serveur."
+        -
+            id: security
+            group: system
+            title: Double authentification
+            page: security
+            intro: "Protéger l'administration avec un code à 6 chiffres en plus du mot de passe."
+            blocks:
+                -
+                    type: steps
+                    items:
+                        - "Ouvre « Sécurité du compte » (menu Aide) et scanne le QR code avec une application d'authentification."
+                        - "Confirme avec le code affiché, puis note les 8 codes de secours (affichés une seule fois)."
+                        - "Ensuite, chaque nouvelle session d'administration demande un code. Le site joueur n'est pas concerné."
+                -
+                    type: tip
+                    text: "Un administrateur qui gère les rôles peut rendre la double authentification obligatoire pour toute l'équipe depuis cette même page."
+        -
+            id: good-practices
+            group: help
+            title: Bonnes pratiques et dépannage
+            intro: "Quelques réflexes pour travailler sereinement."
+            blocks:
+                -
+                    type: list
+                    items:
+                        - "Teste toujours un jeu en aperçu (solo) avant de demander une validation ou de publier."
+                        - "Un jeu modifié dans `var/games` n'est visible par les joueurs qu'après publication : ses fichiers sont alors copiés dans `public/games`."
+                        - "Garde tous les textes dans les fichiers YAML pour pouvoir traduire le jeu plus tard."
+                        - "Utilise les tâches de la fiche du jeu pour organiser l'équipe et suivre l'avancement."
+                        - "Avant une grosse mise à jour, planifie une maintenance du jeu pour prévenir les joueurs."
+                -
+                    type: defs
+                    items:
+                        -
+                            term: L'aperçu ne s'affiche pas
+                            text: "Le jeu doit être jouable seul (`solo: true` et un minimum de 1 joueur)."
+                        -
+                            term: « jeu invalide » à la validation
+                            text: "Le `game.json` contient une erreur : le message indique la clé en cause (champ manquant, statistique mal écrite…)."
+                        -
+                            term: Mes changements ne sont pas en ligne
+                            text: "La version n'a pas encore été publiée : demande une validation au responsable."
+                        -
+                            term: Le Créateur no-code est verrouillé
+                            text: "Le jeu a été codé à la main. Utilise « Apparence » pour le style et l'éditeur de code pour les règles."

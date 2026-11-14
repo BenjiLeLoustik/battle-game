@@ -1,0 +1,103 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+{% import '@site/components/macros/badge.html.twig' as badges_ui %}
+
+{% set active = 'badges' %}
+
+{% block title %}{{ 'admin.badges.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.badges.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.badges.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_badge_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.badges.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <div class="admin-kpis">
+            {% for key, value in kpis %}
+                <div class="admin-kpi">
+                    <span class="admin-kpi__label">{{ ('admin.badges.kpi.' ~ key)|trans({}, 'admin') }}</span>
+                    <strong class="admin-kpi__value">{{ value }}</strong>
+                </div>
+            {% endfor %}
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar" method="get">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.badges.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.badges.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="game" data-component="AutoSubmit" aria-label="{{ 'admin.badges.scope'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.badges.all_scopes'|trans({}, 'admin') }}</option>
+                    <option value="general"{{ filters.game == 'general' ? ' selected' }}>{{ 'site.badges.general'|trans }}</option>
+                    {% for game in games %}
+                        <option value="{{ game.slug }}"{{ filters.game == game.slug ? ' selected' }}>{{ game.name }}</option>
+                    {% endfor %}
+                </select>
+                <select class="admin-select" name="rarity" data-component="AutoSubmit" aria-label="{{ 'admin.badges.rarity'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.badges.all_rarities'|trans({}, 'admin') }}</option>
+                    {% for rarity in rarities %}
+                        <option value="{{ rarity }}"{{ filters.rarity == rarity ? ' selected' }}>{{ ('admin.badges.rarities.' ~ rarity)|trans({}, 'admin') }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% if rows is empty %}
+                <p class="admin-empty">{{ 'admin.badges.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(rows) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['badge', 'scope', 'rule', 'rarity', 'rate', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.badges.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for row in pager.items %}
+                                {% set badge = row.badge %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user">
+                                            {{ badges_ui.shape(row.view, 36) }}
+                                            <span class="admin-user__text">
+                                                <span class="admin-user__name">{{ badge.name }}{% if badge.secret %} <span class="admin-pill">{{ 'admin.badges.secret'|trans({}, 'admin') }}</span>{% endif %}</span>
+                                                <span class="admin-user__meta admin-table__cell--mono">{{ badge.code }}</span>
+                                            </span>
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ badge.game ? badge.game.name : 'site.badges.general'|trans }}</td>
+                                    <td class="admin-table__cell admin-table__cell--mono">{{ badge.rule }} {{ badge.params|json_encode }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill admin-pill--{{ { common: '', rare: 'cyan', epic: 'accent', legendary: 'warn' }[row.view.design.rarity] }}">{{ ('admin.badges.rarities.' ~ row.view.design.rarity)|trans({}, 'admin') }}</span></td>
+                                    <td class="admin-table__cell">{{ row.rate }} %</td>
+                                    <td class="admin-table__cell">{{ admin_ui.post('admin_badge_toggle', { id: badge.id }, (badge.active ? 'admin.badges.active' : 'admin.badges.inactive')|trans({}, 'admin'), 'admin-pill' ~ (badge.active ? ' admin-pill--ok' : ''), 'admin-badges') }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions">
+                                            <a href="{{ path('admin_badge_edit', { id: badge.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            <a href="{{ path('admin_badge_new', { from: badge.id }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.roles.duplicate'|trans({}, 'admin') }}</a>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+        <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.badges.note'|trans({}, 'admin') }}</p>
+
+        <section class="admin-panel" aria-labelledby="badge-rules">
+            <div class="admin-panel__intro">
+                <h2 id="badge-rules" class="admin-panel__title">{{ 'admin.badges.registry'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.badges.registry_help'|trans({}, 'admin') }}</span>
+            </div>
+            <dl class="admin-dl">
+                {% for name, item in usage %}
+                    <dt class="admin-dl__term admin-table__cell--mono">{{ name }}</dt>
+                    <dd class="admin-dl__value">{{ ('admin.badges.rules.' ~ name)|trans({}, 'admin') }} · {{ 'admin.badges.used'|trans({ count: item.count }, 'admin') }} · <span class="admin-table__cell--mono">{{ item.rule.parameters|keys|join(', ') ?: '—' }}</span></dd>
+                {% endfor %}
+            </dl>
+        </section>
+    </div>
+{% endblock %}

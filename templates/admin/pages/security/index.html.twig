@@ -1,0 +1,93 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% set active = 'security' %}
+
+{% block title %}{{ 'admin.twofa.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page admin-page--narrow">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.twofa.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.twofa.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <span class="admin-pill {{ user.hasTotp ? 'admin-pill--ok' : 'admin-pill--warn' }}">{{ (user.hasTotp ? 'admin.twofa.on' : 'admin.twofa.off')|trans({}, 'admin') }}</span>
+        </div>
+
+        {% if required and not user.hasTotp %}
+            <p class="admin-note"><span class="admin-note__icon">!</span>{{ 'admin.twofa.required_notice'|trans({}, 'admin') }}</p>
+        {% endif %}
+
+        {% if codes %}
+            <section class="admin-panel twofa-codes">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.twofa.codes_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.twofa.codes_help'|trans({}, 'admin') }}</span>
+                </div>
+                <ul class="twofa-codes__list">
+                    {% for code in codes %}<li><code>{{ code }}</code></li>{% endfor %}
+                </ul>
+                <form method="post" action="{{ path('admin_twofa_seen') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-2fa') }}">
+                    <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.twofa.codes_done'|trans({}, 'admin') }}</button>
+                </form>
+            </section>
+        {% endif %}
+
+        {% if user.hasTotp %}
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.twofa.active_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.twofa.active_help'|trans({ date: user.totpEnabledAt|date('d/m/Y'), count: remaining }, 'admin') }}</span>
+                </div>
+                <form class="twofa-form" method="post" action="{{ path('admin_twofa_disable') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-2fa') }}">
+                    <label class="admin-field">
+                        {{ 'admin.twofa.disable_label'|trans({}, 'admin') }}
+                        <input class="admin-field__input twofa-form__code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required placeholder="123456">
+                    </label>
+                    <button type="submit" class="admin-btn admin-btn--danger">{{ 'admin.twofa.disable'|trans({}, 'admin') }}</button>
+                </form>
+            </section>
+        {% else %}
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.twofa.setup_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.twofa.setup_help'|trans({}, 'admin') }}</span>
+                </div>
+                <div class="twofa-setup">
+                    <img class="twofa-setup__qr" src="{{ qr }}" alt="{{ 'admin.twofa.qr_alt'|trans({}, 'admin') }}" width="220" height="220">
+                    <div class="twofa-setup__side">
+                        <ol class="twofa-setup__steps">
+                            <li>{{ 'admin.twofa.step1'|trans({}, 'admin') }}</li>
+                            <li>{{ 'admin.twofa.step2'|trans({}, 'admin') }}</li>
+                            <li>{{ 'admin.twofa.step3'|trans({}, 'admin') }}</li>
+                        </ol>
+                        <span class="admin-panel__help">{{ 'admin.twofa.manual'|trans({}, 'admin') }}</span>
+                        <code class="twofa-setup__secret">{{ secret|split('', 4)|join(' ') }}</code>
+                        <form class="twofa-form" method="post" action="{{ path('admin_twofa_enable') }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('admin-2fa') }}">
+                            <label class="admin-field">
+                                {{ 'admin.twofa.code_label'|trans({}, 'admin') }}
+                                <input class="admin-field__input twofa-form__code" name="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" required placeholder="123456">
+                            </label>
+                            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.twofa.enable'|trans({}, 'admin') }}</button>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        {% if manage %}
+            <form class="admin-panel" method="post" action="{{ path('admin_twofa_required') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-2fa') }}">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.twofa.policy_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.twofa.policy_help'|trans({}, 'admin') }}</span>
+                </div>
+                <label class="admin-check"><input type="checkbox" class="admin-check__input" name="required" value="1"{{ required ? ' checked' }}> {{ 'admin.twofa.policy_label'|trans({}, 'admin') }}</label>
+                <div class="admin-actions admin-actions--end"><button type="submit" class="admin-btn admin-btn--secondary">{{ 'admin.save'|trans({}, 'admin') }}</button></div>
+            </form>
+        {% endif %}
+    </div>
+{% endblock %}

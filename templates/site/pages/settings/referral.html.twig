@@ -1,0 +1,19 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% set section = 'referral' %}
+
+{% block settings %}
+    <section class="settings-card">
+        <h2 class="settings-card__title">{{ 'site.referral.title'|trans }}</h2>
+        <p class="settings-card__help">{{ 'site.referral.help'|trans({ referrer: stats.referrer, referee: stats.referee }) }}</p>
+        <div class="referral-link">
+            <input class="field__input referral-link__input" value="{{ link }}" readonly aria-label="{{ 'site.referral.link'|trans }}">
+            <button type="button" class="btn btn--primary" data-component="CopyButton" data-text="{{ link }}" data-done="{{ 'site.profile.copied'|trans }}">{{ 'site.referral.copy'|trans }}</button>
+        </div>
+        <div class="referral-stats">
+            <div><strong>{{ stats.invited }}</strong><span>{{ 'site.referral.invited'|trans }}</span></div>
+            <div><strong>{{ stats.rewarded }}</strong><span>{{ 'site.referral.rewarded'|trans }}</span></div>
+            <div><strong>{{ stats.rewarded * stats.referrer }}</strong><span>{{ 'site.referral.earned'|trans }}</span></div>
+        </div>
+    </section>
+{% endblock %}

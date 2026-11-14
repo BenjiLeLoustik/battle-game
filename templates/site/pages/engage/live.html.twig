@@ -1,0 +1,38 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'live' %}
+
+{% block title %}{{ 'site.live.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage">
+        <div class="engage__head">
+            <div class="engage__intro">
+                <h1 class="engage__title"><span class="live-dot" aria-hidden="true"></span>{{ 'site.live.title'|trans }}</h1>
+                <p class="engage__subtitle">{{ 'site.live.subtitle'|trans }}</p>
+            </div>
+        </div>
+        {% if matches is empty %}
+            <p class="engage-empty">{{ 'site.live.empty'|trans }}</p>
+        {% else %}
+            <div class="tournament-grid">
+                {% for match in matches %}
+                    <a href="{{ path('site_play_show', { code: match.code }) }}" class="live-card" style="--game-color: {{ match.game.color }}">
+                        <span class="live-card__head">
+                            <strong>{{ match.game.name }}</strong>
+                            <span class="live-card__mode">{{ match.mode.translate() }}</span>
+                        </span>
+                        <span class="live-card__players">
+                            {% for player in match.players|slice(0, 6) %}
+                                <span class="live-card__player">{{ ui.avatar({ id: player.id, avatar: player.avatar ?? null, initials: player.initials ?? '?' }, 'sm') }}<span>{{ player.username }}</span></span>
+                            {% endfor %}
+                        </span>
+                        <span class="live-card__watch">{{ 'site.live.watch'|trans }} →</span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

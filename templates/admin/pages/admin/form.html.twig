@@ -1,0 +1,86 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'admins' %}
+{% set title = member ? member.username : 'admin.admins.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-admins') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_admin_index') }}" class="admin-crumbs__link">{{ 'admin.admins.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.admins.identity'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.admins.identity_help'|trans({}, 'admin') }}</span>
+            </div>
+            {% if member %}
+                {{ admin_ui.user(member) }}
+            {% else %}
+                <label class="admin-field">
+                    {{ 'admin.admins.account'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="account" required placeholder="{{ 'admin.admins.account_placeholder'|trans({}, 'admin') }}">
+                    {% if error %}<span class="admin-field__error">{{ error|trans({}, 'admin') }}</span>{% endif %}
+                </label>
+            {% endif %}
+        </section>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.admins.role'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.admins.role_help'|trans({}, 'admin') }} <a href="{{ path('admin_role_index') }}" class="admin-link admin-link--inline">{{ 'admin.admins.manage_roles'|trans({}, 'admin') }}</a></span>
+            </div>
+            <div class="admin-choices">
+                {% for item in roles %}
+                    {% set checked = member and member.adminRole ? member.adminRole.id == item.role.id : item.role.system %}
+                    <label class="admin-choice">
+                        <input type="radio" class="admin-choice__input" name="role" value="{{ item.role.id }}"{{ checked ? ' checked' }}>
+                        <span class="admin-choice__head"><span class="admin-swatch" style="background: {{ item.role.color }}"></span><strong>{{ item.role.name }}</strong><span class="admin-choice__count">{{ item.count }}</span></span>
+                        <span class="admin-choice__text">{{ item.role.description }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </section>
+
+        {% if member %}
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.admins.studio'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.admins.studio_help'|trans({}, 'admin') }}</span>
+                </div>
+                {% if games is empty %}
+                    <p class="admin-panel__help">{{ 'admin.admins.no_games'|trans({}, 'admin') }}</p>
+                {% else %}
+                    <ul class="member-games">
+                        {% for item in games %}
+                            <li>
+                                <a href="{{ path('admin_studio_show', { slug: item.game.slug }) }}" class="member-game">
+                                    <span class="member-game__swatch" style="--swatch: {{ item.game.color }}" aria-hidden="true">{{ item.game.name|first|upper }}</span>
+                                    <span class="admin-user__text">
+                                        <span class="admin-user__name">{{ item.game.name }}</span>
+                                        <span class="admin-user__meta">v{{ item.game.version }} · {{ item.game.status.translate() }}</span>
+                                    </span>
+                                    <span class="admin-pill{{ item.role.value == 'lead' ? ' admin-pill--accent' }}">{{ item.role.translate() }}</span>
+                                    <svg class="member-game__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_admin_index') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ (member ? 'admin.save' : 'admin.admins.create')|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

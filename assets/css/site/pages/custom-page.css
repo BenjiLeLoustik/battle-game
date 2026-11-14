@@ -1,0 +1,31 @@
+.custom-page {
+    @apply mx-auto flex w-full max-w-[860px] flex-col gap-8 max-sm:gap-5;
+}
+
+.custom-page__head {
+    @apply flex flex-col gap-2 border-b border-line pb-6 max-sm:pb-3.5;
+}
+
+.custom-page__title {
+    @apply font-display text-[34px] font-bold;
+}
+
+.custom-page__lead {
+    @apply text-base text-muted-2;
+}
+
+.custom-page__body--markdown {
+    @apply flex flex-col gap-4 leading-relaxed text-ink-soft
+    [&_a]:text-cyan [&_a:hover]:underline
+    [&_blockquote]:border-l-2 [&_blockquote]:border-cyan [&_blockquote]:pl-4 [&_blockquote]:text-muted-2
+    [&_code]:rounded [&_code]:bg-field [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:font-mono [&_code]:text-[13px]
+    [&_h2]:mt-4 [&_h2]:font-display [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-ink
+    [&_h3]:mt-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-ink
+    [&_hr]:border-line [&_img]:max-w-full [&_img]:rounded-xl
+    [&_ol]:list-decimal [&_ol]:pl-6 [&_ul]:list-disc [&_ul]:pl-6 [&_li]:my-1
+    [&_pre]:overflow-x-auto [&_pre]:rounded-xl [&_pre]:border [&_pre]:border-line [&_pre]:bg-field [&_pre]:p-4
+    [&_pre_code]:bg-transparent [&_pre_code]:p-0
+    [&_strong]:text-ink
+    [&_table]:w-full [&_table]:border-collapse [&_td]:border [&_td]:border-line [&_td]:px-3 [&_td]:py-2
+    [&_th]:border [&_th]:border-line [&_th]:bg-field [&_th]:px-3 [&_th]:py-2 [&_th]:text-left;
+}

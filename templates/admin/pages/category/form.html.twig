@@ -1,0 +1,59 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'categories' %}
+{% set title = category.id ? category.name : 'admin.categories.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-categories') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_category_index') }}" class="admin-crumbs__link">{{ 'admin.categories.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.categories.info'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.categories.info_help'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="admin-form-grid">
+                <label class="admin-field">
+                    {{ 'admin.categories.name'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="name" value="{{ category.name }}" maxlength="60" required>
+                    {{ admin_ui.error(errors, 'name') }}
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.categories.slug'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="slug" value="{{ category.slug }}" maxlength="60"{{ locked ? ' readonly' }}>
+                    <span class="admin-panel__help">{{ (locked ? 'admin.categories.slug_locked' : 'admin.categories.slug_help')|trans({}, 'admin') }}</span>
+                    {% if errors.slug is defined %}<span class="admin-field__error">{{ errors.slug|trans({}, 'admin') }}</span>{% endif %}
+                </label>
+            </div>
+        </section>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.categories.look'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.categories.look_help'|trans({}, 'admin') }}</span>
+            </div>
+            {{ admin_ui.color('color', category.color, 'admin.categories.look'|trans({}, 'admin'), colors) }}
+            <label class="admin-check">
+                <input type="checkbox" class="admin-check__input" name="active"{{ category.active ? ' checked' }}>
+                {{ 'admin.categories.active'|trans({}, 'admin') }}
+            </label>
+        </section>
+
+        {{ admin_ui.translations(category) }}
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_category_index') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ (category.id ? 'admin.save' : 'admin.categories.create')|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

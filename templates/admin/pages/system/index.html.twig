@@ -1,0 +1,99 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'general' %}
+
+{% macro bytes(size) %}{{ size >= 1073741824 ? (size / 1073741824)|number_format(1, ',', ' ') ~ ' Go' : (size >= 1048576 ? (size / 1048576)|number_format(1, ',', ' ') ~ ' Mo' : (size / 1024)|number_format(0, ',', ' ') ~ ' Ko') }}{% endmacro %}
+
+{% block title %}{{ 'admin.system.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <h1 class="admin-page__title">{{ 'admin.system.title'|trans({}, 'admin') }}</h1>
+
+        <form class="admin-panel" method="post" action="{{ path('admin_system_settings') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-system') }}">
+            <h2 class="admin-panel__title">{{ 'admin.system.platform'|trans({}, 'admin') }}</h2>
+            <div class="system-row">
+                <span class="admin-user__text">
+                    <strong class="admin-user__name">{{ 'admin.nav.maintenance'|trans({}, 'admin') }}</strong>
+                    <span class="admin-user__meta">{{ 'admin.system.maintenances'|trans({ count: maintenances }, 'admin') }}</span>
+                </span>
+                {{ admin_ui.link(path('admin_maintenance_index'), 'admin.system.manage'|trans({}, 'admin')) }}
+            </div>
+            {% for key, enabled in toggles %}
+                <label class="system-row">
+                    <span class="admin-user__text">
+                        <strong class="admin-user__name">{{ ('admin.system.toggles.' ~ key ~ '.title')|trans({}, 'admin') }}</strong>
+                        <span class="admin-user__meta">{{ ('admin.system.toggles.' ~ key ~ '.help')|trans({}, 'admin') }}</span>
+                    </span>
+                    <input type="checkbox" class="system-switch" name="{{ key }}" role="switch"{{ enabled ? ' checked' }}>
+                </label>
+            {% endfor %}
+            <div class="admin-actions admin-actions--end">
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+            </div>
+        </form>
+
+        <div class="admin-grid">
+            <section class="admin-panel">
+                <div class="admin-panel__bar">
+                    <h2 class="admin-panel__title">{{ 'admin.system.discord'|trans({}, 'admin') }}</h2>
+                    <span class="admin-pill admin-pill--{{ discord ? 'ok' : 'warn' }}">{{ (discord ? 'admin.system.operational' : 'admin.system.not_configured')|trans({}, 'admin') }}</span>
+                </div>
+                <dl class="admin-dl">
+                    <dt class="admin-dl__term">Client ID</dt><dd class="admin-dl__value admin-table__cell--mono">{{ discord ?? '—' }}</dd>
+                    <dt class="admin-dl__term">Client secret</dt><dd class="admin-dl__value">{{ 'admin.system.secret_help'|trans({}, 'admin') }}</dd>
+                    <dt class="admin-dl__term">{{ 'admin.system.redirect'|trans({}, 'admin') }}</dt><dd class="admin-dl__value admin-table__cell--mono">/oauth/discord · identify, email</dd>
+                </dl>
+            </section>
+
+            <section class="admin-panel">
+                <h2 class="admin-panel__title">{{ 'admin.system.services'|trans({}, 'admin') }}</h2>
+                <ul class="dashboard-services">
+                    {% for key, service in services %}
+                        <li class="dashboard-services__item">
+                            <span class="dashboard-services__dot dashboard-services__dot--{{ service.ok ? 'ok' : 'down' }}" aria-hidden="true"></span>
+                            <span class="dashboard-services__name">{{ ('admin.dashboard.service.' ~ key)|trans({}, 'admin') }}</span>
+                            <span class="dashboard-services__value">{{ service.ok ? (service.value ?? 'admin.dashboard.ok'|trans({}, 'admin')) : 'admin.dashboard.down'|trans({}, 'admin') }}</span>
+                        </li>
+                    {% endfor %}
+                    {% for key, size in storage %}
+                        <li class="dashboard-services__item">
+                            <span class="dashboard-services__dot" aria-hidden="true"></span>
+                            <span class="dashboard-services__name">{{ ('admin.system.storage.' ~ key)|trans({}, 'admin') }}</span>
+                            <span class="dashboard-services__value">{{ _self.bytes(size) }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <div class="admin-actions">
+                    {{ admin_ui.post('admin_system_cache', {}, 'admin.system.clear_cache'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-system') }}
+                </div>
+            </section>
+        </div>
+
+        <section class="admin-panel">
+            <div class="admin-panel__bar audit-export">
+                <h2 class="admin-panel__title">{{ 'admin.system.audit'|trans({}, 'admin') }}</h2>
+                <form class="audit-export__form" method="get" action="{{ path('admin_system_audit_export') }}">
+                    <select class="admin-select" name="period" aria-label="{{ 'admin.system.audit_export.period'|trans({}, 'admin') }}">
+                        {% for period in periods %}
+                            <option value="{{ period }}">{{ ('admin.system.audit_export.periods.' ~ period)|trans({}, 'admin') }}</option>
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="admin-btn admin-btn--secondary">
+                        <svg class="audit-export__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+                        {{ 'admin.system.audit_export.button'|trans({}, 'admin') }}
+                    </button>
+                </form>
+            </div>
+            {% if logs is empty %}
+                <p class="admin-panel__help">{{ 'admin.dashboard.no_events'|trans({}, 'admin') }}</p>
+            {% else %}
+                <pre class="admin-log">{% for log in logs %}{{ log.createdAt|date('d/m H:i') }}  {{ log.user ? log.user.username : 'system' }} · {{ log.action }}  {{ log.detail }}
+{% endfor %}</pre>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

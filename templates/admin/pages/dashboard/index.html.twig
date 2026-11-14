@@ -1,0 +1,179 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'dashboard' %}
+
+{% block title %}{{ 'admin.dashboard.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ 'admin.dashboard.title'|trans({}, 'admin') }}</h1>
+            <nav class="admin-segment" aria-label="{{ 'admin.dashboard.period'|trans({}, 'admin') }}">
+                {% for item in periods %}
+                    <a href="{{ path('admin_dashboard_index', { period: item }) }}" class="admin-segment__item{{ item == period ? ' admin-segment__item--active' }}"{% if item == period %} aria-current="page"{% endif %}>
+                        {{ ('admin.dashboard.periods.' ~ item)|trans({}, 'admin') }}
+                    </a>
+                {% endfor %}
+            </nav>
+        </div>
+
+        <div class="admin-kpis">
+            <div class="admin-kpi">
+                <span class="admin-kpi__label">{{ 'admin.dashboard.kpi.online'|trans({}, 'admin') }}</span>
+                <strong class="admin-kpi__value">{{ kpis.online|number_format(0, ',', ' ') }}</strong>
+                <span class="admin-kpi__sub">{{ 'admin.dashboard.kpi.online_sub'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="admin-kpi">
+                <span class="admin-kpi__label">{{ 'admin.dashboard.kpi.accounts'|trans({}, 'admin') }}</span>
+                <strong class="admin-kpi__value">{{ kpis.accounts|number_format(0, ',', ' ') }}</strong>
+                <span class="admin-kpi__sub">{{ 'admin.dashboard.kpi.discord'|trans({ percent: kpis.accounts ? (kpis.discord / kpis.accounts * 100)|round : 0 }, 'admin') }}</span>
+            </div>
+            <div class="admin-kpi">
+                <span class="admin-kpi__label">{{ 'admin.dashboard.kpi.rooms'|trans({}, 'admin') }}</span>
+                <strong class="admin-kpi__value">{{ kpis.rooms|number_format(0, ',', ' ') }}</strong>
+                <span class="admin-kpi__sub">{{ 'admin.dashboard.kpi.private'|trans({ count: kpis.private_rooms }, 'admin') }}</span>
+            </div>
+            <div class="admin-kpi">
+                <span class="admin-kpi__label">{{ 'admin.dashboard.kpi.matches'|trans({}, 'admin') }}</span>
+                <strong class="admin-kpi__value">{{ kpis.matches|number_format(0, ',', ' ') }}</strong>
+                <span class="admin-kpi__sub">{{ ('admin.dashboard.periods.' ~ period)|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_moderation_index') }}" class="admin-kpi">
+                <span class="admin-kpi__label">{{ 'admin.dashboard.kpi.reports'|trans({}, 'admin') }}</span>
+                <strong class="admin-kpi__value">{{ kpis.reports }}</strong>
+                <span class="admin-kpi__sub{{ kpis.reports > 0 ? ' admin-kpi__sub--warn' }}">{{ 'admin.dashboard.kpi.reports_sub'|trans({}, 'admin') }}</span>
+            </a>
+        </div>
+
+        <div class="admin-grid">
+            <section class="admin-panel" aria-labelledby="dashboard-activity">
+                {% set members_label = 'admin.dashboard.members'|trans({}, 'admin') %}
+                {% set guests_label = 'admin.dashboard.guests'|trans({}, 'admin') %}
+                <div class="admin-panel__bar">
+                    <h2 id="dashboard-activity" class="admin-panel__title">{{ 'admin.dashboard.activity'|trans({}, 'admin') }}</h2>
+                    <span class="dashboard-legend">
+                        <span class="dashboard-legend__item dashboard-legend__item--members">{{ members_label }} <strong class="dashboard-legend__value">{{ activity.members }}</strong></span>
+                        <span class="dashboard-legend__item dashboard-legend__item--guests">{{ guests_label }} <strong class="dashboard-legend__value">{{ activity.guests }}</strong></span>
+                    </span>
+                </div>
+                <p class="dashboard-activity__summary">
+                    <strong class="dashboard-activity__total">{{ activity.members + activity.guests }}</strong>
+                    {{ 'admin.dashboard.activity_unique'|trans({}, 'admin') }}
+                    {% if activity.peak %}
+                        <span class="dashboard-activity__peak">{{ 'admin.dashboard.activity_peak'|trans({ hour: '%02d h'|format(activity.peak.hour), count: activity.peak.total }, 'admin') }}</span>
+                    {% endif %}
+                </p>
+                <div class="dashboard-chart">
+                    <div class="dashboard-chart__scale" aria-hidden="true">
+                        <span class="dashboard-chart__tick">{{ activity.max }}</span>
+                        <span class="dashboard-chart__tick">{{ activity.max // 2 }}</span>
+                        <span class="dashboard-chart__tick">0</span>
+                    </div>
+                    <div class="dashboard-chart__plot">
+                        <span class="dashboard-chart__grid dashboard-chart__grid--top" aria-hidden="true"></span>
+                        <span class="dashboard-chart__grid dashboard-chart__grid--middle" aria-hidden="true"></span>
+                        {% for slot in activity.hours %}
+                            {% set range = '%02d h – %02d h'|format(slot.hour, (slot.hour + 1) % 24) %}
+                            <div class="dashboard-chart__slot{{ loop.last ? ' dashboard-chart__slot--now' }}" tabindex="0" aria-label="{{ range }} · {{ members_label }} {{ slot.members }} · {{ guests_label }} {{ slot.guests }}">
+                                {% if slot.total %}
+                                    <span class="dashboard-chart__stack" style="height: {{ (slot.total / activity.max * 100)|round(1) }}%">
+                                        {% if slot.members %}<span class="dashboard-chart__segment dashboard-chart__segment--members" style="flex-grow: {{ slot.members }}"></span>{% endif %}
+                                        {% if slot.guests %}<span class="dashboard-chart__segment dashboard-chart__segment--guests" style="flex-grow: {{ slot.guests }}"></span>{% endif %}
+                                    </span>
+                                {% else %}
+                                    <span class="dashboard-chart__empty" aria-hidden="true"></span>
+                                {% endif %}
+                                <span class="dashboard-chart__tip" aria-hidden="true">
+                                    <strong class="dashboard-chart__tip-title">{{ range }}{{ loop.last ? ' · ' ~ 'admin.dashboard.activity_now'|trans({}, 'admin') }}</strong>
+                                    <span class="dashboard-chart__tip-row dashboard-chart__tip-row--members">{{ members_label }} <b>{{ slot.members }}</b></span>
+                                    <span class="dashboard-chart__tip-row dashboard-chart__tip-row--guests">{{ guests_label }} <b>{{ slot.guests }}</b></span>
+                                </span>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <div class="dashboard-chart__axis" aria-hidden="true">
+                        {% for slot in activity.hours %}
+                            <span class="dashboard-chart__label{{ loop.revindex0 == 4 ? ' dashboard-chart__label--near' }}">{{ loop.last ? 'admin.dashboard.activity_now'|trans({}, 'admin') : ((loop.length - loop.index) % 4 == 0 ? '%02d h'|format(slot.hour)) }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% if not activity.peak %}
+                    <p class="admin-panel__help">{{ 'admin.dashboard.activity_empty'|trans({}, 'admin') }}</p>
+                {% endif %}
+            </section>
+
+            <section class="admin-panel" aria-labelledby="dashboard-services">
+                <div class="admin-panel__bar">
+                    <h2 id="dashboard-services" class="admin-panel__title">{{ 'admin.dashboard.services'|trans({}, 'admin') }}</h2>
+                </div>
+                <ul class="dashboard-services">
+                    {% for key, service in services %}
+                        <li class="dashboard-services__item">
+                            <span class="dashboard-services__dot dashboard-services__dot--{{ service.ok ? 'ok' : 'down' }}" aria-hidden="true"></span>
+                            <span class="dashboard-services__name">{{ ('admin.dashboard.service.' ~ key)|trans({}, 'admin') }}</span>
+                            <span class="dashboard-services__value">{{ service.ok ? (service.value ?? 'admin.dashboard.ok'|trans({}, 'admin')) : 'admin.dashboard.down'|trans({}, 'admin') }}</span>
+                        </li>
+                    {% endfor %}
+                </ul>
+                {{ admin_ui.link(path('admin_system_index'), 'admin.dashboard.system'|trans({}, 'admin')) }}
+            </section>
+        </div>
+
+        <div class="admin-grid">
+            <section class="admin-panel admin-panel--flush" aria-labelledby="dashboard-games">
+                <div class="admin-panel__bar">
+                    <h2 id="dashboard-games" class="admin-panel__title">{{ 'admin.dashboard.top'|trans({}, 'admin') }}</h2>
+                </div>
+                {% if top is empty %}
+                    <p class="admin-empty">{{ 'admin.dashboard.no_games'|trans({}, 'admin') }}</p>
+                {% else %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    {% for column in ['game', 'games', 'duration', 'quit'] %}
+                                        <th class="admin-table__th">{{ ('admin.dashboard.column.' ~ column)|trans({}, 'admin') }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for row in top %}
+                                    {% set seconds = ((row.duration ?? 0) / 1000)|round %}
+                                    <tr class="admin-table__row">
+                                        <td class="admin-table__cell">{{ row.name }}</td>
+                                        <td class="admin-table__cell">{{ row.games|number_format(0, ',', ' ') }}</td>
+                                        <td class="admin-table__cell">{{ row.duration ? (seconds // 60) ~ ' min ' ~ '%02d'|format(seconds % 60) : '—' }}</td>
+                                        <td class="admin-table__cell">{{ (row.cancelled / row.games * 100)|round }} %</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
+            </section>
+
+            <section class="admin-panel" aria-labelledby="dashboard-events">
+                <div class="admin-panel__bar">
+                    <h2 id="dashboard-events" class="admin-panel__title">{{ 'admin.dashboard.events'|trans({}, 'admin') }}</h2>
+                </div>
+                {% if logs is empty %}
+                    <p class="admin-empty">{{ 'admin.dashboard.no_events'|trans({}, 'admin') }}</p>
+                {% else %}
+                    <ul class="dashboard-events">
+                        {% for log in logs %}
+                            <li class="dashboard-events__item">
+                                <span class="dashboard-events__time">{{ log.createdAt|date('d/m H:i') }}</span>
+                                <span class="dashboard-events__text">
+                                    <strong>{{ log.user ? log.user.username : 'admin.system_user'|trans({}, 'admin') }}</strong>
+                                    {{ ('admin.audit.' ~ log.action)|trans({ detail: log.detail }, 'admin') }}
+                                </span>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </section>
+        </div>
+    </div>
+{% endblock %}

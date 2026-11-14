@@ -1,0 +1,15 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% set active = 'chat' %}
+
+{% block title %}{{ 'site.chat.channels'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <section class="notice-page" aria-labelledby="chat-none-title">
+        <span class="notice-page__icon" aria-hidden="true">
+            <svg class="notice-page__svg" viewBox="0 0 24 24"><path d="M5 9h14M5 15h14M10 4 8 20M16 4l-2 16"/></svg>
+        </span>
+        <h1 id="chat-none-title" class="notice-page__title">{{ 'site.chat.none_title'|trans }}</h1>
+        <p class="notice-page__text">{{ 'site.chat.none_text'|trans }}</p>
+    </section>
+{% endblock %}

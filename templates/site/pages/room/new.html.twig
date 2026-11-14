@@ -1,0 +1,104 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/form.html.twig' as form_ui %}
+
+{% set active = 'rooms' %}
+
+{% block title %}{{ 'site.room.form.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="room-form" method="post" action="{{ path('site_room_new') }}" data-component="RoomForm">
+        <input type="hidden" name="_token" value="{{ csrf_token('room-new') }}">
+
+        <div class="room-form__head">
+            <h1 class="room-form__title">{{ 'site.room.form.title'|trans }}</h1>
+            <a href="{{ path('site_room_index') }}" class="room-form__cancel">{{ 'site.room.form.cancel'|trans }}</a>
+        </div>
+
+        {% include '@site/components/partials/room-steps.html.twig' with { step: 1 } %}
+
+        <div class="room-form__notice">
+            <span class="room-form__notice-icon">
+                <svg class="room-form__notice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3"/></svg>
+            </span>
+            <span class="room-form__notice-text">{{ 'site.room.form.intro'|trans }}</span>
+        </div>
+
+        <section class="room-form__panel" aria-labelledby="room-form-section">
+            <h2 id="room-form-section" class="room-form__heading">{{ 'site.room.form.section'|trans }}</h2>
+
+            <div class="room-form__grid">
+                <div class="field field--form">
+                    <label class="field__label" for="room-name">{{ 'site.room.form.name'|trans }}</label>
+                    <input id="room-name" class="field__input field__input--large{{ errors.name is defined ? ' field__input--invalid' }}" name="name" value="{{ data.name }}" maxlength="60" required>
+                    {{ form_ui.error(errors, 'name') }}
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="room-size">{{ 'site.room.form.size'|trans }}</label>
+                    <select id="room-size" class="field__input field__input--large" name="max_players">
+                        {% for size in sizes|reverse %}
+                            <option value="{{ size }}"{{ size == data.maxPlayers ? ' selected' }}>{{ 'site.room.form.size_option'|trans({ count: size }) }}</option>
+                        {% endfor %}
+                    </select>
+                    <span class="field__help">{{ 'site.room.form.size_help'|trans }}</span>
+                </div>
+            </div>
+
+            <fieldset class="room-form__fieldset">
+                <legend class="room-form__legend">{{ 'site.room.form.visibility'|trans }}</legend>
+                <div class="room-form__options">
+                    {% for visibility in visibilities %}
+                        <label class="room-option">
+                            <input type="radio" class="room-option__input" name="visibility" value="{{ visibility.value }}"{{ visibility == data.visibility ? ' checked' }}>
+                            <strong class="room-option__title">{{ visibility.translate() }}</strong>
+                            <span class="room-option__text">{{ ('site.room.form.visibility_help.' ~ visibility.value)|trans }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <div class="field field--form room-form__password" data-password{{ data.visibility.value != 'password' ? ' hidden' }}>
+                <label class="field__label" for="room-password">{{ 'site.room.form.password'|trans }}</label>
+                <input id="room-password" class="field__input field__input--large{{ errors.password is defined ? ' field__input--invalid' }}" name="password" value="{{ data.password }}" maxlength="30" autocomplete="off">
+                <span class="field__help">{{ 'site.room.form.password_help'|trans }}</span>
+                {{ form_ui.error(errors, 'password') }}
+            </div>
+
+            <fieldset class="room-form__fieldset">
+                <legend class="room-form__legend">{{ 'site.room.form.vote'|trans }}</legend>
+                <div class="room-form__grid">
+                    <div class="field field--form">
+                        <label class="field__label" for="room-choices">{{ 'site.room.form.choices'|trans }}</label>
+                        <select id="room-choices" class="field__input field__input--large" name="choices">
+                            {% for choice in choices|reverse %}
+                                <option value="{{ choice }}"{{ choice == data.choices ? ' selected' }}>{{ 'site.room.form.choices_option'|trans({ count: choice }) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field field--form">
+                        <label class="field__label" for="room-duration">{{ 'site.room.form.duration'|trans }}</label>
+                        <select id="room-duration" class="field__input field__input--large" name="vote_duration">
+                            {% for duration in durations %}
+                                <option value="{{ duration }}"{{ duration == data.voteDuration ? ' selected' }}>{{ 'site.room.form.duration_option'|trans({ count: duration }) }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <span class="field__help">{{ 'site.room.form.vote_help'|trans }}</span>
+            </fieldset>
+
+            <div class="room-form__checks">
+                {% for key in ['guests', 'spectators', 'permanent'] %}
+                    <label class="field__check">
+                        <input type="checkbox" class="field__checkbox" name="{{ key }}"{{ attribute(data, key) ? ' checked' }}>
+                        <span class="field__check-label">{{ ('site.room.form.' ~ key)|trans }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="room-form__foot">
+            <button type="submit" class="room-form__submit">{{ 'site.room.form.submit'|trans }}</button>
+        </div>
+    </form>
+{% endblock %}

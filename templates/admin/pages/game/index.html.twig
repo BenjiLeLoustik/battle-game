@@ -1,0 +1,194 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'games' %}
+
+{% block title %}{{ 'admin.games.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.games.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.games.subtitle'|trans({ count: games|length }, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_studio_new') }}" class="admin-btn admin-btn--secondary">{{ 'admin.games.studio'|trans({}, 'admin') }}</a>
+        </div>
+
+        <div class="admin-grid">
+            <form class="admin-panel" method="post" action="{{ path('admin_game_analyze') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-games') }}">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.games.install_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.games.install_help'|trans({}, 'admin') }}</span>
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.games.url'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="url" name="url" required placeholder="https://github.com/org/pulse-clash.git" value="{{ analysis.url ?? '' }}">
+                </label>
+                <div class="admin-form-grid">
+                    <label class="admin-field">
+                        {{ 'admin.games.ref'|trans({}, 'admin') }}
+                        <input class="admin-field__input" name="ref" placeholder="main" value="{{ analysis.ref ?? '' }}">
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.games.token'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="password" name="token" autocomplete="off">
+                    </label>
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.games.after'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="activate">
+                        <option value="0">{{ 'admin.games.after_test'|trans({}, 'admin') }}</option>
+                        <option value="1">{{ 'admin.games.after_live'|trans({}, 'admin') }}</option>
+                    </select>
+                </label>
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.games.analyze'|trans({}, 'admin') }}</button>
+            </form>
+
+            <section class="admin-panel" aria-labelledby="games-analysis">
+                <h2 id="games-analysis" class="admin-panel__title">{{ 'admin.games.validation'|trans({}, 'admin') }}</h2>
+                {% if analysis %}
+                    {% if analysis.error %}
+                        <p class="admin-flash admin-flash--error games-check">✗ {{ analysis.error|trans({}, 'admin') }}</p>
+                    {% else %}
+                        <p class="admin-flash games-check">✓ {{ 'admin.games.valid'|trans({ name: analysis.manifest.name, version: analysis.manifest.version }, 'admin') }}</p>
+                    {% endif %}
+                    <pre class="admin-log">{{ analysis.log|join("\n") }}</pre>
+                    <div class="admin-actions admin-actions--end">
+                        {{ admin_ui.post('admin_game_clear', {}, 'admin.cancel'|trans({}, 'admin'), 'admin-btn admin-btn--ghost', 'admin-games') }}
+                        {% if not analysis.error %}
+                            {{ admin_ui.post('admin_game_install', {}, 'admin.games.install'|trans({ slug: analysis.manifest.slug }, 'admin'), 'admin-btn admin-btn--primary', 'admin-games') }}
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <p class="admin-panel__help">{{ 'admin.games.no_analysis'|trans({}, 'admin') }}</p>
+                    <pre class="admin-log">{{ 'admin.games.structure'|trans({}, 'admin') }}</pre>
+                {% endif %}
+            </section>
+        </div>
+
+        <section class="admin-panel" aria-labelledby="games-featured">
+            <div class="admin-panel__intro">
+                <h2 id="games-featured" class="admin-panel__title">{{ 'admin.games.featured.title'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.games.featured.help'|trans({}, 'admin') }}</span>
+            </div>
+            {% for game in featured %}
+                <div class="featured-row">
+                    <span class="featured-row__position">{{ loop.index }}</span>
+                    <span class="featured-row__color" style="background: {{ game.color }}" aria-hidden="true"></span>
+                    <span class="admin-user__text featured-row__name">
+                        <span class="admin-user__name">{{ game.name }}</span>
+                        <span class="admin-user__meta">{{ game.category ? game.category.name : '—' }}</span>
+                    </span>
+                    {% if game.status.value != 'live' %}
+                        <span class="admin-pill admin-pill--warn" title="{{ 'admin.games.featured.hidden'|trans({}, 'admin') }}">{{ game.status.translate() }}</span>
+                    {% endif %}
+                    <span class="admin-actions">
+                        {% if not loop.first %}
+                            {{ admin_ui.post('admin_game_feature_move', { slug: game.slug, direction: 'up' }, '↑', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-games') }}
+                        {% endif %}
+                        {% if not loop.last %}
+                            {{ admin_ui.post('admin_game_feature_move', { slug: game.slug, direction: 'down' }, '↓', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-games') }}
+                        {% endif %}
+                        {{ admin_ui.post('admin_game_feature', { slug: game.slug }, 'admin.remove'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-games') }}
+                    </span>
+                </div>
+            {% else %}
+                <p class="admin-panel__help">{{ 'admin.games.featured.empty'|trans({}, 'admin') }}</p>
+            {% endfor %}
+        </section>
+
+        <section class="admin-panel admin-panel--flush" aria-labelledby="games-installed">
+            <div class="admin-panel__bar"><h2 id="games-installed" class="admin-panel__title">{{ 'admin.games.installed'|trans({}, 'admin') }}</h2></div>
+            <form class="admin-panel__bar games-filters" method="get" action="{{ path('admin_game_index') }}">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.games.filters.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.games.filters.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.games.column.status'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.games.filters.all_statuses'|trans({}, 'admin') }}</option>
+                    {% for item in statuses %}<option value="{{ item.value }}"{{ filters.status == item ? ' selected' }}>{{ item.translate() }}</option>{% endfor %}
+                </select>
+                <select class="admin-select" name="category" data-component="AutoSubmit" aria-label="{{ 'admin.games.filters.category'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.games.filters.all_categories'|trans({}, 'admin') }}</option>
+                    {% for item in categories %}<option value="{{ item.slug }}"{{ filters.category == item.slug ? ' selected' }}>{{ item.name }}</option>{% endfor %}
+                </select>
+                <select class="admin-select" name="source" data-component="AutoSubmit" aria-label="{{ 'admin.games.column.source'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.games.filters.all_sources'|trans({}, 'admin') }}</option>
+                    {% for item in sources %}<option value="{{ item }}"{{ filters.source == item ? ' selected' }}>{{ ('admin.games.filters.sources.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}
+                </select>
+                <label class="admin-check games-filters__check">
+                    <input type="checkbox" class="admin-check__input" name="early" value="1" data-component="AutoSubmit"{{ filters.early ? ' checked' }}>
+                    {{ 'admin.games.early_pill'|trans({}, 'admin') }}
+                </label>
+                {% if filtered %}
+                    <span class="games-filters__meta">
+                        {{ 'admin.games.filters.results'|trans({ count: games|length, total: total }, 'admin') }}
+                        <a href="{{ path('admin_game_index') }}" class="admin-link admin-link--inline">{{ 'admin.games.filters.reset'|trans({}, 'admin') }}</a>
+                    </span>
+                {% endif %}
+            </form>
+            <form id="games-export" class="games-export" method="post" action="{{ path('admin_game_export') }}" data-component="RowSelection" data-total="{{ games|length }}"
+                  data-label="{{ 'admin.games.export.selected'|trans({}, 'admin') }}" data-label-all="{{ (filtered ? 'admin.games.export.all_selected' : 'admin.games.export.every_selected')|trans({ count: games|length }, 'admin') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-games') }}">
+                <input type="hidden" name="all" value="0" data-selection-all>
+                {% for key, value in { q: filters.q, status: filters.status ? filters.status.value : '', category: filters.category, source: filters.source, early: filters.early ? '1' : '' } %}
+                    <input type="hidden" name="{{ key }}" value="{{ value }}">
+                {% endfor %}
+                <span class="games-export__count" data-selection-count>{{ 'admin.games.export.none'|trans({}, 'admin') }}</span>
+                <button type="button" class="games-export__all" data-selection-everything hidden>{{ (filtered ? 'admin.games.export.select_all' : 'admin.games.export.select_every')|trans({ count: games|length }, 'admin') }}</button>
+                <button type="submit" class="admin-btn admin-btn--primary admin-btn--small games-export__submit" data-selection-submit disabled>
+                    <svg class="games-export__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>
+                    {{ 'admin.games.export.submit'|trans({}, 'admin') }}
+                </button>
+            </form>
+            {% set pager = paginate(games) %}
+            {% if games is empty %}
+                <p class="admin-empty">{{ 'admin.games.filters.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr>
+                        <th class="admin-table__th games-select"><input type="checkbox" class="admin-check__input" form="games-export" data-selection-page aria-label="{{ 'admin.games.export.page'|trans({}, 'admin') }}"></th>
+                        {% for column in ['game', 'version', 'source', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.games.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}
+                    </tr></thead>
+                    <tbody>
+                        {% for game in pager.items %}
+                            <tr class="admin-table__row">
+                                <td class="admin-table__cell games-select"><input type="checkbox" class="admin-check__input" name="games[]" value="{{ game.slug }}" form="games-export" data-selection-row aria-label="{{ 'admin.games.export.row'|trans({ name: game.name }, 'admin') }}"></td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-user__text">
+                                        <span class="admin-user__name">{{ game.name }}</span>
+                                        <span class="admin-user__meta">{{ game.slug }} · {{ game.category ? game.category.name : '—' }}</span>
+                                    </span>
+                                </td>
+                                <td class="admin-table__cell admin-table__cell--mono">{{ game.version }}</td>
+                                <td class="admin-table__cell admin-table__cell--mono">{{ game.repository ? game.repository|replace({ 'https://': '' }) ~ '@' ~ game.reference : 'var/games/' ~ game.directory }}</td>
+                                <td class="admin-table__cell"><span class="admin-badge admin-badge--{{ game.status.value }}">{{ game.status.translate() }}</span></td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-actions">
+                                        {% if game.repository %}
+                                            {{ admin_ui.post('admin_game_update', { slug: game.slug }, 'admin.games.update'|trans({}, 'admin'), 'admin-btn admin-btn--secondary admin-btn--small', 'admin-games') }}
+                                        {% endif %}
+                                        {{ admin_ui.post('admin_game_feature', { slug: game.slug }, (game.featured ? 'admin.games.featured.remove' : 'admin.games.featured.add')|trans({}, 'admin'), 'admin-btn admin-btn--small ' ~ (game.featured ? 'admin-btn--secondary' : 'admin-btn--ghost'), 'admin-games') }}
+                                        {% if game.status.value == 'live' %}
+                                            {{ admin_ui.post('admin_game_early', { slug: game.slug }, (game.earlyAccess ? 'admin.games.early_off' : 'admin.games.early_on')|trans({}, 'admin'), 'admin-btn admin-btn--small ' ~ (game.earlyAccess ? 'admin-btn--warning' : 'admin-btn--ghost'), 'admin-games') }}
+                                        {% endif %}
+                                        {% if game.status.value in ['live', 'archived'] %}
+                                            {{ admin_ui.post('admin_game_toggle', { slug: game.slug }, (game.status.value == 'live' ? 'admin.games.disable' : 'admin.games.enable')|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-games') }}
+                                        {% endif %}
+                                        <a href="{{ path('admin_studio_show', { slug: game.slug }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.games.sheet'|trans({}, 'admin') }}</a>
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% endif %}
+            {{ admin_ui.pagination(pager) }}
+        </section>
+    </div>
+{% endblock %}

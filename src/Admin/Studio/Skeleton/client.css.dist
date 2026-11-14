@@ -1,0 +1,41 @@
+.{{block}} {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    background: radial-gradient(circle at 50% 45%, #141833, #05060C 70%);
+}
+
+.{{block}}__score {
+    font-family: 'Chakra Petch', sans-serif;
+    font-size: 56px;
+    color: #E8EAF6;
+}
+
+.{{block}}__button {
+    width: 220px;
+    height: 220px;
+    border: 0;
+    border-radius: 50%;
+    background: #2EE6D6;
+    color: #06121A;
+    font: 700 28px 'Chakra Petch', sans-serif;
+    box-shadow: 0 0 60px rgba(46, 230, 214, 0.45);
+    cursor: pointer;
+}
+
+.{{block}}__button:active {
+    transform: scale(0.96);
+}
+
+.{{block}}__button:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.{{block}}__hint {
+    font-size: 15px;
+    color: #9AA0BF;
+}

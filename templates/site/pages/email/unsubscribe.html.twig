@@ -1,0 +1,23 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.emails.unsubscribe_title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <section class="notice-page" aria-labelledby="notice-page-title">
+        <span class="notice-page__icon" aria-hidden="true">
+            <svg class="notice-page__svg" viewBox="0 0 24 24"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></svg>
+        </span>
+        <h1 id="notice-page-title" class="notice-page__title">{{ 'site.emails.unsubscribe_title'|trans }}</h1>
+        {% if not valid %}
+            <p class="notice-page__text" role="alert">{{ 'site.emails.unsubscribe_invalid'|trans }}</p>
+        {% elseif done %}
+            <p class="notice-page__text" role="status">{{ 'site.emails.unsubscribe_done'|trans }}</p>
+            <a href="{{ path('site_settings_notifications') }}" class="btn btn--ghost">{{ 'site.emails.unsubscribe_settings'|trans }}</a>
+        {% else %}
+            <p class="notice-page__text">{{ 'site.emails.unsubscribe_text'|trans }}</p>
+            <form method="post">
+                <button type="submit" class="btn btn--primary">{{ 'site.emails.unsubscribe_confirm'|trans }}</button>
+            </form>
+        {% endif %}
+    </section>
+{% endblock %}

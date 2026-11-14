@@ -1,0 +1,152 @@
+@theme {
+    --font-display: "Chakra Petch", system-ui, sans-serif;
+    --font-body: "Inter", system-ui, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --color-bg: #0B0D17;
+    --color-surface: #121524;
+    --color-surface-2: #1A1E33;
+    --color-surface-3: #1F2540;
+    --color-line: #262B45;
+    --color-ink: #E8EAF6;
+    --color-ink-soft: #C9CDE3;
+    --color-muted: #8C93B5;
+    --color-cyan: #2EE6D6;
+    --color-magenta: #FF3DCB;
+    --color-magenta-soft: #FF7FDD;
+    --color-violet: #7C5CFF;
+    --color-yellow: #FFC94A;
+    --color-orange: #FF9F43;
+    --color-danger: #FF5470;
+    --color-success: #4ADE80;
+    --color-header: #0E1120;
+    --color-sidebar: #0A0D19;
+    --color-footer: #0A0C16;
+    --color-panel: #10142A;
+    --color-field: #151A2E;
+    --color-line-soft: #22273F;
+    --color-ghost: #3A4166;
+    --color-muted-2: #9AA0BF;
+    --color-caption: #5E6690;
+    --color-on-cyan: #06121A;
+    --color-on-magenta: #14051A;
+    --color-discord: #5865F2;
+    --color-stage: #05060C;
+    --color-stage-line: #1B2036;
+    --color-stage-me: #172A3A;
+    --color-bronze: #E39B6B;
+
+    --color-rarity-common: #8C93B5;
+    --color-rarity-rare: #2EE6D6;
+    --color-rarity-epic: #A78BFA;
+    --color-rarity-legendary: #FFC94A;
+
+    --color-adm-bg: #0F1115;
+    --color-adm-side: #13161C;
+    --color-adm-panel: #171A21;
+    --color-adm-hover: #1E222B;
+    --color-adm-line: #2A2F3A;
+    --color-adm-ink: #E6E8EE;
+    --color-adm-ink-soft: #C5C9D3;
+    --color-adm-muted: #8A909D;
+    --color-adm-accent: #8B7CFF;
+    --color-adm-accent-soft: #B7AEFF;
+
+    --shadow-glow-cyan: 0 0 18px rgb(46 230 214 / 0.45);
+    --shadow-glow-magenta: 0 0 18px rgb(255 61 203 / 0.45);
+}
+
+@utility clip-corner {
+    clip-path: polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px);
+}
+
+@utility clip-corner-sm {
+    clip-path: polygon(7px 0, 100% 0, 100% calc(100% - 7px), calc(100% - 7px) 100%, 0 100%, 0 7px);
+}
+
+@utility clip-corner-xs {
+    clip-path: polygon(6px 0, 100% 0, 100% calc(100% - 6px), calc(100% - 6px) 100%, 0 100%, 0 6px);
+}
+
+@utility clip-logo {
+    clip-path: polygon(28% 0, 100% 0, 100% 72%, 72% 100%, 0 100%, 0 28%);
+}
+
+@layer base {
+    html {
+        color-scheme: dark;
+    }
+
+    :focus-visible {
+        @apply outline-2 outline-offset-2 outline-cyan;
+    }
+
+    [data-motion="reduced"] *,
+    [data-motion="reduced"] *::before,
+    [data-motion="reduced"] *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+
+    [data-contrast="high"] {
+        --color-line: #4A5280;
+        --color-line-soft: #3A4166;
+        --color-muted: #B8BEDA;
+        --color-muted-2: #C9CDE3;
+        --color-ink-soft: #E8EAF6;
+    }
+
+    :root {
+        --scrollbar-thumb: #2B3152;
+        --scrollbar-thumb-hover: #2EE6D6;
+        --scrollbar-track: transparent;
+    }
+
+    [data-space="admin"] {
+        --scrollbar-thumb: #343A48;
+        --scrollbar-thumb-hover: #8B7CFF;
+    }
+
+    [data-contrast="high"] {
+        --scrollbar-thumb: #5A6496;
+    }
+
+    ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+        background: var(--scrollbar-track);
+    }
+
+    ::-webkit-scrollbar-thumb {
+        min-height: 40px;
+        border: 3px solid transparent;
+        border-radius: 999px;
+        background-color: var(--scrollbar-thumb);
+        background-clip: padding-box;
+        transition: background-color 0.2s;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        border-width: 2px;
+        background-color: color-mix(in srgb, var(--scrollbar-thumb-hover) 70%, transparent);
+    }
+
+    ::-webkit-scrollbar-thumb:active {
+        background-color: var(--scrollbar-thumb-hover);
+    }
+
+    ::-webkit-scrollbar-button {
+        display: none;
+    }
+
+    @supports not selector(::-webkit-scrollbar) {
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: var(--scrollbar-thumb) var(--scrollbar-track);
+        }
+    }
+}

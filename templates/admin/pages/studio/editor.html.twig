@@ -1,0 +1,206 @@
+{% extends 'base.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set labels = {
+    saved: 'admin.editor.saved'|trans({}, 'admin'),
+    unsaved: 'admin.editor.unsaved'|trans({}, 'admin'),
+    saved_file: 'admin.editor.saved_file'|trans({}, 'admin'),
+    nothing: 'admin.editor.nothing'|trans({}, 'admin'),
+    valid: 'admin.editor.valid'|trans({}, 'admin'),
+    invalid: 'admin.editor.invalid'|trans({}, 'admin'),
+    published: 'admin.editor.published'|trans({}, 'admin'),
+    created: 'admin.editor.created'|trans({}, 'admin'),
+    new_file: 'admin.editor.new_file_prompt'|trans({}, 'admin'),
+    reloaded: 'admin.editor.reloaded'|trans({}, 'admin'),
+    ready: 'admin.editor.ready'|trans({}, 'admin'),
+    text: 'admin.editor.text'|trans({}, 'admin'),
+    error: 'admin.editor.error'|trans({}, 'admin'),
+    close: 'admin.editor.close'|trans({}, 'admin'),
+    close_unsaved: 'admin.editor.close_unsaved'|trans({}, 'admin'),
+    no_file: 'admin.editor.no_file'|trans({}, 'admin'),
+    new_folder: 'admin.editor.new_folder_prompt'|trans({}, 'admin'),
+    folder_created: 'admin.editor.folder_created'|trans({}, 'admin'),
+    rename: 'admin.editor.rename_prompt'|trans({}, 'admin'),
+    renamed: 'admin.editor.renamed'|trans({}, 'admin'),
+    delete_confirm: 'admin.editor.delete_confirm'|trans({}, 'admin'),
+    deleted: 'admin.editor.deleted'|trans({}, 'admin'),
+    review_prompt: 'admin.editor.review_prompt'|trans({}, 'admin'),
+    review_sent: 'admin.editor.review_sent'|trans({}, 'admin'),
+    review_already: 'admin.editor.review_already'|trans({}, 'admin'),
+    review_pending: 'admin.editor.review_pending'|trans({}, 'admin')
+} %}
+
+{% block title %}{{ 'admin.editor.title'|trans({ name: game.name }, 'admin') }} · {{ parent() }}{% endblock %}
+{% block body_class %}admin-layout admin-layout--editor{% endblock %}
+{% block space %}admin{% endblock %}
+
+{% block body %}
+    {% include '@admin/components/partials/topbar.html.twig' %}
+
+    <div class="studio-editor" data-component="StudioEditor"
+         data-tree="{{ tree|json_encode }}"
+         data-labels="{{ labels|json_encode }}"
+         data-initial="game.json"
+         data-token="{{ csrf_token('studio-editor-' ~ game.slug) }}"
+         data-read="{{ path('admin_studio_editor_read', { slug: game.slug }) }}"
+         data-save="{{ path('admin_studio_editor_save', { slug: game.slug }) }}"
+         data-create="{{ path('admin_studio_editor_create', { slug: game.slug }) }}"
+         data-folder="{{ path('admin_studio_editor_folder', { slug: game.slug }) }}"
+         data-delete="{{ path('admin_studio_editor_delete', { slug: game.slug }) }}"
+         data-rename="{{ path('admin_studio_editor_rename', { slug: game.slug }) }}"
+         data-validate="{{ path('admin_studio_editor_validate', { slug: game.slug }) }}"
+         data-publish="{{ path('admin_studio_editor_publish', { slug: game.slug }) }}"
+         data-review="{{ path('admin_studio_editor_review', { slug: game.slug }) }}"
+         data-preview="{{ game.solo ? path('site_play_solo', { slug: game.slug, preview: 1 }) : '' }}">
+
+        <div class="studio-editor__toolbar" data-component="EditorPanels">
+            <button type="button" class="studio-editor__button studio-editor__button--files" data-panel="files" aria-controls="studio-files" aria-expanded="false">
+                <svg class="studio-editor__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h7l2 2h9v11H3z"/></svg>
+                {{ 'admin.editor.files'|trans({}, 'admin') }}
+            </button>
+            <button type="button" class="studio-editor__button studio-editor__button--aside" data-panel="aside" aria-controls="studio-aside" aria-expanded="false">
+                <svg class="studio-editor__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5h16v14H4zM8 10l3 2-3 2M13 15h4"/></svg>
+                {{ 'admin.editor.console_tests'|trans({}, 'admin') }}
+            </button>
+            {{ admin_ui.link(path('admin_studio_show', { slug: game.slug }), 'admin.studio.title'|trans({}, 'admin'), 'back') }}
+            <span class="studio-editor__separator" aria-hidden="true">/</span>
+            <strong class="studio-editor__name">
+                {{ game.name }}
+            </strong>
+            <span class="studio-editor__version">
+                v{{ game.version }} · var/games/{{ game.directory }}
+            </span>
+            <span class="studio-editor__state" aria-live="polite"></span>
+            <div class="studio-editor__actions">
+                <button type="button" class="studio-editor__button studio-editor__button--panel" aria-controls="studio-aside" title="{{ 'admin.editor.toggle_aside'|trans({}, 'admin') }}"
+                        data-component="Toggle"
+                        data-target=".studio-editor"
+                        data-class="studio-editor--no-aside"
+                        data-storage-key="battlegame.studio.aside-hidden">
+                    <svg class="studio-editor__button-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v16H3zM15 4v16"/></svg>
+                    {{ 'admin.editor.console_tests'|trans({}, 'admin') }}
+                </button>
+                <button type="button" class="studio-editor__button" data-action="save">
+                    {{ 'admin.editor.save'|trans({}, 'admin') }}
+                </button>
+                {% if lead %}
+                    <button type="button" class="studio-editor__button" data-action="validate">
+                        {{ 'admin.editor.validate'|trans({}, 'admin') }}
+                    </button>
+                {% endif %}
+                {% if nocode %}
+                <a href="{{ path('admin_studio_builder_index', { slug: game.slug }) }}" class="studio-editor__button">
+                    {{ 'builder.open'|trans({}, 'builder') }}
+                </a>
+                {% endif %}
+                <a href="{{ path('admin_studio_design_index', { slug: game.slug }) }}" class="studio-editor__button">
+                    {{ 'admin.design.open'|trans({}, 'admin') }}
+                </a>
+                <a href="{{ path('site_game_show', { slug: game.slug }) }}" target="_blank" rel="noopener" class="studio-editor__button studio-editor__button--test">
+                    ▶ {{ 'admin.editor.test'|trans({}, 'admin') }}
+                </a>
+                {% if lead %}
+                    <button type="button" class="studio-editor__button studio-editor__button--primary" data-action="publish">
+                        {{ review ? 'admin.editor.publish_review'|trans({ name: review.requester ? review.requester.username : '?' }, 'admin') : 'admin.editor.publish'|trans({}, 'admin') }}
+                    </button>
+                {% else %}
+                    <button type="button" class="studio-editor__button studio-editor__button--primary" data-action="review"{% if review %} data-pending="true" disabled{% endif %}>
+                        {{ review ? 'admin.editor.review_pending'|trans({}, 'admin') : 'admin.editor.review'|trans({}, 'admin') }}
+                    </button>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="studio-editor__body">
+            <div id="studio-files" class="studio-editor__side">
+                <span class="studio-editor__side-title">
+                    {{ 'admin.editor.files'|trans({}, 'admin') }}
+                </span>
+                <nav class="studio-editor__tree" aria-label="{{ 'admin.editor.files'|trans({}, 'admin') }}"></nav>
+                <button type="button" class="studio-editor__new" data-action="create">
+                    + {{ 'admin.editor.new_file'|trans({}, 'admin') }}
+                </button>
+            </div>
+
+            <section class="studio-editor__main" aria-label="{{ 'admin.editor.editor'|trans({}, 'admin') }}">
+                <div class="studio-editor__tabs" role="tablist" aria-label="{{ 'admin.editor.open_files'|trans({}, 'admin') }}"></div>
+                <div class="studio-editor__code">
+                    <p class="studio-editor__empty">
+                        {{ 'admin.editor.loading'|trans({}, 'admin') }}
+                    </p>
+                </div>
+                <div class="studio-editor__status">
+                    <span class="studio-editor__language"></span>
+                    <span class="studio-editor__cursor"></span>
+                    <span>
+                        UTF-8
+                    </span>
+                    <span class="studio-editor__sdk">
+                        {{ 'admin.editor.sdk'|trans({ version: constant('App\\Sdk\\AbstractSdk::VERSION') }, 'admin') }}
+                    </span>
+                </div>
+            </section>
+
+            <div class="studio-editor__resizer" role="separator" tabindex="0"
+                 aria-orientation="vertical"
+                 aria-label="{{ 'admin.editor.resize'|trans({}, 'admin') }}"
+                 aria-valuemin="260"
+                 aria-valuemax="900"
+                 data-component="Resizer"
+                 data-target=".studio-editor__aside"
+                 data-min="260"
+                 data-max="900"
+                 data-active-class="studio-editor__aside--resizing"
+                 data-storage-key="battlegame.studio.aside-width">
+            </div>
+
+            <aside id="studio-aside" class="studio-editor__aside" aria-label="{{ 'admin.editor.preview'|trans({}, 'admin') }}">
+                <div class="studio-editor__aside-head">
+                    <strong class="studio-editor__aside-title">
+                        {{ 'admin.editor.preview'|trans({}, 'admin') }}
+                    </strong>
+                    {% if game.solo %}
+                        <button type="button" class="studio-editor__reloaded" data-action="reload">
+                            {{ 'admin.editor.reload'|trans({}, 'admin') }}
+                        </button>
+                    {% endif %}
+                </div>
+                {% if game.solo %}
+                    <iframe class="studio-editor__frame" title="{{ 'admin.editor.preview'|trans({}, 'admin') }}"></iframe>
+                {% else %}
+                    <p class="studio-editor__no-preview">
+                        {{ 'admin.editor.no_preview'|trans({}, 'admin') }}
+                    </p>
+                {% endif %}
+                <button type="button" class="studio-editor__console-title" aria-controls="studio-console"
+                        data-component="Toggle"
+                        data-target=".studio-editor__aside"
+                        data-class="studio-editor__aside--folded"
+                        data-storage-key="battlegame.studio.console-folded">
+                    <span class="studio-editor__chevron" aria-hidden="true">
+                        ▾
+                    </span>
+                    {{ 'admin.editor.console'|trans({}, 'admin') }}
+                </button>
+                <div id="studio-console" class="studio-editor__console" role="log" aria-live="polite"></div>
+            </aside>
+        </div>
+
+        <div class="studio-editor__menu" role="menu" hidden>
+            <button type="button" class="studio-editor__menu-item" role="menuitem" data-command="new-file">
+                {{ 'admin.editor.menu.new_file'|trans({}, 'admin') }}
+            </button>
+            <button type="button" class="studio-editor__menu-item" role="menuitem" data-command="new-folder">
+                {{ 'admin.editor.menu.new_folder'|trans({}, 'admin') }}
+            </button>
+            <button type="button" class="studio-editor__menu-item" role="menuitem" data-command="rename">
+                {{ 'admin.editor.menu.rename'|trans({}, 'admin') }}
+            </button>
+            <button type="button" class="studio-editor__menu-item studio-editor__menu-item--danger" role="menuitem" data-command="delete">
+                {{ 'admin.editor.menu.delete'|trans({}, 'admin') }}
+            </button>
+        </div>
+
+    </div>
+{% endblock %}

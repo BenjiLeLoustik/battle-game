@@ -1,0 +1,298 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Sdk\AbstractSdkServer;
+
+class {{server}} extends AbstractSdkServer
+{
+    private const MODE = {{mode}};
+    private const REVEAL = {{reveal}};
+    private const MAX_TURNS = 300;
+    private const VARIABLES = {{variables}};
+    private const ELEMENTS = {{elements}};
+    private const GRIDS = {{grids}};
+    private const COLUMNS = {{columns}};
+    private const HIDDEN = {{hidden}};
+    private const ACCEPTS = ['button' => ['click'], 'grid' => ['cell'], 'input' => ['answer'], 'choices' => ['answer'], 'custom' => ['click', 'answer']];
+
+    public static function setup(array $players, array $settings): array
+    {
+        $players = array_values(array_map('strval', $players));
+        $state = [
+            'players' => $players,
+            'rounds' => max(1, (int) ($settings['rounds'] ?? {{rounds}})),
+            'duration' => max(3, (int) ($settings['time'] ?? {{time}})) * 1000,
+            'round' => 0,
+            'turn' => 0,
+            'turns' => 0,
+            'phase' => 'play',
+            'openAt' => 0,
+            'endsAt' => 0,
+            'nextAt' => null,
+            'done' => [],
+            'vars' => [],
+            'pvars' => array_fill_keys($players, []),
+            'messages' => [],
+            'pending' => [],
+            'fx' => ['seq' => 0, 'name' => null, 'by' => null],
+            'scores' => array_fill_keys($players, 0),
+            'finished' => false,
+        ];
+
+        foreach (self::VARIABLES as $variable) {
+            $state = self::reset($state, $variable);
+        }
+
+        return self::fire($state, 'game_start', '', null, []);
+    }
+
+    public static function begin(array $state, int $openAt): array
+    {
+        $state['round']++;
+
+        foreach (self::VARIABLES as $variable) {
+            if ($variable['reset'] && $state['round'] > 1) {
+                $state = self::reset($state, $variable);
+            }
+        }
+
+        $state = array_merge($state, [
+            'phase' => 'play',
+            'openAt' => $openAt,
+            'endsAt' => $openAt + $state['duration'],
+            'nextAt' => null,
+            'done' => [],
+            'messages' => [],
+            'pending' => [],
+            'turn' => self::MODE === 'turns' ? ($state['round'] - 1) % count($state['players']) : 0,
+        ]);
+
+        return self::fire($state, 'round_start', '', null, []);
+    }
+
+    public function handle(string $action, array $payload, string $player, array $state): array
+    {
+        if ($state['finished']) {
+            return $state;
+        }
+
+        $now = $this->now();
+
+        if ($action === 'tick') {
+            return $this->tick($state, $now);
+        }
+
+        $element = (string) ($payload['element'] ?? '');
+
+        if (!in_array($action, self::ACCEPTS[self::ELEMENTS[$element] ?? ''] ?? [], true) || !$this->allowed($state, $player, $now)) {
+            return $state;
+        }
+
+        $context = [];
+
+        if ($action === 'cell') {
+            $board = self::GRIDS[$element];
+            $cell = (int) ($payload['cell'] ?? -1);
+
+            if (!isset($state['vars'][$board][$cell])) {
+                return $state;
+            }
+
+            $context = ['board' => $board, 'cell' => $cell];
+        }
+
+        if ($action === 'answer') {
+            $context = ['answer' => mb_substr(trim((string) ($payload['value'] ?? '')), 0, 60)];
+        }
+
+        return $this->settle(self::fire($state, $action, $element, $player, $context), $now);
+    }
+
+    public function view(array $state): array
+    {
+        if ($state['phase'] === 'play' && !$state['finished']) {
+            foreach (self::HIDDEN as [$scope, $key]) {
+                if ($scope === 'game') {
+                    unset($state['vars'][$key]);
+                } else {
+                    foreach (array_keys($state['pvars']) as $player) {
+                        unset($state['pvars'][$player][$key]);
+                    }
+                }
+            }
+        }
+
+        unset($state['pending']);
+
+        return $state;
+    }
+
+    public function results(array $state): array
+    {
+        $results = parent::results($state);
+
+        foreach ($results as $player => $result) {
+            $results[$player]['stats'] = ['score' => (int) $state['scores'][$player]];
+        }
+
+        return $results;
+    }
+
+    protected function allowed(array $state, string $player, int $now): bool
+    {
+        return $state['phase'] === 'play'
+            && $now >= $state['openAt']
+            && $now < $state['endsAt']
+            && in_array($player, $state['players'], true)
+            && empty($state['done'][$player])
+            && (self::MODE !== 'turns' || $state['players'][$state['turn']] === $player);
+    }
+
+    protected function tick(array $state, int $now): array
+    {
+        if ($state['phase'] === 'play') {
+            if ($now < $state['endsAt']) {
+                return $state;
+            }
+
+            $state = self::fire($state, 'timeout', '', self::MODE === 'turns' ? $state['players'][$state['turn']] : null, []);
+
+            if (self::MODE === 'turns') {
+                $state['pending']['next_turn'] = true;
+            } else {
+                $state['pending']['end_round'] = true;
+            }
+
+            return $this->settle($state, $now);
+        }
+
+        if ($state['nextAt'] === null || $now < $state['nextAt']) {
+            return $state;
+        }
+
+        if ($state['round'] >= $state['rounds']) {
+            $state['finished'] = true;
+
+            return $state;
+        }
+
+        return self::begin($state, $now + 500);
+    }
+
+    protected function settle(array $state, int $now): array
+    {
+        $pending = $state['pending'];
+        $state['pending'] = [];
+
+        if (!empty($pending['finish']) || $state['turns'] >= self::MAX_TURNS) {
+            return array_merge($state, ['phase' => 'reveal', 'finished' => true]);
+        }
+
+        if (!empty($pending['end_round']) || (self::MODE === 'simultaneous' && count(array_filter($state['done'])) >= count($state['players']))) {
+            return array_merge($state, ['phase' => 'reveal', 'nextAt' => $now + self::REVEAL]);
+        }
+
+        if (!empty($pending['next_turn'])) {
+            $state['turn'] = ($state['turn'] + 1) % count($state['players']);
+            $state['turns']++;
+            $state['endsAt'] = $now + $state['duration'];
+        }
+
+        return $state;
+    }
+
+    protected static function fire(array $state, string $event, string $element, ?string $actor, array $context): array
+    {
+{{dispatch}}        return $state;
+    }
+{{rules}}
+    protected static function reset(array $state, array $variable): array
+    {
+        $value = $variable['type'] === 'board' ? array_fill(0, $variable['size'], 0) : $variable['initial'];
+
+        if ($variable['scope'] === 'game') {
+            $state['vars'][$variable['key']] = $value;
+        } else {
+            foreach ($state['players'] as $player) {
+                $state['pvars'][$player][$variable['key']] = $value;
+            }
+        }
+
+        return $state;
+    }
+
+    protected static function number(mixed $value): int|float
+    {
+        return is_numeric($value) ? 0 + $value : 0;
+    }
+
+    protected static function compare(mixed $left, string $operator, mixed $right): bool
+    {
+        if (is_numeric($left) && is_numeric($right)) {
+            $left = 0 + $left;
+            $right = 0 + $right;
+        } else {
+            $left = mb_strtolower(trim((string) $left));
+            $right = mb_strtolower(trim((string) $right));
+        }
+
+        return match ($operator) {
+            '==' => $left == $right,
+            '!=' => $left != $right,
+            '>' => $left > $right,
+            '<' => $left < $right,
+            '>=' => $left >= $right,
+            '<=' => $left <= $right,
+            'contains' => $right !== '' && str_contains((string) $left, (string) $right),
+            default => false,
+        };
+    }
+
+    protected static function mark(array $state, ?string $actor): int
+    {
+        $index = array_search((string) $actor, $state['players'], true);
+
+        return $index === false ? 0 : $index + 1;
+    }
+
+    protected static function line(array $state, string $board, int $mark, int $length): bool
+    {
+        $cells = $state['vars'][$board] ?? [];
+        $columns = self::COLUMNS[$board] ?? 3;
+        $rows = (int) ceil(count($cells) / $columns);
+
+        if ($mark === 0) {
+            return false;
+        }
+
+        foreach ($cells as $index => $value) {
+            if ($value !== $mark) {
+                continue;
+            }
+
+            foreach ([[0, 1], [1, 0], [1, 1], [1, -1]] as [$dr, $dc]) {
+                $count = 1;
+                $row = intdiv($index, $columns);
+                $column = $index % $columns;
+
+                while ($count < $length) {
+                    $row += $dr;
+                    $column += $dc;
+
+                    if ($row < 0 || $row >= $rows || $column < 0 || $column >= $columns || ($cells[$row * $columns + $column] ?? null) !== $mark) {
+                        break;
+                    }
+
+                    $count++;
+                }
+
+                if ($count >= $length) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+}

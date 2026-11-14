@@ -1,0 +1,611 @@
+.friends {
+    @apply flex flex-wrap content-start gap-6 max-sm:gap-3.5;
+}
+
+.friends__main {
+    @apply flex min-w-0 flex-[1_1_100%] flex-col gap-5 max-sm:gap-3;
+}
+
+.friends__head {
+    @apply flex flex-wrap items-end justify-between gap-4;
+}
+
+.friends__title {
+    @apply font-display text-[34px] font-bold;
+}
+
+.friends__tabs {
+    @apply flex rounded-xl border border-line bg-surface p-1;
+}
+
+.friends__tab {
+    @apply flex h-9 items-center rounded-lg px-3.5 text-[13px] font-bold text-muted-2 hover:text-ink;
+}
+
+.friends__tab--active {
+    @apply bg-cyan text-on-cyan hover:text-on-cyan;
+}
+
+.friends__list {
+    @apply overflow-hidden rounded-2xl border border-line bg-surface;
+}
+
+.friends__empty {
+    @apply p-5 text-sm text-muted-2 max-sm:p-3;
+}
+
+.friends__aside {
+    @apply grid min-w-0 flex-[1_1_100%] grid-cols-[repeat(auto-fit,minmax(280px,1fr))] items-start gap-5 max-sm:gap-3;
+}
+
+.friend-row {
+    @apply flex flex-wrap items-center gap-3.5 border-b border-line-soft px-[18px] py-3.5 last:border-b-0 hover:bg-surface-2 max-sm:px-2.5;
+}
+
+.friend-row__avatar {
+    @apply relative flex;
+}
+
+.friend-row__dot {
+    @apply absolute -right-0.5 -bottom-0.5 size-3 rounded-full border-2 border-surface bg-[#5A6080];
+}
+
+.friend-row__dot--online {
+    @apply bg-success;
+}
+
+.friend-row__dot--room {
+    @apply bg-cyan;
+}
+
+.friend-row__dot--playing {
+    @apply bg-magenta;
+}
+
+.friend-row__text {
+    @apply flex min-w-0 flex-[1_1_180px] flex-col text-ink;
+}
+
+.friend-row__name {
+    @apply text-[15px] font-semibold;
+}
+
+.friend-row__level {
+    @apply text-xs font-medium text-muted;
+}
+
+.friend-row__status {
+    @apply text-[13px] text-muted;
+}
+
+.friend-row__status--online {
+    @apply text-success;
+}
+
+.friend-row__status--room {
+    @apply text-cyan;
+}
+
+.friend-row__status--playing {
+    @apply text-magenta-soft;
+}
+
+.friend-row__actions {
+    @apply flex gap-2;
+}
+
+.friend-row__button {
+    @apply flex h-[38px] cursor-pointer items-center rounded-lg border border-cyan px-3.5 text-[13px] font-semibold text-cyan hover:bg-cyan/10;
+}
+
+.friend-row__icon {
+    @apply flex size-[38px] items-center justify-center rounded-lg border border-line bg-surface-2 text-ink hover:border-cyan;
+}
+
+.friend-row__svg {
+    @apply size-4;
+}
+
+.friend-card {
+    @apply flex flex-col gap-3 rounded-[14px] border border-line bg-surface p-[18px] max-sm:p-2.5;
+}
+
+.friend-card__title {
+    @apply font-display text-[17px];
+}
+
+.friend-card__form {
+    @apply flex flex-col gap-3;
+}
+
+.friend-card__submit {
+    @apply h-[42px] cursor-pointer rounded-[10px] bg-cyan text-sm font-bold text-on-cyan hover:brightness-110;
+}
+
+.friend-card__sent {
+    @apply flex flex-col gap-2 border-t border-line-soft pt-3;
+}
+
+.friend-card__caption {
+    @apply text-xs font-semibold text-muted-2;
+}
+
+.friend-card__empty {
+    @apply text-[13px] text-muted;
+}
+
+.friend-mini {
+    @apply flex items-center gap-2.5 text-sm;
+}
+
+.friend-mini__text {
+    @apply flex min-w-0 flex-1 flex-col text-ink;
+}
+
+.friend-mini__name {
+    @apply flex-1 truncate font-semibold;
+}
+
+.friend-mini__meta {
+    @apply truncate text-xs text-muted;
+}
+
+.friend-mini__button {
+    @apply h-[34px] cursor-pointer rounded-lg border border-line bg-surface-2 px-3 text-xs font-semibold text-ink hover:border-cyan;
+}
+
+.friend-mini__accept,
+.friend-mini__decline {
+    @apply flex size-9 cursor-pointer items-center justify-center rounded-lg text-base font-bold;
+}
+
+.friend-mini__accept {
+    @apply bg-success/14 text-success;
+}
+
+.friend-mini__decline {
+    @apply bg-danger/14 text-[#FF7A8F];
+}
+
+.social-action {
+    @apply contents;
+}
+
+.chat {
+    @apply flex min-h-[720px] flex-wrap overflow-hidden rounded-2xl border border-line bg-surface
+    max-md:-mx-4 max-md:min-h-[calc(100dvh-200px)] max-md:flex-col max-md:flex-nowrap max-md:rounded-none max-md:border-x-0;
+}
+
+.chat__nav {
+    @apply flex max-w-full flex-[1_1_240px] flex-col gap-2 border-r border-line-soft bg-[#0F1220] px-3 py-4
+    max-md:flex-none max-md:flex-row max-md:gap-1 max-md:overflow-x-auto max-md:border-r-0 max-md:border-b max-md:px-2 max-md:py-2;
+}
+
+.chat__section {
+    @apply flex flex-col gap-1.5 max-md:contents;
+}
+
+.chat__section + .chat__section {
+    @apply border-t border-line-soft pt-4 md:mt-2;
+}
+
+.chat__section-head {
+    @apply flex items-center gap-2 px-2.5 pb-1 text-muted max-md:hidden;
+}
+
+.chat__section-head .chat__caption {
+    @apply flex-1 p-0;
+}
+
+.chat__section-icon {
+    @apply size-4 shrink-0 text-cyan;
+}
+
+.chat__section-action {
+    @apply flex size-7 items-center justify-center rounded-lg border border-line text-muted-2 hover:border-cyan hover:text-cyan [&>svg]:size-3.5;
+}
+
+.chat__list {
+    @apply flex flex-col gap-0.5 max-md:contents;
+}
+
+.chat__avatar {
+    @apply relative shrink-0;
+}
+
+.chat__dot {
+    @apply absolute -right-0.5 -bottom-0.5 size-2.5 rounded-full bg-success ring-2 ring-[#0F1220];
+}
+
+.chat__group {
+    @apply flex flex-col gap-0.5 max-md:flex-row max-md:items-center max-md:gap-1;
+}
+
+.chat__nav .chat__caption,
+.chat__nav .chat__hint {
+    @apply max-md:hidden;
+}
+
+.chat__caption {
+    @apply px-2.5 pb-1.5 font-display text-xs font-semibold tracking-[0.14em] text-muted uppercase;
+}
+
+.chat__channel,
+.chat__direct {
+    @apply flex min-h-[38px] items-center gap-2 rounded-lg px-2.5 text-sm text-ink-soft hover:bg-surface-2;
+}
+
+.chat__direct {
+    @apply min-h-11 gap-2.5;
+}
+
+.chat__channel--active {
+    @apply bg-stage-me font-semibold text-cyan hover:bg-stage-me;
+}
+
+.chat__hash {
+    @apply font-bold text-muted;
+}
+
+.chat__channel-name {
+    @apply flex-1;
+}
+
+.chat__badge {
+    @apply flex h-[18px] min-w-[18px] items-center justify-center rounded-[9px] bg-magenta px-[5px] text-[11px] font-bold text-on-magenta;
+}
+
+.chat__direct-text {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.chat__nav .chat__channel,
+.chat__nav .chat__direct {
+    @apply max-md:min-h-9 max-md:shrink-0 max-md:rounded-full max-md:border max-md:border-line max-md:px-3 max-md:whitespace-nowrap;
+}
+
+.chat__nav .chat__direct-last {
+    @apply max-md:hidden;
+}
+
+.chat__direct-name {
+    @apply font-semibold;
+}
+
+.chat__direct-last {
+    @apply truncate text-xs text-muted;
+}
+
+.chat__hint {
+    @apply px-2.5 text-xs text-muted;
+}
+
+.chat__main {
+    @apply flex min-w-0 flex-[999_1_420px] flex-col max-md:flex-1;
+}
+
+.chat__head {
+    @apply flex items-center gap-3 border-b border-line-soft px-5 py-3.5 max-sm:px-3;
+}
+
+.chat__head-hash {
+    @apply text-xl font-bold text-muted;
+}
+
+.chat__head-text {
+    @apply flex flex-1 flex-col;
+}
+
+.chat__head-title {
+    @apply text-base font-bold text-ink;
+}
+
+.chat__head-sub {
+    @apply text-xs text-muted-2;
+}
+
+.chat__online {
+    @apply text-xs text-success;
+}
+
+.chat__messages {
+    @apply flex max-h-[560px] min-h-[320px] flex-1 flex-col gap-[18px] overflow-y-auto p-5 max-sm:gap-2.5 max-sm:p-3;
+}
+
+.chat__empty {
+    @apply m-auto text-sm text-muted;
+}
+
+.chat__day {
+    @apply flex items-center gap-3 text-xs text-muted first-letter:uppercase;
+}
+
+.chat__day-line {
+    @apply h-px flex-1 bg-line-soft;
+}
+
+.chat__day-label {
+    @apply first-letter:uppercase;
+}
+
+.chat__message {
+    @apply flex gap-3;
+}
+
+.chat__body {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.chat__meta {
+    @apply flex items-baseline gap-2;
+}
+
+.chat__author {
+    @apply text-sm text-[#C4B5FD];
+}
+
+.chat__message--mine .chat__author {
+    @apply text-cyan;
+}
+
+.chat__staff {
+    @apply rounded bg-magenta/15 px-1.5 py-px text-[11px] font-bold text-magenta-soft;
+}
+
+.chat__time {
+    @apply text-xs text-muted;
+}
+
+.chat__text {
+    @apply text-sm leading-normal break-words text-[#D6D9EC];
+}
+
+.chat__card {
+    @apply mt-1.5 flex max-w-[380px] items-center gap-3 rounded-xl border border-cyan bg-[#0F1226] p-3.5;
+}
+
+.chat__card-icon {
+    @apply size-11 shrink-0 rounded-[10px] bg-[radial-gradient(circle_at_60%_30%,rgb(46_230_214/0.5),transparent_65%),#141833];
+}
+
+.chat__card-text {
+    @apply flex flex-1 flex-col gap-0.5;
+}
+
+.chat__card-title {
+    @apply text-sm;
+}
+
+.chat__card-meta {
+    @apply text-xs text-muted-2;
+}
+
+.chat__card-join {
+    @apply flex h-[38px] items-center rounded-lg bg-cyan px-3.5 text-[13px] font-bold text-on-cyan;
+}
+
+.chat__typing {
+    @apply min-h-5 px-5 text-xs text-muted-2 italic max-sm:px-3;
+}
+
+.chat__form {
+    @apply flex items-center gap-2.5 border-t border-line-soft px-5 py-3.5 max-sm:px-3;
+}
+
+.chat__invite {
+    @apply flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-[10px] border border-line bg-surface-2 text-cyan;
+}
+
+.chat__invite-icon {
+    @apply size-[18px];
+}
+
+.chat__input {
+    @apply h-11 min-w-0 flex-1 rounded-[10px] border border-line bg-bg px-3.5 text-sm text-ink outline-none focus:border-cyan;
+}
+
+.chat__send {
+    @apply h-11 cursor-pointer rounded-[10px] bg-cyan px-[18px] text-sm font-bold text-on-cyan max-sm:px-2.5;
+}
+
+.chat__locked {
+    @apply border-t border-line-soft px-5 py-4 text-[13px] text-muted-2 max-sm:px-3;
+}
+
+.chat__locked-link {
+    @apply font-semibold text-cyan hover:underline;
+}
+
+.chat__members {
+    @apply flex max-w-full flex-[1_1_350px] flex-col gap-2 border-l border-line-soft bg-[#0F1220] p-4
+    max-md:border-t max-md:border-l-0;
+}
+
+.chat__members .chat__section-head {
+    @apply max-md:flex;
+}
+
+.chat__members .chat__section,
+.chat__members .chat__list {
+    @apply max-md:flex;
+}
+
+.chat__profile {
+    @apply flex flex-col items-center gap-1 rounded-xl border border-line bg-surface p-4 text-center;
+}
+
+.chat__profile .avatar {
+    @apply mb-1;
+}
+
+.chat__profile-name {
+    @apply font-display text-lg font-bold text-ink hover:text-cyan;
+}
+
+.chat__profile-handle {
+    @apply text-xs text-muted;
+}
+
+.chat__profile-status {
+    @apply mt-1 rounded-full bg-field px-2.5 py-1 text-xs text-muted-2;
+}
+
+.chat__profile-status--online,
+.chat__profile-status--room,
+.chat__profile-status--playing {
+    @apply bg-success/10 text-success;
+}
+
+.chat__profile-link {
+    @apply mt-2 w-full rounded-lg border border-line py-2 text-sm font-semibold text-ink hover:border-cyan;
+}
+
+.chat__write {
+    @apply ml-auto flex size-8 shrink-0 items-center justify-center rounded-lg border border-line text-muted-2 hover:border-cyan hover:text-cyan [&>svg]:size-4;
+}
+
+.chat__member {
+    @apply flex items-center gap-2.5 rounded-lg px-1.5 py-1.5 text-sm text-ink hover:bg-surface-2;
+}
+
+.chat__member-text {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.chat__member-name {
+    @apply font-semibold;
+}
+
+.chat__member-activity {
+    @apply truncate text-xs text-muted;
+}
+
+.chat__notice {
+    @apply mt-auto rounded-[10px] bg-field p-3 text-xs leading-normal text-muted-2;
+}
+
+.notify {
+    @apply relative;
+}
+
+.notify__badge {
+    @apply absolute top-1.5 right-1.5 flex h-4 min-w-4 items-center justify-center rounded-lg bg-magenta px-1 text-[10px] font-bold text-on-magenta;
+}
+
+.notify__panel {
+    @apply absolute top-[52px] right-0 z-50 flex w-[360px] max-w-[calc(100vw-32px)] flex-col overflow-hidden rounded-[14px] border border-line bg-surface shadow-[0_20px_60px_rgb(0_0_0/0.5)]
+    max-md:fixed max-md:inset-x-3 max-md:top-[68px] max-md:w-auto max-md:max-w-none;
+}
+
+.notify__head {
+    @apply flex items-center justify-between border-b border-line-soft px-4 py-3;
+}
+
+.notify__title {
+    @apply font-display text-[15px];
+}
+
+.notify__link {
+    @apply text-xs text-cyan hover:underline;
+}
+
+.notify__list {
+    @apply flex max-h-[420px] flex-col overflow-y-auto max-md:max-h-[calc(100dvh-150px)];
+}
+
+.notify__row {
+    @apply border-b border-line-soft last:border-b-0;
+}
+
+.notify__item {
+    @apply flex gap-3 px-4 py-3 text-ink hover:bg-surface-2;
+}
+
+.notify__item--unread {
+    @apply bg-cyan/6;
+}
+
+.notify__text {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.notify__message {
+    @apply text-[13px] font-semibold;
+}
+
+.notify__preview {
+    @apply truncate text-xs text-muted-2;
+}
+
+.notify__date {
+    @apply text-[11px] text-muted;
+}
+
+.notify__empty {
+    @apply px-4 py-6 text-center text-[13px] text-muted max-sm:py-3.5;
+}
+
+.notify__skeleton {
+    @apply flex items-center gap-3 px-4 py-3;
+}
+
+.notify__skeleton-avatar {
+    @apply size-8 shrink-0 animate-pulse rounded-full bg-surface-2 motion-reduce:animate-none;
+}
+
+.notify__skeleton-lines {
+    @apply h-8 flex-1 animate-pulse rounded-md bg-surface-2 motion-reduce:animate-none;
+}
+
+.profile-hero__button--primary {
+    @apply border-transparent bg-cyan font-bold text-on-cyan hover:border-transparent;
+}
+
+.profile-hero__button--friends {
+    @apply border-[#2D5A3E] bg-success/12 font-bold text-success;
+}
+
+.profile-hero__button--muted {
+    @apply text-muted-2;
+}
+
+.profile-menu {
+    @apply relative;
+}
+
+.profile-menu__toggle {
+    @apply list-none [&::-webkit-details-marker]:hidden;
+}
+
+.profile-menu__panel {
+    @apply absolute top-12 right-0 z-30 flex w-[300px] flex-col gap-1 rounded-xl border border-line bg-surface p-2 shadow-[0_20px_60px_rgb(0_0_0/0.5)]
+    max-md:fixed max-md:inset-x-3 max-md:top-auto max-md:bottom-3 max-md:z-50 max-md:max-h-[80dvh] max-md:w-auto max-md:overflow-y-auto max-md:rounded-2xl max-md:p-3;
+}
+
+.profile-menu__item {
+    @apply w-full cursor-pointer rounded-lg px-3 py-2.5 text-left text-sm text-ink hover:bg-surface-2;
+}
+
+.profile-menu__item--warning {
+    @apply text-yellow;
+}
+
+.profile-menu__item--danger {
+    @apply text-[#FF7A8F];
+}
+
+.profile-menu__report {
+    @apply flex flex-col gap-2 border-y border-line-soft px-1 py-2;
+}
+
+.profile-menu__label {
+    @apply px-2 text-xs font-semibold text-muted-2;
+}
+
+.profile-menu__field {
+    @apply h-auto min-h-10 text-sm;
+}
+
+.chat__send:disabled {
+    @apply cursor-wait opacity-60;
+}

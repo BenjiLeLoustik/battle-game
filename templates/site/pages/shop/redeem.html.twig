@@ -1,0 +1,38 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+
+{% set active = 'shop' %}
+
+{% block title %}{{ 'site.shop.nav.redeem'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="shop">
+        <div class="shop__head">
+            <div class="shop__intro">
+                <h1 class="shop__title">{{ 'site.shop.nav.redeem'|trans }}</h1>
+                {% include '@site/pages/shop/_nav.html.twig' with { page: 'redeem' } %}
+            </div>
+        </div>
+
+        {{ shop.flashes() }}
+
+        <section class="shop-panel shop-redeem">
+            {% if redeemed %}
+                <div class="shop-done shop-done--ok">
+                    <span class="shop-done__icon">{{ shop.icon('gift') }}</span>
+                    <h2 class="shop-done__title">{{ 'site.shop.gift.redeemed'|trans({ coins: redeemed.coins }) }}</h2>
+                    <a href="{{ path('site_shop_index') }}" class="btn btn--primary">{{ 'site.shop.back'|trans }}</a>
+                </div>
+            {% else %}
+                <h2 class="shop-panel__title">{{ 'site.shop.gift.title'|trans }}</h2>
+                <p class="shop-redeem__help">{{ 'site.shop.gift.redeem_help'|trans }}</p>
+                <form class="shop-redeem__form" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('shop') }}">
+                    <input class="field__input shop-redeem__input" name="code" required maxlength="30" autocomplete="off" placeholder="GIFT-XXXX-XXXX-XXXX" aria-label="{{ 'site.shop.gift.title'|trans }}">
+                    <button type="submit" class="btn btn--primary">{{ 'site.shop.gift.submit'|trans }}</button>
+                </form>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

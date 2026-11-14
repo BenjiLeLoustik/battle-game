@@ -1,0 +1,79 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'rooms' %}
+{% set title = creating ? 'admin.rooms.new'|trans({}, 'admin') : room.name %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-rooms') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_room_index') }}" class="admin-crumbs__link">{{ 'admin.rooms.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ creating ? title : room.code }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.rooms.form.room'|trans({}, 'admin') }}</h2>
+            <label class="admin-field">
+                {{ 'site.room.form.name'|trans }}
+                <input class="admin-field__input" name="name" value="{{ data.name }}" maxlength="60" required>
+                {{ admin_ui.error(errors, 'name') }}
+            </label>
+            <label class="admin-check">
+                <input type="checkbox" class="admin-check__input" name="official"{{ room.official ? ' checked' }}>
+                {{ 'admin.rooms.form.official'|trans({}, 'admin') }}
+            </label>
+        </section>
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.rooms.form.access'|trans({}, 'admin') }}</h2>
+            <div class="admin-choices">
+                {% for visibility in visibilities %}
+                    <label class="admin-choice">
+                        <input type="radio" class="admin-choice__input" name="visibility" value="{{ visibility.value }}"{{ data.visibility == visibility ? ' checked' }}>
+                        <span class="admin-choice__head"><strong>{{ visibility.translate() }}</strong></span>
+                        <span class="admin-choice__text">{{ ('site.room.form.visibility_help.' ~ visibility.value)|trans }}</span>
+                    </label>
+                {% endfor %}
+            </div>
+            <label class="admin-field" data-component="FieldReveal" data-field="visibility" data-values="password"{{ data.visibility.value != 'password' ? ' hidden' }}>
+                {{ 'site.room.form.password'|trans }}
+                <input class="admin-field__input" name="password" value="{{ data.password }}" maxlength="30" autocomplete="off">
+                {{ admin_ui.error(errors, 'password') }}
+            </label>
+        </section>
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.rooms.form.capacity'|trans({}, 'admin') }}</h2>
+            <div class="admin-form-grid">
+                {% for field, options in { max_players: sizes, choices: choices, vote_duration: durations } %}
+                    {% set current = { max_players: data.maxPlayers, choices: data.choices, vote_duration: data.voteDuration }[field] %}
+                    <label class="admin-field">
+                        {{ ('admin.rooms.form.' ~ field)|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="{{ field }}">
+                            {% for option in options %}
+                                <option value="{{ option }}"{{ option == current ? ' selected' }}>{{ option }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endfor %}
+            </div>
+            {% for key in ['guests', 'spectators', 'permanent'] %}
+                <label class="admin-check">
+                    <input type="checkbox" class="admin-check__input" name="{{ key }}"{{ attribute(data, key) ? ' checked' }}>
+                    {{ ('site.room.form.' ~ key)|trans }}
+                </label>
+            {% endfor %}
+        </section>
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ creating ? path('admin_room_index') : path('admin_room_show', { code: room.code }) }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ (creating ? 'admin.rooms.form.create' : 'admin.save')|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

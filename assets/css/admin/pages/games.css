@@ -1,0 +1,51 @@
+.featured-row {
+    @apply flex flex-wrap items-center gap-3 rounded-[10px] border border-adm-line bg-adm-bg px-3 py-2.5;
+}
+
+.featured-row__position {
+    @apply w-5 text-center font-mono text-xs text-adm-muted;
+}
+
+.featured-row__color {
+    @apply size-3 shrink-0 rounded-full;
+}
+
+.featured-row__name {
+    @apply min-w-0 flex-1;
+}
+
+.games-filters {
+    @apply flex flex-wrap items-center gap-2.5;
+}
+
+.games-filters__check {
+    @apply whitespace-nowrap;
+}
+
+.games-filters__meta {
+    @apply ml-auto flex items-center gap-2 text-xs text-adm-muted max-md:ml-0;
+}
+
+.games-export {
+    @apply flex flex-wrap items-center gap-3 border-b border-adm-line bg-adm-bg/40 px-5 py-2.5 text-xs text-adm-muted;
+}
+
+.games-export__submit {
+    @apply ml-auto gap-1.5 disabled:cursor-not-allowed disabled:opacity-40;
+}
+
+.games-export__icon {
+    @apply size-4;
+}
+
+.games-select {
+    @apply w-10 pr-0;
+}
+
+.games-export__count {
+    @apply text-xs leading-none;
+}
+
+.games-export__all {
+    @apply cursor-pointer text-xs leading-none font-semibold text-adm-accent-soft hover:underline;
+}

@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'admin.title'|trans({}, 'admin') }} · BattleGame{% endblock %}
+{% block body_class %}admin-layout{% endblock %}
+{% block space %}admin{% endblock %}
+
+{% block body %}
+    {% include '@admin/components/partials/topbar.html.twig' %}
+    <div class="admin-layout__body">
+        <div id="admin-nav" class="admin-layout__aside" data-component="AdminNav">
+            {% include '@admin/components/partials/sidebar.html.twig' with {
+                active: active|default('dashboard')
+            } %}
+        </div>
+        <div class="admin-layout__backdrop" data-admin-nav-backdrop hidden></div>
+        <main class="admin-layout__main">
+            <div class="admin-flashes" data-component="FlashStack" data-close="{{ 'admin.close'|trans({}, 'admin') }}">
+                {% for type, messages in flashes() %}
+                    {% for message in messages %}
+                        <p class="admin-flash admin-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">
+                            <span class="admin-flash__text">{{ message|trans({}, message starts with 'admin.' ? 'admin' : 'validators') }}</span>
+                        </p>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+            {% block content %}{% endblock %}
+        </main>
+    </div>
+{% endblock %}

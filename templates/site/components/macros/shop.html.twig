@@ -1,0 +1,91 @@
+{% macro color(type) %}{{ { all: '#2EE6D6', subscription: '#A78BFA', coins: '#FFC94A', lives: '#FF5470', badge: '#7C5CFF', cosmetic: '#FF7FDD', physical: '#2EE6D6', gift: '#4ADE80' }[type] ?? '#2EE6D6' }}{% endmacro %}
+
+{% macro price(cents) %}{{ (cents / 100)|number_format(2, ',', ' ') }} €{% endmacro %}
+
+{% macro icon(type) %}
+    {% set paths = {
+        coins: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v10M9 9.5c0-1 1.3-1.5 3-1.5s3 .7 3 1.8c0 2.7-6 1.4-6 4.2 0 1.1 1.3 2 3 2s3-.6 3-1.6',
+        subscription: 'M5 16l-2-9 5 4 4-7 4 7 5-4-2 9H5zM5 20h14',
+        badge: 'M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.9L12 3z',
+        cosmetic: 'M12 3a9 9 0 0 0 0 18c1.1 0 2-.9 2-2 0-.5-.2-1-.5-1.3-.3-.4-.5-.8-.5-1.3 0-1.1.9-2 2-2h2.4A4.6 4.6 0 0 0 21 9.8C21 6 17 3 12 3zM7.5 12a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM10.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3zM15.5 8a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3z',
+        physical: 'M3 8l9-5 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8',
+        gift: 'M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8S10 3 7.5 3a2.5 2.5 0 0 0 0 5H12zM12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5H12z',
+        lives: 'M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z',
+        all: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+    } %}
+    <svg class="shop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ paths[type] ?? paths.all }}"/></svg>
+{% endmacro %}
+
+{% macro flashes() %}
+    {% for type, messages in flashes() %}
+        {% for message in messages %}
+            <p class="shop-flash shop-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">
+                {{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}
+            </p>
+        {% endfor %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro buy(product, owned, card, member) %}
+    {% import _self as shop %}
+    {% if owned %}
+        <span class="shop-card__owned">
+            {{ 'site.shop.owned'|trans }}
+        </span>
+    {% elseif not member %}
+        <a href="{{ path('site_security_register') }}" class="btn btn--ghost btn--block">
+            {{ 'site.shop.need_account'|trans }}
+        </a>
+    {% else %}
+        <div class="shop-card__actions">
+            {% if product.priceCoins is not null and product.type.allowsCoins %}
+                <form method="post" action="{{ path('site_shop_buy', { slug: product.slug }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('shop') }}">
+                    <button type="submit" class="btn shop-btn shop-btn--coins">
+                        {{ shop.icon('coins') }}
+                        {{ 'site.shop.coins_price'|trans({ coins: product.priceCoins|number_format(0, ',', ' ') }) }}
+                    </button>
+                </form>
+            {% endif %}
+            {% if product.priceCents is not null %}
+                <form class="shop-checkout" method="post" action="{{ path('site_shop_checkout', { slug: product.slug }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('shop') }}">
+                    {% if product.type.value == 'physical' and product.sizes is not empty %}
+                        <label class="shop-checkout__size">
+                            <span class="shop-checkout__label">{{ 'site.shop.size'|trans }}</span>
+                            <select class="shop-checkout__select" name="variant" required>
+                                <option value="" disabled selected>{{ 'site.shop.size_pick'|trans }}</option>
+                                {% for size in product.sizes %}<option value="{{ size }}">{{ size }}</option>{% endfor %}
+                            </select>
+                        </label>
+                    {% endif %}
+                    {% if product.type.value != 'subscription' %}
+                        <input class="shop-checkout__code" name="code" maxlength="30" autocomplete="off" placeholder="{{ 'site.shop.promo_placeholder'|trans }}" aria-label="{{ 'site.shop.promo_placeholder'|trans }}">
+                    {% endif %}
+                    <label class="shop-checkout__terms">
+                        <input type="checkbox" name="terms" value="1" required>
+                        <span>{{ (product.type.value == 'physical' ? 'site.shop.terms_physical' : 'site.shop.terms_digital')|trans({ url: '/cgv' })|raw }}</span>
+                    </label>
+                    <button type="submit" class="btn shop-btn shop-btn--card"{{ card ? '' : ' disabled title="' ~ 'site.shop.card_off'|trans ~ '"' }}>
+                        {{ product.type.value == 'subscription' ? 'site.shop.subscribe'|trans({ price: shop.price(product.priceCents) }) : 'site.shop.pay'|trans({ price: shop.price(product.priceCents) }) }}
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro cosmetic(product, initials = 'BG', size = 'lg') %}
+    {% import '@site/components/macros/badge.html.twig' as badges_ui %}
+    {% set look = cosmetic_look(product) %}
+    {% set kind = product.option('kind') %}
+    {% if kind == 'frame' %}
+        <span class="avatar avatar--{{ size }} avatar--frame avatar--frame-{{ look.frame }}"{% if look.frame_style is defined %} style="{{ look.frame_style }}"{% endif %}>{{ initials }}</span>
+    {% elseif kind == 'banner' %}
+        <span class="profile-banner-sample{{ size == 'lg' ? ' profile-banner-sample--wide' }} profile-banner--{{ look.banner }}"{% if look.banner_style is defined %} style="{{ look.banner_style }}"{% endif %}></span>
+    {% elseif kind == 'victory' %}
+        <span class="victory-sample{{ size == 'lg' ? ' victory-sample--lg' }}">
+            {% for index in 1..3 %}<span class="victory-sample__piece victory-sample__piece--{{ index }}">{{ badges_ui.shape({ name: product.name, path: look.victory.path, design: look.victory }, size == 'lg' ? 30 : 20) }}</span>{% endfor %}
+        </span>
+    {% endif %}
+{% endmacro %}

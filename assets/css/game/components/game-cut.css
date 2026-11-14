@@ -1,0 +1,63 @@
+.game-alert {
+    @apply flex shrink-0 items-center gap-3.5 border-b border-[#6B5A2A] bg-[#1C1810] px-[18px] py-2.5 text-[13px] text-[#E6D3A6];
+}
+
+.game-alert__tag {
+    @apply shrink-0 rounded-[5px] bg-yellow px-[9px] py-[3px] font-display text-[11px] font-bold tracking-[0.14em] text-[#1A1405];
+}
+
+.game-alert__text {
+    @apply flex-1;
+}
+
+.game-alert__link {
+    @apply shrink-0 font-semibold text-[#FFD36E] hover:underline;
+}
+
+.game-cut {
+    @apply absolute inset-0 z-10 flex items-center justify-center bg-[#080604]/88 p-4;
+}
+
+.game-cut__card {
+    @apply flex w-full max-w-[640px] flex-col items-center gap-4 rounded-[20px] border-2 border-yellow bg-[#14100A] p-9 text-center shadow-[0_0_80px_rgb(255_201_74/0.2)] max-md:p-6;
+}
+
+.game-cut__icon {
+    @apply flex size-[72px] items-center justify-center rounded-[20px] bg-yellow text-[#1A1405];
+}
+
+.game-cut__svg {
+    @apply size-9;
+}
+
+.game-cut__kicker {
+    @apply font-display text-[13px] tracking-[0.24em] text-[#FFD36E];
+}
+
+.game-cut__title {
+    @apply font-display text-[40px] font-bold text-[#FFF1CC] max-md:text-3xl;
+}
+
+.game-cut__text {
+    @apply flex flex-col text-base leading-[1.6] text-[#E6D3A6];
+}
+
+.game-cut__lost {
+    @apply text-[#FFE3A0];
+}
+
+.game-cut__back {
+    @apply text-sm text-[#C9B894];
+}
+
+.game-cut__actions {
+    @apply mt-1.5 flex flex-wrap justify-center gap-2.5;
+}
+
+.game-cut__follow {
+    @apply flex h-12 items-center rounded-[10px] bg-yellow px-5 text-[15px] font-bold text-[#1A1405];
+}
+
+.game-cut__home {
+    @apply flex h-12 items-center rounded-[10px] border border-[#6B5A2A] px-5 text-[15px] font-semibold text-[#FFE3A0];
+}

@@ -1,0 +1,7 @@
+<nav class="shop-subnav" aria-label="{{ 'site.shop.title'|trans }}">
+    {% for item in ['index', 'inventory', 'orders', 'redeem'] %}
+        <a href="{{ path('site_shop_' ~ item) }}" class="shop-subnav__link{{ page == item ? ' shop-subnav__link--active' }}"{% if page == item %} aria-current="page"{% endif %}>
+            {{ ('site.shop.nav.' ~ item)|trans }}
+        </a>
+    {% endfor %}
+</nav>

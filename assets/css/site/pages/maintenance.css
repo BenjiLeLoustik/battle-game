@@ -1,0 +1,78 @@
+.maintenance-page {
+    @apply min-h-dvh bg-bg font-body text-ink antialiased;
+}
+
+.maintenance-page__main {
+    @apply relative flex min-h-dvh flex-col items-center justify-center gap-7 overflow-hidden px-6 py-12 text-center
+    bg-[radial-gradient(circle_at_50%_30%,#1C1830,var(--color-bg)_65%)] max-sm:gap-4 max-sm:px-3.5 max-sm:py-7;
+}
+
+.maintenance-page__grid {
+    @apply pointer-events-none absolute -right-[10%] -bottom-[40%] -left-[10%] h-[70%] origin-top;
+    background-image: repeating-linear-gradient(0deg, transparent 0 47px, rgb(255 201 74 / 0.14) 47px 48px), repeating-linear-gradient(90deg, transparent 0 47px, rgb(255 201 74 / 0.14) 47px 48px);
+    transform: perspective(500px) rotateX(62deg);
+}
+
+.maintenance-page__logo {
+    @apply relative flex items-center gap-3 text-ink;
+}
+
+.maintenance-page__mark {
+    @apply clip-logo flex size-12 items-center justify-center bg-cyan font-display text-[19px] font-bold text-on-cyan;
+}
+
+.maintenance-page__name {
+    @apply font-display text-2xl font-bold tracking-[0.08em];
+}
+
+.maintenance-page__accent {
+    @apply text-cyan;
+}
+
+.maintenance-page__intro {
+    @apply relative flex w-full max-w-[720px] flex-col items-center gap-4;
+}
+
+.maintenance-page__tag {
+    @apply rounded-md bg-yellow px-3 py-1.5 font-display text-[13px] font-bold tracking-[0.16em] text-[#1A1405];
+}
+
+.maintenance-page__title {
+    @apply font-display text-5xl leading-[1.1] font-bold max-md:text-3xl;
+}
+
+.maintenance-page__message {
+    @apply text-[17px] leading-[1.6] text-ink-soft;
+}
+
+.maintenance-page__cards {
+    @apply relative flex flex-wrap justify-center gap-3.5;
+}
+
+.maintenance-page__card {
+    @apply flex min-w-[170px] flex-col items-center gap-1 rounded-[14px] border border-line bg-surface/92 px-[22px] py-4 max-sm:px-3.5;
+}
+
+.maintenance-page__label {
+    @apply text-xs text-muted-2;
+}
+
+.maintenance-page__countdown {
+    @apply font-display text-[32px] text-yellow;
+}
+
+.maintenance-page__window {
+    @apply font-display text-[22px] leading-[1.6];
+}
+
+.maintenance-page__links {
+    @apply relative flex flex-col items-center gap-3;
+}
+
+.maintenance-page__buttons {
+    @apply flex flex-wrap justify-center gap-2.5;
+}
+
+.maintenance-page__team {
+    @apply absolute right-6 bottom-[18px] text-xs text-[#6A7090] hover:text-ink;
+}

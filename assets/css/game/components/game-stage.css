@@ -1,0 +1,280 @@
+.game-stage {
+    @apply fixed inset-0 z-50 flex flex-col bg-stage font-body text-ink antialiased;
+}
+
+.game-stage__play {
+    @apply flex min-h-0 flex-1 flex-col;
+}
+
+.game-stage__bar {
+    @apply flex h-14 shrink-0 items-center gap-[18px] border-b border-stage-line bg-header/92 px-[18px] max-md:gap-2.5 max-md:px-3;
+}
+
+.game-stage__mark {
+    @apply clip-logo flex size-[30px] shrink-0 items-center justify-center
+    bg-cyan font-display text-[13px] font-bold text-on-cyan;
+}
+
+.game-stage__title {
+    @apply flex flex-col leading-[1.2] min-w-0;
+}
+
+.game-stage__name {
+    @apply font-display text-[15px] truncate;
+}
+
+.game-stage__meta {
+    @apply text-xs text-muted-2 truncate max-sm:hidden;
+}
+
+.game-stage__progress {
+    @apply flex flex-1 items-center justify-center gap-3.5 min-w-0 max-md:flex-none max-md:gap-2;
+}
+
+.game-stage__progress-label {
+    @apply font-display text-[13px] tracking-[0.16em] text-muted-2 max-md:hidden;
+}
+
+.game-stage__dots {
+    @apply flex gap-1.5 max-md:hidden;
+}
+
+.game-stage__dot {
+    @apply h-1.5 w-7 rounded-[3px] bg-line;
+}
+
+.game-stage__dot--done {
+    @apply bg-cyan;
+}
+
+.game-stage__dot--current {
+    @apply bg-magenta shadow-[0_0_10px_var(--color-magenta)];
+}
+
+.game-stage__count {
+    @apply font-display text-[15px];
+}
+
+.game-stage__actions {
+    @apply ml-auto flex items-center gap-2.5 max-md:gap-2;
+}
+
+.game-stage__icon-btn {
+    @apply flex size-10 items-center justify-center rounded-lg border border-line bg-field text-ink hover:border-cyan max-md:size-9;
+}
+
+.game-stage__icon {
+    @apply size-[18px];
+}
+
+.game-stage__quit {
+    @apply flex h-10 items-center rounded-lg border border-danger/40 px-3.5 text-[13px]
+    font-semibold text-danger hover:bg-danger/10 max-md:h-9 max-md:px-2.5;
+}
+
+.game-stage__body {
+    @apply flex min-h-0 flex-1 max-md:flex-col;
+}
+
+.game-stage__screen {
+    @apply relative flex min-w-0 flex-1 overflow-y-auto overscroll-contain;
+}
+
+.game-stage__aside {
+    @apply flex w-[300px] shrink-0 flex-col gap-3.5 border-l border-stage-line bg-header/85 p-5 max-md:order-first max-md:w-full max-md:flex-row max-md:items-center max-md:gap-2 max-md:overflow-x-auto max-md:border-b max-md:border-l-0 max-md:px-3 max-md:py-2;
+}
+
+.game-stage__aside-title {
+    @apply font-display text-[13px] font-semibold tracking-[0.16em] text-muted-2 uppercase max-md:hidden;
+}
+
+.game-stage__ranking {
+    @apply flex flex-col gap-1 max-md:flex-row max-md:gap-2;
+}
+
+.game-stage__rank {
+    @apply -mx-2.5 flex items-center gap-2.5 rounded-[10px] px-2.5 py-2 max-md:mx-0 max-md:shrink-0 max-md:gap-2 max-md:border max-md:border-line max-md:py-1.5 max-md:pr-3 max-md:pl-2;
+}
+
+.game-stage__rank--me {
+    @apply bg-stage-me shadow-[inset_2px_0_0_var(--color-cyan)];
+}
+
+.game-stage__rank-position {
+    @apply w-[18px] font-display font-bold text-muted-2;
+}
+
+.game-stage__rank-info {
+    @apply flex min-w-0 flex-1 flex-col;
+}
+
+.game-stage__rank-name {
+    @apply truncate text-sm font-semibold max-md:max-w-[110px];
+}
+
+.game-stage__rank-detail {
+    @apply text-xs text-muted max-md:hidden;
+}
+
+.game-stage__rank-score {
+    @apply font-display text-sm text-cyan;
+}
+.game-stage__ping {
+    @apply rounded-md bg-surface-2 px-2 py-1 font-mono text-xs text-muted-2 max-md:hidden;
+}
+
+.game-stage__sound {
+    @apply flex items-center gap-2 max-md:gap-1.5;
+}
+
+.game-stage__icon--off,
+.game-stage__icon-btn--off .game-stage__icon--on {
+    @apply hidden;
+}
+
+.game-stage__icon-btn--off .game-stage__icon--off {
+    @apply block;
+}
+
+.game-stage__icon-btn--off {
+    @apply text-muted-2;
+}
+
+@media (max-height: 560px) and (min-width: 768px) {
+    .game-stage__bar {
+        @apply h-11 gap-3 px-3;
+    }
+
+    .game-stage__icon-btn {
+        @apply size-8;
+    }
+
+    .game-stage__quit {
+        @apply h-8 px-2.5 text-xs;
+    }
+
+    .game-stage__progress-label,
+    .game-stage__meta {
+        @apply hidden;
+    }
+
+    .game-stage__aside {
+        @apply w-[180px] gap-2 p-2.5;
+    }
+
+    .game-stage__aside-title,
+    .game-stage__rank-detail {
+        @apply hidden;
+    }
+
+    .game-stage__rank {
+        @apply mx-0 gap-2 px-2 py-1.5;
+    }
+}
+
+.game-emote {
+    @apply relative;
+}
+
+.game-emote__menu {
+    @apply absolute top-[calc(100%+6px)] right-0 z-30 flex gap-1 rounded-xl border border-line bg-panel p-1.5 shadow-[0_14px_30px_rgba(0,0,0,.5)];
+}
+
+.game-emote__item {
+    @apply flex size-9 cursor-pointer items-center justify-center rounded-lg text-lg font-bold text-ink hover:bg-surface-2;
+}
+
+.game-emotes {
+    @apply pointer-events-none fixed bottom-4 left-4 z-[60] flex flex-col-reverse gap-2;
+}
+
+.game-emotes__bubble {
+    @apply flex animate-[emote-in_0.25s_ease-out] items-center gap-2 rounded-full border border-line bg-panel/95 py-1 pr-3 pl-1 shadow-[0_8px_20px_rgba(0,0,0,.4)];
+}
+
+.game-emotes__bubble--me {
+    @apply border-cyan/60;
+}
+
+.game-emotes__name {
+    @apply text-xs font-semibold;
+}
+
+.game-emotes__symbol {
+    @apply size-6 text-yellow;
+}
+
+.game-emotes__symbol--text {
+    @apply size-auto font-display text-base font-bold;
+}
+
+.game-emote__icon {
+    @apply size-5;
+}
+
+.game-stage__spectator {
+    @apply rounded-md bg-danger/15 px-2 py-1 text-[11px] font-bold tracking-widest text-danger uppercase max-md:hidden;
+}
+
+.victory-fx {
+    @apply pointer-events-none fixed inset-0 z-[70] overflow-hidden;
+}
+
+.victory-fx__piece {
+    @apply absolute flex;
+    left: var(--x);
+    top: -48px;
+    animation: victory-rain 3.4s var(--delay) cubic-bezier(.2,.6,.4,1) both;
+}
+
+.victory-fx--burst .victory-fx__piece {
+    left: 50%;
+    top: 45%;
+    animation: victory-burst 2.6s var(--delay) cubic-bezier(.15,.7,.3,1) both;
+}
+
+.victory-fx--fountain .victory-fx__piece {
+    left: calc(50% + var(--drift) * .3);
+    top: 100%;
+    animation: victory-fountain 3.2s var(--delay) cubic-bezier(.2,.7,.4,1) both;
+}
+
+.game-rewards__card--rating {
+    @apply border-violet;
+}
+
+.game-rewards__delta {
+    @apply font-display text-sm text-success;
+}
+
+.game-rewards__delta--down {
+    @apply text-danger;
+}
+
+.user-name-wrap {
+    @apply inline-flex items-baseline gap-1;
+}
+
+@keyframes victory-rain {
+    0% { transform: translate(0, 0) rotate(0); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translate(var(--drift), 110vh) rotate(var(--spin)); opacity: .3; }
+}
+
+@keyframes victory-burst {
+    0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--spin)); opacity: 0; }
+}
+
+@keyframes victory-fountain {
+    0% { transform: translate(0, 0); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translate(var(--drift), -70vh) rotate(calc(var(--spin) / 2)); }
+    100% { transform: translate(calc(var(--drift) * 1.6), -10vh) rotate(var(--spin)); opacity: 0; }
+}
+
+@keyframes emote-in {
+    0% { transform: translateY(10px) scale(.9); opacity: 0; }
+    100% { transform: none; opacity: 1; }
+}

@@ -1,0 +1,27 @@
+.site-layout {
+    @apply flex h-dvh flex-col overflow-hidden bg-bg font-body text-ink antialiased;
+}
+
+.site-layout__body {
+    @apply flex min-h-0 flex-1;
+}
+
+.site-layout__scroll {
+    @apply flex min-w-0 flex-1 flex-col overflow-y-auto;
+}
+
+.site-layout__main {
+    @apply min-w-0 flex-1 p-7 max-md:p-4 max-sm:p-3;
+}
+
+.site-layout__main--center {
+    @apply flex items-start justify-center px-6 py-12 max-md:px-4 max-md:py-6 max-sm:px-3 max-sm:py-4;
+}
+
+.site-layout__backdrop {
+    @apply fixed inset-0 z-40 bg-black/60 backdrop-blur-sm lg:hidden;
+}
+
+.site-layout--locked {
+    @apply max-lg:overflow-hidden;
+}

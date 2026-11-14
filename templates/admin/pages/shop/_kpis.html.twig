@@ -1,0 +1,22 @@
+<div class="admin-kpis">
+    <div class="admin-kpi">
+        <span class="admin-kpi__label">{{ 'admin.shop.kpi.revenue'|trans({}, 'admin') }}</span>
+        <strong class="admin-kpi__value">{{ (kpis.revenue / 100)|number_format(2, ',', ' ') }} €</strong>
+        <span class="admin-kpi__sub">{{ 'admin.shop.kpi.orders'|trans({ count: kpis.orders }, 'admin') }}</span>
+    </div>
+    <div class="admin-kpi">
+        <span class="admin-kpi__label">{{ 'admin.shop.kpi.shipping'|trans({}, 'admin') }}</span>
+        <strong class="admin-kpi__value">{{ kpis.shipping }}</strong>
+        <span class="admin-kpi__sub">{{ 'admin.shop.kpi.shipping_sub'|trans({}, 'admin') }}</span>
+    </div>
+    <div class="admin-kpi">
+        <span class="admin-kpi__label">{{ 'admin.shop.kpi.subscribers'|trans({}, 'admin') }}</span>
+        <strong class="admin-kpi__value">{{ kpis.subscribers }}</strong>
+        <span class="admin-kpi__sub">{{ 'admin.shop.kpi.subscribers_sub'|trans({}, 'admin') }}</span>
+    </div>
+    <div class="admin-kpi">
+        <span class="admin-kpi__label">{{ 'admin.shop.kpi.coins'|trans({}, 'admin') }}</span>
+        <strong class="admin-kpi__value">{{ kpis.coins|number_format(0, ',', ' ') }}</strong>
+        <span class="admin-kpi__sub">{{ 'admin.shop.kpi.coins_sub'|trans({}, 'admin') }}</span>
+    </div>
+</div>

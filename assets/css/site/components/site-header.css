@@ -1,0 +1,118 @@
+.site-header {
+    @apply flex min-h-[72px] flex-wrap items-center gap-4 border-b border-line-soft bg-header px-6 py-3.5
+    max-md:min-h-0 max-md:gap-x-2.5 max-md:gap-y-3 max-md:px-4 max-md:py-3;
+}
+
+.site-header__menu {
+    @apply flex size-11 shrink-0 items-center justify-center rounded-[10px] border border-line bg-field text-ink
+    hover:border-cyan lg:hidden;
+}
+
+.site-header__menu-icon {
+    @apply size-5;
+}
+
+.site-header__logo {
+    @apply flex shrink-0 items-center gap-2.5 text-ink;
+}
+
+.site-header__mark {
+    @apply clip-logo flex size-10 items-center justify-center bg-cyan font-display text-[17px] font-bold text-on-cyan;
+}
+
+.site-header__name {
+    @apply font-display text-xl font-bold tracking-[0.08em] max-sm:hidden;
+}
+
+.site-header__accent {
+    @apply text-cyan;
+}
+
+.site-header__search {
+    @apply relative flex h-11 max-w-[420px] flex-[1_1_240px] items-center gap-2.5 rounded-[10px] border
+    border-line bg-field px-3.5 text-muted-2 focus-within:border-cyan
+    max-md:order-last max-md:max-w-none max-md:basis-full;
+}
+
+.site-header__search-icon {
+    @apply size-[18px] shrink-0;
+}
+
+.site-header__search-input {
+    @apply min-w-0 flex-1 border-0 bg-transparent text-sm text-ink outline-none placeholder:text-muted-2;
+}
+
+.site-header__join {
+    @apply flex items-center gap-2 max-lg:hidden;
+}
+
+.site-header__code {
+    @apply h-11 w-[132px] rounded-[10px] border border-line bg-field px-3 font-display text-sm
+    tracking-[0.1em] text-ink uppercase placeholder:normal-case placeholder:tracking-normal placeholder:text-muted-2;
+}
+
+.site-header__actions {
+    @apply ml-auto flex items-center gap-2.5;
+}
+
+.site-header__notify {
+    @apply flex size-11 items-center justify-center rounded-[10px] border border-line
+    bg-field text-ink hover:border-cyan;
+}
+
+.site-header__wallet {
+    @apply flex h-11 items-center gap-3 rounded-[10px] border border-line bg-field px-3 font-display text-sm font-bold
+    text-ink transition hover:border-yellow max-sm:hidden;
+}
+
+.site-header__wallet-item {
+    @apply flex items-center gap-1.5;
+}
+
+.site-header__wallet-item--coins .site-header__wallet-icon {
+    @apply text-yellow;
+}
+
+.site-header__wallet-item--lives .site-header__wallet-icon {
+    @apply text-danger;
+}
+
+.site-header__wallet-icon {
+    @apply size-4;
+}
+
+.site-header__admin {
+    @apply flex h-11 items-center gap-2 rounded-[10px] border border-violet/50 bg-violet/10 px-3 text-sm font-semibold
+    text-ink hover:border-violet max-lg:w-11 max-lg:justify-center max-lg:px-0;
+}
+
+.site-header__admin-label {
+    @apply max-lg:sr-only;
+}
+
+.site-header__notify-icon {
+    @apply size-5;
+}
+
+.site-header__profile {
+    @apply flex items-center gap-2.5 rounded-xl border border-line bg-field py-1 pr-3 pl-1 text-ink hover:border-cyan max-md:p-1;
+}
+
+.site-header__profile-text {
+    @apply flex flex-col leading-[1.2] max-md:hidden;
+}
+
+.site-header__profile-name {
+    @apply text-sm font-semibold;
+}
+
+.site-header__profile-meta {
+    @apply text-xs text-muted-2;
+}
+.site-header__guest {
+    @apply text-[13px] text-muted-2 max-md:hidden;
+}
+
+.site-header__guest-name {
+    @apply text-ink;
+}

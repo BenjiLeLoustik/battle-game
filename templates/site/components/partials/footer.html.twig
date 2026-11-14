@@ -1,0 +1,51 @@
+<footer class="site-footer">
+    <div class="site-footer__columns">
+        <div class="site-footer__about">
+            <span class="site-footer__brand">
+                BATTLE<span class="site-footer__accent">GAME</span>
+            </span>
+            <p class="site-footer__pitch">
+                {{ 'site.footer.pitch'|trans }}
+            </p>
+            <a href="{{ discord_url() ?? '#' }}" class="btn btn--discord site-footer__discord" target="_blank" rel="noopener">
+                <svg class="site-footer__discord-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M20.3 4.4A19.6 19.6 0 0 0 15.4 3l-.6 1.3a18 18 0 0 0-5.6 0L8.6 3a19.6 19.6 0 0 0-4.9 1.4C.6 9-.3 13.6.1 18.1a19.8 19.8 0 0 0 6 3l1.3-2.1a12.7 12.7 0 0 1-2-1l.5-.4a14 14 0 0 0 12.2 0l.5.4a12.7 12.7 0 0 1-2 1l1.3 2.1a19.7 19.7 0 0 0 6-3c.5-5.2-.9-9.7-3.6-13.7zM8.1 15.3c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4zm7.8 0c-1.2 0-2.2-1.1-2.2-2.4s1-2.4 2.2-2.4 2.2 1.1 2.2 2.4-1 2.4-2.2 2.4z"/></svg>
+                {{ 'site.footer.discord'|trans }}
+            </a>
+        </div>
+        {% set pages = footer_pages() %}
+        <div class="site-footer__column">
+            <span class="site-footer__title">
+                {{ 'site.footer.play'|trans }}
+            </span>
+            <a href="{{ path('site_home_index') }}#games" class="site-footer__link">
+                {{ 'site.footer.all_games'|trans }}
+            </a>
+            <a href="{{ path('site_room_new') }}" class="site-footer__link">
+                {{ 'site.nav.create_room'|trans }}
+            </a>
+            <a href="{{ path('site_leaderboard_index') }}" class="site-footer__link">
+                {{ 'site.nav.leaderboard'|trans }}
+            </a>
+            {% for page in pages.play ?? [] %}
+                <a href="{{ page.url }}" class="site-footer__link">{{ page|localize('title') }}</a>
+            {% endfor %}
+        </div>
+        {% for column in ['developers', 'info'] %}
+            {% if pages[column] is defined %}
+                <div class="site-footer__column">
+                    <span class="site-footer__title">
+                        {{ ('site.footer.' ~ column)|trans }}
+                    </span>
+                    {% for page in pages[column] %}
+                        <a href="{{ page.url }}" class="site-footer__link">{{ page|localize('title') }}</a>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    <div class="site-footer__bottom">
+        <span>
+            © {{ 'now'|date('Y') }} BattleGame
+        </span>
+    </div>
+</footer>

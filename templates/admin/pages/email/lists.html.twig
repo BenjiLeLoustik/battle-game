@@ -1,0 +1,51 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'emails' %}
+
+{% block title %}{{ 'admin.emails.tabs.lists'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        {% include '@admin/components/partials/email-tabs.html.twig' %}
+
+        <section class="admin-panel admin-panel--flush">
+            {% if lists is empty %}
+                <p class="admin-empty">{{ 'admin.emails.lists.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(lists) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['name', 'audience', 'recipients', 'actions'] %}<th class="admin-table__th">{{ ('admin.emails.lists.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for row in pager.items %}
+                                {% set list = row.list %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            <span class="admin-user__name">{{ list.name }}</span>
+                                            {% if list.description %}<span class="admin-user__meta">{{ list.description }}</span>{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        {{ list.audience.translate() }}{{ list.country ? ' · ' ~ list.country }}{{ list.game ? ' · ' ~ list.game.name }}
+                                        {% if list.optIn %}<span class="admin-pill admin-pill--cyan">{{ 'admin.emails.lists.opt_in_short'|trans({}, 'admin') }}</span>{% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">{{ row.count }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_email_list_edit', { id: list.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_email_list_delete', { id: list.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-emails', 'admin.emails.lists.delete_confirm'|trans({ name: list.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

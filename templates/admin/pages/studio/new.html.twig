@@ -1,0 +1,148 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'studio' %}
+
+{% macro error(violations, path) %}
+    {% if violations and violations.has(path) %}
+        <span class="admin-field__error">
+            {{ violations.first(path)|trans({}, 'validators') }}
+        </span>
+    {% endif %}
+{% endmacro %}
+
+{% block title %}{{ 'admin.studio.new'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post" action="{{ path('admin_studio_new') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('studio-new') }}">
+
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_studio_index') }}" class="admin-crumbs__link">
+                {{ 'admin.studio.title'|trans({}, 'admin') }}
+            </a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">
+                {{ 'admin.studio.new'|trans({}, 'admin') }}
+            </span>
+        </nav>
+
+        <div class="admin-page__intro">
+            <h1 class="admin-page__title">
+                {{ 'admin.studio.new'|trans({}, 'admin') }}
+            </h1>
+            <span class="admin-page__subtitle">
+                {{ 'admin.studio.new_help'|trans({}, 'admin') }}
+            </span>
+        </div>
+
+        <section class="admin-panel" aria-labelledby="studio-game">
+            <h2 id="studio-game" class="admin-panel__title">
+                {{ 'admin.studio.step_game'|trans({}, 'admin') }}
+            </h2>
+            <div class="studio-form__grid">
+                <label class="admin-field">
+                    {{ 'admin.studio.name'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="name" value="{{ data.name }}" maxlength="60" required data-component="SlugPreview" data-target="#studio-slug" data-placeholder="mon-jeu">
+                    {{ _self.error(violations, 'name') }}
+                </label>
+                <div class="admin-field">
+                    {{ 'admin.studio.slug'|trans({}, 'admin') }}
+                    <span id="studio-slug" class="admin-field__generated">
+                        {{ data.slug ?: 'mon-jeu' }}
+                    </span>
+                    {{ _self.error(violations, 'slug') }}
+                </div>
+                <label class="admin-field">
+                    {{ 'admin.studio.category'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="category" required>
+                        {% for category in categories %}
+                            <option value="{{ category.slug }}"{{ data.category == category.slug ? ' selected' }}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {{ _self.error(violations, 'category') }}
+                </label>
+                <div class="studio-form__pair">
+                    <label class="admin-field">
+                        {{ 'admin.studio.min_players'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="number" name="min_players" value="{{ data.minPlayers }}" min="1" max="32">
+                        {{ _self.error(violations, 'minPlayers') }}
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.studio.max_players'|trans({}, 'admin') }}
+                        <input class="admin-field__input" type="number" name="max_players" value="{{ data.maxPlayers }}" min="1" max="32">
+                        {{ _self.error(violations, 'maxPlayers') }}
+                    </label>
+                </div>
+                <label class="admin-field studio-form__wide">
+                    {{ 'admin.studio.description'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="description" value="{{ data.description }}" maxlength="160" placeholder="{{ 'admin.studio.description_hint'|trans({}, 'admin') }}">
+                    {{ _self.error(violations, 'description') }}
+                </label>
+            </div>
+            <div class="admin-note">
+                <svg class="admin-note__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6"/></svg>
+                <span>
+                    {{ 'admin.studio.skeleton'|trans({}, 'admin') }}
+                </span>
+            </div>
+        </section>
+
+        <section class="admin-panel" aria-labelledby="studio-team">
+            <div class="admin-panel__intro">
+                <h2 id="studio-team" class="admin-panel__title">
+                    {{ 'admin.studio.step_team'|trans({}, 'admin') }}
+                </h2>
+                <span class="admin-panel__help">
+                    {{ 'admin.studio.team_help'|trans({}, 'admin') }}
+                </span>
+            </div>
+            <div class="studio-member studio-member--lead">
+                {{ ui.avatar(app_user(), 'round') }}
+                <span class="studio-member__info">
+                    <strong class="studio-member__name">
+                        {{ app_user().username }}{{ 'admin.you'|trans({}, 'admin') }}
+                    </strong>
+                    <span class="studio-member__meta">
+                        {{ 'admin.role'|trans({}, 'admin') }}
+                    </span>
+                </span>
+                <span class="admin-tag">
+                    {{ enum('App\\Shared\\Game\\Enum\\GameMemberRoleEnum').LEAD.translate() }}
+                </span>
+            </div>
+            <div class="studio-form__team">
+                {% for admin in admins|filter(admin => admin.id != app_user().id) %}
+                    <label class="studio-member studio-member--choice">
+                        <input class="studio-member__check" type="checkbox" name="team[]" value="{{ admin.id }}"{{ admin.id in data.team ? ' checked' }}>
+                        {{ ui.avatar(admin, 'round') }}
+                        <span class="studio-member__info">
+                            <strong class="studio-member__name">
+                                {{ admin.username }}
+                            </strong>
+                            <span class="studio-member__meta">
+                                {{ 'admin.role'|trans({}, 'admin') }}
+                            </span>
+                        </span>
+                    </label>
+                {% else %}
+                    <p class="admin-panel__help">
+                        {{ 'admin.studio.no_admins'|trans({}, 'admin') }}
+                    </p>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="admin-actions">
+            <button type="submit" class="admin-btn admin-btn--primary admin-btn--large">
+                {{ 'admin.studio.create'|trans({}, 'admin') }}
+            </button>
+            <a href="{{ path('admin_studio_index') }}" class="admin-btn admin-btn--ghost admin-btn--large">
+                {{ 'admin.cancel'|trans({}, 'admin') }}
+            </a>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,87 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'channels' %}
+{% set title = channel.id ? '# ' ~ channel.name : 'admin.channels.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-channels') }}">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_channel_index') }}" class="admin-crumbs__link">{{ 'admin.channels.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.channels.info'|trans({}, 'admin') }}</h2>
+            <div class="admin-form-grid">
+                <label class="admin-field">
+                    {{ 'admin.channels.name'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="name" value="{{ channel.name }}" maxlength="60" required placeholder="général">
+                    {{ admin_ui.error(errors, 'name') }}
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.channels.slug'|trans({}, 'admin') }}
+                    <input class="admin-field__input admin-field__input--mono" name="slug" value="{{ channel.slug }}" maxlength="40" placeholder="general"{{ channel.id ? ' disabled' }}>
+                    <span class="admin-panel__help">{{ (channel.id ? 'admin.channels.slug_locked' : 'admin.channels.slug_help')|trans({}, 'admin') }}</span>
+                    {{ admin_ui.error(errors, 'slug') }}
+                </label>
+                <label class="admin-field admin-field--wide">
+                    {{ 'admin.channels.description'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="description" value="{{ channel.description }}" maxlength="160">
+                </label>
+            </div>
+        </section>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.channels.rules'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.channels.rules_help'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="admin-form-grid">
+                <label class="admin-field">
+                    {{ 'admin.channels.read'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="read">
+                        {% for access in reads %}
+                            <option value="{{ access.value }}"{{ channel.readAccess == access ? ' selected' }}>{{ access.translate() }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.channels.write'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="write">
+                        {% for access in writes %}
+                            <option value="{{ access.value }}"{{ channel.writeAccess == access ? ' selected' }}>{{ access.translate() }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.channels.cooldown'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" name="cooldown" value="{{ channel.cooldown }}" min="1" max="3600">
+                    <span class="admin-panel__help">{{ 'admin.channels.cooldown_help'|trans({}, 'admin') }}</span>
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.channels.position'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" name="position" value="{{ channel.position }}">
+                    <span class="admin-panel__help">{{ 'admin.channels.position_help'|trans({}, 'admin') }}</span>
+                </label>
+            </div>
+            <label class="admin-check">
+                <input type="checkbox" class="admin-check__input" name="active"{{ channel.active ? ' checked' }}>
+                {{ 'admin.channels.active'|trans({}, 'admin') }}
+            </label>
+        </section>
+
+        {{ admin_ui.translations(channel) }}
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_channel_index') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

@@ -1,0 +1,26 @@
+export default function mount(element, context) {
+    const { t, html, text } = context;
+
+    element.innerHTML = html`
+        <div class="{{block}}">
+            <strong class="{{block}}__score"></strong>
+            <button type="button" class="{{block}}__button">${t('click')}</button>
+            <span class="{{block}}__hint"></span>
+        </div>`;
+
+    const score = element.querySelector('.{{block}}__score');
+    const button = element.querySelector('.{{block}}__button');
+    const hint = element.querySelector('.{{block}}__hint');
+
+    const render = () => {
+        const state = context.snapshot.state;
+
+        text(score, 'score', { score: state.scores[context.player] ?? 0, target: state.target });
+        text(hint, state.finished ? 'finished' : 'hint');
+        button.disabled = state.finished;
+    };
+
+    button.addEventListener('click', () => context.send('click'));
+    context.on(render);
+    render();
+}

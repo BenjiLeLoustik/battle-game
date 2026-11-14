@@ -1,0 +1,84 @@
+{% macro icon(group) %}
+    {% set paths = {
+        start: 'M12 3l2.6 5.6 6.1.7-4.5 4.2 1.2 6L12 16.6 6.6 19.5l1.2-6L3.3 9.3l6.1-.7z',
+        steering: 'M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z',
+        studio: 'M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16',
+        community: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3',
+        system: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4',
+        help: 'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3M12 17h.01',
+    } %}
+    <svg class="docs-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ paths[group] ?? paths.help }}"/></svg>
+{% endmacro %}
+
+{% macro block(item) %}
+    {% if item.type == 'p' %}
+        <p class="docs__text">{{ item.text|doc_inline }}</p>
+    {% elseif item.type == 'heading' %}
+        <h3 class="docs__subtitle">{{ item.text }}</h3>
+    {% elseif item.type == 'steps' %}
+        <ol class="docs__steps">
+            {% for step in item.items %}
+                <li class="docs__step"><span class="docs__step-number" aria-hidden="true">{{ loop.index }}</span><span class="docs__step-text">{{ step|doc_inline }}</span></li>
+            {% endfor %}
+        </ol>
+    {% elseif item.type == 'list' %}
+        <ul class="docs__list">
+            {% for entry in item.items %}
+                <li class="docs__list-item">{{ entry|doc_inline }}</li>
+            {% endfor %}
+        </ul>
+    {% elseif item.type == 'defs' %}
+        <dl class="docs__defs">
+            {% for entry in item.items %}
+                <div class="docs__def">
+                    <dt class="docs__term">{{ entry.term|doc_inline }}</dt>
+                    <dd class="docs__desc">{{ entry.text|doc_inline }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    {% elseif item.type in ['tip', 'warn'] %}
+        <aside class="docs__callout docs__callout--{{ item.type }}">
+            {% import '@site/components/macros/icon.html.twig' as icon %}<span class="docs__callout-icon" aria-hidden="true">{{ icon.svg(item.type == 'tip' ? 'lightbulb' : 'alert') }}</span>
+            <p class="docs__callout-text">{{ item.text|doc_inline }}</p>
+        </aside>
+    {% elseif item.type == 'code' %}
+        <figure class="docs__figure">
+            {% if item.title is defined %}
+                <figcaption class="docs__caption">{{ item.title }}</figcaption>
+            {% endif %}
+            <pre class="docs__pre"><code>{{ item.text }}</code></pre>
+        </figure>
+    {% endif %}
+{% endmacro %}
+
+{% macro nav(docs, groups, current = null, currentGroup = null) %}
+    <aside class="docs-nav" aria-label="{{ docs.toc }}" data-component="DocsSearch">
+        <div class="docs-nav__head">
+            <a href="{{ path('admin_docs_index') }}" class="docs-nav__brand">
+                <span class="docs-nav__brand-icon" aria-hidden="true">?</span>
+                <span>{{ docs.title }}</span>
+            </a>
+            <label class="admin-search docs-nav__search">
+                <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                <input class="admin-search__input docs-search__query" type="search" placeholder="{{ docs.search_short }}" aria-label="{{ docs.search }}">
+            </label>
+        </div>
+        <div class="docs-nav__groups">
+            {% for group, list in groups %}
+                <details class="docs-nav__group docs-search__group"{{ group == currentGroup or currentGroup is null ? ' open' }}>
+                    <summary class="docs-nav__summary">
+                        {{ _self.icon(group) }}
+                        <span class="docs-nav__summary-text">{{ docs.groups[group] ?? group }}</span>
+                        <span class="docs-nav__count">{{ list|length }}</span>
+                    </summary>
+                    <div class="docs-nav__links">
+                        {% for section in list %}
+                            <a href="{{ path('admin_docs_show', { id: section.id }) }}" class="docs-nav__link docs-search__item{{ current == section.id ? ' docs-nav__link--active' }}"{% if current == section.id %} aria-current="page"{% endif %} data-search="{{ section.search }}">{{ section.title }}</a>
+                        {% endfor %}
+                    </div>
+                </details>
+            {% endfor %}
+            <p class="docs-search__empty docs-nav__empty" hidden>{{ docs.empty }}</p>
+        </div>
+    </aside>
+{% endmacro %}

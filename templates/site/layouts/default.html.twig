@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block body_class %}site-layout{% endblock %}
+
+{% block body %}
+    {% include '@site/components/partials/header.html.twig' %}
+    {% include '@site/components/partials/banner.html.twig' %}
+    <div class="site-layout__body">
+        {% include '@site/components/partials/sidebar.html.twig' with {
+            active: active|default('home')
+        } %}
+        <div class="site-layout__backdrop" data-sidebar-backdrop hidden></div>
+        <div class="site-layout__scroll">
+            <main id="content" class="site-layout__main">
+                {% block content %}{% endblock %}
+            </main>
+            {% include '@site/components/partials/footer.html.twig' %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,5 @@
+texts:
+    click: CLIQUE !
+    score: "{score} / {target}"
+    hint: Le premier à atteindre l’objectif gagne.
+    finished: Partie terminée !

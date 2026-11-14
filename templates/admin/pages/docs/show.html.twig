@@ -1,0 +1,56 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/docs.html.twig' as docs_ui %}
+
+{% set active = 'docs' %}
+
+{% block title %}{{ section.title }} · {{ docs.title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% set sections = admin_sections() %}
+    <div class="admin-page docs-page">
+        {{ docs_ui.nav(docs, groups, section.id, section.group) }}
+
+        <article class="docs-article" aria-labelledby="docs-title">
+            <nav class="docs-article__crumbs" aria-label="{{ docs.breadcrumb }}">
+                <a href="{{ path('admin_docs_index') }}" class="docs-article__crumb">{{ docs.title }}</a>
+                <span aria-hidden="true">/</span>
+                <span>{{ docs.groups[section.group] ?? section.group }}</span>
+            </nav>
+
+            <header class="docs-article__head">
+                <h1 id="docs-title" class="docs-article__title">{{ section.title }}</h1>
+                {% if section.page is defined and sections[section.page] is defined %}
+                    <a href="{{ path(sections[section.page][0]) }}" class="admin-btn admin-btn--primary admin-btn--small">{{ docs.open }} →</a>
+                {% endif %}
+            </header>
+
+            {% if section.intro is defined %}
+                <p class="docs-article__intro">{{ section.intro|doc_inline }}</p>
+            {% endif %}
+
+            <div class="docs-article__body">
+                {% for item in section.blocks ?? [] %}
+                    {{ docs_ui.block(item) }}
+                {% endfor %}
+            </div>
+
+            <footer class="docs-article__pager">
+                {% if previous %}
+                    <a href="{{ path('admin_docs_show', { id: previous.id }) }}" class="docs-article__pager-link">
+                        <small>← {{ docs.previous }}</small>
+                        <strong>{{ previous.title }}</strong>
+                    </a>
+                {% else %}
+                    <span></span>
+                {% endif %}
+                {% if next %}
+                    <a href="{{ path('admin_docs_show', { id: next.id }) }}" class="docs-article__pager-link docs-article__pager-link--next">
+                        <small>{{ docs.next }} →</small>
+                        <strong>{{ next.title }}</strong>
+                    </a>
+                {% endif %}
+            </footer>
+        </article>
+    </div>
+{% endblock %}

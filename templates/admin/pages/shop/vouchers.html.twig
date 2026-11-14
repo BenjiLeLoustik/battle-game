@@ -1,0 +1,113 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'shop_vouchers' %}
+
+{% block title %}{{ 'admin.shop.vouchers.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.shop.vouchers.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.shop.vouchers.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+        </div>
+
+        <form class="admin-panel" method="post" action="{{ path('admin_shop_voucher_new') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-shop') }}">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.shop.vouchers.new'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.shop.vouchers.new_help'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="voucher-form">
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.kind'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="kind">
+                        {% for item in kinds %}<option value="{{ item.value }}">{{ item.translate() }}</option>{% endfor %}
+                    </select>
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.code'|trans({}, 'admin') }}
+                    <input class="admin-field__input voucher-code" name="code" maxlength="30" placeholder="{{ 'admin.shop.vouchers.code_auto'|trans({}, 'admin') }}">
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.value'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="value" required placeholder="20% / 5 / 500">
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.max_uses'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" min="1" name="max_uses" placeholder="∞">
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.ends_at'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="date" name="ends_at">
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.shop.vouchers.count'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" min="1" max="200" name="count" value="1">
+                </label>
+            </div>
+            <label class="admin-field">
+                {{ 'admin.shop.vouchers.note'|trans({}, 'admin') }}
+                <input class="admin-field__input" name="note" maxlength="160" placeholder="{{ 'admin.shop.vouchers.note_placeholder'|trans({}, 'admin') }}">
+            </label>
+            <span class="admin-panel__help">{{ 'admin.shop.vouchers.value_help'|trans({}, 'admin') }}</span>
+            <div class="admin-actions admin-actions--end">
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.shop.vouchers.create'|trans({}, 'admin') }}</button>
+            </div>
+        </form>
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar shop-filters" method="get">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ q }}" placeholder="{{ 'admin.shop.vouchers.search'|trans({}, 'admin') }}" aria-label="{{ 'admin.shop.vouchers.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="kind" data-component="AutoSubmit" aria-label="{{ 'admin.shop.vouchers.kind'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.shop.all'|trans({}, 'admin') }}</option>
+                    {% for item in kinds %}<option value="{{ item.value }}"{{ kind == item ? ' selected' }}>{{ item.translate() }}</option>{% endfor %}
+                </select>
+            </form>
+            {% if vouchers is empty %}
+                <p class="admin-empty">{{ 'admin.shop.vouchers.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(vouchers, 'page', 15) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['code', 'kind', 'value', 'uses', 'ends', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.shop.vouchers.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for voucher in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            <code class="voucher-code">{{ voucher.code }}</code>
+                                            {% if voucher.note %}<span class="admin-user__meta">{{ voucher.note }}</span>{% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ voucher.kind.value == 'gift' ? ' admin-pill--ok' : ' admin-pill--accent' }}">{{ voucher.kind.translate() }}</span></td>
+                                    <td class="admin-table__cell">
+                                        {% if voucher.kind.value == 'gift' %}{{ 'admin.shop.coins'|trans({ count: voucher.coins }, 'admin') }}
+                                        {% elseif voucher.percent %}-{{ voucher.percent }} %
+                                        {% else %}-{{ ((voucher.amountCents ?? 0) / 100)|number_format(2, ',', ' ') }} €{% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">{{ voucher.uses }}{{ voucher.maxUses ? ' / ' ~ voucher.maxUses : '' }}</td>
+                                    <td class="admin-table__cell">{{ voucher.endsAt ? voucher.endsAt|date('d/m/Y') : '—' }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ voucher.usable ? ' admin-pill--ok' }}">{{ (voucher.usable ? 'admin.shop.vouchers.usable' : (voucher.active ? 'admin.shop.vouchers.exhausted' : 'admin.shop.vouchers.disabled'))|trans({}, 'admin') }}</span></td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            {{ admin_ui.post('admin_shop_voucher_toggle', { id: voucher.id }, (voucher.active ? 'admin.shop.vouchers.disable' : 'admin.shop.vouchers.enable')|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-shop') }}
+                                            {{ admin_ui.post('admin_shop_voucher_delete', { id: voucher.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-shop', 'admin.shop.vouchers.delete_confirm'|trans({ code: voucher.code }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

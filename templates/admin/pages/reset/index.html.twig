@@ -1,0 +1,147 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'reset' %}
+
+{% block title %}{{ 'admin.reset.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.reset.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.reset.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+        </div>
+
+        <form class="admin-panel admin-panel--danger reset-form" method="post" action="{{ path('admin_reset_run') }}" data-component="ResetForm">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-reset') }}">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.reset.blocks_title'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.reset.blocks_help'|trans({}, 'admin') }}</span>
+            </div>
+            {% set icons = { activity: 'M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z', social: 'M4 5h16v11H9l-5 4V5z', shop: 'M3 6h18v12H3zM3 10h18M7 15h4', catalog: 'M5 8h14l-1.2 11.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9L5 8zM9 8V6a3 3 0 0 1 6 0v2', players: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3', content: 'M6 3h9l5 5v13H6zM14 3v6h6M9 13h8M9 17h6', settings: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4', logs: 'M4 4h16v16H4zM8 8h8M8 12h8M8 16h5' } %}
+            <div class="reset-blocks">
+                {% for key, block in blocks %}
+                    <div class="reset-block">
+                        <label class="reset-block__main">
+                            <input type="checkbox" class="reset-block__input" name="blocks[]" value="{{ key }}">
+                            <span class="reset-block__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icons[key] }}"/></svg></span>
+                            <span class="reset-block__text">
+                                <strong class="reset-block__name">{{ ('admin.reset.blocks.' ~ key ~ '.name')|trans({}, 'admin') }}</strong>
+                                <span class="reset-block__help">{{ ('admin.reset.blocks.' ~ key ~ '.help')|trans({}, 'admin') }}</span>
+                            </span>
+                            <span class="reset-block__total">
+                                <strong class="reset-block__count">{{ block.total|number_format(0, ',', ' ') }}</strong>
+                                <span class="reset-block__unit">{{ 'admin.reset.rows_unit'|trans({}, 'admin') }}</span>
+                            </span>
+                            <span class="reset-block__check" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 7"/></svg></span>
+                        </label>
+                        {% if block.counts is not empty %}
+                            <details class="reset-block__details">
+                                <summary class="reset-block__summary">{{ (block.counts|length > 1 ? 'admin.reset.tables' : 'admin.reset.table')|trans({ count: block.counts|length }, 'admin') }}</summary>
+                                <ul class="reset-block__tables">
+                                    {% for table, count in block.counts %}
+                                        <li class="reset-block__table"><code>{{ table }}</code><span>{{ count|number_format(0, ',', ' ') }}</span></li>
+                                    {% endfor %}
+                                </ul>
+                            </details>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+            <p class="admin-note"><span class="admin-note__icon">i</span>{{ 'admin.reset.kept'|trans({}, 'admin') }}</p>
+            <div class="reset-confirm">
+                <label class="admin-field">
+                    {{ 'admin.reset.confirm_label'|trans({ word: confirm }, 'admin') }}
+                    <input class="admin-field__input" name="confirm" autocomplete="off" data-component="ConfirmMatch" data-expected="{{ confirm }}" placeholder="{{ confirm }}">
+                </label>
+                <button type="submit" class="admin-btn admin-btn--danger" data-reset-submit disabled>{{ 'admin.reset.submit'|trans({}, 'admin') }}</button>
+            </div>
+            <span class="admin-panel__help">{{ 'admin.reset.backup_note'|trans({}, 'admin') }}</span>
+        </form>
+
+        <form class="admin-panel" method="post" action="{{ path('admin_reset_auto') }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('admin-reset') }}">
+            <div class="reset-auto__head">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.reset.auto.title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.reset.auto.help'|trans({}, 'admin') }}</span>
+                </div>
+                <span class="admin-pill {{ scheduler.running ? 'admin-pill--ok' : 'admin-pill--warn' }}">{{ (scheduler.running ? 'admin.reset.auto.running' : 'admin.reset.auto.stopped')|trans({}, 'admin') }}</span>
+            </div>
+            {% if not scheduler.running %}
+                <p class="admin-note"><span class="admin-note__icon">i</span>{{ 'admin.reset.auto.stopped_help'|trans({}, 'admin') }}</p>
+            {% endif %}
+            <div class="reset-auto">
+                <label class="admin-check"><input type="checkbox" class="admin-check__input" name="backup_auto" value="1"{{ auto.enabled ? ' checked' }}> {{ 'admin.reset.auto.enabled'|trans({}, 'admin') }}</label>
+                <label class="admin-check"><input type="checkbox" class="admin-check__input" name="backup_files" value="1"{{ auto.files ? ' checked' }}> {{ 'admin.reset.auto.files'|trans({}, 'admin') }}</label>
+                <label class="admin-field reset-auto__keep">
+                    {{ 'admin.reset.auto.keep'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" name="backup_keep" min="1" max="60" value="{{ auto.keep }}">
+                </label>
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+            </div>
+        </form>
+
+        <section class="admin-panel admin-panel--flush">
+            <div class="admin-panel__bar reset-backups__bar">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.reset.backups_title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.reset.backups_help'|trans({}, 'admin') }}</span>
+                </div>
+                <span class="admin-actions">
+                    {{ admin_ui.post('admin_reset_backup', {}, 'admin.reset.backup_now'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-reset') }}
+                    {{ admin_ui.post('admin_reset_backup_files', {}, 'admin.reset.backup_files_now'|trans({}, 'admin'), 'admin-btn admin-btn--ghost', 'admin-reset') }}
+                </span>
+            </div>
+            {% if backups is empty %}
+                <p class="admin-empty">{{ 'admin.reset.no_backup'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(backups, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['file', 'type', 'date', 'size', 'actions'] %}<th class="admin-table__th">{{ ('admin.reset.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for backup in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell admin-table__cell--mono">{{ backup.name }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ backup.type == 'files' ? ' admin-pill--accent' : '' }}">{{ ('admin.reset.types.' ~ backup.type)|trans({}, 'admin') }}</span>{% if backup.auto %} <span class="admin-pill">{{ 'admin.reset.types.auto'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell">{{ backup.date|date('d/m/Y H:i') }}</td>
+                                    <td class="admin-table__cell">{{ (backup.size / 1024)|number_format(0, ',', ' ') }} Ko</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_reset_download', { name: backup.name }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.reset.download'|trans({}, 'admin') }}</a>
+                                            {% if backup.type == 'database' %}<button type="button" class="admin-btn admin-btn--warning admin-btn--small" data-restore="{{ path('admin_reset_restore', { name: backup.name }) }}" data-name="{{ backup.name }}">{{ 'admin.reset.restore'|trans({}, 'admin') }}</button>{% endif %}
+                                            {{ admin_ui.post('admin_reset_delete', { name: backup.name }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-reset', 'admin.reset.delete_confirm'|trans({ name: backup.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+
+        <dialog class="reset-dialog" data-component="RestoreDialog" aria-labelledby="reset-dialog-title">
+            <form class="reset-dialog__card" method="post" action="">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-reset') }}">
+                <span class="reset-dialog__icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+                <h2 id="reset-dialog-title" class="reset-dialog__title">{{ 'admin.reset.restore_title'|trans({}, 'admin') }}</h2>
+                <code class="reset-dialog__file" data-restore-name></code>
+                <p class="reset-dialog__text">{{ 'admin.reset.restore_help'|trans({ word: restore }, 'admin') }}</p>
+                <label class="admin-field">
+                    {{ 'admin.reset.confirm_label'|trans({ word: restore }, 'admin') }}
+                    <input class="admin-field__input" name="confirm" autocomplete="off" data-component="ConfirmMatch" data-expected="{{ restore }}" placeholder="{{ restore }}">
+                </label>
+                <div class="reset-dialog__actions">
+                    <button type="button" class="admin-btn admin-btn--ghost" data-restore-close>{{ 'admin.cancel'|trans({}, 'admin') }}</button>
+                    <button type="submit" class="admin-btn admin-btn--danger" disabled>{{ 'admin.reset.restore_submit'|trans({}, 'admin') }}</button>
+                </div>
+            </form>
+        </dialog>
+    </div>
+{% endblock %}

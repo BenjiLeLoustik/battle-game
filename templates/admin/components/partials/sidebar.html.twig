@@ -1,0 +1,84 @@
+{% set groups = [
+    { id: 'steering', items: [
+        { id: 'dashboard', icon: 'M3 3h8v8H3zM13 3h8v5h-8zM13 10h8v11h-8zM3 13h8v8H3z' },
+        { id: 'games', icon: 'M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z' },
+        { id: 'categories', icon: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM16.5 13a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z' },
+        { id: 'studio', icon: 'M8 6l-6 6 6 6M16 6l6 6-6 6M14 4l-4 16' },
+        { id: 'rooms', icon: 'M4 20h16M6 20V4h12v16M14 12h.01' },
+        { id: 'banners', icon: 'M3 10h18v4H3zM7 10V7M17 10V7M5 14v3M19 14v3' },
+        { id: 'badges', icon: 'M12 2l2.4 4.9 5.4.8-3.9 3.8.9 5.4L12 14.4 7.2 16.9l.9-5.4-3.9-3.8 5.4-.8L12 2zM8 16l-2 6 6-2 6 2-2-6' },
+    ] },
+    { id: 'shop', items: [
+        { id: 'shop_products', icon: 'M5 8h14l-1.2 11.1a1 1 0 0 1-1 .9H7.2a1 1 0 0 1-1-.9L5 8zM9 8V6a3 3 0 0 1 6 0v2' },
+        { id: 'shop_orders', icon: 'M3 8l9-5 9 5v8l-9 5-9-5V8zM3 8l9 5 9-5M12 13v8' },
+        { id: 'shop_vouchers', icon: 'M3 8h18v4H3zM5 12v9h14v-9M12 8v13M12 8S10 3 7.5 3a2.5 2.5 0 0 0 0 5H12zM12 8s2-5 4.5-5a2.5 2.5 0 0 1 0 5H12z' },
+        { id: 'shop_subscriptions', icon: 'M5 16l-2-9 5 4 4-7 4 7 5-4-2 9H5zM5 20h14' },
+        { id: 'shop_settings', icon: 'M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18zM12 7v10M9 9.5c0-1 1.3-1.5 3-1.5s3 .7 3 1.8c0 2.7-6 1.4-6 4.2 0 1.1 1.3 2 3 2s3-.6 3-1.6' },
+    ] },
+    { id: 'engage', items: [
+        { id: 'engage_seasons', icon: 'M8 2v4M16 2v4M3 9h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zM8 14h3v3H8z' },
+        { id: 'engage_ranks', icon: 'M12 2l3 6 6 1-4.5 4.5 1 6.5-5.5-3-5.5 3 1-6.5L3 9l6-1 3-6z' },
+        { id: 'engage_events', icon: 'M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8' },
+        { id: 'engage_pass', icon: 'M4 6h16v12H4zM4 10h16M8 14h4' },
+        { id: 'engage_tournaments', icon: 'M4 4h5v4H4zM4 16h5v4H4zM15 10h5v4h-5zM9 6h3v12H9M12 12h3' },
+        { id: 'engage_clans', icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM12 8v8M8 12h8' },
+    ] },
+    { id: 'community', items: [
+        { id: 'users', icon: 'M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21a7 7 0 0 1 14 0M17 3a4 4 0 0 1 0 8M22 21a7 7 0 0 0-4-6.3' },
+        { id: 'channels', icon: 'M5 9h14M5 15h14M10 4 8 20M16 4l-2 16' },
+        { id: 'moderation', icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z' },
+    ] },
+    { id: 'system', items: [
+        { id: 'general', icon: 'M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M14 4v4M8 10v4M16 16v4' },
+        { id: 'pages', icon: 'M6 3h9l5 5v13H6zM14 3v6h6M9 13h8M9 17h6' },
+        { id: 'maintenance', icon: 'M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4 2.6-2.6z' },
+        { id: 'languages', icon: 'M4 5h8M8 3v2M6 5c0 4 3 7 6 8M10 5c0 3-3 7-6 8M13 21l4-10 4 10M14.5 17h5' },
+        { id: 'emails', icon: 'M3 6h18v12H3zM3 7l9 6 9-6' },
+        { id: 'realtime', icon: 'M2 12h4l3-8 4 16 3-8h6' },
+        { id: 'admins', icon: 'M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM12 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM9 16a3 3 0 0 1 6 0' },
+        { id: 'roles', icon: 'M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5zM12 15v2' },
+        { id: 'reset', icon: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5' },
+    ] },
+] %}
+
+{% set sections = admin_sections() %}
+
+<nav class="admin-sidebar" aria-label="{{ 'admin.nav.label'|trans({}, 'admin') }}">
+    {% for group in groups|filter(group => group.items|filter(item => sections[item.id] is defined)|length > 0) %}
+        <div class="admin-sidebar__group">
+            <span class="admin-sidebar__title">
+                {{ ('admin.nav.' ~ group.id)|trans({}, 'admin') }}
+            </span>
+            {% for item in group.items|filter(item => sections[item.id] is defined) %}
+                <a href="{{ path(sections[item.id][0]) }}" class="admin-sidebar__link{{ item.id == active ? ' admin-sidebar__link--active' }}"{% if item.id == active %} aria-current="page"{% endif %}>
+                    <svg class="admin-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ item.icon }}"/></svg>
+                    <span class="admin-sidebar__label">
+                        {{ ('admin.nav.' ~ item.id)|trans({}, 'admin') }}
+                    </span>
+                </a>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <div class="admin-sidebar__group">
+        <span class="admin-sidebar__title">
+            {{ 'admin.nav.help'|trans({}, 'admin') }}
+        </span>
+        <a href="{{ path('admin_twofa_index') }}" class="admin-sidebar__link{{ active == 'security' ? ' admin-sidebar__link--active' }}"{% if active == 'security' %} aria-current="page"{% endif %}>
+            <svg class="admin-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3zM9 12l2 2 4-4"/></svg>
+            <span class="admin-sidebar__label">
+                {{ 'admin.nav.security'|trans({}, 'admin') }}
+            </span>
+        </a>
+        <a href="{{ path('admin_docs_index') }}" class="admin-sidebar__link{{ active == 'docs' ? ' admin-sidebar__link--active' }}"{% if active == 'docs' %} aria-current="page"{% endif %}>
+            <svg class="admin-sidebar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7M8 11h5"/></svg>
+            <span class="admin-sidebar__label">
+                {{ 'admin.nav.docs'|trans({}, 'admin') }}
+            </span>
+        </a>
+    </div>
+    <div class="admin-sidebar__footer">
+        <span class="admin-sidebar__brand"><span class="admin-sidebar__dot" aria-hidden="true"></span>BattleGame</span>
+        <span class="admin-sidebar__chip" title="{{ 'admin.version.platform'|trans({}, 'admin') }}">v{{ constant('App\\Kernel::VERSION') }}</span>
+        <span class="admin-sidebar__chip" title="{{ 'admin.version.sdk'|trans({}, 'admin') }}">SDK {{ constant('App\\Sdk\\AbstractSdk::VERSION') }}</span>
+    </div>
+</nav>

@@ -1,0 +1,1300 @@
+system:
+    error:
+        title: Erreur {status}
+        back: Retour à l'accueil
+    suspended:
+        title: Accès suspendu
+        until: "Ton compte est suspendu jusqu'au {date}."
+        permanent: Ton compte est banni définitivement.
+        reason: "Motif : {reason}"
+        logout: Se déconnecter
+
+site:
+    tagline: Mini-jeux multijoueur entre amis
+    header:
+        home: BattleGame, accueil
+        search: Rechercher un jeu, un joueur…
+        search_label: Rechercher
+        room_code: Code de room
+        join: Rejoindre
+        admin: Administration
+        notifications: Notifications
+        
+    banner:
+        label: Événements en cours
+        live: EN COURS
+        cta: Voir
+        close: Masquer le bandeau
+        details: Détails
+        maintenance:
+            site: Maintenance du site
+            games: "Maintenance : {names}"
+            features: "Indisponible : {names}"
+            until: "En cours · retour prévu à {time}"
+            from: "Prévue de {start} à {end}"
+
+    maintenance:
+        title: Maintenance
+        tag_running: MAINTENANCE EN COURS
+        tag_planned: MAINTENANCE PRÉVUE
+        heading_running: On met à jour l'arène
+        heading_planned: Une maintenance arrive bientôt
+        back_in: Retour estimé dans
+        starts_in: Début dans
+        window: Fenêtre de maintenance
+        available: Toujours accessible pendant la maintenance
+        home: Retour à l'accueil
+        discord: Suivre sur Discord
+        team: Accès équipe
+        page:
+            leaderboard: Classement
+            games: Catalogue des jeux
+        
+    rewards:
+        title: Récompenses du jour
+        pending: "{count} récompense(s) à récupérer"
+        all_done: "Tout est récupéré : +{coins} pièces aujourd'hui"
+        countdown: "Nouvelles récompenses dans {hours} h {minutes}"
+        daily: Connexion quotidienne
+        streak: "Série de {count} jour(s)"
+        day: "J{day}"
+        tomorrow: Demain
+        claim: "Récupérer {coins} pièces"
+        come_back: "Reviens demain pour récupérer {coins} pièces et prolonger ta série."
+        claimed: Récompense récupérée !
+        claimed_short: "+{coins} pièces récupérées"
+        ready: Défi réussi, récupère ta récompense
+        challenges: Défis du jour
+        list:
+            play: "Jouer {count} parties en ligne"
+            win: Gagner une partie en ligne
+            variety: "Jouer à {count} jeux différents"
+        types:
+            coins: "{count} pièces"
+            lives: "{count} vie(s)"
+            giftcard: "Carte cadeau de {count} pièces"
+            subscription: "Abonnement {name} · {days} jours"
+
+    invoice:
+        print: Imprimer / Enregistrer en PDF
+        back: Retour
+        missing_seller: "Les informations du vendeur ne sont pas encore renseignées (admin › Boutique › Réglages)."
+        date: "Émise le {date}"
+        credit_of: "Avoir sur la facture {number}"
+        order: "Commande {reference}"
+        seller: Vendeur
+        buyer: Client
+        vat_number: N° TVA
+        account: "Compte BattleGame : {name}"
+        label: Désignation
+        quantity: Qté
+        net: Prix HT
+        vat: TVA
+        total: Total TTC
+        total_net: Total HT
+        total_vat: "TVA ({rate} %)"
+        vat_exempt_short: TVA
+        total_paid: Total payé TTC
+        total_credit: Total remboursé TTC
+        exempt_mention: TVA non applicable, art. 293 B du CGI.
+        paid_note: "Payée le {date} par carte bancaire (Stripe)."
+        credit_note: Montant remboursé sur le moyen de paiement utilisé lors de la commande.
+        legal: "Pas d'escompte pour paiement anticipé. En cas de retard de paiement, indemnité forfaitaire pour frais de recouvrement : 40 €."
+
+    shop:
+        title: Boutique
+        subtitle: "Abonnements, pièces, vies et objets. Chaque partie en ligne rapporte {match} pièces, +{win} en cas de victoire."
+        categories: Catégories de la boutique
+        owned: Déjà possédé
+        need_account: Crée un compte pour acheter
+        coins_price: "{coins} pièces"
+        pay: "Payer {price}"
+        subscribe: "S'abonner · {price}"
+        card_off: Paiement par carte indisponible pour le moment
+        card_admin: "Stripe n'est pas configuré : ajoute STRIPE_SECRET_KEY et STRIPE_WEBHOOK_SECRET dans .env.local pour activer la carte bancaire."
+        month: mois
+        stock: "{count} en stock"
+        size: Taille
+        promo_placeholder: Code promo (facultatif)
+        promo_used: "code {code}"
+        gift:
+            your_code: Ton code cadeau
+            help: "À offrir ! La personne qui l'utilise dans « Utiliser un code » reçoit {coins} pièces."
+            used: déjà utilisé
+            title: Utiliser un code cadeau
+            redeem_help: Saisis le code reçu (carte cadeau, concours, partenaire…). Les pièces sont ajoutées tout de suite à ton portefeuille. Les codes promo, eux, se saisissent au moment du paiement.
+            submit: Valider le code
+            redeemed: "+{coins} pièces ajoutées à ton portefeuille !"
+        size_pick: Choisir…
+        terms_physical: "J'accepte les <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">CGV</a>."
+        terms_digital: "J'accepte les <a href=\"{url}\" target=\"_blank\" rel=\"noopener\">CGV</a> et demande la livraison immédiate : je renonce à mon droit de rétractation."
+        empty: Aucun produit dans cette catégorie pour le moment.
+        reference: Référence
+        back: Retour à la boutique
+        nav:
+            index: Catalogue
+            inventory: Mon inventaire
+            orders: Mes achats
+            redeem: Utiliser un code
+        tabs:
+            all: Tout
+            subscription: Abonnements
+            coins: Pièces
+            lives: Vies
+            badge: Badges
+            cosmetic: Cosmétiques
+            gift: Cartes cadeaux
+            physical: Goodies
+        plan:
+            tag: ABONNEMENT
+            lives: "{count} vies par jour"
+            unlimited: Vies illimitées en ligne
+            early: Accès aux jeux en avant-première
+            pass: "Pass de saison : {tracks}"
+        purse:
+            coins: pièces
+            lives: "vies · recharge à {time}"
+            unlimited: vies illimitées
+            until: "jusqu'au {date}"
+        flash:
+            bought: Achat effectué !
+            cancelled: Paiement annulé, aucun montant n'a été débité.
+            equipped: Cosmétique mis à jour.
+            unsubscribed: "Abonnement résilié : il reste actif jusqu'à la fin de la période payée."
+            terms: Coche la case d'acceptation des conditions générales de vente pour payer.
+        success:
+            title: Merci pour ton achat !
+            pending: Paiement en cours de confirmation
+            pending_text: "Ton paiement pour « {name} » est en cours de validation. Ton achat sera livré automatiquement dans quelques instants."
+            coins: "Tes pièces ont été ajoutées à ton portefeuille."
+            lives: "Tes vies bonus sont disponibles dès maintenant."
+            badge: "Le badge « {name} » a rejoint ta collection."
+            cosmetic: "« {name} » est dans ton inventaire : équipe-le pour l'afficher."
+            subscription: "Ton abonnement « {name} » est actif. Profite de tes avantages !"
+            physical: "Ta commande « {name} » est enregistrée. Tu recevras le numéro de suivi dès l'expédition."
+            gift: "Ta carte cadeau « {name} » est prête : voici le code à offrir."
+        orders:
+            title: Commandes
+            empty: Aucun achat pour le moment.
+            tracking: "suivi {code}"
+            coins: Historique des pièces
+            no_coins: Aucun mouvement de pièces.
+        reason:
+            match: Partie jouée
+            shop: Achat boutique
+            purchase: Achat de pièces
+            refund: Remboursement
+            admin: Ajustement par l'équipe
+            daily: Récompense quotidienne
+            challenge: Défi du jour
+            season: Récompense de fin de saison
+            gift: Code cadeau
+            pass: "Pass de saison"
+            referral: "Parrainage"
+            tournament: "Tournoi"
+        inventory:
+            subscription: Abonnement
+            renews: "Renouvellement le {date}"
+            ends: "Actif jusqu'au {date}, sans renouvellement"
+            cancel: Résilier
+            cancel_confirm: Résilier ton abonnement ? Il restera actif jusqu'à la fin de la période payée.
+            no_subscription: Aucun abonnement actif.
+            see_plans: Voir les offres
+            cosmetics: Cosmétiques
+            equip: Équiper
+            unequip: Retirer
+            no_items: Aucun cosmétique pour le moment.
+            see_cosmetics: Découvrir les cosmétiques
+
+    nav:
+        label: Navigation principale
+        caption_main: // NAVIGATION
+        caption_account: // COMPTE
+        collapse: Réduire le menu
+        expand: Ouvrir le menu
+        open: Afficher le menu
+        close: Fermer le menu
+        home: Accueil
+        rooms: Rooms
+        leaderboard: Classement
+        chat: Discussion
+        friends: Amis
+        shop: Boutique
+        login: Connexion
+        profile: Mon profil
+        settings: Paramètres
+        logout: Déconnexion
+        create_room: Créer une room
+        guest_playing: Tu joues en invité
+        guest_text: Crée un compte pour garder ton XP et tes badges.
+        pass: "Pass de saison"
+        ranked: "Classé"
+        tournaments: "Tournois"
+        live: "En direct"
+        clans: "Clans"
+        
+    auth:
+        registration_closed: Les inscriptions sont fermées pour le moment. Tu peux quand même jouer en invité si c'est autorisé.
+        login: Connexion
+        register: Créer un compte
+        have_account: J'ai déjà un compte
+        aside: Pourquoi créer un compte
+        title: Le compte est
+        title_accent: facultatif
+        intro: "Tu peux jouer tout de suite avec un simple pseudo. Un compte sert à garder ce que tu gagnes :"
+        perks:
+            progress:
+                title: Progression sauvegardée
+                description: Niveau, records et historique de parties.
+            leaderboard:
+                title: Classements
+                description: Apparais dans le top global et par jeu.
+            friends:
+                title: Amis & discussion
+                description: Messages privés, salons, invitations en un clic.
+            rooms:
+                title: Rooms permanentes
+                description: Garde ta room et son code pour tes soirées.
+        form: Formulaire
+        tabs: Connexion ou inscription
+        tab_login: Connexion
+        tab_register: Inscription
+        discord_login: Se connecter avec Discord
+        discord_register: S'inscrire avec Discord
+        or_email: ou par email
+        first_name: Prénom
+        last_name: Nom
+        username: Pseudo
+        username_help: "3 à 30 caractères : lettres, chiffres et _. Affiché @Pseudo."
+        email: Email
+        email_placeholder: toi@exemple.fr
+        password: Mot de passe
+        password_hint: 10 caractères minimum
+        remember_me: Rester connecté
+        forgot: Mot de passe oublié ?
+        agree: J'accepte les règles de la communauté et la politique de confidentialité.
+        submit_login: Se connecter
+        submit_register: Créer mon compte
+        guest: Jouer sans compte
+        guest_placeholder: Ton pseudo
+        guest_submit: Continuer en invité
+        guest_help: Les invités peuvent créer et rejoindre des rooms et discuter dans la room. Scores non sauvegardés.
+        guest_keep: Ton pseudo d'invité est conservé, ainsi que tes scores de la session.
+        guest_label: Invité
+        discord_step:
+            badge: Connecté avec Discord
+            title: Dernière étape
+            intro: "Bienvenue {name} ! Choisis le pseudo affiché aux autres joueurs : il est unique sur BattleGame."
+            cancel: Annuler et revenir à la connexion
+        
+    footer:
+        pitch: Des mini-jeux multijoueur rapides, en rooms privées entre amis. Pas besoin de compte pour jouer.
+        discord: Rejoindre le Discord
+        play: Jouer
+        all_games: Tous les jeux
+        developers: Développeurs
+        info: Infos
+        
+    game:
+        players: "{players} joueurs"
+        early: Avant-première
+        early_unlock: Débloquer avec un abonnement
+        duration: "~{minutes} min"
+        online: "{count} en ligne"
+        play: Jouer
+        
+    home:
+        title: Mini-jeux multijoueur entre amis
+        featured: À la une · {category}
+        players: joueurs
+        per_game: par partie
+        playing_now: en jeu maintenant
+        play_now: Jouer maintenant
+        see_game: Voir le jeu
+        slider:
+            label: Jeux à la une
+            slide: "{current} sur {total}"
+            previous: Jeu précédent
+            next: Jeu suivant
+            go_to: "Afficher {name}"
+            pause: Mettre en pause le défilement
+            play: Reprendre le défilement
+        join:
+            title: Un ami t'a envoyé un code ?
+            help: "Pas besoin de compte : choisis un pseudo et rejoins sa room."
+            pseudo: Pseudo
+            code: Code
+            submit: Rejoindre la room
+        notification: Notifications
+        
+        games:
+            title: Tous les jeux
+            filter: Filtrer par catégorie
+            all: Tous
+            empty: Aucun jeu dans cette catégorie pour le moment.
+            retry: Réessayer le chargement
+        
+    game_page:
+        lives:
+            left: "{left}/{max} vies aujourd'hui"
+            bonus: "+{count} bonus"
+            empty: "Plus de vies en ligne aujourd'hui, recharge à {time}. L'entraînement reste illimité."
+            more: Plus de vies
+        breadcrumb: Fil d'Ariane
+        games: Jeux
+        playing: En jeu
+        record: Record
+        best: Ton meilleur
+        quick_play: Partie rapide
+        solo: Entraînement solo
+        how_to: Comment jouer
+        you: " (toi)"
+        no_results: Aucun résultat pour le moment. Joue une partie pour ouvrir le classement !
+        my_stats: Tes stats
+        login: Connecte-toi
+        login_help: pour suivre tes stats sur ce jeu.
+        no_games: Joue une partie pour voir tes stats.
+        games_played: Parties
+        wins: Victoires
+        infos: Infos du jeu
+        author: Auteur
+        updated: Mis à jour
+        maintenance:
+            down_title: "{name} est en maintenance"
+            down_message: "{name} est temporairement indisponible, le temps d'une mise à jour."
+            blocked_title: "Maintenance à {time}"
+            blocked_message: Aucune nouvelle partie ne peut être lancée avant la maintenance.
+            planned_title: "Maintenance prévue à {time}"
+            back: Retour estimé
+            window: Fenêtre
+            badge: EN MAINTENANCE
+            unavailable: "{action} · indisponible"
+            note_finish: "Les parties lancées avant {time} ont pu se terminer normalement."
+            note_stop: Les parties en cours au début de la maintenance ont été interrompues et ne sont pas comptées.
+            alternatives: En attendant, essaie…
+            playing: "{count} en jeu"
+        
+    leaderboard:
+        title: Classement
+        ends_in: se termine dans
+        days: "{count} jours"
+        accounts_only: réservé aux comptes
+        game: Jeu
+        all_games: Tous les jeux (global)
+        period: Période
+        podium: Podium
+        table: Tableau du classement
+        empty: Aucune partie classée sur cette période pour l'instant.
+        points_value: "{points} pts"
+        rank: Rang
+        player: Joueur
+        level: Niveau
+        points: Points
+        games: Parties
+        wins: Victoires
+        favorite: Jeu favori
+        trend: Évolution
+        new: Nouveau
+        anonymous: Joueur anonyme
+        note: Les points viennent des parties rapides, selon le barème de chaque jeu. Les entraînements ne comptent ni pour le classement ni pour les stats.
+
+    room:
+        title: Rooms
+        intro: "Une room réunit un groupe de joueurs : à chaque tour, des jeux sont tirés au sort et le plus voté se lance."
+        new: Nouvelle room
+        mine: Mes rooms
+        mine_empty: Tu n'as encore rejoint aucune room. Crée la tienne ou entre un code d'invitation.
+        public: Rooms publiques
+        public_count: "{count} ouvertes"
+        public_empty: Aucune room publique ouverte pour le moment.
+        legend_open: "Ouverte : on entre directement"
+        filter: Nom, hôte…
+        filter_label: Filtrer les rooms
+        free: Places libres
+        access: Accès
+        room: Room
+        host: Hôte
+        status: Statut
+        players: Joueurs
+        action: Action
+        open: Ouvrir
+        enter: Rejoindre
+        watch: Regarder
+        copy_link: Copier le lien d'invitation
+        copied: Copié ✓
+        code: Code
+        count: "{count} / {max} joueurs"
+        you_host: Tu es l'hôte
+        host_of: "Hôte : {name}"
+        permanent: room permanente
+        playing_game: "partie de {game} en cours"
+        empty_room: Personne
+        players_range: "{min}–{max} j."
+        chip:
+            code: Code
+            password: Code + mot de passe
+            public: Publique
+        steps:
+            label: Étapes
+            room: La room
+            invite: Invitation
+        form:
+            title: Créer une room
+            cancel: Annuler
+            intro: "Une room, c'est ton groupe. Invite tes amis d'abord : dans le lobby, des jeux compatibles avec le nombre de joueurs présents sont tirés au sort, chacun vote, et le plus voté se lance automatiquement."
+            section: Ta room
+            name: Nom de la room
+            size: Taille du groupe (max)
+            size_option: "{count} joueurs"
+            size_help: Plus le groupe est grand, moins il y a de jeux compatibles.
+            visibility: Qui peut entrer ?
+            visibility_help:
+                code: Tes amis entrent avec le lien ou le code de la room.
+                password: "Le code ne suffit pas : il faut aussi le mot de passe."
+                public: Visible dans la liste des rooms, tout le monde peut entrer.
+            password: Mot de passe de la room
+            password_help: Il sera affiché à l'étape suivante pour que tu le partages.
+            vote: Vote des jeux
+            choices: Jeux tirés à chaque tour
+            choices_option: "{count} jeux"
+            duration: Durée du vote
+            duration_option: "{count} secondes"
+            vote_help: Le jeu le plus voté se lance automatiquement. En cas d'égalité, tirage au sort.
+            guests: Invités sans compte autorisés
+            spectators: Spectateurs autorisés
+            permanent: Room permanente (garder le même code pour les prochaines soirées)
+            submit: CRÉER LA ROOM →
+        invite:
+            ready: "« {name} » est prête"
+            summary: "{visibility} · {max} joueurs max · le jeu se choisit dans le lobby"
+            link: Lien d'invitation
+            copy_link: Copier le lien
+            copied_link: Lien copié ✓
+            code: Code de la room
+            code_help: À saisir dans « Code de room » en haut du site
+            password: Mot de passe
+            password_help: Demandé à l'entrée de la room
+            message_label: Message prêt à envoyer
+            message: "Rejoins ma room « {name} » sur BattleGame ! {link} — code {code}."
+            message_password: "Mot de passe : {password}."
+            message_guests: Pas besoin de compte, un pseudo suffit.
+            copy_message: Copier le message
+            copied_message: Message copié ✓
+            discord: Partager sur Discord
+            lobby: ALLER AU LOBBY →
+        join:
+            title: Rejoindre une room
+            kicker: Room
+            protected: Room protégée
+            host: "Hôte : {name}"
+            code: Code de la room
+            code_help: Si tu arrives par un lien ou par « Code de room », il est déjà rempli.
+            password: Mot de passe
+            password_help: Demande le mot de passe à l'hôte.
+            attempts: "Essais restants : {count}"
+            pseudo: Ton pseudo
+            pseudo_help: Pas besoin de compte, un pseudo suffit.
+            submit: ENTRER DANS LA ROOM
+            back: ← Retour aux rooms
+            not_found: Aucune room ne correspond à ce code.
+            wrong_password: Mot de passe incorrect.
+            locked: Trop d'essais. Demande le mot de passe à l'hôte.
+        lobby:
+            kicked: Tu as été exclu de la room.
+            rules_title: "Règles de {game}"
+            rules_host: Choisis les règles de la partie, ou garde celles par défaut. Les autres joueurs attendent ton choix.
+            rules_waiting: "{host} choisit les règles de {game}…"
+            rules_left: "Règles par défaut dans {time}"
+            rules_default_tag: défaut
+            rules_default: Règles par défaut
+            rules_apply: Lancer avec ces règles
+            rules_chosen: "{rules}"
+            configuring: L'hôte choisit les règles.
+            kicker: "{visibility} · hôte {host}"
+            meta: "{count} / {max} joueurs · {played} parties jouées"
+            code: Code
+            copy: Copier l'invitation
+            copied: Invitation copiée ✓
+            invitation: "Rejoins ma room « {name} » sur BattleGame ! {link} — code {code}."
+            leave: Quitter
+            group: Le groupe
+            host_suffix: " (hôte)"
+            invite: + Inviter
+            voted: a voté
+            thinking: réfléchit…
+            away: absent
+            ready: présent
+            spectator: spectateur
+            vote_title: "Vote · tirage n°{number}"
+            vote_help: "{choices} jeux tirés au hasard parmi les {compatible} jouables à {players} joueurs. Le plus voté se lance automatiquement."
+            voted_count: "{voted} / {total} ont voté"
+            done: Terminé
+            winner_badge: GAGNANT
+            vote_one: "{count} vote"
+            vote_many: "{count} votes"
+            vote: Voter
+            your_vote: Ton vote ✓
+            launching: Lancement…
+            wins: "{name} l'emporte · {votes}"
+            tie: Égalité départagée au hasard.
+            launch_in: "Lancement automatique dans {seconds} s."
+            launch_now: Lancer maintenant
+            rules: "Égalité : tirage au sort entre les ex æquo · les jeux joués ce soir sont moins souvent tirés · pas de vote = vote blanc"
+            waiting_title: En attente de joueurs
+            waiting: "Il faut au moins {min} joueurs présents pour lancer un tirage. Partage le code de la room !"
+            no_games: Aucun jeu disponible pour ce nombre de joueurs. Nouvel essai dans quelques secondes.
+            playing_title: Partie en cours
+            playing: Une partie est en cours. Tu participeras au prochain tirage.
+            watch: Regarder la partie
+            chat: Chat de la room
+            present: "{count} présents"
+            message: Écris un message…
+            message_label: Message
+            send: Envoyer
+        system:
+            created: "{name} a créé la room"
+            kicked: "{name} a été exclu de la room"
+            rules: "{name} a choisi les règles de {game}"
+            rules_default: "{name} garde les règles par défaut de {game}"
+            joined: "{name} a rejoint la room"
+            watching: "{name} regarde la room"
+            left: "{name} a quitté la room"
+            draw: "Nouveau tirage : {games}"
+            launched: "Partie de {game} lancée"
+            finished: "Partie de {game} terminée · {name} gagne"
+
+    profile:
+        players: Joueurs
+        level: Niveau
+        level_short: "Niv. {level}"
+        rank_badge: "#{rank} au classement"
+        member_since: "Membre depuis {date}"
+        games_count: "{count} parties"
+        global_rank: "rang global #{rank}"
+        favorite: "jeu favori : {game}"
+        edit: Modifier le profil
+        share: Partager
+        more: Plus d'actions
+        copy_link: Copier le lien du profil
+        block: Bloquer
+        block_confirm: "Bloquer {name} ? Ce joueur ne pourra plus t'inviter, t'écrire ni voir ton statut. Il sera retiré de tes amis."
+        report:
+            title: "Signaler {name}"
+            comment: Précise ce qui s'est passé (facultatif)
+            submit: Envoyer le signalement
+        copied: Lien copié ✓
+        general: Progression générale
+        xp: "{current} / {needed} XP · tous jeux confondus"
+        xp_short: "{current} / {needed} XP"
+        next_title: "Prochain palier :"
+        title_at: "niveau {level} — titre « {title} »"
+        titles:
+            recruit: Recrue
+            regular: Habitué
+            veteran: Vétéran
+            legend: Légende
+        private: Ce joueur a rendu son profil privé.
+        versus:
+            title: Face à face
+            meta: "{count} parties jouées ensemble · dernière le {date}"
+            you: Toi
+            best: "Ton meilleur jeu contre ce joueur : {game} ({mine} – {theirs})"
+        games:
+            title: Progression par jeu
+            help: Chaque jeu a ses niveaux. L'XP gagnée compte aussi pour le niveau général.
+            tabs: Jeux
+            empty: Aucune partie classée pour le moment.
+            level: "{game} · niveau {level}"
+            page: Page du jeu
+            played: Parties
+            wins: Victoires
+            rank: Classement
+        history:
+            title: Dernières parties
+            empty: Aucune partie jouée pour le moment.
+            game: Jeu
+            result: Résultat
+            score: Score
+            xp: XP
+            when: Quand
+            position: "{position}e"
+        activity: "Activité sur 30 jours"
+        activity_total: "{points} points gagnés"
+
+    settings:
+        title: Paramètres
+        nav: Sections des paramètres
+        save: Enregistrer
+        cancel: Annuler
+        edit: Modifier
+        update: Mettre à jour
+        groups:
+            account: Compte
+            experience: Expérience
+        nav_items:
+            profile:
+                title: Profil
+                hint: Avatar, pseudo, bio
+            account:
+                title: Compte & connexions
+                hint: Email, mot de passe, Discord
+            privacy:
+                title: Confidentialité
+                hint: Visibilité, invitations
+            game:
+                title: Jeu & apparence
+                hint: Son, plein écran, couleurs
+            notifications:
+                title: Notifications
+                hint: Site et email
+            referral:
+                title: "Parrainage"
+                hint: "Invite tes amis, gagnez des pièces"
+        flash:
+            saved: Modifications enregistrées.
+            email_sent: Lien de confirmation envoyé. L'adresse change dès que tu cliques dessus.
+            email_changed: Ton adresse email a été mise à jour.
+            password: Mot de passe mis à jour.
+            devices: Appareils déconnectés.
+            paused: Ton profil est maintenant masqué.
+            deletion_cancelled: La suppression de ton compte est annulée.
+        countries:
+            none: Ne pas afficher
+        profile:
+            avatar: Avatar
+            upload: Importer une image
+            discord_avatar: Utiliser mon avatar Discord
+            remove: Retirer
+            avatar_help: PNG, JPG ou WebP · 2 Mo max · recadré en carré
+            public: Informations publiques
+            username: Pseudo
+            username_help: Modifiable une fois tous les 30 jours.
+            username_locked: "Prochain changement possible le {date}."
+            country: Pays
+            bio: Bio
+            bio_help: 160 caractères max.
+            favorite: Jeu favori affiché
+            favorite_none: Aucun
+            featured_badge: Badge mis en avant
+            no_badge: Aucun badge obtenu pour le moment
+            auto_badge: Automatique (le plus rare)
+        account:
+            login: Connexion
+            email: Email
+            email_pending: "En attente de confirmation : {email}"
+            new_email: Nouvelle adresse email
+            email_help: Un lien de confirmation est envoyé à la nouvelle adresse.
+            current_password: Mot de passe actuel
+            password: Mot de passe
+            password_changed: "modifié le {date}"
+            no_password: Aucun mot de passe (connexion Discord)
+            set_password: Définir
+            new_password: Nouveau mot de passe
+            confirmation: Confirmation
+            discord: Discord
+            discord_linked: Compte lié
+            discord_unlinked: Non lié
+            link: Lier mon compte
+            unlink: Délier
+            discord_confirm: "Délier Discord ? Tu ne pourras plus te connecter avec Discord, tu gardes la connexion par email et mot de passe."
+            discord_password: Définis d'abord un mot de passe.
+            devices: Appareils connectés
+            devices_empty: Aucun appareil mémorisé. Coche « Se souvenir de moi » à la connexion pour en ajouter.
+            devices_confirm: "Déconnecter {count} autre(s) appareil(s) ? Cet appareil reste connecté."
+            logout_others: Déconnecter les autres
+            logout: Déconnecter
+            this_device: Cet appareil
+            unknown_browser: Navigateur inconnu
+            data: Mes données
+            export: Exporter mes données
+            export_help: Profil, parties et rooms au format JSON.
+            export_action: Télécharger
+            delete_help: Définitif après 14 jours de délai.
+            delete_action: Supprimer…
+        privacy:
+            visibility: Visibilité
+            public:
+                title: Profil public
+                help: Ton profil et tes statistiques sont visibles par tous.
+            online:
+                title: Afficher mon statut en ligne
+                help: Tes amis voient quand tu joues et à quoi.
+            leaderboard:
+                title: Apparaître dans les classements
+                help: Sinon tu restes classé, mais sous un nom anonyme.
+            who: Qui peut…
+            invite: M'inviter dans une room
+            message: M'envoyer un message privé
+            friend_request: M'envoyer une demande d'ami
+            audiences:
+                everyone: Tout le monde
+                friends: Mes amis
+                nobody: Personne
+        game:
+            sound: Son
+            music: Musique
+            sound_help: Volume transmis aux jeux qui ont du son.
+            play: En partie
+            fullscreen:
+                title: Passer en plein écran au lancement
+                help: La partie s'ouvre en plein écran dans le navigateur.
+            ping:
+                title: Afficher le ping
+                help: Latence vers le serveur dans la barre de jeu.
+            vibrations:
+                title: Vibrations (mobile)
+                help: Retour haptique transmis aux jeux compatibles.
+            stay_in_room:
+                title: Rester dans la room après une partie
+                help: Revient automatiquement au lobby à la fin du vote.
+            look: Apparence
+            accent: Couleur d'accent
+            accents:
+                cyan: Cyan
+                magenta: Magenta
+                violet: Violet
+                amber: Ambre
+                green: Vert
+            reduce_motion:
+                title: Réduire les animations
+                help: Désactive les effets de lueur et de mouvement.
+            contrast:
+                title: Contraste élevé
+                help: Bordures et textes plus marqués.
+            language: Langue du site
+        notifications:
+            title: Où recevoir quoi
+            help: Coche les canaux pour chaque type de notification.
+            event: Événement
+            channels:
+                site: Sur le site
+                email: Email
+            events:
+                room_invite:
+                    title: Invitation dans une room
+                    help: Un ami t'invite à jouer.
+                message:
+                    title: Message privé
+                    help: Nouveau message d'un ami.
+                friend_request:
+                    title: Demande d'ami
+                    help: Quelqu'un veut t'ajouter.
+                events:
+                    title: Événements
+                    help: Nouveaux jeux, fin de saison, maintenances.
+                security:
+                    title: Sécurité du compte
+                    help: Changement d'email ou de mot de passe.
+                shop:
+                    title: Boutique
+                    help: Confirmation, expédition et remboursement de tes commandes.
+            dnd: Ne pas déranger
+            dnd_help: Aucune notification email pendant ces heures.
+            from: De
+            to: À
+        delete:
+            title: Supprimer mon compte
+            intro: "La suppression devient définitive {days} jours après la demande. D'ici là, il suffit de te reconnecter pour l'annuler."
+            lost: Ce qui sera supprimé
+            items:
+                profile: Profil, avatar et bio
+                level: Niveau et XP
+                games: Progression dans chaque jeu
+                friends: Amis et messages privés
+                rooms: Rooms permanentes
+                discord: Liaison avec Discord
+            history: Tes scores restent dans l'historique des parties sous le nom « Joueur supprimé ».
+            before: Avant de partir
+            export_help: Récupère ton profil, tes parties et tes rooms.
+            pause: Faire une pause
+            pause_help: Masque ton profil, sans rien perdre.
+            pause_action: Masquer mon profil
+            confirm: Confirmer
+            reason: Pourquoi pars-tu ? (facultatif)
+            reasons:
+                none: Choisir une raison
+                stopped: Je ne joue plus
+                other_account: Je crée un autre compte
+                community: Problème avec la communauté
+                other: Autre
+            type: "Tape ton pseudo « {username} »"
+            scheduled: Suppression programmée
+            scheduled_text: "Ton compte sera supprimé le {date}. Reconnecte-toi ou annule ici avant cette date pour le garder."
+            cancel: Annuler la suppression
+            deleted_name: Joueur supprimé
+        mail:
+            email_subject: Confirme ta nouvelle adresse email
+            title: Confirme ta nouvelle adresse
+            text: "Bonjour {name}, tu as demandé à utiliser {email} pour ton compte BattleGame. Clique sur le bouton pour confirmer."
+            action: Confirmer mon adresse
+            ignore: Si tu n'es pas à l'origine de cette demande, ignore cet email.
+        showcase:
+            title: "Vitrine de badges"
+            help: "Choisis jusqu'à 3 badges à mettre en avant sur ton profil."
+            empty: "Tu n'as encore aucun badge à exposer."
+            save: "Enregistrer la vitrine"
+            saved: "Vitrine mise à jour."
+
+    presence:
+        playing: "En jeu · {game}"
+        room: "Dans la room « {room} »"
+        online: En ligne
+        offline: Hors ligne
+        seen: "Hors ligne · vu le {date}"
+
+    friends:
+        title: Amis
+        filter: Filtrer
+        tabs:
+            online: En ligne
+            all: Tous
+            blocked: Bloqués
+        blocked_since: "Bloqué le {date}"
+        state:
+            none: Ajouter en ami
+            sent: Demande envoyée
+            received: Accepter la demande
+            friends: Amis ✓
+        actions:
+            add: Ajouter
+            accept: Accepter
+            decline: Refuser
+            cancel: Annuler
+            watch: Regarder
+            join: Rejoindre
+            invite: Inviter
+            invite_room: Inviter dans ma room
+            message: Envoyer un message
+            unblock: Débloquer
+        confirm_remove: "Retirer {name} de tes amis ?"
+        add:
+            title: Ajouter un ami
+            label: Pseudo
+            placeholder: MonPote
+            submit: Envoyer la demande
+        sent: Demandes envoyées
+        requests: "Demandes reçues · {count}"
+        mutual: "{count} ami(s) en commun"
+        no_mutual: Aucun ami en commun
+        recent: Joué récemment avec
+        empty:
+            online: Aucun ami en ligne pour le moment.
+            all: Tu n'as pas encore d'amis. Ajoute un joueur par son pseudo ou depuis tes dernières parties.
+            blocked: Tu n'as bloqué personne.
+            requests: Aucune demande en attente.
+            recent: Joue quelques parties pour retrouver tes adversaires ici.
+        flash:
+            sent: Demande d'ami envoyée.
+            accept: Vous êtes maintenant amis.
+            decline: Demande refusée.
+            cancel: Demande annulée.
+            remove: Ami retiré.
+            block: Joueur bloqué.
+            unblock: Joueur débloqué.
+            invite: Invitation envoyée.
+            report: Signalement envoyé. L'équipe de modération va l'examiner.
+
+    chat:
+        nav: Salons et messages privés
+        channels: Salons
+        direct: Messages privés
+        no_direct: Aucune conversation. Écris à un ami depuis la page Amis.
+        none_title: Aucun salon pour le moment
+        none_text: Les salons de discussion n'ont pas encore été ouverts. Reviens bientôt !
+        online: "{count} en ligne"
+        online_title: "En ligne — {count}"
+        people: Personnes
+        new_message: Nouveau message
+        friends_online: "Amis en ligne — {count}"
+        players_online: "Joueurs en ligne — {count}"
+        no_friends_online: Aucun ami en ligne pour le moment.
+        find_friends: Trouver des amis
+        nobody_online: Personne d'autre en ligne.
+        write_to: "Écrire à {name}"
+        view_profile: Voir le profil
+        today: Aujourd'hui
+        typing: "{name} est en train d'écrire…"
+        staff: STAFF
+        empty: Aucun message pour le moment. Lance la conversation !
+        placeholder: "Écrire dans {title}"
+        message_label: "Message dans {title}"
+        send: Envoyer
+        invite_action: "Envoyer une invitation pour « {room} »"
+        invite_title: "Invitation · {name}"
+        invite_meta: "Room {code} · {max} joueurs max"
+        join: Rejoindre
+        locked:
+            guest: Un compte est nécessaire pour écrire dans les salons et envoyer des messages privés.
+            direct: "{name} ne reçoit pas de message de ta part pour le moment."
+            staff: Seule l'équipe peut écrire dans ce salon.
+            readonly: Ce salon est en lecture seule.
+        notice: Les invités peuvent lire les salons publics et discuter dans leur room. Un compte est nécessaire pour écrire ici et envoyer des messages privés.
+
+    emails:
+        unsubscribe: Se désabonner des emails d'actualité
+        unsubscribe_title: Emails d'actualité
+        unsubscribe_text: Tu ne recevras plus les emails d'actualité (nouveaux jeux, saisons, maintenances, annonces). Les emails liés à la sécurité de ton compte restent envoyés.
+        unsubscribe_confirm: Me désabonner
+        unsubscribe_done: C'est fait, tu ne recevras plus les emails d'actualité. Tu peux les réactiver à tout moment dans tes paramètres.
+        unsubscribe_invalid: Ce lien de désabonnement n'est pas valide.
+        unsubscribe_settings: Gérer mes notifications
+        campaign_note: Tu reçois cet email parce que tu as accepté les emails d'actualité de BattleGame.
+    notifications:
+        title: Notifications
+        friends: Voir mes amis
+        empty: Aucune notification pour le moment.
+        open: Ouvrir BattleGame
+        email_footer: Tu reçois cet email selon tes préférences de notification, modifiables dans les paramètres.
+        types:
+            friend_request: "{name} veut t'ajouter en ami"
+            friend_accepted: "{name} a accepté ta demande d'ami"
+            room_invite: "{name} t'invite dans la room « {room} »"
+            message: "{name} t'a envoyé {count} message(s)"
+            email_changed: "Ton adresse email a été changée pour {email}"
+            password_changed: Ton mot de passe a été modifié
+            game_released: "Nouveau jeu disponible : {game}"
+            season_started: "La saison {season} commence, les classements repartent à zéro"
+            maintenance_planned: "Maintenance prévue le {date} : {title}"
+            studio_review: "{name} demande la validation de {game}"
+            studio_approved: "{name} a validé {game} (version {version})"
+            studio_rejected: "{name} a refusé la validation de {game}, une correction est demandée"
+            studio_lead: "{name} t'a nommé responsable de {game}"
+            shop_paid: "Commande {reference} confirmée : {product}"
+            shop_shipped: "Ta commande « {product} » est expédiée (suivi : {tracking})"
+            shop_refunded: "Ta commande « {product} » a été remboursée"
+            season_reward: "Saison {season} terminée : tu finis #{rank} et gagnes {coins} pièces !"
+            referral_reward: "{name} a joué sa première partie, tu gagnes {coins} pièces !"
+            tournament_reward: "Tournoi {tournament} : tu finis #{rank} et gagnes {reward} !"
+            tournament_qualified: "Tu es qualifié et inscrit au tournoi {tournament} !"
+
+    badges:
+        secret: Badge secret
+        secret_hint: Condition cachée tant que le badge n'est pas obtenu.
+        obtained: "obtenu le {date}"
+        featured: Badges mis en avant
+        general: Général
+        general_title: "Badges généraux · {count} / {total}"
+        general_help: Liés au compte, tous jeux confondus.
+        game_title: "Badges {game} · {count} / {total}"
+        count: "{count} / {total} badges"
+        none: Aucun badge obtenu sur ce jeu pour le moment.
+
+    reset:
+        title: Mot de passe oublié
+        intro: Indique l'email de ton compte, on t'envoie un lien pour choisir un nouveau mot de passe.
+        sent: Si un compte existe pour cet email, un lien vient d'être envoyé. Il est valable 1 heure.
+        submit_request: Envoyer le lien
+        for: "Nouveau mot de passe pour @{name}"
+        submit: Enregistrer le mot de passe
+        invalid: Ce lien est invalide ou a expiré.
+        again: Demander un nouveau lien
+        mail:
+            subject: Réinitialise ton mot de passe BattleGame
+            title: Nouveau mot de passe
+            text: "Salut {name}, tu as demandé à changer ton mot de passe. Le lien est valable 1 heure."
+            action: Choisir un nouveau mot de passe
+            ignore: Si tu n'es pas à l'origine de cette demande, ignore cet email.
+
+    search:
+        title: Recherche
+        too_short: "Tape au moins {min} caractères pour lancer la recherche."
+        empty: "Aucun jeu ni joueur ne correspond à « {query} »."
+        no_match: Aucun résultat.
+        games: Jeux
+        players: Joueurs
+        all: Voir tous les résultats
+    events:
+        label: "Événements"
+        live: "EN COURS"
+        coins: "Pièces ×{x}"
+        until: "Jusqu'au {date}"
+        play: "Jouer à {game}"
+    pass:
+        title: "Pass de saison"
+        subtitle: "Gagne de l'XP en jouant et débloque des récompenses à chaque palier."
+        no_season: "Aucune saison n'est en cours pour le moment."
+        no_tiers: "Les paliers du pass ne sont pas encore configurés."
+        level: "Palier"
+        next: "{xp} / {need} XP"
+        complete: "Pass terminé, bravo !"
+        help: "Chaque partie te rapporte de l'XP de pass. La saison se termine le {date}."
+        premium_on: "Toutes les pistes sont débloquées"
+        premium_off: "Piste premium verrouillée"
+        unlock: "Débloquer les autres pistes"
+        tier: "Palier"
+        free: "Gratuit"
+        premium: "Premium"
+        coins: "{count} pièces"
+        lives: "{count} vie(s)"
+        claim: "Récupérer"
+        claimed: "Récompense récupérée !"
+    ranked:
+        title: "Mode classé"
+        subtitle: "Affronte des joueurs de ton niveau et grimpe les rangs."
+        game: "Jeu"
+        board: "Classement {game}"
+        empty: "Personne n'a encore joué en classé sur ce jeu."
+        you: "Ton rang"
+        peak: "Record : {peak}"
+        record: "{wins} victoire(s) sur {games} partie(s)"
+        play: "Jouer en classé"
+        help: "Ta cote évolue après chaque partie classée selon ta position et le niveau de tes adversaires."
+        account_only: "Connecte-toi pour jouer en classé et obtenir un rang."
+        tiers:
+            bronze: "Bronze"
+            silver: "Argent"
+            gold: "Or"
+            platinum: "Platine"
+            diamond: "Diamant"
+            master: "Maître"
+        every: "puis une division tous les {step} pts"
+        next: "Prochain grade : {tier}"
+        missing: "encore {points} pts"
+    tournaments:
+        title: "Tournois"
+        subtitle: "Inscris-toi, cumule un maximum de points pendant le tournoi et remporte des pièces."
+        empty: "Aucun tournoi n'est prévu pour le moment."
+        states:
+            upcoming: "À venir"
+            live: "En cours"
+            finished: "Terminé"
+        players: "{count} joueur(s)"
+        coins: "{count} pièces"
+        joined: "Inscrit"
+        join: "S'inscrire"
+        leave: "Se désinscrire"
+        play: "Jouer maintenant"
+        standings: "Classement"
+        no_players: "Aucun inscrit pour le moment."
+        games: "{count} partie(s)"
+        prizes: "Récompenses"
+        no_prizes: "Pas de récompense pour ce tournoi."
+        rules: "Seules comptent les parties jouées sur le jeu du tournoi, entre le début et la fin, après ton inscription."
+        flash:
+            join: "Tu es inscrit au tournoi !"
+            leave: "Tu t'es désinscrit du tournoi."
+            error: "Action impossible sur ce tournoi."
+        ended_on: "Terminé le"
+        ends_in: "Fin dans"
+        starts_in: "Début dans"
+        day_short: "j"
+        login: "Connecte-toi pour participer"
+        full: "Complet"
+        live_hint: "Mis à jour à chaque partie terminée"
+        player: "Joueur"
+        games_short: "Parties"
+        wins_short: "Victoires"
+        points: "Points"
+        your_rank: "Ta position"
+        your_stats: "{points} points en {games} partie(s)"
+        place: "{place}e place"
+        how: "Comment ça marche ?"
+        stats:
+            players: "Inscrits"
+            pool: "Cagnotte (pièces)"
+            starts: "Début"
+            ends: "Fin"
+        steps:
+            join: "Inscris-toi avant ou pendant le tournoi."
+            play: "Joue un maximum de parties sur {game} pendant le tournoi."
+            win: "Les mieux classés à la fin gagnent les pièces de la cagnotte."
+        joined_long: "Tu es inscrit"
+        not_qualified: "Réservé aux qualifiés"
+        prize_hint: "Gain si le classement reste ainsi"
+        qualification: "Qualification"
+        qualified_yes: "Tu es qualifié"
+        qualified_no: "Tu n'es pas qualifié pour l'instant"
+        qualifier:
+            general: "Réservé aux {count} meilleurs joueurs du classement général ({period})."
+            game: "Réservé aux {count} meilleurs joueurs du classement de {game} ({period})."
+    clans:
+        title: "Clans"
+        subtitle: "Rejoins un clan et cumulez vos points de saison ensemble."
+        mine: "Ton clan : {name}"
+        create: "Créer un clan"
+        ranking: "Classement des clans"
+        empty: "Aucun clan pour le moment, crée le premier !"
+        members: "{count} membre(s)"
+        open: "Ouvert"
+        closed: "Sur demande"
+        no_description: "Pas encore de description."
+        leave: "Quitter le clan"
+        leave_confirm: "Quitter ce clan ?"
+        request_sent: "Demande envoyée"
+        join: "Rejoindre"
+        request: "Demander à rejoindre"
+        roster: "Membres"
+        promote: "Promouvoir officier"
+        demote: "Rétrograder"
+        transfer: "Donner la direction"
+        transfer_confirm: "Donner la direction du clan à {name} ?"
+        kick: "Exclure"
+        kick_confirm: "Exclure {name} du clan ?"
+        requests: "Demandes en attente"
+        settings: "Réglages du clan"
+        save: "Enregistrer"
+        disband: "Dissoudre le clan"
+        disband_confirm: "Dissoudre définitivement ce clan ?"
+        points_help: "Points de saison cumulés par les membres."
+        form:
+            name: "Nom du clan"
+            tag: "Tag"
+            tag_help: "2 à 5 lettres ou chiffres, affiché devant le pseudo."
+            description: "Description"
+            color: "Couleur"
+            open: "Ouvert à tous (sinon sur demande)"
+            error: "Nom ou tag invalide ou déjà pris, ou tu fais déjà partie d'un clan."
+            intro: "Choisis un nom, un tag de 2 à 5 caractères et une couleur. Le tag s'affichera devant le pseudo de chaque membre."
+            preview: "Aperçu"
+            name_placeholder: "Les Invincibles"
+            description_placeholder: "Présente ton clan, son ambiance, ses jeux préférés…"
+            custom: "Couleur personnalisée"
+            open_help: "Désactivé, chaque joueur doit envoyer une demande que tu valides."
+            cancel: "Annuler"
+        flash:
+            joined: "Bienvenue dans le clan !"
+            requested: "Demande envoyée au clan."
+            error: "Action impossible."
+        your_clan: "Ton clan"
+        cta_title: "Pas encore de clan ?"
+        cta_help: "Rejoins un clan ouvert ci-dessous ou fonde le tien avec tes amis."
+        count: "{count} clan(s)"
+        full: "Complet"
+        points: "pts"
+        members_short: "membres"
+        accept: "Accepter"
+        decline: "Refuser"
+        about: "Comment ça marche ?"
+        about_help: "Chaque partie jouée par un membre rapporte ses points de saison au clan. Un clan accueille jusqu'à {max} joueurs."
+        stats:
+            rank: "Rang"
+            points: "Points de saison"
+            members: "Membres"
+            access: "Accès"
+    live:
+        title: "En direct"
+        subtitle: "Les parties en cours que tu peux regarder."
+        empty: "Aucune partie en cours pour le moment."
+        watch: "Regarder"
+    referral:
+        title: "Parrainage"
+        help: "Partage ton lien : quand ton filleul termine sa première partie, tu gagnes {referrer} pièces et il en gagne {referee}."
+        link: "Ton lien de parrainage"
+        copy: "Copier"
+        invited: "Filleuls"
+        rewarded: "Récompensés"
+        earned: "Pièces gagnées"
+
+game:
+    you: " (toi)"
+    stage:
+        round: Manche
+        fullscreen: Plein écran
+        effects: Effets sonores
+        effects_on: Couper les effets sonores
+        effects_off: Activer les effets sonores
+        music: Musique
+        music_on: Couper la musique
+        music_off: Activer la musique
+        quit: Quitter
+        live: Classement en direct
+        ping: "{ms} ms"
+    
+    countdown:
+        hint: Prépare-toi, la partie commence…
+    language:
+        title: Langue du jeu
+        help: Choisis la langue dans laquelle afficher le jeu.
+    
+    search:
+        quick: "Partie rapide · {name}"
+        cancel: Annuler la recherche
+        clock: ATTENTE
+        progress: Joueurs trouvés
+        slots: Joueurs de la partie
+        tag: RECHERCHE EN COURS
+        full: SALLE COMPLÈTE
+        title: Recherche de joueurs…
+        found: Partie trouvée !
+        count: "{found} / {total} joueurs trouvés · la partie démarre quand la salle est complète"
+        help: Tu peux aussi envoyer le lien de cette page à un ami pour jouer ensemble.
+        fill: "La partie démarre dans {seconds} s, ou dès que la salle est complète."
+        launch: "Lancement automatique dans {seconds} s."
+        enter: "ENTRER DANS LA PARTIE ({seconds})"
+        looking: Recherche…
+        
+    rewards:
+        general: Progression générale
+        game: "Progression {game}"
+        level: "Niv. {level}"
+        level_up: "Niv. {before} → {after}"
+        xp: "+{xp} XP"
+        badge: Badge débloqué
+        badge_game: "Badge {game} débloqué"
+        wallet: Récompenses
+        coins: "+{coins} pièces"
+        lives: "{lives} vie(s) restante(s) aujourd'hui"
+        lives_unlimited: Vies illimitées
+        rating: "Cote classée"
+        boost: "Bonus événement"
+
+    results:
+        finished: PARTIE TERMINÉE
+        wins: remporte la partie
+        solo_title: Entraînement terminé
+        solo_heading: On s'entraîne encore ?
+        solo_help: Les parties d'entraînement ne comptent ni dans le classement ni dans tes stats.
+        preview_title: Aperçu terminé
+        preview_heading: Résultat calculé par le serveur
+        preview_help: "Ce que results() enregistrerait pour une vraie partie (position, stats, points), puis l'état final. Rien n'est enregistré pendant l'aperçu."
+        preview_replay: RELANCER L'APERÇU
+        points: "{score} pts"
+        vote_title: On rejoue ?
+        vote_help: "La partie se relance avec les mêmes réglages dès que la majorité ({needed} / {total}) vote oui. Ceux qui votent non retournent sur la page du jeu."
+        vote_help_room: "La partie se relance avec les mêmes réglages dès que la majorité ({needed} / {total}) vote oui. Ceux qui votent non retournent au lobby."
+        vote_count: "{yes} / {total} veulent rejouer"
+        vote_majority: "majorité : {needed}"
+        vote_ends: "Fin du vote dans {time}"
+        vote_done: Vote terminé
+        vote_relaunch: "Majorité atteinte · nouvelle partie dans {seconds} s"
+        vote_yes: Rejouer
+        vote_no: Non
+        vote_wait: En attente…
+        replay: REJOUER
+        decline: Non merci
+        declined: Tu as voté non. Tu retournes sur la page du jeu à la fin du vote.
+        declined_room: Tu as voté non. Tu retournes au lobby à la fin du vote.
+        change: Changer mon vote
+        back: Retour au jeu
+        guest: "{name} (invité) : crée un compte pour garder ton score, ton XP et tes badges ·"
+        back_lobby: Retour au lobby
+        quit_room: Quitter la room
+        quit: Quitter
+
+    maintenance:
+        details: Détails
+        at: "MAINTENANCE À {time}"
+        now: MAINTENANCE EN COURS
+        site: Le site
+        soon: "{subject} passe en maintenance dans {delay}."
+        minutes: "{minutes} min"
+        finish: Cette partie pourra se terminer normalement et sera comptée. Aucune nouvelle partie ne pourra être lancée ensuite.
+        stop: Cette partie sera interrompue si elle n'est pas terminée et ne sera pas comptée.
+        running: Cette partie peut se terminer normalement et sera comptée. Aucune nouvelle partie ne pourra être lancée ensuite.
+        cut: Une maintenance urgente a arrêté la partie.
+        cut_round: "Une maintenance urgente a arrêté la partie à la manche {current} / {total}."
+        back: "Retour estimé : {time}"
+        cut_kicker: MAINTENANCE EN COURS
+        cut_title: Partie interrompue
+        cut_lost: Les scores, l'XP et les badges de cette partie ne sont pas pris en compte.
+        follow: Suivre la maintenance
+        home: Retour à l'accueil
+    emotes:
+        open: "Emotes"
+        thumbs: "Pouce"
+        laugh: "Rire"
+        wow: "Surpris"
+        angry: "Énervé"
+        fire: "En feu"
+        gg: "Bien joué"
+    spectator: "Spectateur"

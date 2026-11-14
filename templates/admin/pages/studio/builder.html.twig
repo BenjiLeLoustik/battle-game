@@ -1,0 +1,101 @@
+{% extends 'base.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% block title %}{{ labels.title|replace({ '{name}': game.name }) }} · {{ parent() }}{% endblock %}
+{% block body_class %}admin-layout admin-layout--editor{% endblock %}
+{% block space %}admin{% endblock %}
+
+{% block body %}
+    {% include '@admin/components/partials/topbar.html.twig' %}
+
+    <div class="studio-builder" data-component="StudioBuilder"
+         data-blueprint="{{ blueprint ? blueprint|json_encode : '' }}"
+         data-templates="{{ templates|json_encode }}"
+         data-labels="{{ labels|json_encode }}"
+         data-schema="{{ schema|json_encode }}"
+         data-locked="{{ locked ? '1' : '0' }}"
+         data-token="{{ csrf_token('studio-builder-' ~ game.slug) }}"
+         data-save="{{ path('admin_studio_builder_save', { slug: game.slug }) }}"
+         data-generate="{{ path('admin_studio_builder_generate', { slug: game.slug }) }}"
+         data-library="{{ library|json_encode }}"
+         data-me="{{ me }}"
+         data-block-save="{{ path('admin_studio_builder_block_save', { slug: game.slug }) }}"
+         data-block-delete="{{ path('admin_studio_builder_block_delete', { slug: game.slug, id: 0 }) }}">
+
+        <div class="studio-builder__toolbar">
+            {{ admin_ui.link(path('admin_studio_show', { slug: game.slug }), 'admin.studio.title'|trans({}, 'admin'), 'back') }}
+            <span class="studio-builder__separator" aria-hidden="true">/</span>
+            <strong class="studio-builder__name">{{ game.name }}</strong>
+            <span class="studio-builder__badge">{{ labels.badge }}</span>
+            <span class="studio-builder__state" aria-live="polite"></span>
+            <div class="studio-builder__actions">
+                <a href="{{ path('admin_studio_design_index', { slug: game.slug }) }}" class="studio-editor__button">{{ labels.design }}</a>
+                <a href="{{ path('admin_studio_editor_index', { slug: game.slug }) }}" class="studio-editor__button">{{ labels.code }}</a>
+                {% if not locked %}
+                    <button type="button" class="studio-editor__button" data-action="save">{{ labels.save }}</button>
+                    <button type="button" class="studio-editor__button{{ lead ? '' : ' studio-editor__button--primary' }}" data-action="generate">{{ labels.generate }}</button>
+                    {% if lead %}
+                        <button type="button" class="studio-editor__button studio-editor__button--primary" data-action="publish">{{ labels.publish }}</button>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="studio-builder__body">
+            <aside class="studio-builder__side">
+                <strong class="studio-builder__heading">{{ labels.blocks }}</strong>
+                <div class="studio-builder__palette"></div>
+                <strong class="studio-builder__heading">{{ labels.library.title }}</strong>
+                <div class="studio-builder__library"></div>
+                <strong class="studio-builder__heading">{{ labels.screen }}</strong>
+                <ol class="studio-builder__outline"></ol>
+            </aside>
+
+            <section class="studio-builder__canvas" aria-label="{{ labels.preview }}">
+                <p class="studio-builder__help">{{ labels.preview_help }}</p>
+                <div class="studio-builder__phone">
+                    <div class="studio-builder__screen"></div>
+                </div>
+            </section>
+
+            <aside class="studio-builder__panel">
+                <div class="studio-builder__tabs" role="tablist">
+                    {% for tab in ['element', 'rules', 'variables', 'settings'] %}
+                        <button type="button" class="studio-builder__tab" role="tab" data-tab="{{ tab }}" aria-selected="{{ loop.first ? 'true' : 'false' }}">{{ labels.tabs[tab] }}</button>
+                    {% endfor %}
+                </div>
+                <div class="studio-builder__pane" role="tabpanel"></div>
+            </aside>
+        </div>
+
+        {% if locked %}
+            <div class="studio-builder__chooser">
+                <div class="studio-builder__dialog" role="alertdialog" aria-modal="true" aria-labelledby="builder-locked">
+                    <h2 id="builder-locked" class="studio-builder__dialog-title">{{ labels.locked.title }}</h2>
+                    <p class="studio-builder__warning">{{ labels.locked.text }}</p>
+                    <p class="studio-builder__help">{{ labels.locked.help }}</p>
+                    <div class="studio-builder__dialog-actions">
+                        <a href="{{ path('admin_studio_design_index', { slug: game.slug }) }}" class="admin-btn admin-btn--secondary">{{ labels.design }}</a>
+                        <a href="{{ path('admin_studio_editor_index', { slug: game.slug }) }}" class="admin-btn admin-btn--primary">{{ labels.code }}</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+        <div class="studio-builder__chooser" hidden>
+            <div class="studio-builder__dialog" role="dialog" aria-modal="true" aria-labelledby="builder-choose">
+                <h2 id="builder-choose" class="studio-builder__dialog-title">{{ labels.choose.title }}</h2>
+                <p class="studio-builder__help">{{ labels.choose.help }}</p>
+                <div class="studio-builder__templates">
+                    {% for name in templates|keys %}
+                        <button type="button" class="studio-builder__template" data-template="{{ name }}">
+                            <strong>{{ labels.templates[name] }}</strong>
+                            <span>{{ labels.templates[name ~ '_help'] }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

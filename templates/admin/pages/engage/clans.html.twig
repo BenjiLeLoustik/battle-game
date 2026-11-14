@@ -1,0 +1,42 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_clans' %}
+
+{% block title %}{{ 'admin.engage.clans.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.clans.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.clans.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+        </div>
+        <section class="admin-panel admin-panel--flush">
+            {% if clans is empty %}
+                <p class="admin-empty">{{ 'admin.engage.clans.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(clans, 'page', 15) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['clan', 'members', 'points', 'access', 'actions'] %}<th class="admin-table__th">{{ ('admin.engage.clans.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for clan in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><a class="admin-link" href="{{ path('site_clan_show', { tag: clan.tag }) }}" target="_blank" rel="noopener"><code>[{{ clan.tag }}]</code> {{ clan.name }}</a></td>
+                                    <td class="admin-table__cell">{{ clan.members }}</td>
+                                    <td class="admin-table__cell">{{ clan.points }}</td>
+                                    <td class="admin-table__cell">{{ (clan.open ? 'site.clans.open' : 'site.clans.closed')|trans }}</td>
+                                    <td class="admin-table__cell">{{ admin_ui.post('admin_engage_clan_delete', { id: clan.id }, 'admin.engage.clans.disband'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-engage', 'admin.engage.delete_confirm'|trans({ name: clan.name }, 'admin')) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

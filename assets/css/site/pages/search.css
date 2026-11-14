@@ -1,0 +1,83 @@
+.search-page {
+    @apply mx-auto flex w-full max-w-[860px] flex-col gap-6 max-sm:gap-3.5;
+}
+
+.search-page__form {
+    @apply flex flex-col gap-4;
+}
+
+.search-page__title {
+    @apply font-display text-[34px] font-bold;
+}
+
+.search-page__field {
+    @apply flex h-14 items-center gap-3 rounded-xl border border-line bg-field px-4 text-muted-2 focus-within:border-cyan;
+}
+
+.search-page__icon {
+    @apply size-5 shrink-0;
+}
+
+.search-page__input {
+    @apply min-w-0 flex-1 border-0 bg-transparent text-base text-ink outline-none placeholder:text-muted-2;
+}
+
+.search-page__empty {
+    @apply rounded-xl border border-line bg-panel px-5 py-8 text-center text-muted max-sm:px-3 max-sm:py-5;
+}
+
+.search-page__section {
+    @apply flex flex-col gap-3;
+}
+
+.search-page__caption {
+    @apply font-mono text-xs font-semibold tracking-[0.14em] text-caption uppercase;
+}
+
+.search-page__list {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-2.5;
+}
+
+.search-result {
+    @apply flex items-center gap-3 rounded-[10px] border border-transparent px-3 py-2.5 text-ink hover:border-line hover:bg-field;
+}
+
+.search-page__list .search-result {
+    @apply border-line bg-panel hover:border-cyan;
+}
+
+.search-result--active {
+    @apply border-line bg-field;
+}
+
+.search-result__swatch {
+    @apply size-9 shrink-0 rounded-lg bg-[var(--swatch)] shadow-[0_0_14px_color-mix(in_srgb,var(--swatch)_45%,transparent)];
+}
+
+.search-result__text {
+    @apply flex min-w-0 flex-col;
+}
+
+.search-result__name {
+    @apply truncate text-sm font-semibold;
+}
+
+.search-result__meta {
+    @apply truncate text-xs text-muted;
+}
+
+.search-suggest {
+    @apply absolute top-[calc(100%+8px)] right-0 left-0 z-40 flex max-h-[70vh] flex-col gap-1 overflow-y-auto rounded-xl border border-line bg-panel p-2 shadow-[0_18px_40px_rgba(0,0,0,.5)];
+}
+
+.search-suggest__caption {
+    @apply px-3 pt-2 pb-1 font-mono text-[11px] font-semibold tracking-[0.14em] text-caption uppercase;
+}
+
+.search-suggest__empty {
+    @apply px-3 py-3 text-sm text-muted;
+}
+
+.search-suggest__all {
+    @apply mt-1 rounded-[10px] border-t border-line px-3 py-2.5 text-sm font-semibold text-cyan hover:bg-field;
+}

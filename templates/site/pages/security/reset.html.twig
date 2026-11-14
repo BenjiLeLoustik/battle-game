@@ -1,0 +1,31 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.reset.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% embed '@site/components/embeds/auth-card.html.twig' with { tab: 'login' } %}
+        {% block form %}
+            {% if user %}
+                <form class="auth-card__form" method="post">
+                    <input type="hidden" name="_token" value="{{ csrf_token('reset') }}">
+                    {% if error %}
+                        <p class="auth-card__alert" role="alert">{{ error|trans({}, 'validators') }}</p>
+                    {% endif %}
+                    <p class="auth-card__hint">{{ 'site.reset.for'|trans({ name: user.username }) }}</p>
+                    <div class="field field--form">
+                        <label class="field__label" for="reset-password">{{ 'site.settings.account.new_password'|trans }}</label>
+                        <input id="reset-password" class="field__input field__input--large" type="password" name="password" autocomplete="new-password" minlength="10" required placeholder="{{ 'site.auth.password_hint'|trans }}">
+                    </div>
+                    <div class="field field--form">
+                        <label class="field__label" for="reset-confirmation">{{ 'site.settings.account.confirmation'|trans }}</label>
+                        <input id="reset-confirmation" class="field__input field__input--large" type="password" name="confirmation" autocomplete="new-password" minlength="10" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary btn--large btn--block">{{ 'site.reset.submit'|trans }}</button>
+                </form>
+            {% else %}
+                <p class="auth-card__alert" role="alert">{{ 'site.reset.invalid'|trans }}</p>
+                <a href="{{ path('site_security_forgot') }}" class="auth-card__link">{{ 'site.reset.again'|trans }}</a>
+            {% endif %}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'rooms' %}
+
+{% block title %}{{ 'admin.rooms.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.rooms.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.rooms.subtitle'|trans({ total: counts.total, playing: counts.playing }, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_room_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.rooms.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar" method="get">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.rooms.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.rooms.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="access" data-component="AutoSubmit" aria-label="{{ 'admin.rooms.filter_access'|trans({}, 'admin') }}">
+                    {% for item in accesses %}
+                        <option value="{{ item }}"{{ filters.access == item ? ' selected' }}>{{ ('admin.rooms.access.' ~ item)|trans({}, 'admin') }}</option>
+                    {% endfor %}
+                </select>
+                <select class="admin-select" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.rooms.filter_status'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.rooms.all_statuses'|trans({}, 'admin') }}</option>
+                    {% for item in statuses %}
+                        <option value="{{ item.value }}"{{ filters.status == item.value ? ' selected' }}>{{ item.translate() }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% if rows is empty %}
+                <p class="admin-empty">{{ 'admin.rooms.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(rows) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['code', 'name', 'host', 'visibility', 'status', 'players', 'age', 'actions'] %}<th class="admin-table__th">{{ ('admin.rooms.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for row in pager.items %}
+                                {% set room = row.room %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell admin-table__cell--mono">{{ room.code }}</td>
+                                    <td class="admin-table__cell">{{ room.name }}{% if room.official %} <span class="admin-pill admin-pill--accent">{{ 'admin.rooms.official'|trans({}, 'admin') }}</span>{% endif %}</td>
+                                    <td class="admin-table__cell">{{ room.host ? room.host.username : '—' }}</td>
+                                    <td class="admin-table__cell">{{ room.visibility.translate() }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ room.status.value == 'playing' ? ' admin-pill--ok' : (room.status.value == 'waiting' ? '' : ' admin-pill--warn') }}">{{ room.status.translate() }}</span></td>
+                                    <td class="admin-table__cell">{{ row.present }} / {{ room.maxPlayers }}</td>
+                                    <td class="admin-table__cell">{{ room.createdAt|date('d/m H:i') }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions">
+                                            <a href="{{ path('admin_room_show', { code: room.code }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.view'|trans({}, 'admin') }}</a>
+                                            <a href="{{ path('admin_room_edit', { code: room.code }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+
+{% set active = 'shop' %}
+
+{% block title %}{{ 'site.shop.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="shop shop--narrow">
+        <section class="shop-done{{ paid ? ' shop-done--ok' : '' }}">
+            <span class="shop-done__icon">{{ shop.icon(paid ? order.type.value : 'coins') }}</span>
+            <h1 class="shop-done__title">
+                {{ paid ? 'site.shop.success.title'|trans : 'site.shop.success.pending'|trans }}
+            </h1>
+            <p class="shop-done__text">
+                {{ ('site.shop.success.' ~ (paid ? order.type.value : 'pending_text'))|trans({ name: order.productName }) }}
+            </p>
+            {% if gift %}
+                <div class="shop-gift">
+                    <span class="shop-gift__label">{{ 'site.shop.gift.your_code'|trans }}</span>
+                    <code class="shop-gift__code">{{ gift.code }}</code>
+                    <span class="shop-gift__help">{{ 'site.shop.gift.help'|trans({ coins: gift.coins }) }}</span>
+                </div>
+            {% endif %}
+            <p class="shop-done__reference">
+                {{ 'site.shop.reference'|trans }} <strong>{{ order.reference }}</strong>
+            </p>
+            <div class="shop-done__actions">
+                <a href="{{ path('site_shop_index') }}" class="btn btn--primary">{{ 'site.shop.back'|trans }}</a>
+                <a href="{{ path(order.type.value == 'cosmetic' ? 'site_shop_inventory' : 'site_shop_orders') }}" class="btn btn--ghost">
+                    {{ order.type.value == 'cosmetic' ? 'site.shop.nav.inventory'|trans : 'site.shop.nav.orders'|trans }}
+                </a>
+            </div>
+        </section>
+    </div>
+{% endblock %}

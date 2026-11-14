@@ -1,0 +1,31 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Sdk\AbstractSdkServer;
+
+class {{class}}Server extends AbstractSdkServer
+{
+    public function handle(string $action, array $payload, string $player, array $state): array
+    {
+        if ($action !== 'click' || $state['finished']) {
+            return $state;
+        }
+
+        $state['scores'][$player]++;
+        $state['finished'] = $state['scores'][$player] >= $state['target'];
+
+        return $state;
+    }
+
+    public function results(array $state): array
+    {
+        $results = parent::results($state);
+
+        foreach ($results as $player => $result) {
+            $results[$player]['stats'] = ['clicks' => $state['scores'][$player]];
+        }
+
+        return $results;
+    }
+}

@@ -1,0 +1,139 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'languages' %}
+
+{% block title %}{{ 'admin.languages.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.languages.title'|trans({}, 'admin') }}</h1>
+            </div>
+            <form class="admin-actions" method="post" action="{{ path('admin_language_add') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-languages') }}">
+                <input class="admin-field__input admin-field__input--auto" name="locale" maxlength="2" pattern="[a-z]{2}" required placeholder="en" aria-label="{{ 'admin.languages.code'|trans({}, 'admin') }}">
+                <button type="submit" class="admin-btn admin-btn--primary">+ {{ 'admin.languages.add'|trans({}, 'admin') }}</button>
+            </form>
+        </div>
+
+        <div class="admin-grid">
+            {% for locale, language in languages %}
+                {% set percent = language.total ? (language.done / language.total * 100)|round : 0 %}
+                <section class="admin-panel">
+                    <div class="admin-panel__bar">
+                        <h2 class="admin-panel__title"><span class="admin-pill admin-pill--accent">{{ locale|upper }}</span> {{ locale|language_name }}</h2>
+                        <span class="language-card__side">
+                            <span class="admin-pill{{ locale == reference ? ' admin-pill--ok' : '' }}">{{ locale == reference ? 'admin.languages.reference'|trans({}, 'admin') : percent ~ ' %' }}</span>
+                            {% if locale == reference and not (language.lock and language.lock.user != app_user().id) %}
+                                <a href="{{ path('admin_language_translate', { locale: locale }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                            {% endif %}
+                            {% if locale != reference and not (language.lock and language.lock.user != app_user().id) %}
+                                <a href="{{ path('admin_language_translate', { locale: locale }) }}" class="admin-btn admin-btn--primary admin-btn--small" title="{{ 'admin.languages.translate'|trans({ count: language.total - language.done }, 'admin') }}">{{ 'admin.languages.translate_short'|trans({ count: language.total - language.done }, 'admin') }}</a>
+                            {% endif %}
+                            {% if locale != reference %}
+                                {{ admin_ui.post('admin_language_delete', { locale: locale }, 'admin.languages.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-languages', 'admin.languages.delete_confirm'|trans({ name: locale|language_name }, 'admin')) }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="language-track"><span class="language-track__fill" style="width: {{ percent }}%"></span></div>
+                    <dl class="admin-dl">
+                        {% for domain, stat in language.stats %}
+                            <dt class="admin-dl__term admin-table__cell--mono">{{ domain }}.yaml</dt>
+                            <dd class="admin-dl__value">{{ stat.done }} / {{ stat.total }}</dd>
+                        {% endfor %}
+                    </dl>
+                    {% if language.lock and language.lock.user != app_user().id %}
+                        <p class="admin-panel__help">{{ 'admin.languages.locked_by'|trans({ name: language.lock.name, time: language.lock.until|date('H:i') }, 'admin') }}</p>
+                        {{ admin_ui.post('admin_language_unlock', { locale: locale }, 'admin.languages.force_unlock'|trans({}, 'admin'), 'admin-btn admin-btn--ghost admin-btn--small', 'admin-languages') }}
+                    {% endif %}
+                </section>
+            {% endfor %}
+        </div>
+        <section id="countries" class="admin-panel admin-panel--flush" aria-labelledby="countries-title">
+            <div class="admin-panel__bar countries__bar">
+                <div class="admin-panel__intro">
+                    <h2 id="countries-title" class="admin-panel__title">{{ 'admin.languages.countries.title'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.languages.countries.help'|trans({}, 'admin') }}</span>
+                </div>
+                <form class="countries__add" method="post" action="{{ path('admin_language_country_add') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('admin-languages') }}">
+                    <input class="admin-field__input countries__code" name="code" maxlength="2" pattern="[A-Za-z]{2}" required placeholder="BE" aria-label="{{ 'admin.languages.countries.code'|trans({}, 'admin') }}">
+                    <input class="admin-field__input countries__name" name="name" maxlength="60" required placeholder="{{ 'admin.languages.countries.name_placeholder'|trans({}, 'admin') }}" aria-label="{{ 'admin.languages.countries.name'|trans({}, 'admin') }}">
+                    <button type="submit" class="admin-btn admin-btn--primary">+ {{ 'admin.languages.countries.add'|trans({}, 'admin') }}</button>
+                </form>
+            </div>
+            {% if countries is empty %}
+                <p class="admin-empty">{{ 'admin.languages.countries.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(countries) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                <th class="admin-table__th">{{ 'admin.languages.countries.code'|trans({}, 'admin') }}</th>
+                                <th class="admin-table__th">{{ 'admin.languages.countries.name'|trans({}, 'admin') }} · {{ reference|upper }}</th>
+                                <th class="admin-table__th">{{ 'admin.languages.countries.locale'|trans({}, 'admin') }}</th>
+                                <th class="admin-table__th">{{ 'admin.languages.countries.users'|trans({}, 'admin') }}</th>
+                                <th class="admin-table__th">{{ 'admin.users.column.actions'|trans({}, 'admin') }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in pager.items %}
+                                {% set country = row.country %}
+                                {% set form = 'country-' ~ country.id %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell admin-table__cell--mono">{{ country.code }}</td>
+                                    <td class="admin-table__cell">
+                                        <input class="admin-field__input countries__input" form="{{ form }}" name="name" value="{{ country.name }}" maxlength="60" required aria-label="{{ 'admin.languages.countries.name'|trans({}, 'admin') }} · {{ reference|upper }}">
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <select class="admin-field__input countries__input" form="{{ form }}" name="locale" aria-label="{{ 'admin.languages.countries.locale'|trans({}, 'admin') }}">
+                                            {% for locale in locales %}
+                                                <option value="{{ locale }}"{{ country.locale == locale ? ' selected' }}>{{ locale|language_name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                    <td class="admin-table__cell">{{ row.users }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            {% if targets is not empty %}
+                                                <button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-component="RowToggle" aria-expanded="false" aria-controls="{{ form }}-names">
+                                                    {{ 'admin.languages.countries.translations'|trans({ done: row.names|length, total: targets|length }, 'admin') }}
+                                                </button>
+                                            {% endif %}
+                                            <form id="{{ form }}" method="post" action="{{ path('admin_language_country_update', { id: country.id }) }}">
+                                                <input type="hidden" name="_token" value="{{ csrf_token('admin-languages') }}">
+                                                <button type="submit" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.save'|trans({}, 'admin') }}</button>
+                                            </form>
+                                            {{ admin_ui.post('admin_language_country_delete', { id: country.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-languages', 'admin.languages.countries.delete_confirm'|trans({ name: country.name, count: row.users }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                                {% if targets is not empty %}
+                                    <tr id="{{ form }}-names" class="countries__names" hidden>
+                                        <td class="admin-table__cell" colspan="5">
+                                            <div class="countries__grid">
+                                                {% for locale in targets %}
+                                                    <label class="admin-field">
+                                                        <span class="countries__locale"><span class="admin-pill admin-pill--accent">{{ locale|upper }}</span> {{ locale|language_name }}</span>
+                                                        <input class="admin-field__input countries__input" form="{{ form }}" name="translations[{{ locale }}][name]" value="{{ row.names[locale].name ?? '' }}" maxlength="60" placeholder="{{ country.name }}">
+                                                    </label>
+                                                {% endfor %}
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+
+        <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.languages.note'|trans({}, 'admin') }}</p>
+    </div>
+{% endblock %}

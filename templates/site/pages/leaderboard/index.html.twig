@@ -1,0 +1,177 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+
+{% set active = 'leaderboard' %}
+
+{% block title %}{{ 'site.leaderboard.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="leaderboard">
+        <div class="leaderboard__head">
+            <div class="leaderboard__intro">
+                <h1 class="leaderboard__title">
+                    {{ 'site.leaderboard.title'|trans }}
+                </h1>
+                <span class="leaderboard__subtitle">
+                    {% if board.season %}
+                        {{ board.season.name }} · {{ 'site.leaderboard.ends_in'|trans }}
+                        <strong class="leaderboard__highlight">
+                            {{ 'site.leaderboard.days'|trans({ count: board.season.daysLeft }) }}
+                        </strong> ·
+                    {% endif %}
+                    {{ 'site.leaderboard.accounts_only'|trans }}
+                </span>
+            </div>
+            <form class="leaderboard__filters" method="get" action="{{ path('site_leaderboard_index') }}" data-component="LeaderboardFilter">
+                <input type="hidden" name="period" value="{{ board.period.value }}">
+                <label class="leaderboard__game">
+                    {{ 'site.leaderboard.game'|trans }}
+                    <select class="leaderboard__select" name="game">
+                        <option value="">
+                            {{ 'site.leaderboard.all_games'|trans }}
+                        </option>
+                        {% for item in games %}
+                            <option value="{{ item.slug }}"{{ game and game.id == item.id ? ' selected' }}>
+                                {{ item.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <nav class="leaderboard__periods" aria-label="{{ 'site.leaderboard.period'|trans }}">
+                    {% for period in board.periods %}
+                        <a href="{{ path('site_leaderboard_index', { period: period.value, game: game ? game.slug : null }) }}"
+                           class="leaderboard__period{{ period == board.period ? ' leaderboard__period--active' }}"
+                           {% if period == board.period %}aria-current="page"{% endif %}>
+                            {{ period.translate() }}
+                        </a>
+                    {% endfor %}
+                </nav>
+            </form>
+        </div>
+
+        {% if board.podium is empty %}
+            <p class="leaderboard__empty">
+                {{ 'site.leaderboard.empty'|trans }}
+            </p>
+        {% else %}
+            <section class="leaderboard__podium" aria-label="{{ 'site.leaderboard.podium'|trans }}">
+                {% for index in [1, 0, 2] %}
+                    {% if board.podium[index] is defined %}
+                        {% set row = board.podium[index] %}
+                        <div class="leaderboard__step leaderboard__step--{{ index + 1 }}">
+                            {{ ui.avatar(row, index == 0 ? 'xl' : 'lg') }}
+                            <strong class="leaderboard__step-name">
+                                {% if row.anonymous %}
+                                    {{ row.username }}
+                                {% else %}
+                                    <a href="{{ path('site_profile_show', { username: row.username }) }}" class="leaderboard__link">{{ ui.name(row) }}</a>
+                                {% endif %}
+                            </strong>
+                            <span class="leaderboard__step-points">
+                                {{ 'site.leaderboard.points_value'|trans({ points: row.points|number_format(0, ',', ' ') }) }}
+                            </span>
+                            <div class="leaderboard__block">
+                                {{ index + 1 }}
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </section>
+
+            {% if board.rows is not empty %}
+                <section class="leaderboard__table-wrap" aria-label="{{ 'site.leaderboard.table'|trans }}">
+                    <table class="leaderboard__table">
+                        <thead>
+                        <tr>
+                            <th class="leaderboard__th leaderboard__th--rank">
+                                {{ 'site.leaderboard.rank'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.player'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.level'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.points'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.games'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.wins'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.favorite'|trans }}
+                            </th>
+                            <th class="leaderboard__th">
+                                {{ 'site.leaderboard.trend'|trans }}
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for row in board.rows %}
+                            <tr class="leaderboard__row{{ row.id == board.me ? ' leaderboard__row--me' }}">
+                                <td class="leaderboard__cell leaderboard__cell--rank">
+                                    {{ row.rank }}
+                                </td>
+                                <td class="leaderboard__cell">
+                                    <span class="leaderboard__player">
+                                        {{ ui.avatar(row, 'sm') }}
+                                        <span class="leaderboard__name">
+                                            {% if row.anonymous %}
+                                                {{ row.username }}
+                                            {% else %}
+                                                <a href="{{ path('site_profile_show', { username: row.username }) }}" class="leaderboard__link">{{ ui.name(row) }}</a>
+                                            {% endif %}
+                                        </span>
+                                    </span>
+                                </td>
+                                <td class="leaderboard__cell">
+                                    {{ row.level }}
+                                </td>
+                                <td class="leaderboard__cell leaderboard__cell--points">
+                                    {{ row.points|number_format(0, ',', ' ') }}
+                                </td>
+                                <td class="leaderboard__cell">
+                                    {{ row.games }}
+                                </td>
+                                <td class="leaderboard__cell">
+                                    {{ (row.wins / row.games * 100)|round }} %
+                                </td>
+                                <td class="leaderboard__cell">
+                                    {{ row.favorite ?? '-' }}
+                                </td>
+                                <td class="leaderboard__cell">
+                                    {% if row.trend is null %}
+                                        <span class="leaderboard__trend leaderboard__trend--new">
+                                            {{ 'site.leaderboard.new'|trans }}
+                                        </span>
+                                    {% elseif row.trend > 0 %}
+                                        <span class="leaderboard__trend leaderboard__trend--up">
+                                            ▲ {{ row.trend }}
+                                        </span>
+                                    {% elseif row.trend < 0 %}
+                                        <span class="leaderboard__trend leaderboard__trend--down">
+                                            ▼ {{ -row.trend }}
+                                        </span>
+                                    {% else %}
+                                        <span class="leaderboard__trend">
+                                            –
+                                        </span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </section>
+            {% endif %}
+        {% endif %}
+
+        <p class="leaderboard__note">
+            {{ 'site.leaderboard.note'|trans }}
+        </p>
+    </div>
+{% endblock %}

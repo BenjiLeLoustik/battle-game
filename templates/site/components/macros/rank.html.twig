@@ -1,0 +1,3 @@
+{% macro badge(tier, size = null) %}
+    <span class="rank-badge{{ size ? ' rank-badge--' ~ size }}" style="--rank-color: {{ tier.color }}">{{ tier.label ?? tier.name }}</span>
+{%- endmacro %}

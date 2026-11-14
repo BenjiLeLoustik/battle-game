@@ -1,0 +1,73 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'admins' %}
+
+{% block title %}{{ 'admin.admins.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.admins.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.admins.subtitle'|trans({}, 'admin') }} <a href="{{ path('admin_role_index') }}" class="admin-link admin-link--inline">{{ 'admin.admins.manage_roles'|trans({}, 'admin') }}</a></span>
+            </div>
+            <a href="{{ path('admin_admin_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.admins.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar" method="get">
+                <select class="admin-select" name="role" data-component="AutoSubmit" aria-label="{{ 'admin.admins.filter'|trans({}, 'admin') }}">
+                    <option value="">{{ 'admin.admins.all_roles'|trans({}, 'admin') }}</option>
+                    {% for item in roles %}
+                        <option value="{{ item.id }}"{{ role and role.id == item.id ? ' selected' }}>{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% set pager = paginate(admins) %}
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr>{% for column in ['member', 'role', 'games', 'seen', 'actions'] %}<th class="admin-table__th">{{ ('admin.admins.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                    <tbody>
+                        {% for row in pager.items %}
+                            {% set member = row.user %}
+                            <tr class="admin-table__row">
+                                <td class="admin-table__cell">{{ admin_ui.user(member) }}</td>
+                                <td class="admin-table__cell">
+                                    {% if member.adminRole %}
+                                        <span class="admin-pill" style="color: {{ member.adminRole.color }}"><span class="admin-swatch" style="background: {{ member.adminRole.color }}"></span>{{ member.adminRole.name }}</span>
+                                    {% else %}
+                                        <span class="admin-pill admin-pill--accent">{{ 'admin.admins.full'|trans({}, 'admin') }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="admin-table__cell">
+                                    {% set counts = { lead: row.games|filter(item => item.role.value == 'lead')|length, developer: row.games|filter(item => item.role.value == 'developer')|length, tester: row.games|filter(item => item.role.value == 'tester')|length } %}
+                                    {% if row.games is empty %}
+                                        —
+                                    {% else %}
+                                        <span class="admin-counts">
+                                            {% for role, count in counts|filter(count => count > 0) %}
+                                                <span class="admin-pill{{ role == 'lead' ? ' admin-pill--accent' }}" title="{{ row.games|filter(item => item.role.value == role)|map(item => item.game.name)|join(', ') }}">{{ ('admin.admins.games_count.' ~ role)|trans({ count: count }, 'admin') }}</span>
+                                            {% endfor %}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="admin-table__cell">{{ member.seenAt ? member.seenAt|date('d/m H:i') : '—' }}</td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-actions">
+                                        <a href="{{ path('admin_admin_edit', { id: member.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                        {% if member.id != app_user().id %}
+                                            {{ admin_ui.post('admin_admin_remove', { id: member.id }, 'admin.admins.remove'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-admins', 'admin.admins.remove_confirm'|trans({ name: member.username }, 'admin')) }}
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {{ admin_ui.pagination(pager) }}
+        </section>
+    </div>
+{% endblock %}

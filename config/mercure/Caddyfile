@@ -1,0 +1,23 @@
+{
+	admin off
+	auto_https disable_redirects
+}
+
+{$APP_URL} {
+	tls internal
+	encode zstd gzip
+
+	route {
+		mercure {
+			protocol_version_compatibility 8
+			publisher_jwt {env.MERCURE_JWT_SECRET} HS256
+            subscriber_jwt {env.MERCURE_JWT_SECRET} HS256
+            transport bolt {
+                path var/mercure/mercure.db
+            }
+            anonymous
+			cors_origins {$APP_URL}
+		}
+		reverse_proxy 127.0.0.1:8001
+	}
+}

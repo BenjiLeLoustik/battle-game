@@ -1,0 +1,610 @@
+.shop-admin-product {
+    @apply flex items-center gap-3;
+}
+
+.shop-admin-product__thumb {
+    @apply flex size-10 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-adm-hover text-sm font-bold text-adm-ink-soft;
+}
+
+.shop-admin-product__thumb img {
+    @apply size-full object-cover;
+}
+
+.shop-admin-product__thumb--coins {
+    @apply bg-yellow/15 text-yellow;
+}
+
+.shop-admin-product__thumb--subscription {
+    @apply bg-adm-accent/20 text-adm-accent-soft;
+}
+
+.shop-admin-product__thumb--lives {
+    @apply bg-danger/15 text-danger;
+}
+
+.shop-admin-product__thumb--cosmetic {
+    @apply bg-magenta/15 text-magenta-soft;
+}
+
+.shop-admin-product__thumb--physical {
+    @apply bg-cyan/15 text-cyan;
+}
+
+.shop-admin-address {
+    @apply text-sm leading-relaxed text-adm-ink-soft not-italic;
+}
+
+.shop-admin-code {
+    @apply text-xs break-all text-adm-ink-soft;
+}
+
+.shop-admin-days {
+    @apply w-28;
+}
+
+.shop-admin-dot {
+    @apply inline-block size-2.5 shrink-0 rounded-full bg-(--plan-color);
+}
+
+.shop-admin-plan {
+    @apply inline-flex items-center gap-2 font-semibold;
+}
+
+.shop-types {
+    @apply grid gap-2.5 sm:grid-cols-2 xl:grid-cols-3;
+}
+
+.shop-type {
+    @apply relative flex cursor-pointer items-start gap-3 rounded-xl border border-adm-line bg-adm-bg p-3 transition
+    hover:border-adm-muted has-checked:border-adm-accent has-checked:bg-adm-accent/8 has-focus-visible:outline-2 has-focus-visible:outline-adm-accent;
+}
+
+.shop-type__input {
+    @apply sr-only;
+}
+
+.shop-type__icon {
+    @apply flex size-9 shrink-0 items-center justify-center rounded-lg bg-adm-hover text-adm-ink-soft;
+}
+
+.shop-type__icon svg {
+    @apply size-[18px];
+}
+
+.shop-type__icon--coins {
+    @apply bg-yellow/15 text-yellow;
+}
+
+.shop-type__icon--subscription {
+    @apply bg-adm-accent/20 text-adm-accent-soft;
+}
+
+.shop-type__icon--badge {
+    @apply bg-violet/15 text-[#B7A6FF];
+}
+
+.shop-type__icon--cosmetic {
+    @apply bg-magenta/15 text-magenta-soft;
+}
+
+.shop-type__icon--physical {
+    @apply bg-cyan/15 text-cyan;
+}
+
+.shop-type__icon--lives {
+    @apply bg-danger/15 text-danger;
+}
+
+.shop-type__text {
+    @apply flex min-w-0 flex-col gap-0.5;
+}
+
+.shop-type__name {
+    @apply text-sm font-semibold text-adm-ink;
+}
+
+.shop-type__help {
+    @apply text-xs leading-snug text-adm-muted;
+}
+
+.shop-form {
+    @apply grid items-start gap-4 lg:grid-cols-[minmax(0,1fr)_300px];
+}
+
+.shop-form__main,
+.shop-form__side {
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.shop-form__side {
+    @apply lg:sticky lg:top-4;
+}
+
+.shop-form__row {
+    @apply grid gap-4 sm:grid-cols-2;
+}
+
+.shop-form__stack {
+    @apply flex flex-col gap-4;
+}
+
+.shop-form__check {
+    @apply self-center sm:mt-6 sm:self-start;
+}
+
+.shop-form__segment {
+    @apply w-fit;
+}
+
+.shop-kind {
+    @apply relative cursor-pointer has-checked:bg-[#26224A] has-checked:text-adm-accent-soft;
+}
+
+.shop-slug {
+    @apply flex items-stretch;
+}
+
+.shop-slug__prefix {
+    @apply flex items-center rounded-l-lg border border-r-0 border-adm-line bg-adm-hover px-2.5 text-xs font-normal text-adm-muted;
+}
+
+.shop-slug__input {
+    @apply rounded-l-none;
+}
+
+.shop-affix {
+    @apply relative flex items-center;
+}
+
+.shop-affix .admin-field__input {
+    @apply pr-20;
+}
+
+.shop-affix__unit {
+    @apply pointer-events-none absolute right-3 text-xs font-normal text-adm-muted;
+}
+
+.shop-frames {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(96px,1fr))] gap-2.5;
+}
+
+.shop-frame {
+    @apply relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-adm-line bg-adm-bg px-2 pt-4 pb-2.5 transition
+    hover:border-adm-muted has-checked:border-adm-accent has-checked:bg-adm-accent/8;
+}
+
+.shop-frame__name {
+    @apply text-xs font-semibold text-adm-ink-soft;
+}
+
+.shop-switch {
+    @apply relative flex cursor-pointer items-center gap-3 text-sm text-adm-ink;
+}
+
+.shop-switch__input {
+    @apply sr-only;
+}
+
+.shop-switch__track {
+    @apply relative h-6 w-11 shrink-0 rounded-full bg-adm-line transition after:absolute after:top-0.5 after:left-0.5 after:size-5
+    after:rounded-full after:bg-white after:transition after:content-[''];
+}
+
+.shop-switch__input:checked + .shop-switch__track {
+    @apply bg-success after:translate-x-5;
+}
+
+.shop-switch__input:focus-visible + .shop-switch__track {
+    @apply outline-2 outline-offset-2 outline-adm-accent;
+}
+
+.shop-drop {
+    @apply relative flex aspect-[16/10] cursor-pointer items-center justify-center overflow-hidden rounded-xl border-2 border-dashed
+    border-adm-line bg-adm-bg text-center transition hover:border-adm-accent has-focus-visible:border-adm-accent;
+}
+
+.shop-drop__preview {
+    @apply absolute inset-0 size-full object-cover;
+}
+
+.shop-drop__empty {
+    @apply flex flex-col items-center gap-1 px-4 text-xs text-adm-muted;
+}
+
+.shop-drop__empty strong {
+    @apply text-sm text-adm-ink-soft;
+}
+
+.shop-drop--filled .shop-drop__empty {
+    @apply absolute inset-x-0 bottom-0 bg-adm-bg/85 py-2 opacity-0 transition;
+}
+
+.shop-drop--filled:hover .shop-drop__empty {
+    @apply opacity-100;
+}
+
+.shop-drop__icon {
+    @apply mb-1 size-7 text-adm-muted;
+}
+
+[data-for][hidden],
+[data-kind][hidden],
+[data-coins-field][hidden] {
+    @apply hidden;
+}
+
+.shop-badge-editor {
+    @apply grid items-start gap-5 rounded-xl border border-adm-line bg-adm-bg p-4 sm:grid-cols-[120px_minmax(0,1fr)];
+}
+
+.shop-badge-editor__preview {
+    @apply flex flex-col items-center gap-3 pt-2;
+}
+
+.shop-badge-editor__caption {
+    @apply text-center text-[11px] text-adm-muted;
+}
+
+.shop-icons {
+    @apply flex flex-wrap gap-2;
+}
+
+.shop-icon-choice {
+    @apply relative flex size-10 cursor-pointer items-center justify-center rounded-lg border border-adm-line bg-adm-panel text-adm-ink-soft
+    transition hover:border-adm-muted has-checked:border-adm-accent has-checked:bg-adm-accent/10 has-checked:text-adm-accent-soft;
+}
+
+.shop-icon-choice .plan-icon {
+    @apply size-5;
+}
+
+.shop-filters {
+    @apply flex flex-wrap items-center gap-2.5;
+}
+
+.shop-filters__check {
+    @apply whitespace-nowrap;
+}
+
+.shop-filters__meta {
+    @apply ml-auto flex items-center gap-2 text-xs text-adm-muted max-md:ml-0;
+}
+
+.shop-adjust {
+    @apply grid items-end gap-3 md:grid-cols-[minmax(0,2fr)_150px_130px] xl:grid-cols-[minmax(0,2fr)_150px_130px_minmax(0,2fr)_auto];
+}
+
+.shop-adjust__reason {
+    @apply md:col-span-2 xl:col-span-1;
+}
+
+.shop-adjust__submit {
+    @apply h-[42px];
+}
+
+.shop-grant__player {
+    @apply w-full max-w-xs flex-[1_1_220px];
+}
+
+.shop-type__icon--gift {
+    @apply bg-success/15 text-success;
+}
+
+.shop-admin-product__thumb--gift {
+    @apply bg-success/15 text-success;
+}
+
+.voucher-form {
+    @apply grid items-end gap-3 md:grid-cols-3 xl:grid-cols-6;
+}
+
+.voucher-code {
+    @apply font-mono text-xs font-semibold text-adm-ink select-all;
+}
+
+.lucide-field__row {
+    @apply flex items-center gap-3;
+}
+
+.lucide-field__preview {
+    @apply flex size-11 shrink-0 items-center justify-center rounded-xl border border-adm-line bg-adm-bg text-adm-accent-soft [&_svg]:size-6;
+}
+
+.lucide-field__input {
+    @apply flex-1 font-mono;
+}
+
+.lucide-field__status {
+    @apply min-h-4 text-xs text-adm-muted data-[state=missing]:text-[#FF7A8F] data-[state=ok]:text-[#6EE7A0];
+}
+
+.lucide-field__chips {
+    @apply flex flex-wrap gap-1.5;
+}
+
+.lucide-field__chip {
+    @apply cursor-pointer rounded-md border border-adm-line px-2 py-1 font-mono text-[11px] text-adm-muted hover:border-adm-accent hover:text-adm-ink;
+}
+
+.cosmetic-designer {
+    @apply flex flex-col;
+}
+
+.designer {
+    @apply flex flex-col gap-4;
+}
+
+.designer__stage {
+    @apply relative flex flex-col gap-4 overflow-hidden rounded-2xl border border-adm-line bg-[#0B0D14] bg-[radial-gradient(circle_at_50%_0%,rgb(124_92_255/.14),transparent_60%)] p-6 max-sm:p-4;
+}
+
+.designer__showcase {
+    @apply flex flex-wrap items-center justify-center gap-10 py-6 max-sm:gap-6;
+}
+
+.designer__hero-avatar {
+    @apply border-0 shadow-none;
+}
+
+.designer__presets {
+    @apply flex flex-wrap items-center justify-center gap-2 border-t border-white/5 pt-4;
+}
+
+.designer__presets-label {
+    @apply mr-1 text-xs font-semibold tracking-wide text-adm-muted uppercase;
+}
+
+.designer__preset {
+    @apply inline-flex cursor-pointer items-center gap-2 rounded-full border border-adm-line bg-adm-panel px-3 py-1.5 text-xs font-semibold text-adm-ink-soft transition-colors hover:border-adm-accent hover:text-adm-ink;
+}
+
+.designer__preset-dot {
+    @apply size-3.5 rounded-full;
+    background: conic-gradient(var(--p-a), var(--p-b), var(--p-c), var(--p-a));
+}
+
+.designer__controls {
+    @apply grid gap-x-5 gap-y-4 sm:grid-cols-2;
+}
+
+.designer__group {
+    @apply flex min-w-0 flex-col gap-2;
+}
+
+.designer__group--wide {
+    @apply sm:col-span-2;
+}
+
+.designer__label {
+    @apply flex items-center justify-between text-[13px] font-semibold text-adm-ink;
+}
+
+.designer__output {
+    @apply rounded-md bg-adm-hover px-2 py-0.5 font-mono text-xs text-adm-accent-soft;
+}
+
+.designer__range input {
+    @apply w-full accent-adm-accent;
+}
+
+.designer__swatches {
+    @apply grid gap-2 sm:grid-cols-3;
+}
+
+.designer__swatch {
+    @apply relative flex cursor-pointer items-center gap-3 rounded-xl border border-adm-line bg-adm-bg px-3 py-2 transition-colors hover:border-(--swatch);
+}
+
+.designer__swatch--single {
+    @apply w-fit;
+}
+
+.designer__swatch-input {
+    @apply absolute inset-0 size-full cursor-pointer opacity-0;
+}
+
+.designer__swatch-chip {
+    @apply size-8 shrink-0 rounded-lg bg-(--swatch) shadow-[inset_0_0_0_1px_rgb(255_255_255/.15)];
+}
+
+.designer__swatch-text {
+    @apply flex flex-col text-xs leading-tight text-adm-muted;
+}
+
+.designer__swatch-text strong {
+    @apply text-adm-ink-soft;
+}
+
+.designer__swatch-text span {
+    @apply font-mono;
+}
+
+.designer__choices {
+    @apply grid grid-cols-3 gap-2;
+}
+
+.designer__choices--chips {
+    @apply flex flex-wrap;
+}
+
+.designer__choices--segment {
+    @apply grid-cols-2;
+}
+
+.designer__choices--pattern {
+    @apply grid-cols-5 max-sm:grid-cols-3;
+}
+
+.designer__choice {
+    @apply flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-adm-line bg-adm-bg px-2 py-2.5 text-center text-xs font-semibold text-adm-muted transition-colors hover:border-adm-muted has-checked:border-adm-accent has-checked:bg-adm-accent/10 has-checked:text-adm-ink has-focus-visible:outline-2 has-focus-visible:outline-adm-accent;
+}
+
+.designer__choices--chips .designer__choice,
+.designer__choices--segment .designer__choice {
+    @apply flex-row justify-center px-3 py-2;
+}
+
+.designer__choice-sample {
+    @apply hidden;
+}
+
+.designer__choices--paint .designer__choice-sample {
+    @apply block size-9 rounded-full p-[4px];
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+
+.designer__choices--paint .designer__choice--solid .designer__choice-sample {
+    background: var(--p-a);
+}
+
+.designer__choices--paint .designer__choice--gradient .designer__choice-sample {
+    background: linear-gradient(135deg, var(--p-a), var(--p-b), var(--p-c));
+}
+
+.designer__choices--paint .designer__choice--conic .designer__choice-sample {
+    background: conic-gradient(var(--p-a), var(--p-b), var(--p-c), var(--p-a));
+}
+
+.designer__choices--pattern .designer__choice-sample {
+    @apply relative block h-10 w-full overflow-hidden rounded-lg;
+    background: linear-gradient(120deg, var(--p-a), var(--p-b) 55%, var(--p-c));
+}
+
+.designer__choices--pattern .designer__choice-sample::after {
+    content: '';
+    @apply absolute inset-0 opacity-60;
+}
+
+.designer__choice--dots .designer__choice-sample::after {
+    background: radial-gradient(circle, rgb(255 255 255 / .7) 1.2px, transparent 1.6px) 0 0 / 9px 9px;
+}
+
+.designer__choice--stripes .designer__choice-sample::after {
+    background: repeating-linear-gradient(45deg, rgb(255 255 255 / .5) 0 2px, transparent 2px 9px);
+}
+
+.designer__choice--grid .designer__choice-sample::after {
+    background: linear-gradient(rgb(255 255 255 / .45) 1px, transparent 1px) 0 0 / 12px 12px, linear-gradient(90deg, rgb(255 255 255 / .45) 1px, transparent 1px) 0 0 / 12px 12px;
+}
+
+.designer__choice--waves .designer__choice-sample::after {
+    background: radial-gradient(circle at 50% 120%, transparent 38%, rgb(255 255 255 / .5) 39%, rgb(255 255 255 / .5) 43%, transparent 44%) 0 0 / 20px 10px;
+}
+
+.designer__profile {
+    @apply overflow-hidden rounded-2xl border border-adm-line bg-adm-panel;
+}
+
+.designer__profile-banner {
+    @apply block h-36 max-sm:h-24;
+}
+
+.designer__profile-identity {
+    @apply relative z-10 -mt-12 flex items-end gap-4 px-5 pb-4;
+}
+
+.designer__profile-identity .avatar {
+    @apply shrink-0;
+}
+
+.designer__profile-text {
+    @apply flex flex-col pb-2 text-sm text-adm-muted;
+}
+
+.designer__profile-text strong {
+    @apply text-lg text-adm-ink;
+}
+
+.designer__stage--victory {
+    @apply min-h-72 items-center justify-center;
+}
+
+.designer__victory-badge {
+    @apply relative z-10 flex;
+}
+
+.designer__play {
+    @apply relative z-10 gap-2;
+}
+
+.designer__icons {
+    @apply grid grid-cols-8 gap-2 max-sm:grid-cols-6;
+}
+
+.designer__icon {
+    @apply flex aspect-square cursor-pointer items-center justify-center rounded-xl border border-adm-line bg-adm-bg text-adm-muted transition-colors hover:text-adm-ink has-checked:border-adm-accent has-checked:bg-adm-accent/10 has-checked:text-adm-accent-soft [&_svg]:size-5;
+}
+
+.cosmetic-fx {
+    @apply pointer-events-none absolute inset-0 z-0 overflow-hidden;
+}
+
+.cosmetic-fx__piece {
+    @apply absolute top-0 left-0 flex;
+    transform: translate(var(--x), -40px);
+    animation: cosmetic-rain 2.8s var(--delay) cubic-bezier(.2,.6,.4,1) both;
+}
+
+.cosmetic-fx--burst .cosmetic-fx__piece {
+    @apply top-1/2 left-1/2;
+    transform: translate(-50%, -50%);
+    animation: cosmetic-burst 2.2s var(--delay) cubic-bezier(.15,.7,.3,1) both;
+}
+
+.cosmetic-fx--fountain .cosmetic-fx__piece {
+    @apply top-full left-1/2;
+    animation: cosmetic-fountain 2.8s var(--delay) cubic-bezier(.2,.7,.4,1) both;
+}
+
+@keyframes cosmetic-rain {
+    0% { transform: translate(var(--x), -40px) rotate(0); opacity: 0; }
+    10% { opacity: 1; }
+    100% { transform: translate(calc(var(--x) + var(--drift)), var(--h)) rotate(var(--spin)); opacity: .4; }
+}
+
+@keyframes cosmetic-burst {
+    0% { transform: translate(-50%, -50%) scale(.2); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(var(--spin)); opacity: 0; }
+}
+
+@keyframes cosmetic-fountain {
+    0% { transform: translate(-50%, 0); opacity: 0; }
+    10% { opacity: 1; }
+    50% { transform: translate(calc(-50% + var(--drift)), calc(var(--rise) * -1)) rotate(calc(var(--spin) / 2)); }
+    100% { transform: translate(calc(-50% + var(--drift) * 1.6), 0) rotate(var(--spin)); opacity: 0; }
+}
+
+.designer__upload {
+    @apply flex cursor-pointer items-center gap-3 rounded-xl border border-dashed border-adm-line bg-adm-bg p-3 transition-colors hover:border-adm-accent;
+}
+
+.designer__upload--filled {
+    @apply border-solid;
+}
+
+.designer__upload-thumb {
+    @apply h-12 w-20 shrink-0 rounded-lg object-cover;
+}
+
+.designer__upload-icon {
+    @apply flex size-12 shrink-0 items-center justify-center rounded-lg bg-adm-hover text-adm-accent-soft;
+}
+
+.designer__upload--filled .designer__upload-icon {
+    @apply hidden;
+}
+
+.designer__upload-text {
+    @apply flex min-w-0 flex-col text-xs text-adm-muted;
+}
+
+.designer__upload-text strong {
+    @apply text-sm text-adm-ink;
+}
+
+.designer__upload-text span {
+    @apply truncate;
+}

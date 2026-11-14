@@ -1,0 +1,123 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'users' %}
+{% set title = creating ? 'admin.users.new'|trans({}, 'admin') : user.username %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-user') }}">
+
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_user_index') }}" class="admin-crumbs__link">{{ 'admin.users.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.users.form.profile'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.users.form.profile_help'|trans({}, 'admin') }}</span>
+            </div>
+            <div class="admin-form-grid">
+                <label class="admin-field">
+                    {{ 'admin.users.form.username'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="username" value="{{ data.username }}" maxlength="30" required>
+                    {{ admin_ui.error(errors, 'username') }}
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.users.form.first_name'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="first_name" value="{{ data.firstName }}" maxlength="50">
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.users.form.email'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="email" name="email" value="{{ data.email }}" required>
+                    {{ admin_ui.error(errors, 'email') }}
+                </label>
+                <label class="admin-field">
+                    {{ 'admin.users.form.country'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="country">
+                        <option value="">{{ 'site.settings.countries.none'|trans }}</option>
+                        {% for country in countries %}
+                            <option value="{{ country.code }}"{{ data.country == country.code ? ' selected' }}>{{ country|localize('name') }}</option>
+                        {% endfor %}
+                    </select>
+                </label>
+            </div>
+            {% if creating %}
+                <p class="admin-panel__help">{{ 'admin.users.form.password_help'|trans({}, 'admin') }}</p>
+            {% endif %}
+        </section>
+
+        {% if not creating %}
+            <section class="admin-panel">
+                <div class="admin-panel__intro">
+                    <h2 class="admin-panel__title">{{ 'admin.users.form.status'|trans({}, 'admin') }}</h2>
+                    <span class="admin-panel__help">{{ 'admin.users.form.status_help'|trans({}, 'admin') }}</span>
+                </div>
+                <nav class="admin-segment" role="radiogroup">
+                    {% for status in statuses %}
+                        <label class="admin-segment__item{{ data.status == status ? ' admin-segment__item--active' }}">
+                            <input type="radio" class="sr-only" name="status" value="{{ status }}"{{ data.status == status ? ' checked' }}>
+                            {{ ('admin.status.' ~ status)|trans({}, 'admin') }}
+                        </label>
+                    {% endfor %}
+                </nav>
+                <div class="admin-form-grid" data-component="FieldReveal" data-field="status" data-values="suspension,ban"{{ data.status == 'active' ? ' hidden' }}>
+                    <label class="admin-field">
+                        {{ 'admin.users.form.duration'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="duration">
+                            {% for hours in durations %}
+                                <option value="{{ hours }}"{{ data.duration == hours ? ' selected' }}>{{ ('admin.durations.' ~ hours)|trans({}, 'admin') }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="admin-field">
+                        {{ 'admin.users.form.reason'|trans({}, 'admin') }}
+                        <select class="admin-field__input" name="reason">
+                            {% for reason in reasons %}
+                                <option value="{{ reason.value }}"{{ data.reason == reason ? ' selected' }}>{{ reason.translate() }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                    <label class="admin-field admin-field--wide">
+                        {{ 'admin.users.form.message'|trans({}, 'admin') }}
+                        <textarea class="admin-field__input admin-field__input--area" name="message" rows="2" maxlength="500">{{ data.message }}</textarea>
+                    </label>
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="admin-panel">
+            <div class="admin-panel__intro">
+                <h2 class="admin-panel__title">{{ 'admin.users.form.note'|trans({}, 'admin') }}</h2>
+                <span class="admin-panel__help">{{ 'admin.users.form.note_help'|trans({}, 'admin') }}</span>
+            </div>
+            <textarea class="admin-field__input admin-field__input--area" name="note" rows="3" maxlength="1000" aria-label="{{ 'admin.users.form.note'|trans({}, 'admin') }}">{{ data.note }}</textarea>
+        </section>
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ creating ? path('admin_user_index') : path('admin_user_show', { id: user.id }) }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ (creating ? 'admin.users.form.create' : 'admin.save')|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+
+    {% if not creating and user.id != app_user().id %}
+        <form class="admin-page admin-page--danger" method="post" action="{{ path('admin_user_delete', { id: user.id }) }}">
+            <section class="admin-panel admin-panel--danger">
+                <h2 class="admin-panel__title admin-panel__title--danger">{{ 'admin.users.delete'|trans({ name: user.username }, 'admin') }}</h2>
+                <p class="admin-panel__help">{{ 'admin.users.delete_help'|trans({}, 'admin') }}</p>
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-user') }}">
+                <label class="admin-field">
+                    {{ 'admin.users.delete_confirm'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="confirm" autocomplete="off" data-component="ConfirmMatch" data-expected="SUPPRIMER">
+                </label>
+                <button type="submit" class="admin-btn admin-btn--danger" disabled>{{ 'admin.users.delete_action'|trans({}, 'admin') }}</button>
+            </section>
+        </form>
+    {% endif %}
+{% endblock %}

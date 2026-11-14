@@ -1,0 +1,88 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'studio' %}
+
+{% block title %}{{ 'admin.studio.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">
+                    {{ 'admin.studio.title'|trans({}, 'admin') }}
+                </h1>
+                <span class="admin-page__subtitle">
+                    {{ mine ? 'admin.studio.subtitle_mine'|trans({ name: app_user().firstName }, 'admin') : 'admin.studio.subtitle_all'|trans({}, 'admin') }}
+                </span>
+            </div>
+            <a href="{{ path('admin_studio_new') }}" class="admin-btn admin-btn--primary">
+                + {{ 'admin.studio.new'|trans({}, 'admin') }}
+            </a>
+        </div>
+
+        <form class="studio-filters" method="get" action="{{ path('admin_studio_index') }}">
+            <input type="hidden" name="scope" value="{{ mine ? 'mine' : 'all' }}">
+            <nav class="admin-segment" aria-label="{{ 'admin.studio.scope'|trans({}, 'admin') }}">
+                {% for scope, count in counts %}
+                    {% set current = (scope == 'mine') == mine %}
+                    <a href="{{ path('admin_studio_index', { scope: scope, status: status ? status.value : null, q: search ?: null }) }}" class="admin-segment__item{{ current ? ' admin-segment__item--active' }}"{% if current %} aria-current="page"{% endif %}>
+                        {{ ('admin.studio.scope_' ~ scope)|trans({}, 'admin') }} · {{ count }}
+                    </a>
+                {% endfor %}
+            </nav>
+            <select class="admin-select" name="status" aria-label="{{ 'admin.studio.filter_status'|trans({}, 'admin') }}" data-component="AutoSubmit">
+                <option value="">
+                    {{ 'admin.studio.all_statuses'|trans({}, 'admin') }}
+                </option>
+                {% for item in statuses %}
+                    <option value="{{ item.value }}"{{ status == item ? ' selected' }}>
+                        {{ item.translate() }}
+                    </option>
+                {% endfor %}
+            </select>
+            <label class="admin-search">
+                <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                <input class="admin-search__input" type="search" name="q" value="{{ search }}" aria-label="{{ 'admin.studio.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.studio.search'|trans({}, 'admin') }}">
+            </label>
+        </form>
+
+        {% set pager = paginate(games, 'page', 10) %}
+        <section class="studio-list" aria-label="{{ 'admin.studio.games'|trans({}, 'admin') }}">
+            {% for game in pager.items %}
+                <a href="{{ path('admin_studio_show', { slug: game.slug }) }}" class="studio-list__row" style="--game-color: {{ game.color }}">
+                    <span class="studio-list__thumb">
+                        <svg class="studio-list__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z"/></svg>
+                    </span>
+                    <span class="studio-list__info">
+                        <strong class="studio-list__name">
+                            {{ game.name }}
+                        </strong>
+                        <span class="studio-list__meta">
+                            v{{ game.version }} · {{ 'admin.studio.updated'|trans({ date: game.updatedAt|date('d/m/Y') }, 'admin') }}
+                        </span>
+                    </span>
+                    {% set open = tasks[game.id] ?? 0 %}
+                    <span class="studio-list__tasks{{ open == 0 ? ' studio-list__tasks--none' }}" title="{{ 'admin.studio.open_tasks'|trans({ count: open }, 'admin') }}">
+                        <svg class="studio-list__tasks-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2"/></svg>
+                        {{ 'admin.studio.open_tasks'|trans({ count: open }, 'admin') }}
+                    </span>
+                    <span class="admin-badge admin-badge--{{ game.status.value }}">{{ game.status.translate() }}</span>
+                    <span class="studio-list__team">
+                        {% for member in teams[game.id] ?? [] %}
+                            {{ ui.avatar(member.user, 'stack') }}
+                        {% endfor %}
+                    </span>
+                    <svg class="studio-list__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                </a>
+            {% else %}
+                <p class="studio-list__empty">
+                    {{ 'admin.studio.empty'|trans({}, 'admin') }}
+                </p>
+            {% endfor %}
+            {{ admin_ui.pagination(pager) }}
+        </section>
+    </div>
+{% endblock %}

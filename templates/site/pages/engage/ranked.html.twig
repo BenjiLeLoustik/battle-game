@@ -1,0 +1,82 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/rank.html.twig' as rank %}
+
+{% set active = 'ranked' %}
+
+{% block title %}{{ 'site.ranked.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage">
+        <div class="engage__head">
+            <div class="engage__intro">
+                <h1 class="engage__title">{{ 'site.ranked.title'|trans }}</h1>
+                <p class="engage__subtitle">{{ 'site.ranked.subtitle'|trans }}</p>
+            </div>
+            {% if games is not empty %}
+                <form method="get" class="engage__filters">
+                    <select class="engage-select" name="game" onchange="this.form.submit()" aria-label="{{ 'site.ranked.game'|trans }}">
+                        {% for item in games %}<option value="{{ item.slug }}"{{ game and game.id == item.id ? ' selected' }}>{{ item.name }}</option>{% endfor %}
+                    </select>
+                </form>
+            {% endif %}
+        </div>
+
+        <section class="ranked-tiers">
+            {% for tier in tiers %}
+                <div class="ranked-tier">
+                    {{ rank.badge(tier) }}
+                    <small>{{ tier.min }}+</small>
+                </div>
+            {% endfor %}
+            <div class="ranked-tier ranked-tier--more">
+                <span class="rank-badge" style="--rank-color: {{ (tiers|last).color }}">{{ (tiers|last).name }} II, III…</span>
+                <small>{{ 'site.ranked.every'|trans({ step: step }) }}</small>
+            </div>
+        </section>
+
+        {% if game %}
+            <div class="engage-grid">
+                <section class="engage-panel">
+                    <h2 class="engage-panel__title">{{ 'site.ranked.board'|trans({ game: game.name }) }}</h2>
+                    {% if rows is empty %}
+                        <p class="engage-empty">{{ 'site.ranked.empty'|trans }}</p>
+                    {% else %}
+                        <ol class="engage-list">
+                            {% for row in rows %}
+                                <li class="engage-list__row">
+                                    <span class="engage-list__rank">{{ loop.index }}</span>
+                                    {{ ui.avatar(row.user, 'sm') }}
+                                    <a class="engage-list__name" href="{{ path('site_profile_show', { username: row.user.username }) }}">{{ ui.name(row.user) }}</a>
+                                    {{ rank.badge(row.tier) }}
+                                    <span class="engage-list__meta">{{ 'site.ranked.record'|trans({ wins: row.wins, games: row.games }) }}</span>
+                                    <strong class="engage-list__score">{{ row.rating }}</strong>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    {% endif %}
+                </section>
+                <aside class="engage-panel engage-panel--side">
+                    <h2 class="engage-panel__title">{{ 'site.ranked.you'|trans }}</h2>
+                    {% if mine %}
+                        {{ rank.badge(mine_tier, 'lg') }}
+                        <strong class="engage-big">{{ mine.rating }}</strong>
+                        <div class="rank-next" style="--rank-color: {{ mine_tier.next.color }}">
+                            <div class="rank-next__row">
+                                <span>{{ 'site.ranked.next'|trans({ tier: mine_tier.next.label }) }}</span>
+                                <strong>{{ 'site.ranked.missing'|trans({ points: mine_tier.next.min - mine.rating }) }}</strong>
+                            </div>
+                            <span class="rank-next__bar"><span style="width: {{ mine_tier.progress }}%"></span></span>
+                        </div>
+                        <span class="engage-list__meta">{{ 'site.ranked.peak'|trans({ peak: mine.peak }) }} · {{ 'site.ranked.record'|trans({ wins: mine.wins, games: mine.games }) }}</span>
+                        <a href="{{ path('site_play_ranked', { slug: game.slug }) }}" class="btn btn--primary">{{ 'site.ranked.play'|trans }}</a>
+                    {% else %}
+                        <p class="engage-empty">{{ 'site.ranked.account_only'|trans }}</p>
+                    {% endif %}
+                    <p class="engage-help">{{ 'site.ranked.help'|trans }}</p>
+                </aside>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

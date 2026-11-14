@@ -1,0 +1,338 @@
+.studio-filters {
+    @apply flex flex-wrap items-center gap-2.5;
+}
+
+.studio-list {
+    @apply overflow-hidden rounded-xl border border-adm-line bg-adm-panel;
+}
+
+.studio-list__row {
+    @apply flex flex-wrap items-center gap-4 border-b border-adm-line px-5 py-3.5
+    text-adm-ink last:border-b-0 hover:bg-adm-hover;
+}
+
+.studio-list__thumb {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-[10px] border
+    border-adm-line bg-adm-bg text-(--game-color);
+}
+
+.studio-list__icon {
+    @apply size-5;
+}
+
+.studio-list__info {
+    @apply flex min-w-0 flex-[1_1_200px] flex-col gap-0.5;
+}
+
+.studio-list__name {
+    @apply text-[15px];
+}
+
+.studio-list__meta {
+    @apply text-xs text-adm-muted;
+}
+
+.studio-list__tasks {
+    @apply inline-flex items-center gap-1.5 whitespace-nowrap rounded-full border border-adm-accent/40 bg-adm-accent-soft px-2.5 py-1 text-xs font-semibold text-adm-accent;
+}
+
+.studio-list__tasks--none {
+    @apply border-adm-line bg-transparent font-normal text-adm-muted;
+}
+
+.studio-list__tasks-icon {
+    @apply size-3.5;
+}
+
+.studio-list__team {
+    @apply flex w-[110px] items-center max-md:ml-auto max-md:w-auto;
+}
+
+.studio-list__chevron {
+    @apply size-4 text-adm-muted;
+}
+
+.studio-list__empty {
+    @apply px-5 py-7 text-center text-sm text-[#9BA1AE];
+}
+
+.studio-form__grid {
+    @apply grid grid-cols-2 gap-3.5 max-md:grid-cols-1;
+}
+
+.studio-form__pair {
+    @apply grid grid-cols-2 gap-2.5;
+}
+
+.studio-form__wide {
+    @apply col-span-full;
+}
+
+.studio-form__team {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(230px,1fr))] gap-2.5;
+}
+
+.studio-member {
+    @apply flex flex-wrap items-center gap-x-3 gap-y-2 rounded-[10px] border border-adm-line bg-adm-bg px-3 py-2.5;
+}
+
+.studio-member > .admin-pill,
+.studio-member > form {
+    @apply shrink-0;
+}
+
+.studio-member > form {
+    @apply ml-auto;
+}
+
+.studio-member--lead {
+    @apply border-[#3A3570];
+}
+
+.studio-member--choice {
+    @apply cursor-pointer has-checked:border-adm-accent has-checked:bg-[#1E1B36];
+}
+
+.studio-member__check {
+    @apply size-[18px] accent-adm-accent;
+}
+
+.studio-member__info {
+    @apply flex min-w-0 flex-[1_1_120px] flex-col;
+}
+
+.studio-member__name {
+    @apply truncate text-sm;
+}
+
+.studio-member__meta {
+    @apply truncate text-xs text-adm-muted;
+}
+
+.studio-hero {
+    @apply flex flex-wrap items-center gap-[18px] rounded-xl border border-adm-line bg-adm-panel px-[22px] py-5;
+}
+
+.studio-hero__thumb {
+    @apply flex size-14 items-center justify-center rounded-[14px] border border-adm-line
+    bg-adm-bg text-(--game-color);
+}
+
+.studio-hero__icon {
+    @apply size-7;
+}
+
+.studio-hero__intro {
+    @apply flex flex-[1_1_260px] flex-col gap-1;
+}
+
+.studio-hero__heading {
+    @apply flex flex-wrap items-center gap-2.5;
+}
+
+.studio-hero__title {
+    @apply text-2xl font-bold;
+}
+
+.studio-hero__meta {
+    @apply text-[13px] text-[#9BA1AE];
+}
+
+.studio-hero__slug {
+    @apply font-mono;
+}
+
+.studio-hero__actions {
+    @apply flex flex-wrap gap-2;
+}
+
+.studio-sheet {
+    @apply grid grid-cols-[repeat(auto-fit,minmax(min(420px,100%),1fr))] items-start gap-5 max-md:grid-cols-1;
+}
+
+.studio-sheet__side {
+    @apply flex flex-col gap-5;
+}
+
+.studio-sheet__view {
+    @apply flex flex-col gap-4 p-5;
+}
+
+.studio-sheet__fields {
+    @apply grid grid-cols-[auto_1fr] gap-x-4 gap-y-2 text-[13px];
+}
+
+.studio-sheet__key {
+    @apply text-[#9BA1AE];
+}
+
+.studio-sheet__value {
+    @apply m-0 font-mono text-xs break-all text-adm-ink;
+}
+
+.studio-sheet__settings {
+    @apply flex flex-col gap-2;
+}
+
+.studio-sheet__subtitle {
+    @apply text-sm font-bold;
+}
+
+.studio-sheet__check {
+    @apply flex items-center gap-2 rounded-lg bg-success/10 px-3 py-2.5 text-[13px] text-[#6EE7A0];
+}
+
+.studio-sheet__check--error {
+    @apply bg-danger/10 text-[#FF8A9C];
+}
+
+.studio-sheet__raw {
+    @apply m-0 max-h-[560px] overflow-auto p-5 font-mono text-xs leading-[1.6] text-adm-ink-soft;
+}
+
+.studio-sheet__inline {
+    @apply flex flex-wrap gap-2;
+}
+
+.studio-sheet__grow {
+    @apply min-w-0 flex-[1_1_160px];
+}
+
+.studio-task {
+    @apply rounded-[10px] border border-adm-line bg-adm-bg;
+}
+
+.studio-task[open] {
+    @apply border-adm-accent/40;
+}
+
+.studio-task--done .studio-task__title {
+    @apply text-adm-muted line-through;
+}
+
+.studio-task__summary {
+    @apply flex cursor-pointer list-none items-center gap-3 px-3 py-2.5 [&::-webkit-details-marker]:hidden;
+}
+
+.studio-task__main {
+    @apply flex min-w-0 flex-1 flex-col gap-1.5;
+}
+
+.studio-task__title {
+    @apply truncate text-sm text-adm-ink;
+}
+
+.studio-task__meta {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.studio-task__info {
+    @apply text-xs text-adm-muted;
+}
+
+.studio-task__info--late {
+    @apply font-semibold text-[#FF8A9C];
+}
+
+.studio-task__people {
+    @apply flex shrink-0;
+}
+
+.studio-task__body {
+    @apply flex flex-col gap-3 border-t border-adm-line px-3 py-3;
+}
+
+.studio-task__description {
+    @apply text-[13px] leading-relaxed whitespace-pre-line text-adm-ink-soft;
+}
+
+.studio-task__checklist {
+    @apply flex flex-col gap-1;
+}
+
+.studio-task__item {
+    @apply flex w-full cursor-pointer items-center gap-2.5 rounded-md px-1.5 py-1 text-left text-[13px] text-adm-ink-soft hover:bg-adm-hover;
+}
+
+.studio-task__item--done {
+    @apply text-adm-muted line-through;
+}
+
+.studio-task__box {
+    @apply flex size-4 shrink-0 items-center justify-center rounded border border-adm-line text-[11px] font-bold text-adm-bg;
+}
+
+.studio-task__item--done .studio-task__box {
+    @apply border-adm-accent bg-adm-accent;
+}
+
+.studio-task__actions {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.studio-task__actions > form:last-child {
+    @apply ml-auto;
+}
+
+.studio-task-form__people {
+    @apply grid grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-2;
+}
+
+.studio-task-form__person {
+    @apply cursor-pointer rounded-[10px] border border-adm-line bg-adm-bg px-3 py-2 has-checked:border-adm-accent;
+}
+.studio-lead {
+    @apply mt-4 items-center border-t border-adm-line pt-4;
+}
+
+.studio-lead__label {
+    @apply w-full text-xs font-semibold uppercase tracking-wider text-adm-muted;
+}
+
+.studio-review--pending {
+    @apply border-amber-400/40;
+}
+
+.studio-review__request {
+    @apply flex flex-col gap-3;
+}
+
+.studio-review__text {
+    @apply m-0 text-sm text-adm-ink;
+}
+
+.studio-review__message {
+    @apply m-0 whitespace-pre-line rounded-lg border-l-2 border-adm-accent bg-adm-accent-soft px-3 py-2 text-sm text-adm-ink;
+}
+
+.studio-review__actions {
+    @apply flex flex-wrap gap-2;
+}
+
+.studio-review__reject {
+    @apply flex flex-col items-start gap-2 border-t border-adm-line pt-3;
+}
+
+.studio-review__reject .admin-field {
+    @apply w-full;
+}
+
+.studio-review__history {
+    @apply m-0 mt-4 flex list-none flex-col gap-2 p-0;
+}
+
+.studio-review__item {
+    @apply flex flex-col gap-1 rounded-lg border border-adm-line px-3 py-2;
+}
+
+.studio-review__line {
+    @apply flex flex-wrap items-center gap-2;
+}
+
+.studio-review__meta {
+    @apply text-xs text-adm-muted;
+}
+
+.studio-review__comment {
+    @apply m-0 whitespace-pre-line text-sm text-adm-ink-soft;
+}

@@ -1,0 +1,65 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'categories' %}
+
+{% block title %}{{ 'admin.categories.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.categories.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.categories.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_category_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.categories.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <section class="admin-panel">
+            <span class="admin-panel__help">{{ 'admin.categories.preview'|trans({}, 'admin') }}</span>
+            <div class="admin-actions">
+                <span class="category-chip category-chip--all">{{ 'site.home.games.all'|trans }}</span>
+                {% for row in rows|filter(row => row.category.active) %}
+                    <span class="category-chip" style="--chip: {{ row.category.color }}">{{ row.category.name }}</span>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="admin-panel admin-panel--flush">
+            {% set pager = paginate(rows) %}
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead><tr>{% for column in ['order', 'category', 'slug', 'games', 'active', 'actions'] %}<th class="admin-table__th">{{ ('admin.categories.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                    <tbody>
+                        {% for row in pager.items %}
+                            {% set category = row.category %}
+                            <tr class="admin-table__row">
+                                <td class="admin-table__cell">
+                                    <span class="admin-actions">
+                                        {% if pager.offset + loop.index0 > 0 %}{{ admin_ui.post('admin_category_move', { id: category.id, direction: 'up' }, '↑', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-categories') }}{% endif %}
+                                        {% if pager.offset + loop.index < pager.total %}{{ admin_ui.post('admin_category_move', { id: category.id, direction: 'down' }, '↓', 'admin-btn admin-btn--ghost admin-btn--small', 'admin-categories') }}{% endif %}
+                                    </span>
+                                </td>
+                                <td class="admin-table__cell"><span class="admin-swatch" style="background: {{ category.color }}"></span> {{ category.name }}</td>
+                                <td class="admin-table__cell admin-table__cell--mono">{{ category.slug }}</td>
+                                <td class="admin-table__cell">{{ row.games }}</td>
+                                <td class="admin-table__cell">{{ admin_ui.post('admin_category_toggle', { id: category.id }, (category.active ? 'admin.yes' : 'admin.no')|trans({}, 'admin'), 'admin-pill' ~ (category.active ? ' admin-pill--ok' : ''), 'admin-categories') }}</td>
+                                <td class="admin-table__cell">
+                                    <span class="admin-actions">
+                                        <a href="{{ path('admin_category_edit', { id: category.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                        {% if row.games == 0 %}
+                                            {{ admin_ui.post('admin_category_delete', { id: category.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-categories', 'admin.categories.delete_confirm'|trans({ name: category.name }, 'admin')) }}
+                                        {% endif %}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {{ admin_ui.pagination(pager) }}
+        </section>
+        <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.categories.note'|trans({}, 'admin') }}</p>
+    </div>
+{% endblock %}

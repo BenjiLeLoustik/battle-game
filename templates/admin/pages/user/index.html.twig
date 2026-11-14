@@ -1,0 +1,76 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'users' %}
+
+{% block title %}{{ 'admin.users.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.users.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.users.subtitle'|trans({ count: pager.total|number_format(0, ',', ' ') }, 'admin') }}</span>
+            </div>
+            <div class="admin-actions">
+                <a href="{{ path('admin_user_export') }}" class="admin-btn admin-btn--secondary">{{ 'admin.users.export'|trans({}, 'admin') }}</a>
+                <a href="{{ path('admin_user_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.users.new'|trans({}, 'admin') }}</a>
+            </div>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            <form class="admin-panel__bar" method="get" action="{{ path('admin_user_index') }}">
+                <label class="admin-search">
+                    <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                    <input class="admin-search__input" type="search" name="q" value="{{ filters.q }}" aria-label="{{ 'admin.users.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.users.search'|trans({}, 'admin') }}">
+                </label>
+                <select class="admin-select" name="status" data-component="AutoSubmit" aria-label="{{ 'admin.users.filter_status'|trans({}, 'admin') }}">
+                    {% for item in statuses %}
+                        <option value="{{ item }}"{{ filters.status == item ? ' selected' }}>{{ ('admin.users.statuses.' ~ item)|trans({}, 'admin') }}</option>
+                    {% endfor %}
+                </select>
+                <select class="admin-select" name="auth" data-component="AutoSubmit" aria-label="{{ 'admin.users.filter_auth'|trans({}, 'admin') }}">
+                    {% for item in auths %}
+                        <option value="{{ item }}"{{ filters.auth == item ? ' selected' }}>{{ ('admin.users.auths.' ~ item)|trans({}, 'admin') }}</option>
+                    {% endfor %}
+                </select>
+            </form>
+            {% if pager.items is empty %}
+                <p class="admin-empty">{{ 'admin.users.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                            <tr>
+                                {% for column in ['user', 'auth', 'status', 'games', 'joined', 'seen', 'actions'] %}
+                                    <th class="admin-table__th">{{ ('admin.users.column.' ~ column)|trans({}, 'admin') }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in pager.items %}
+                                {% set user = row.user %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">{{ admin_ui.user(user) }}</td>
+                                    <td class="admin-table__cell">{{ ('admin.users.auths.' ~ (user.discordId ? (user.hasPassword ? 'both' : 'discord') : 'email'))|trans({}, 'admin') }}</td>
+                                    <td class="admin-table__cell">{{ admin_ui.status(row.status) }}</td>
+                                    <td class="admin-table__cell">{{ row.games }}</td>
+                                    <td class="admin-table__cell">{{ user.createdAt ? user.createdAt|date('d/m/Y') : '—' }}</td>
+                                    <td class="admin-table__cell">{{ user.seenAt ? user.seenAt|date('d/m H:i') : '—' }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions">
+                                            <a href="{{ path('admin_user_show', { id: user.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.view'|trans({}, 'admin') }}</a>
+                                            <a href="{{ path('admin_user_edit', { id: user.id }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% macro shape(badge, size) %}
+    {% set design = badge.design %}
+    {% set state = badge.state ?? 'on' %}
+    <span class="badge-shape badge-shape--{{ design.shape }} badge-shape--{{ design.rarity }}{{ design.double and size >= 40 ? ' badge-shape--double' }}{{ state in ['locked', 'secret'] ? ' badge-shape--locked' }}"
+          style="--badge-size: {{ size }}px; --badge-glow: {{ design.glow }};{% if design.color %} --badge-color: {{ design.color }};{% endif %}"
+          role="img" aria-label="{{ badge.name }}">
+        <span class="badge-shape__frame" aria-hidden="true"></span>
+        <span class="badge-shape__inner" aria-hidden="true"></span>
+        <svg class="badge-shape__icon{{ design.label and size >= 56 and state != 'secret' ? ' badge-shape__icon--raised' }}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ badge.path }}"/></svg>
+        {% if design.label and size >= 56 and state != 'secret' %}
+            <span class="badge-shape__label" aria-hidden="true">{{ design.label }}</span>
+        {% endif %}
+    </span>
+{% endmacro %}
+
+{% macro card(badge) %}
+    {% set state = badge.state ?? 'on' %}
+    <div class="badge-card badge-card--{{ state }}" style="{% if badge.design.color %}--badge-color: {{ badge.design.color }};{% endif %}">
+        {{ _self.shape(badge, 44) }}
+        <span class="badge-card__text">
+            <strong class="badge-card__name">{{ state == 'secret' ? 'site.badges.secret'|trans : badge.name }}</strong>
+            <span class="badge-card__description">
+                {%- if state == 'secret' -%}
+                    {{ 'site.badges.secret_hint'|trans }}
+                {%- elseif state == 'on' and badge.obtainedAt -%}
+                    {{ badge.description }} · {{ 'site.badges.obtained'|trans({ date: badge.obtainedAt|date('d/m/Y') }) }}
+                {%- elseif state == 'progress' -%}
+                    {{ badge.description }} · {{ badge.percent }} %
+                {%- else -%}
+                    {{ badge.description }}
+                {%- endif -%}
+            </span>
+            {% if state == 'progress' %}
+                <span class="badge-card__track"><span class="badge-card__fill" style="width: {{ badge.percent }}%"></span></span>
+            {% endif %}
+        </span>
+    </div>
+{% endmacro %}

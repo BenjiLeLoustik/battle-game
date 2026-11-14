@@ -1,0 +1,40 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_events' %}
+{% set title = event.id ? 'admin.engage.events.edit'|trans({}, 'admin') : 'admin.engage.events.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page admin-page--narrow" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+        <nav class="admin-crumbs"><a href="{{ path('admin_engage_events') }}" class="admin-crumbs__link">{{ 'admin.engage.events.title'|trans({}, 'admin') }}</a> <span aria-hidden="true">/</span> <span class="admin-crumbs__current">{{ title }}</span></nav>
+        <h1 class="admin-page__title">{{ title }}</h1>
+        {% if error %}<p class="admin-note"><span class="admin-note__icon">!</span>{{ error|trans({}, 'admin') }}</p>{% endif %}
+        <section class="admin-panel">
+            <label class="admin-field">{{ 'admin.engage.events.name'|trans({}, 'admin') }}<input class="admin-field__input" name="name" maxlength="80" required value="{{ event.name }}" placeholder="{{ 'admin.engage.events.name_placeholder'|trans({}, 'admin') }}"></label>
+            <label class="admin-field">{{ 'admin.engage.events.description'|trans({}, 'admin') }}<textarea class="admin-field__input admin-field__input--area" name="description" rows="2" maxlength="300">{{ event.description }}</textarea></label>
+            <div class="admin-form-grid">
+                <label class="admin-field">{{ 'admin.engage.events.game'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="game">
+                        <option value="">{{ 'admin.engage.events.all_games'|trans({}, 'admin') }}</option>
+                        {% for game in games %}<option value="{{ game.id }}"{{ event.game and event.game.id == game.id ? ' selected' }}>{{ game.name }}</option>{% endfor %}
+                    </select>
+                </label>
+                <label class="admin-field">{{ 'admin.engage.events.xp'|trans({}, 'admin') }}<input class="admin-field__input" name="xp" inputmode="decimal" value="{{ event.xpMultiplier }}"></label>
+                <label class="admin-field">{{ 'admin.engage.events.coins'|trans({}, 'admin') }}<input class="admin-field__input" name="coins" inputmode="decimal" value="{{ event.coinsMultiplier }}"></label>
+                <label class="admin-field">{{ 'admin.engage.events.starts'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="starts_at" required value="{{ event.startsAt|date('Y-m-d\\TH:i') }}"></label>
+                <label class="admin-field">{{ 'admin.engage.events.ends'|trans({}, 'admin') }}<input class="admin-field__input" type="datetime-local" name="ends_at" required value="{{ event.endsAt|date('Y-m-d\\TH:i') }}"></label>
+            </div>
+            <div class="admin-field">{{ 'admin.engage.events.color'|trans({}, 'admin') }}{{ admin_ui.color('color', event.color, 'admin.engage.events.color'|trans({}, 'admin'), ['#FFC94A', '#2EE6D6', '#FF3DCB', '#7C5CFF', '#4ADE80', '#FF9F43', '#FF5470', '#60A5FA']) }}</div>
+            <span class="admin-panel__help">{{ 'admin.engage.events.help'|trans({}, 'admin') }}</span>
+            <label class="admin-check"><input type="checkbox" class="admin-check__input" name="active" value="1"{{ event.active ? ' checked' }}> {{ 'admin.engage.events.active'|trans({}, 'admin') }}</label>
+        </section>
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_engage_events') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

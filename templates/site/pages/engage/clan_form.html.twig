@@ -1,0 +1,68 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/clan.html.twig' as clan_ui %}
+
+{% set active = 'clans' %}
+{% set color = values.color ?? '#2EE6D6' %}
+
+{% block title %}{{ 'site.clans.create'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage engage--narrow">
+        <nav class="engage__crumbs"><a href="{{ path('site_clan_index') }}">{{ 'site.clans.title'|trans }}</a> / {{ 'site.clans.create'|trans }}</nav>
+        <div class="engage__intro">
+            <h1 class="engage__title">{{ 'site.clans.create'|trans }}</h1>
+            <p class="engage__subtitle">{{ 'site.clans.form.intro'|trans }}</p>
+        </div>
+        <form class="engage-panel clan-form" method="post" data-component="ClanForm">
+            <input type="hidden" name="_token" value="{{ csrf_token('clans') }}">
+            {% if error %}<p class="engage-flash engage-flash--error" role="alert">{{ error|trans }}</p>{% endif %}
+
+            <div class="clan-preview" data-preview style="--clan-color: {{ color }}">
+                <span class="clan-preview__label">{{ 'site.clans.form.preview'|trans }}</span>
+                <div class="clan-preview__card">
+                    {{ clan_ui.emblem(values.tag ?? 'TAG', color, 'md') }}
+                    <span class="clan-preview__text">
+                        <strong class="clan-preview__name" data-preview-name data-fallback="{{ 'site.clans.form.name_placeholder'|trans }}">{{ values.name ?? 'site.clans.form.name_placeholder'|trans }}</strong>
+                        <span class="clan-preview__player"><span class="user-clan" style="--clan-color: {{ color }}" data-preview-tag>[{{ values.tag ?? 'TAG' }}]</span><span class="user-name">{{ user.username }}</span></span>
+                    </span>
+                </div>
+            </div>
+
+            <div class="clan-form__row">
+                <label class="field clan-form__name">
+                    <span class="field__label">{{ 'site.clans.form.name'|trans }}</span>
+                    <input class="field__input" name="name" minlength="3" maxlength="40" required value="{{ values.name ?? '' }}" placeholder="{{ 'site.clans.form.name_placeholder'|trans }}" data-input-name>
+                </label>
+                <label class="field clan-form__tag">
+                    <span class="field__label">{{ 'site.clans.form.tag'|trans }}</span>
+                    <input class="field__input engage-form__tag" name="tag" maxlength="5" minlength="2" pattern="[A-Za-z0-9]{2,5}" required value="{{ values.tag ?? '' }}" placeholder="TAG" autocomplete="off" data-input-tag>
+                </label>
+            </div>
+            <span class="engage-help">{{ 'site.clans.form.tag_help'|trans }}</span>
+
+            <label class="field">
+                <span class="field__label">{{ 'site.clans.form.description'|trans }}</span>
+                <textarea class="field__input" name="description" rows="3" maxlength="300" placeholder="{{ 'site.clans.form.description_placeholder'|trans }}">{{ values.description ?? '' }}</textarea>
+            </label>
+
+            <div class="field">
+                <span class="field__label">{{ 'site.clans.form.color'|trans }}</span>
+                {{ clan_ui.colors('color', color) }}
+            </div>
+
+            <label class="clan-switch">
+                <span class="clan-switch__text">
+                    <span class="clan-switch__label">{{ 'site.clans.form.open'|trans }}</span>
+                    <span class="clan-switch__help">{{ 'site.clans.form.open_help'|trans }}</span>
+                </span>
+                <input type="checkbox" class="settings-switch__input" name="open" value="1"{{ values is empty or values.open is defined ? ' checked' }}>
+            </label>
+
+            <div class="clan-form__actions">
+                <a href="{{ path('site_clan_index') }}" class="btn btn--ghost">{{ 'site.clans.form.cancel'|trans }}</a>
+                <button type="submit" class="btn btn--primary">{{ 'site.clans.create'|trans }}</button>
+            </div>
+        </form>
+    </div>
+{% endblock %}

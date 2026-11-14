@@ -1,0 +1,54 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'emails' %}
+
+{% block title %}{{ 'admin.emails.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        {% include '@admin/components/partials/email-tabs.html.twig' %}
+
+        <section class="admin-panel admin-panel--flush">
+            {% if campaigns is empty %}
+                <p class="admin-empty">{{ 'admin.emails.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(campaigns) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['subject', 'list', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.emails.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for campaign in pager.items %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="admin-user__text">
+                                            <span class="admin-user__name">{{ campaign.subject }}</span>
+                                            <span class="admin-user__meta">{{ campaign.author ? campaign.author.username : '—' }} · {{ (campaign.updatedAt ?? campaign.createdAt)|date('d/m/Y H:i') }}</span>
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">{{ campaign.list ? campaign.list.name : '—' }}</td>
+                                    <td class="admin-table__cell">
+                                        {% if campaign.sent %}
+                                            <span class="admin-pill admin-pill--ok">{{ 'admin.emails.states.sent'|trans({ count: campaign.recipients, date: campaign.sentAt|date('d/m H:i') }, 'admin') }}</span>
+                                        {% else %}
+                                            <span class="admin-pill">{{ 'admin.emails.states.draft'|trans({}, 'admin') }}</span>
+                                        {% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_email_edit', { id: campaign.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ (campaign.sent ? 'admin.view' : 'admin.edit')|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_email_delete', { id: campaign.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-emails', 'admin.emails.delete_confirm'|trans({ name: campaign.subject }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+        <p class="admin-note"><span class="admin-note__icon" aria-hidden="true">i</span>{{ 'admin.emails.note'|trans({}, 'admin') }}</p>
+    </div>
+{% endblock %}

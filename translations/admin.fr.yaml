@@ -1,0 +1,2152 @@
+admin:
+    title: Back-office
+    back_to_site: Voir le site
+    role: Administrateur
+    logout: Se déconnecter
+    you: " (toi)"
+    breadcrumb: Fil d'Ariane
+    cancel: Annuler
+    apply: Appliquer
+    add: Ajouter
+    remove: Retirer
+    "yes": Oui
+    "no": Non
+    version:
+        platform: Version de la plateforme
+        sdk: Version du SDK des jeux
+    
+    env:
+        dev: Développement
+        prod: Production
+        
+    nav:
+        label: Menu du back-office
+        steering: Pilotage
+        community: Communauté
+        system: Système
+        shop: Boutique
+        shop_products: Produits
+        shop_orders: Commandes
+        shop_vouchers: Codes
+        shop_subscriptions: Abonnements
+        shop_settings: Réglages
+        dashboard: Tableau de bord
+        games: Jeux installés
+        categories: Catégories
+        studio: Atelier de jeux
+        rooms: Rooms
+        banners: Bandeaux
+        badges: Badges
+        users: Utilisateurs
+        channels: Discussions
+        moderation: Modération
+        general: Général
+        pages: Pages
+        open: Ouvrir le menu
+        maintenance: Maintenance
+        languages: Langues
+        emails: Emails
+        realtime: Temps réel (Mercure)
+        admins: Administrateurs
+        roles: Rôles & permissions
+        help: Aide
+        docs: Documentation
+        security: Sécurité du compte
+        reset: Réinitialisation
+        engage: "Engagement"
+        engage_events: "Événements"
+        engage_pass: "Pass de saison"
+        engage_tournaments: "Tournois"
+        engage_clans: "Clans"
+        engage_seasons: "Saisons"
+        engage_ranks: "Grades classés"
+        
+    studio:
+        title: Atelier de jeux
+        open_tasks: "{count} tâche(s) en cours"
+        lead_change: Changer le responsable
+        lead_submit: Nommer responsable
+        lead_confirm: "Changer le responsable de {game} ? L'actuel responsable deviendra développeur."
+        lead_changed: Le responsable du jeu a été changé.
+        review:
+            title: Validation du jeu
+            requested: "{name} a demandé une validation le {date}."
+            check: Vérifier le code
+            approve: Valider et publier
+            comment: Ce qu'il faut corriger
+            reject: Refuser et demander une correction
+            waiting: Le responsable du jeu a été prévenu, il vérifie le code avant de valider.
+            history: "Demandée par {requester} · traitée par {reviewer} le {date}"
+            approved_flash: Le jeu a été validé et la nouvelle version est publiée.
+            rejected_flash: La demande a été refusée, le développeur a été prévenu.
+            comment_required: Indique ce qu'il faut corriger avant de refuser.
+        subtitle_mine: "Les jeux sur lesquels tu travailles ({name})."
+        subtitle_all: Tous les jeux de la plateforme, de l'idée à l'archive.
+        new: Nouveau jeu
+        new_help: Le squelette du jeu est généré dans var/games/ et installé en « En développement ». Tu l'édites ensuite dans l'éditeur en ligne.
+        scope: Périmètre
+        scope_mine: Mes jeux
+        scope_all: Tous
+        filter_status: Filtrer par état
+        all_statuses: Tous les états
+        search: Rechercher un jeu
+        games: Jeux
+        updated: "mis à jour le {date}"
+        created: "créé le {date}"
+        empty: Aucun jeu ne correspond à ces filtres.
+        step_game: 1 · Le jeu
+        step_team: 2 · L'équipe
+        name: Nom du jeu
+        slug: Identifiant (généré)
+        category: Catégorie
+        min_players: Joueurs min
+        max_players: Joueurs max
+        description: Description courte
+        description_hint: Une phrase affichée sur la carte du jeu
+        skeleton: "Un squelette standard et jouable est généré : game.json, composer.json, classes Manager et Server, client JS et CSS."
+        team_help: Chaque membre verra ce jeu dans « Mes jeux » de l'Atelier. Tu en es le responsable.
+        no_admins: Aucun autre administrateur pour l'instant.
+        create: Créer le jeu
+        player_view: Voir côté joueur
+        edit: Modifier dans l'éditeur
+        config: Configuration
+        config_help: Lue depuis game.json · se modifie dans l'éditeur
+        display: Affichage
+        view: Vue
+        raw: JSON brut
+        settings: Réglages proposés aux parties
+        setting:
+            key: Clé
+            type: Type
+            default: Défaut
+            values: Valeurs
+        field:
+            slug: Identifiant
+            version: Version
+            category: Catégorie
+            players: Joueurs
+            duration: Durée (min)
+            solo: Entraînement solo
+            points: Points
+            manager: Manager
+            server: Serveur
+            client: Client
+        valid: "Manifeste valide · SDK {sdk} (plateforme {platform})"
+        invalid: "Manifeste invalide : {reason}"
+        status: État
+        new_status: Nouvel état
+        team: Équipe
+        team_note: Le jeu apparaît dans « Mes jeux » de chaque membre
+        remove_member: "Retirer {name} de l'équipe"
+        member_to_add: Administrateur à ajouter
+        member_role: Rôle dans l'équipe
+        delete: Supprimer le jeu
+        delete_help: "Supprime le jeu, ses parties, ses résultats, ses classements et son équipe. Le code source est déplacé dans var/games/.trash/{directory}-…, il n'est pas effacé."
+        delete_confirm: "Tape « {name} » pour confirmer"
+        delete_submit: Supprimer définitivement
+        to_maintenance: Mettre en maintenance
+        
+    tasks:
+        title: Tâches
+        new: Créer une tâche
+        empty: Aucune tâche pour ce jeu.
+        status: Statut de la tâche
+        progress: "{done}/{total} faits"
+        assigned: "Assignée à {names}"
+        unassigned: Personne n'est assigné
+        by: "créée par {name}"
+        delete_confirm: Supprimer cette tâche ?
+        fields:
+            title: Titre
+            start_at: Date de début
+            end_at: Date de fin
+            description: Description
+            checklist: Liste
+            checklist_placeholder: "Une étape par ligne"
+            checklist_help: Une étape par ligne. Elles se cochent depuis la page du jeu.
+            assignees: Admins assignés
+            assignees_help: Une ou plusieurs personnes chargées de la tâche.
+        errors:
+            title: Le titre est obligatoire.
+            dates: La date de fin doit être après la date de début.
+        flash:
+            deleted: Tâche supprimée.
+    design:
+        title: "Apparence · {name}"
+        badge: No-code
+        mode: Mode de l'aperçu
+        select: Sélectionner
+        play: Jouer
+        code: Éditeur de code
+        panel: Propriétés de l'élément
+        open: Apparence
+        empty: "Clique sur un élément du jeu dans l'aperçu pour modifier son apparence. Passe en mode « Jouer » pour avancer dans la partie, puis reviens en « Sélectionner »."
+        parents: Éléments parents
+        target: Appliquer à
+        target_help: "Le style s'applique à tous les éléments qui portent cette classe. Choisis une variante (ex. data-value) pour ne cibler qu'un cas."
+        hover: Au survol uniquement
+        groups:
+            box: Boîte & taille
+            layout: Disposition
+            background: Fond
+            border: Bordure
+            text: Texte
+            effects: Effets
+        margin: Extérieur
+        padding: Intérieur
+        content: contenu
+        sides:
+            top: haut
+            right: droite
+            bottom: bas
+            left: gauche
+        width: Largeur
+        height: Hauteur
+        max_width: Largeur max
+        min_height: Hauteur min
+        display: Affichage
+        direction: Direction
+        justify: Alignement principal
+        align: Alignement secondaire
+        gap: Espacement
+        background: Couleur de fond
+        gradient: Dégradé
+        gradient_from: Couleur de départ du dégradé
+        gradient_to: Couleur d'arrivée du dégradé
+        angle: Angle du dégradé
+        border_width: Épaisseur
+        border_style: Style
+        border_color: Couleur
+        radius: Arrondi
+        font: Police
+        font_size: Taille
+        weight: Graisse
+        color: Couleur du texte
+        text_align: Alignement
+        transform: Casse
+        spacing: Espacement des lettres
+        shadow: Ombre
+        opacity: Opacité
+        shadows:
+            none: Aucune
+            soft: Douce
+            strong: Profonde
+            glow-cyan: Halo cyan
+            glow-magenta: Halo magenta
+            glow-amber: Halo ambre
+            inset: Creusée
+        reset: Retirer le style de cet élément
+        styled: Éléments stylés
+        remove: Retirer ce style
+        ready: Aperçu prêt, clique sur un élément.
+        unsaved: Modifications non enregistrées
+        saving: Enregistrement…
+        saved: Apparence enregistrée
+        cleaned: "Enregistré : certaines valeurs invalides ont été ignorées"
+        error: Une erreur est survenue.
+        publish_lead: "Les styles sont enregistrés dans assets/css/design.css. Publie la version depuis l'éditeur pour les mettre en ligne."
+        publish_dev: "Les styles sont enregistrés dans assets/css/design.css. Demande une validation au responsable pour les mettre en ligne."
+    editor:
+        title: "Éditeur · {name}"
+        save: Enregistrer
+        validate: Valider le jeu
+        test: Tester
+        publish: Publier la version
+        publish_review: "Valider et publier (demande de {name})"
+        review: Demander une validation
+        review_pending: Validation demandée
+        review_prompt: "Message pour le responsable (ce qui a changé, ce qu'il faut vérifier) :"
+        review_sent: "Demande de validation envoyée au responsable."
+        review_already: "Une demande de validation est déjà en attente, le responsable a été prévenu."
+        files: Fichiers
+        console_tests: Console & tests
+        toggle_aside: Afficher ou masquer l'aperçu et la console
+        new_file: Nouveau fichier
+        new_file_prompt: "Chemin du nouveau fichier (ex. src/Helper.php) :"
+        editor: Éditeur
+        open_files: Fichiers ouverts
+        loading: Chargement de l'éditeur…
+        sdk: "SDK BattleGame {version}"
+        preview: Aperçu en direct
+        reload: Recharger
+        reloaded: rechargé à
+        no_preview: "L'aperçu utilise l'entraînement solo : ajoute \"solo\": true dans game.json pour l'activer."
+        console: Console
+        saved: Enregistré
+        unsaved: Modifications non enregistrées
+        saved_file: "enregistré :"
+        nothing: Aucune modification à enregistrer.
+        valid: game.json valide ✓
+        invalid: "✕ jeu invalide :"
+        published: "version publiée et installée :"
+        created: "fichier créé :"
+        ready: Éditeur prêt.
+        text: Texte
+        error: Une erreur est survenue.
+        close: Fermer
+        close_unsaved: Ce fichier a des modifications non enregistrées. Le fermer quand même ?
+        no_file: Ouvre un fichier dans l'arborescence.
+        resize: Redimensionner l'aperçu et la console
+        new_folder_prompt: "Chemin du nouveau dossier (ex. src/Helper) :"
+        folder_created: "dossier créé :"
+        rename_prompt: "Nouveau nom :"
+        renamed: "renommé :"
+        delete_confirm: "Supprimer définitivement ? Cette action est irréversible :"
+        deleted: "supprimé :"
+        menu:
+            new_file: Nouveau fichier
+            new_folder: Nouveau dossier
+            rename: Renommer
+            delete: Supprimer
+            
+    emails:
+        title: Emails
+        subtitle: Messages envoyés aux joueurs, listes de diffusion et modèle commun à tous les emails du site.
+        new: Nouvel email
+        empty: Aucun email pour le moment.
+        note: "Les emails respectent les préférences des joueurs : une liste « opt-in » n'inclut que ceux qui acceptent les emails d'actualité, et chaque email contient un lien de désabonnement."
+        delete_confirm: "Supprimer l'email « {name} » ?"
+        tabs:
+            campaigns: Messages
+            lists: Listes de diffusion
+            layout: Modèle
+        column:
+            subject: Objet
+            list: Liste
+            status: État
+            actions: Actions
+        states:
+            draft: Brouillon
+            sent: "Envoyé à {count} · {date}"
+        subject: Objet
+        list: Liste de diffusion
+        no_list: Aucune liste (brouillon)
+        content: Contenu
+        content_help: "Markdown accepté (**gras**, listes, liens). {username} est remplacé par le pseudo du joueur."
+        button_label: Texte du bouton (facultatif)
+        button_placeholder: Jouer maintenant
+        button_url: Lien du bouton
+        save: Enregistrer
+        save_test: Enregistrer et m'envoyer un test
+        preview: Aperçu
+        preview_help: L'aperçu apparaît une fois l'email enregistré.
+        send_title: Envoi
+        send_help: "{count} joueur(s) de la liste « {list} » recevront cet email. Un email envoyé ne peut plus être modifié."
+        send: "Envoyer à {count} joueur(s)"
+        send_confirm: "Envoyer cet email à {count} joueur(s) maintenant ? Cette action est définitive."
+        send_no_list: Choisis une liste de diffusion puis enregistre pour pouvoir envoyer l'email.
+        flash:
+            test: Email enregistré, un test t'a été envoyé.
+            sent: Email envoyé.
+        errors:
+            subject: Indique un objet.
+            content: Le contenu ne peut pas être vide.
+            url: "Le lien doit commencer par http:// ou https://."
+            name: Donne un nom à la liste.
+            country: Choisis un pays.
+            game: Choisis un jeu.
+        lists:
+            new: Nouvelle liste
+            empty: Aucune liste de diffusion pour le moment.
+            recipients: "{count} destinataire(s)"
+            name: Nom
+            description: Description
+            audience: Destinataires
+            audience_help: La liste est recalculée à chaque envoi, les nouveaux joueurs qui correspondent y sont donc inclus automatiquement.
+            audience_field: Qui reçoit les emails
+            country: Pays
+            game: Jeu joué au moins une fois
+            opt_in: Uniquement les joueurs qui acceptent les emails d'actualité
+            opt_in_help: "Recommandé : respecte la préférence « Événements · Email » des joueurs. Décoche seulement pour une information importante (conditions d'utilisation, sécurité)."
+            opt_in_short: opt-in
+            delete_confirm: "Supprimer la liste « {name} » ? Les emails déjà envoyés sont conservés."
+            column:
+                name: Liste
+                audience: Destinataires
+                recipients: Joueurs
+                actions: Actions
+        layout:
+            title: Modèle des emails
+            help: HTML commun à tous les emails du site (notifications, sécurité, messages). Utilise les variables ci-dessous ; l'aperçu se met à jour pendant la saisie.
+            default: Modèle par défaut
+            custom: Modèle personnalisé
+            reset: Revenir au modèle par défaut
+            reset_confirm: Remplacer le modèle actuel par le modèle par défaut ?
+            tokens:
+                title: Titre de l'email
+                content: Contenu (HTML)
+                button: Bouton d'action (vide s'il n'y en a pas)
+                note: Petite note sous le contenu
+                unsubscribe: Lien de désabonnement (emails d'actualité)
+                site: Adresse du site
+                year: Année en cours
+                lang: Langue du destinataire (fr, en…)
+
+    maintenance:
+        title: Maintenance
+        subtitle: Planifie des maintenances du site, d'un jeu ou d'une fonctionnalité, et informe les joueurs à l'avance.
+        new: Planifier une maintenance
+        edit_title: Modifier la maintenance
+        preset_title: "Mettre {name} en maintenance"
+        preset_help: "Pré-rempli depuis l'Atelier : <strong>{name}</strong> est ciblé. Les joueurs sont prévenus selon les options ci-dessous."
+        team_access: Les administrateurs connectés gardent l'accès complet au site et au back-office.
+        current: État actuel
+        site_up: Site en ligne
+        site_down: Site en maintenance
+        ends_at: "Fin estimée : {date}"
+        next_site: "Prochaine maintenance du site : {date}"
+        no_site: Aucune maintenance du site prévue
+        now: Maintenance immédiate
+        games_down: "{count} jeu(x) en maintenance"
+        games_up: Tous les jeux sont disponibles
+        features: Fonctionnalités
+        features_up: Toutes disponibles
+        list: Maintenances
+        filter: Filtre
+        tab:
+            open: "À venir & en cours · {count}"
+            running: "En cours · {count}"
+            history: Historique
+        column:
+            name: Maintenance
+            target: Cible
+            period: Période
+            notice: Annonce
+            status: Statut
+            actions: Actions
+        game_prefix: Jeu
+        feature_prefix: Fonction
+        by: "par {name}"
+        notice:
+            1440: Bandeau 24 h avant
+            180: Bandeau 3 h avant
+            60: Bandeau 1 h avant
+            0: Pas d'annonce
+        notice_option:
+            1440: 24 h avant
+            180: 3 h avant
+            60: 1 h avant
+            0: Pas d'annonce
+        edit: Modifier
+        end: Terminer maintenant
+        cancel: Annuler
+        cancel_this: Annuler cette maintenance
+        empty: Aucune maintenance dans cette liste.
+        internal_title: Titre interne
+        step_target: 1 · Que met-on en maintenance ?
+        target_help:
+            site: Le site affiche la page de maintenance, sauf les pages autorisées.
+            games: Les jeux choisis sont indisponibles, le reste du site fonctionne.
+            features: Coupe par exemple le classement ou les inscriptions.
+        step_when: 2 · Quand ?
+        starts_at: Début
+        ends_at_field: Fin estimée
+        policy: Parties en cours au début
+        block_before: "Bloquer le lancement de nouvelles parties {minutes} min avant le début"
+        step_pages: 3 · Pages accessibles pendant la maintenance
+        pages_help: Toutes les autres pages redirigent vers la page de maintenance.
+        locked:
+            maintenance: Page de maintenance · toujours
+            admin: Back-office · toujours
+            login: Connexion de l'équipe · toujours
+        locked_path:
+            maintenance: /maintenance
+            admin: /admin
+            login: /login
+        paths: Autres chemins autorisés (un par ligne)
+        step_notice: Informer les joueurs
+        announce: Annonce dans le bandeau
+        message: Message aux joueurs
+        preview:
+            label: Aperçu côté joueur
+            tag: MAINTENANCE PRÉVUE
+            site: BattleGame sera en maintenance
+            games: en maintenance
+            features: indisponible(s)
+            none: Aucun élément choisi
+        back: Retour à la liste
+        save: Enregistrer
+        schedule: Planifier la maintenance
+
+    save: Enregistrer
+    close: Fermer
+    edit: Modifier
+    view: Voir
+    delete: Supprimer
+    next: Suivant
+    previous: Précédent
+    pagination: "{from}–{to} sur {total}"
+    pagination_label: Pagination
+    system_user: Système
+
+    status:
+        active: Actif
+        suspension: Suspendu
+        ban: Banni
+        mute: Interdit de discuter
+        warning: Avertissement
+
+    durations:
+        "24": 24 heures
+        "72": 3 jours
+        "168": 7 jours
+        "720": 30 jours
+
+    flash:
+        saved: Modifications enregistrées.
+        deleted: Élément supprimé.
+        reset_sent: Lien de réinitialisation envoyé par email.
+        devices: Appareils déconnectés.
+        sanction: Sanction appliquée et signalements traités.
+        dismissed: Signalements classés sans suite.
+        installed: Jeu installé.
+        cache: Cache vidé.
+        published: Message publié sur le hub.
+
+    audit:
+        user.create: "a créé le compte {detail}"
+        user.update: "a modifié le compte {detail}"
+        user.delete: "a supprimé le compte {detail}"
+        user.sanction: "a sanctionné {detail}"
+        user.revoke: "a levé la sanction de {detail}"
+        user.reset: "a envoyé un lien de réinitialisation à {detail}"
+        user.logout: "a déconnecté les appareils de {detail}"
+        user.export: a exporté la liste des utilisateurs
+        report.dismiss: "a classé les signalements de {detail}"
+        words.update: "a mis à jour les mots filtrés ({detail})"
+        room.create: "a créé la room {detail}"
+        room.update: "a modifié la room {detail}"
+        room.close: "a fermé la room {detail}"
+        room.kick: "a exclu un joueur de la room {detail}"
+        banner.save: "a enregistré le bandeau « {detail} »"
+        game.early: "a changé l'avant-première de {detail}"
+        game.export: "a exporté {detail}"
+        shop.voucher: "a modifié des codes ({detail})"
+        shop.voucher_delete: "a supprimé le code {detail}"
+        reset.run: "a réinitialisé {detail}"
+        reset.backup: "a créé la sauvegarde {detail}"
+        reset.restore: "a restauré la sauvegarde {detail}"
+        reset.delete: "a supprimé la sauvegarde {detail}"
+        reset.auto: a modifié les sauvegardes automatiques
+        twofa.enable: a activé la double authentification
+        twofa.disable: a désactivé la double authentification
+        twofa.required: a modifié l'obligation de double authentification
+        shop.product: "a enregistré le produit « {detail} »"
+        shop.product_delete: "a supprimé le produit « {detail} »"
+        shop.order_ship: "a expédié la commande {detail}"
+        shop.order_cancel: "a annulé la commande {detail}"
+        shop.order_refund: "a remboursé la commande {detail}"
+        shop.order_deliver: "a livré manuellement la commande {detail}"
+        shop.subscription_grant: "a offert un abonnement ({detail})"
+        shop.subscription_cancel: "a résilié l'abonnement de {detail}"
+        shop.settings: a modifié les réglages de la boutique
+        shop.coins: "a ajusté des pièces ({detail})"
+        banner.delete: "a supprimé « {detail} »"
+        banner.list: "a diffusé la liste « {detail} »"
+        banner.schedule: "a programmé la liste « {detail} »"
+        badge.save: "a enregistré le badge {detail}"
+        badge.delete: "a supprimé le badge {detail}"
+        category.save: "a enregistré la catégorie {detail}"
+        category.delete: "a supprimé la catégorie {detail}"
+        game.install: "a installé {detail}"
+        game.update: "a mis à jour {detail}"
+        game.status: "a changé l'état de {detail}"
+        admin.save: "a enregistré l'administrateur {detail}"
+        admin.remove: "a retiré l'accès admin de {detail}"
+        role.save: "a enregistré le rôle {detail}"
+        role.delete: "a supprimé le rôle {detail}"
+        setting.update: "a modifié les paramètres ({detail})"
+        cache.clear: a vidé le cache
+        country.save: "a enregistré le pays {detail}"
+        country.delete: "a supprimé le pays {detail}"
+        page.save: "a enregistré la page {detail}"
+        channel.save: "a enregistré le salon #{detail}"
+        channel.purge: "a vidé le salon #{detail}"
+        channel.delete: "a supprimé le salon #{detail}"
+        email.save: "a enregistré l'email « {detail} »"
+        email.delete: "a supprimé l'email « {detail} »"
+        email.send: "a envoyé l'email {detail} destinataire(s)"
+        email.list_save: "a enregistré la liste de diffusion {detail}"
+        email.list_delete: "a supprimé la liste de diffusion {detail}"
+        email.layout: a modifié le modèle des emails
+        page.delete: "a supprimé la page {detail}"
+        translation.save: "a ajouté la langue {detail}"
+        translation.delete: "a supprimé la langue {detail}"
+        audit.export: "a exporté le journal d'audit ({detail})"
+        mercure.test: "a publié un test sur {detail}"
+        engage.event: "a enregistré l'événement {detail}"
+        engage.event_delete: "a supprimé l'événement {detail}"
+        engage.pass: "a modifié le pass de saison ({detail})"
+        engage.tournament: "a enregistré le tournoi {detail}"
+        engage.tournament_delete: "a supprimé le tournoi {detail}"
+        engage.clan_delete: "a dissous le clan {detail}"
+        engage.season: "a enregistré la saison {detail}"
+        engage.season_delete: "a supprimé la saison {detail}"
+        engage.pass_delete: "a supprimé le pass {detail}"
+        engage.pass_tracks: "a modifié les pistes du pass ({detail})"
+        engage.ranks: "a modifié les grades classés ({detail})"
+        engage.tournament_qualify: "a inscrit les qualifiés du tournoi {detail}"
+
+    permissions:
+        groups:
+            steering: Pilotage
+            studio: Atelier de jeux
+            community: Communauté
+            moderation: Modération
+            shop: Boutique
+            system: Système
+            engage: "Engagement"
+        dash_view: Voir le tableau de bord
+        games_install: Installer / mettre à jour des jeux
+        games_state: Changer l'état des jeux, catégories et badges
+        studio_view: Voir tous les jeux de l'Atelier
+        studio_create: Créer un jeu
+        studio_edit: Modifier le code (éditeur)
+        studio_publish: Publier une version
+        studio_team: Gérer les équipes
+        users_view: Voir les utilisateurs
+        users_edit: Créer / modifier
+        users_suspend: Suspendre / bannir
+        users_delete: Supprimer
+        rooms_view: Voir les rooms
+        rooms_close: Créer, modifier et fermer des rooms
+        chat_manage: Gérer les salons de discussion
+        mod_view: Voir les signalements
+        mod_sanction: Appliquer des sanctions
+        mod_words: Gérer les mots filtrés
+        shop_view: Voir les abonnements
+        shop_manage: Gérer les produits, les réglages et les pièces
+        shop_orders: Traiter les commandes
+        sys_general: Paramètres généraux et bandeaux
+        sys_pages: Pages et liens du pied de page
+        sys_maintenance: Maintenance
+        sys_langs: Traductions
+        sys_mercure: Temps réel (Mercure)
+        sys_emails: Emails, listes de diffusion et modèle
+        sys_admins: Administrateurs & rôles
+        sys_reset: Réinitialiser les données et restaurer des sauvegardes
+        help:
+            dash_view: Accès aux statistiques, à l'activité des joueurs et à l'état des services.
+            games_install: Installer un jeu depuis un dépôt et appliquer ses mises à jour.
+            games_state: Publier, archiver ou mettre en maintenance un jeu, et gérer les catégories et badges.
+            studio_view: Consulter tous les jeux de l'Atelier, même ceux dont on n'est pas membre.
+            studio_create: Démarrer un nouveau jeu à partir du squelette de l'Atelier.
+            studio_edit: Modifier les fichiers d'un jeu dans l'éditeur en ligne.
+            studio_publish: Passer un jeu en test ou en ligne et publier une nouvelle version.
+            studio_team: Ajouter ou retirer des membres de l'équipe d'un jeu.
+            users_view: Rechercher les joueurs et consulter leur fiche.
+            users_edit: Créer un compte ou modifier le profil d'un joueur.
+            users_suspend: Suspendre temporairement ou bannir un compte.
+            users_delete: Supprimer définitivement un compte et ses données.
+            rooms_view: Lister les rooms ouvertes et voir leurs membres.
+            rooms_close: Créer des rooms officielles, les modifier ou les fermer.
+            chat_manage: Créer, modifier et vider les salons, et choisir qui peut les lire et y écrire.
+            mod_view: Consulter les signalements et les dossiers de modération.
+            mod_sanction: Avertir, rendre muet, suspendre ou bannir suite à un signalement.
+            mod_words: Modifier la liste des mots filtrés dans les discussions.
+            shop_view: Consulter la liste des abonnés Premium et VIP.
+            shop_manage: Créer et modifier les produits, offrir des abonnements, régler les gains de pièces et les vies, ajuster le solde d'un joueur.
+            shop_orders: Consulter les commandes, expédier les goodies, annuler ou rembourser un achat.
+            sys_general: Activer ou couper les fonctions du site et gérer les bandeaux d'annonce.
+            sys_pages: Créer les pages personnalisées (FAQ, CGU…) et les liens du pied de page.
+            sys_maintenance: Programmer, démarrer et terminer les maintenances du site ou des jeux.
+            sys_langs: Ajouter des langues, traduire les textes et gérer les pays.
+            sys_mercure: Surveiller le temps réel et envoyer des messages de test.
+            sys_emails: Rédiger et envoyer des emails, gérer les listes de diffusion et le modèle.
+            sys_reset: Vider des blocs de données (parties, social, boutique, joueurs…), créer, télécharger et restaurer des sauvegardes de la base.
+            sys_admins: Donner ou retirer l'accès au back-office et modifier les rôles.
+            engage_manage: "Créer des événements (multiplicateurs), régler les paliers du pass, organiser des tournois et dissoudre des clans."
+        engage_manage: "Gérer les événements, le pass, les tournois et les clans"
+
+    player_picker:
+        empty: Aucun joueur trouvé.
+        coins: "{coins} pièces"
+
+    shop:
+        all: Tout
+        vouchers:
+            title: Codes promo et cadeaux
+            subtitle: "Les codes promo donnent une réduction au paiement par carte (hors abonnements). Les codes cadeaux créditent des pièces quand un joueur les utilise. Chaque joueur ne peut utiliser un même code qu'une fois."
+            new: Créer des codes
+            new_help: Laisse le code vide pour en générer un automatiquement. Avec une quantité supérieure à 1, des codes uniques sont générés (ex. lots pour un concours).
+            kind: Type
+            code: Code
+            code_auto: généré automatiquement
+            value: Valeur
+            value_help: "Code promo : « 20% » pour un pourcentage ou « 5 » pour 5 € de réduction. Code cadeau : nombre de pièces offertes."
+            max_uses: Utilisations max.
+            ends_at: Valable jusqu'au
+            count: Quantité
+            note: Note interne
+            note_placeholder: "Ex. : concours Discord de novembre"
+            create: Créer
+            search: Code ou note…
+            empty: Aucun code.
+            invalid: "Code invalide (lettres, chiffres et tirets, 3 à 30 caractères), déjà existant, ou valeur manquante."
+            archived: Ce code a déjà servi, il a été désactivé au lieu d'être supprimé.
+            usable: Valable
+            exhausted: Épuisé ou expiré
+            disabled: Désactivé
+            enable: Activer
+            disable: Désactiver
+            delete_confirm: "Supprimer le code {code} ?"
+            column:
+                code: Code
+                kind: Type
+                value: Valeur
+                uses: Utilisations
+                ends: Fin
+                status: État
+                actions: Actions
+        month: mois
+        coins: "{count} pièces"
+        coins_unit: pièces
+        see_shop: Voir la boutique
+        username: Pseudo du joueur
+        kpi:
+            revenue: Chiffre d'affaires du mois
+            orders: "{count} commande(s) payée(s) ce mois-ci"
+            shipping: Goodies à expédier
+            shipping_sub: commandes payées en attente d'envoi
+            subscribers: Abonnés actifs
+            subscribers_sub: toutes offres confondues
+            coins: Pièces en circulation
+            coins_sub: somme des portefeuilles joueurs
+        icons:
+            crown: Couronne
+            star: Étoile
+            diamond: Diamant
+            bolt: Éclair
+            heart: Cœur
+            flame: Flamme
+            shield: Bouclier
+            check: Certifié
+        frames:
+            neon: Néon
+            gold: Doré
+            flame: Flamme
+            ice: Glace
+            magenta: Magenta
+            rainbow: Arc-en-ciel
+            aurora: "Aurore"
+            pulse: "Pulsation"
+            ember: "Braise"
+        products:
+            title: Produits
+            subtitle: Le catalogue de la boutique. Un produit inactif n'apparaît plus côté site mais reste dans l'historique des commandes.
+            new: Nouveau produit
+            edit: Modifier le produit
+            empty: Aucun produit dans cette catégorie.
+            on: En vente
+            off: Masqué
+            out: Épuisé / sans prix
+            enable: Mettre en vente
+            disable: Masquer
+            delete_confirm: "Supprimer le produit « {name} » ? S'il a déjà été acheté, il sera seulement masqué."
+            archived: Ce produit a déjà été acheté, il a été masqué au lieu d'être supprimé.
+            column:
+                product: Produit
+                type: Type
+                price: Prix
+                stock: Stock
+                status: État
+                actions: Actions
+            type: Type de produit
+            type_help: Le type décide de ce que le joueur reçoit après le paiement.
+            types:
+                coins: Crédite des pièces dans le portefeuille. Carte bancaire uniquement.
+                subscription: Offre mensuelle avec ses vies et sa couleur. Carte bancaire uniquement.
+                badge: Débloque un badge existant dans la collection du joueur.
+                cosmetic: Cadre d'avatar, couleur de pseudo ou titre à équiper.
+                physical: Objet expédié à une adresse de livraison. Carte bancaire uniquement.
+                lives: Ajoute des vies bonus utilisables une fois le quota du jour épuisé.
+                gift: Carte cadeau en pièces, payée par carte ; l'acheteur reçoit un code à offrir.
+            content: Présentation
+            name: Nom
+            slug: Identifiant dans l'URL
+            slug_auto: généré depuis le nom
+            description: Description
+            image: Image
+            image_help: PNG, JPEG ou WebP, 3 Mo maximum. Recadrée en 640 × 400.
+            remove_image: Retirer l'image
+            price: Prix
+            price_help: Renseigne un prix en euros, en pièces, ou les deux. Le joueur choisit alors son moyen de paiement.
+            price_euros: Prix en euros (carte bancaire)
+            price_coins: Prix en pièces
+            stock: Stock
+            stock_unlimited: illimité
+            position: Ordre d'affichage
+            stripe_off: "Stripe n'est pas encore configuré : les prix en euros sont enregistrés mais le paiement par carte restera désactivé côté site."
+            delivery: Ce que reçoit le joueur
+            delivery_help: Ces informations sont utilisées pour livrer automatiquement l'achat.
+            coins_amount: Nombre de pièces créditées
+            lives_amount: Nombre de vies bonus
+            gift_coins: Pièces offertes par la carte
+            gift_help: "Après le paiement, l'acheteur reçoit un code unique (GIFT-…) à offrir ; la personne qui l'utilise reçoit ces pièces."
+            plan_lives: Vies par jour
+            plan_lives_help: Remplace le quota des joueurs gratuits tant que l'abonnement est actif.
+            plan_unlimited: Vies illimitées
+            plan_color: Couleur de la pastille
+            plan_icon: Icône de la pastille
+            plan_label: Libellé de la pastille
+            plan_label_help: Affiché au survol de la pastille. Vide = nom de l'offre.
+            badge_preview: Aperçu sur un avatar
+            early_access: Accès aux jeux en avant-première
+            plan_color_help: Utilisée pour la carte de l'offre et la pastille affichée sur l'avatar des abonnés.
+            perks: Avantages affichés
+            perks_placeholder: "Pastille sur ton avatar\nAccès prioritaire aux nouveaux jeux"
+            perks_help: "Un avantage par ligne. Le nombre de vies par jour est ajouté automatiquement en tête de liste."
+            kind: Type de cosmétique
+            translations_later: Enregistre le produit une première fois pour pouvoir le traduire dans les autres langues du site.
+            publication: Publication
+            image_pick: Choisir une image
+            badge: Badge débloqué
+            badge_help: Crée d'abord le badge dans Pilotage › Badges, avec une règle impossible à atteindre s'il doit rester exclusif à la boutique.
+            color: Couleur du pseudo
+            title_value: Texte du titre (30 caractères max.)
+            sizes: Tailles ou variantes proposées
+            physical_help: "L'adresse de livraison et le téléphone sont demandés par Stripe au paiement. Pays livrés : France, Belgique, Suisse, Luxembourg, Monaco, Canada."
+            active: Mettre en vente sur la boutique
+            errors:
+                name: Le nom est obligatoire.
+                slug: Cet identifiant est vide ou déjà utilisé.
+                price: Indique au moins un prix (euros ou pièces).
+                price_card: Ce type de produit doit avoir un prix en euros.
+                amount: Indique une quantité supérieure à zéro.
+                badge: Choisis le badge à débloquer.
+                value: Choisis une valeur valide pour ce cosmétique.
+                image: Image invalide (PNG, JPEG ou WebP, 3 Mo maximum).
+            season_pass: "Débloque la piste premium du pass de saison"
+            pass_tracks: "Pistes du pass de saison débloquées"
+            pass_tracks_help: "Les abonnés pourront récupérer les récompenses de ces pistes en plus de la piste gratuite."
+            pass_tracks_none: "Aucune piste payante n'existe. Crée-en depuis la page"
+            icon_help: "Tape le nom d'une icône Lucide (en anglais, avec des tirets). Aperçu en direct, l'icône est enregistrée avec l'abonnement."
+            icon_loading: "Chargement de l'icône…"
+            icon_missing: "Icône introuvable"
+            icon_ok: "Icône trouvée"
+        orders:
+            title: Commandes
+            subtitle: Tous les achats, par carte ou en pièces. Les goodies payés attendent ton expédition.
+            all_statuses: Tous les statuts
+            all_types: Tous les types
+            all_payments: Tous les paiements
+            all_periods: Toutes les dates
+            period: Période
+            periods:
+                '1': Dernières 24 h
+                '7': 7 derniers jours
+                '30': 30 derniers jours
+                '90': 3 derniers mois
+            search: Référence, joueur, email, produit, suivi…
+            to_ship_only: À expédier uniquement
+            results: "{count} commande(s)"
+            reset: Réinitialiser
+            no_match: Aucune commande ne correspond à ces filtres.
+            empty: Aucune commande.
+            to_ship: À expédier
+            open: Ouvrir
+            deleted_user: Compte supprimé
+            column:
+                reference: Référence
+                user: Joueur
+                product: Produit
+                type: Type
+                amount: Montant
+                date: Date
+                status: Statut
+                actions: Actions
+        order:
+            details: Détails
+            payment: Paiement
+            created: Créée le
+            paid: Payée le
+            tracking: Numéro de suivi
+            tracking_placeholder: Numéro de suivi (facultatif)
+            note: Note interne
+            variant: Taille / variante
+            terms: CGV acceptées le
+            shipping: Livraison
+            no_address: Aucune adresse reçue pour le moment.
+            ship: Marquer comme expédiée
+            actions: Actions
+            actions_help: "Un remboursement par carte passe par Stripe ; un achat en pièces recrédite le portefeuille du joueur. Ce qui a été livré est repris (pièces dans la limite du solde, vies bonus, badge, cosmétique) et un abonnement est résilié immédiatement."
+            deliver: Livrer manuellement
+            deliver_confirm: Le paiement a bien été reçu sur Stripe ? La commande sera livrée au joueur.
+            cancel: Annuler la commande
+            cancel_confirm: Annuler cette commande ? Aucun remboursement n'est effectué.
+            refund: Rembourser
+            refund_confirm: Rembourser cette commande ? Cette action est définitive.
+            stripe: Ouvrir Stripe
+        subscriptions:
+            title: Abonnements
+            subtitle: Crée autant d'offres que tu veux et suis leurs abonnés. Les abonnements Stripe se renouvellent automatiquement chaque mois.
+            new_offer: Nouvelle offre
+            offers: Offres
+            no_offer: Aucune offre pour le moment.
+            subscribers: Abonnés
+            unlimited: Vies illimitées
+            lives_day: "{count} vies / jour"
+            delete_offer: "Supprimer l'offre « {name} » ? Si elle a déjà été achetée, elle sera seulement masquée et ses abonnés la gardent jusqu'à la fin de leur période."
+            offer_column:
+                offer: Offre
+                price: Prix
+                lives: Vies
+                subscribers: Abonnés actifs
+                status: État
+                actions: Actions
+            grant: Offrir un abonnement
+            grant_help: Pour un gagnant de concours, un partenaire ou un geste commercial. Aucun paiement n'est demandé.
+            grant_submit: Offrir
+            grant_invalid: Joueur introuvable ou offre invalide.
+            plan: Offre
+            days: Durée en jours
+            empty: Aucun abonnement.
+            stripe: Stripe
+            manual: Offert
+            cancel: Résilier
+            cancel_confirm: "Résilier l'abonnement de {name} ? Il restera actif jusqu'à la fin de la période en cours."
+            column:
+                user: Joueur
+                plan: Offre
+                source: Origine
+                ends: Fin de période
+                status: Statut
+                actions: Actions
+        settings:
+            title: Pièces, vies & paiement
+            subtitle: Les règles de l'économie du site et la connexion à Stripe.
+            stripe: Paiement Stripe
+            stripe_help: "Les clés se placent dans .env.local (jamais dans le dépôt). Dans le tableau de bord Stripe, crée un webhook vers l'URL ci-dessous avec les événements listés."
+            test: Mode test
+            live: Mode réel
+            ok: Configuré
+            missing: Manquante
+            webhook_url: URL du webhook
+            events: Événements
+            general: Boutique
+            enabled: Boutique ouverte aux joueurs (les admins y ont toujours accès)
+            coins: Gains de pièces
+            coins_help: Pièces gagnées à la fin de chaque partie en ligne (hors entraînement). Les invités ne gagnent pas de pièces.
+            coins_per_match: Par partie terminée
+            coins_per_win: Bonus de victoire
+            lives: Vies quotidiennes
+            lives_help: "Chaque défaite en ligne retire une vie. À 0, le joueur ne peut plus lancer de partie en ligne avant minuit (heure de Paris), sauf avec des vies bonus. L'entraînement reste illimité. Le quota des abonnés se règle dans chaque offre (page Abonnements). 0 = vies illimitées."
+            lives_free: Vies par jour des joueurs sans abonnement
+            legal: Informations de facturation
+            legal_help: "Imprimées sur chaque facture et avoir, au moment de leur émission. Une facture est émise automatiquement à chaque paiement par carte, un avoir à chaque remboursement."
+            legal_name: Nom ou raison sociale
+            legal_form: Forme juridique
+            legal_siret: SIRET
+            legal_vat_number: N° de TVA intracommunautaire
+            legal_email: Email de facturation
+            legal_address: Adresse
+            vat_rate: Taux de TVA (%)
+            vat_exempt: "Franchise en base de TVA (TVA non applicable, art. 293 B du CGI)"
+            rewards: Récompenses
+            rewards_help: "Pièces offertes chaque jour, pour les défis du jour (une fois par défi et par jour, joueurs avec compte uniquement) et en fin de saison."
+            daily_rewards: Récompense quotidienne, jour par jour
+            daily_rewards_help: "Montants séparés par des virgules, du 1er jour de série au dernier ; la série recommence ensuite. Un jour manqué remet la série à zéro."
+            challenge_play: "Défi « Jouer 3 parties »"
+            challenge_win: "Défi « Gagner une partie »"
+            challenge_variety: "Défi « Jouer à 2 jeux »"
+            season_rewards: Récompenses de fin de saison
+            season_rewards_help: "Pièces données au 1er, 2e, 3e… du classement général de la saison, automatiquement dans l'heure qui suit la fin de la saison (le planificateur doit tourner)."
+            adjust: Ajuster les pièces d'un joueur
+            adjust_help: Choisis le joueur, l'opération et le montant. L'opération apparaît dans l'historique de pièces du joueur avec le motif indiqué.
+            player: Joueur
+            player_search: Rechercher un joueur…
+            operation: Opération
+            add: Ajouter
+            remove: Retirer
+            reason_placeholder: "Ex. : gain du tournoi du vendredi"
+            not_enough: Le joueur n'a pas assez de pièces pour ce retrait.
+            added: Pièces ajoutées au joueur.
+            removed: Pièces retirées au joueur.
+            amount: Montant
+            reason: Motif affiché au joueur
+            adjust_submit: Appliquer
+            coins_invalid: Joueur introuvable ou montant nul.
+            referral_referrer: "Pièces pour le parrain"
+            referral_referee: "Pièces pour le filleul"
+        banners:
+            sunset: "Coucher de soleil"
+            ocean: "Océan"
+            galaxy: "Galaxie"
+            forest: "Forêt"
+            gold: "Or"
+            neon: "Néon"
+        effects:
+            confetti: "Confettis"
+            neon: "Néon"
+            gold: "Pluie d'or"
+            hearts: "Cœurs"
+        design:
+            colors: "Couleurs"
+            color: "Couleur"
+            color_n: "Couleur {n}"
+            paint: "Remplissage"
+            animation: "Animation"
+            width: "Épaisseur"
+            glow: "Halo"
+            mode: "Fond"
+            image_help: "En mode image, la bannière utilise l'image du produit (panneau Image)."
+            angle: "Angle du dégradé"
+            pattern: "Motif"
+            icon: "Icône"
+            shape: "Forme"
+            rarity: "Rareté"
+            effect: "Animation de victoire"
+            count: "Nombre de badges"
+            play: "Tester l'effet"
+            paints:
+                solid: "Uni"
+                gradient: "Dégradé"
+                conic: "Conique"
+            animations:
+                none: "Aucune"
+                spin: "Rotation"
+                pulse: "Pulsation"
+                shimmer: "Miroitement"
+            modes:
+                gradient: "Dégradé"
+                image: "Image"
+            patterns:
+                none: "Aucun"
+                dots: "Points"
+                stripes: "Rayures"
+                grid: "Grille"
+                waves: "Vagues"
+            effects:
+                rain: "Pluie"
+                burst: "Explosion"
+                fountain: "Fontaine"
+            presets_label: "Modèles"
+            profile_sample: "Niv. 12 · Aperçu du profil"
+            presets:
+                neon: "Néon"
+                gold: "Or"
+                fire: "Feu"
+                ice: "Glace"
+                rainbow: "Arc-en-ciel"
+                toxic: "Toxique"
+                sunset: "Coucher de soleil"
+                ocean: "Océan"
+                galaxy: "Galaxie"
+                forest: "Forêt"
+            image: "Image de la bannière"
+            image_pick: "Choisir une image"
+            image_change: "Changer limage"
+            image_formats: "JPG, PNG ou WebP"
+
+    twofa:
+        title: Sécurité du compte
+        subtitle: "La double authentification protège l'administration : en plus de ton mot de passe ou de Discord, un code à 6 chiffres de ton application est demandé à chaque nouvelle session d'administration."
+        on: Double authentification activée
+        off: Double authentification désactivée
+        required_notice: La double authentification est obligatoire pour les administrateurs. Active-la pour accéder au reste de l'administration.
+        setup_title: Activer la double authentification
+        setup_help: Avec une application d'authentification (Google Authenticator, Microsoft Authenticator, Authy, 1Password, Bitwarden…).
+        qr_alt: QR code à scanner avec ton application d'authentification
+        step1: Ouvre ton application d'authentification et ajoute un compte.
+        step2: Scanne le QR code (ou saisis la clé ci-dessous).
+        step3: Tape le code à 6 chiffres affiché pour confirmer.
+        manual: Clé à saisir manuellement
+        code_label: Code à 6 chiffres
+        enable: Activer
+        enabled: Double authentification activée. Garde tes codes de secours en lieu sûr.
+        invalid: Code incorrect ou expiré. Réessaie avec le code actuellement affiché.
+        codes_title: Tes codes de secours
+        codes_help: "Chaque code permet une seule connexion si tu perds ton téléphone. Note-les maintenant : ils ne seront plus jamais affichés."
+        codes_done: J'ai noté mes codes
+        active_title: Double authentification active
+        active_help: "Activée le {date}. Codes de secours restants : {count}."
+        disable_label: Code actuel pour désactiver
+        disable: Désactiver
+        disabled: Double authentification désactivée.
+        policy_title: Règle pour l'équipe
+        policy_help: Si cette option est cochée, chaque administrateur sans double authentification est redirigé vers cette page jusqu'à l'avoir activée.
+        policy_label: Rendre la double authentification obligatoire pour tous les administrateurs
+        verify_title: Vérification en deux étapes
+        verify_help: Saisis le code à 6 chiffres de ton application d'authentification, ou un code de secours.
+        verify_submit: Continuer
+
+    reset:
+        title: Réinitialisation
+        subtitle: Vider des blocs de données de la base, et gérer les sauvegardes pour revenir en arrière.
+        blocks_title: Que veux-tu réinitialiser ?
+        blocks_help: Coche un ou plusieurs blocs. Les lignes concernées sont supprimées définitivement de la base.
+        rows: "{count} ligne(s)"
+        rows_unit: lignes
+        tables: "Voir les {count} tables concernées"
+        table: Voir la table concernée
+        kept: "Toujours conservés : les comptes administrateurs, les rôles, les jeux installés (et leurs équipes, tâches et blocs no-code), les catégories, les salons de discussion et les pays."
+        confirm_label: "Pour confirmer, tape {word}"
+        submit: Réinitialiser les blocs cochés
+        backup_note: Une sauvegarde complète de la base est créée automatiquement juste avant, pour pouvoir revenir en arrière.
+        backups_title: Sauvegardes
+        backups_help: "Stockées dans var/backups. Restaurer une sauvegarde de base remplace toute la base (l'état actuel est sauvegardé avant). Une archive de fichiers se restaure en la décompressant à la racine du projet."
+        backup_now: Sauvegarder la base
+        backup_files_now: Sauvegarder les fichiers
+        types:
+            database: Base de données
+            files: Fichiers
+            auto: Auto
+        auto:
+            title: Sauvegardes automatiques
+            help: "Chaque nuit à 3 h (heure de Paris) : export complet de la base, et archive des fichiers (avatars, images de la boutique, jeux) si l'option est cochée. Seules les dernières sauvegardes automatiques sont gardées ; les sauvegardes manuelles ne sont jamais supprimées."
+            running: Planificateur actif
+            stopped: Planificateur arrêté
+            stopped_help: "Le planificateur ne tourne pas : les sauvegardes automatiques ne se feront pas. Il démarre avec « php bin/neo battlegame:server:start » ; sur un serveur, ajoute une tâche cron qui lance « php bin/neo schedule:run » chaque minute."
+            enabled: Activer les sauvegardes automatiques
+            files: Inclure les fichiers (archive .zip)
+            keep: Nombre de sauvegardes automatiques gardées
+        no_backup: Aucune sauvegarde pour le moment.
+        download: Télécharger
+        restore: Restaurer
+        restore_title: Restaurer cette sauvegarde ?
+        restore_help: "Toute la base sera remplacée par le contenu de ce fichier. L'état actuel est sauvegardé juste avant, pour pouvoir annuler."
+        restore_submit: Restaurer maintenant
+        delete_confirm: "Supprimer définitivement la sauvegarde {name} ?"
+        column:
+            file: Fichier
+            type: Type
+            date: Date
+            size: Taille
+            actions: Actions
+        blocks:
+            activity:
+                name: Parties & rooms
+                help: Parties jouées, résultats, classements, XP et niveaux (calculés depuis les résultats), badges obtenus, rooms et leurs messages.
+            social:
+                name: Social
+                help: Messages de discussion, amitiés, blocages, notifications, signalements et sanctions.
+            shop:
+                name: Achats & portefeuilles
+                help: Commandes, historique et soldes de pièces, vies, abonnements en cours et inventaires de cosmétiques.
+            catalog:
+                name: Catalogue boutique
+                help: Tous les produits de la boutique (et les cosmétiques possédés qui en dépendent).
+            players:
+                name: Comptes joueurs
+                help: Tous les comptes non-administrateurs (invités compris), leurs avatars et tout ce qui leur est rattaché.
+            content:
+                name: Contenu éditorial
+                help: Bandeaux, pages personnalisées, badges (et badges obtenus), saisons, maintenances, campagnes et listes d'emails.
+            settings:
+                name: Réglages
+                help: Remet tous les réglages du site et de la boutique à leurs valeurs par défaut.
+            logs:
+                name: Journaux
+                help: Journal d'audit de l'administration et tâches en échec de la file d'attente.
+        flash:
+            invalid: Coche au moins un bloc et tape le mot de confirmation exact.
+            backup_failed: La sauvegarde préalable a échoué, rien n'a été réinitialisé.
+            done: Réinitialisation terminée. Une sauvegarde de l'état précédent est disponible ci-dessous.
+            backup: Sauvegarde créée.
+            restored: Sauvegarde restaurée.
+            restore_failed: La restauration a échoué. Une sauvegarde de l'état d'avant a été créée.
+
+    dashboard:
+        title: Tableau de bord
+        period: Période
+        periods:
+            day: Dernières 24 h
+            week: 7 jours
+            month: 30 jours
+        kpi:
+            online: Joueurs connectés
+            online_sub: actifs ces 5 dernières minutes
+            accounts: Nouveaux comptes
+            discord: "{percent} % via Discord"
+            rooms: Rooms actives
+            private: "{count} privées"
+            matches: Parties jouées
+            reports: Signalements
+            reports_sub: à traiter
+        activity: Joueurs actifs · 24 h
+        activity_unique: joueurs uniques sur les 24 dernières heures
+        activity_peak: "Pic à {hour} · {count}"
+        activity_now: maintenant
+        activity_empty: Aucune partie jouée sur les 24 dernières heures.
+        members: comptes
+        guests: invités
+        services: État des services
+        service:
+            app: Application web
+            mercure: Temps réel (Mercure)
+            database: Base de données
+            discord: OAuth Discord
+        ok: OK
+        down: Hors service
+        system: Détails système
+        top: Jeux les plus joués
+        no_games: Aucune partie sur cette période.
+        column:
+            game: Jeu
+            games: Parties
+            duration: Durée moy.
+            quit: Interrompues
+        events: Activité récente
+        no_events: Aucune action enregistrée pour le moment.
+
+    users:
+        title: Utilisateurs
+        subtitle: "{count} comptes"
+        export: Exporter (CSV)
+        new: Créer un utilisateur
+        search: Pseudo ou email
+        filter_status: Statut
+        filter_auth: Connexion
+        statuses:
+            all: Tous les statuts
+            active: Actif
+            suspension: Suspendu
+            ban: Banni
+        auths:
+            all: Toutes les connexions
+            both: Email + Discord
+            email: Email
+            discord: Discord
+        empty: Aucun utilisateur ne correspond.
+        column:
+            user: Utilisateur
+            auth: Connexion
+            status: Statut
+            games: Parties
+            joined: Inscrit le
+            seen: Dernière visite
+            actions: Actions
+            date: Date
+            type: Sanction
+            reason: Motif
+            by: Par
+            end: Fin
+            game: Jeu
+            room: Room
+            result: Résultat
+        until: "jusqu'au {date}"
+        joined: "inscrit le {date}"
+        reset: Réinitialiser le mot de passe
+        logout: Déconnecter ses appareils
+        lift: Lever la sanction
+        profile: Profil public
+        stats:
+            games: Parties
+            wins: Victoires
+            level: Niveau
+            friends: Amis
+            reports: Signalements reçus
+        sanctions: Historique des sanctions
+        no_sanctions: Aucune sanction.
+        revoked: "levée le {date}"
+        games: Dernières parties
+        no_games: Aucune partie.
+        devices: Appareils mémorisés
+        no_devices: Aucun appareil mémorisé.
+        delete: "Supprimer {name} ?"
+        delete_help: Le compte, la progression, les amis et les messages seront supprimés définitivement. Cette action est irréversible.
+        delete_confirm: Tape SUPPRIMER pour confirmer
+        delete_action: Supprimer définitivement
+        form:
+            profile: Profil
+            profile_help: Visible publiquement sur le site.
+            username: Pseudo
+            first_name: Prénom affiché
+            email: Email
+            country: Pays
+            password_help: Le joueur reçoit un email pour définir lui-même son mot de passe.
+            status: Statut
+            status_help: Une suspension ou un bannissement est ajouté à l'historique et bloque l'accès au site.
+            duration: Durée
+            reason: Motif
+            message: Message affiché au joueur
+            note: Note interne
+            note_help: Visible uniquement par l'équipe.
+            create: Créer l'utilisateur
+
+    moderation:
+        title: Modération
+        search: Joueur signalé
+        filter_status: Statut
+        filter_reason: Motif
+        all_reasons: Tous les motifs
+        sort: Tri
+        statuses:
+            open: À traiter
+            all: Tous les signalements
+        sorts:
+            recent: Plus récents
+            count: Plus signalés
+        no_match: Aucun dossier ne correspond à ces filtres.
+        to_handle: "{count} à traiter"
+        handled: Traité
+        review: Examiner
+        case:
+            title: "Dossier · {name}"
+            user: Fiche utilisateur
+            reports: "Signalements · {count}"
+            no_reports: Aucun signalement pour ce joueur.
+            messages_help: "Les {count} derniers messages du joueur dans les salons, messages privés et rooms."
+            actions: Décision
+            actions_help: "Appliquer une sanction ou classer sans suite traite les {count} signalement(s) en attente."
+        tabs:
+            reports: "Signalements · {count}"
+            treated: Traités
+            sanctions: "Sanctions actives · {count}"
+            words: Mots filtrés
+        empty: Aucun signalement à traiter.
+        empty_sanctions: Aucune sanction active.
+        no_comment: Sans commentaire
+        history: "{count} sanction(s) antérieure(s)"
+        context: Derniers messages du joueur
+        no_context: Aucun message récent.
+        sanction: Sanction
+        default_message: Ton comportement ne respecte pas les règles de la communauté.
+        dismiss: Classer sans suite
+        apply: Appliquer la sanction
+        permanent: Définitive
+        revoke: Lever
+        words_title: Mots filtrés
+        words_help: Un mot par ligne. Ils sont remplacés par des astérisques dans les salons, les messages privés et les rooms.
+        column:
+            player: Joueur
+            reasons: Motifs
+            reports: Signalements
+            reporters: Signalé par
+            last: Dernier signalement
+            history: Antécédents
+            state: État
+            date: Date
+            target: Joueur
+            reason: Motif
+            by: Signalé par
+            status: Statut
+            type: Sanction
+            end: Fin
+            actions: Actions
+
+    admins:
+        title: Administrateurs
+        subtitle: Comptes de l'équipe ayant accès au back-office. Les droits viennent du rôle.
+        manage_roles: Gérer les rôles
+        new: Ajouter un administrateur
+        filter: Rôle
+        all_roles: Tous les rôles
+        full: Accès complet
+        remove: Retirer
+        remove_confirm: "Retirer l'accès au back-office de {name} ? Il est aussi retiré des équipes de ses jeux."
+        column:
+            member: Membre
+            role: Rôle
+            games: Jeux (Atelier)
+            seen: Dernière visite
+            actions: Actions
+        games_count:
+            lead: "Responsable de {count} jeu(x)"
+            developer: "Développeur sur {count} jeu(x)"
+            tester: "Testeur sur {count} jeu(x)"
+        identity: Compte
+        identity_help: Un administrateur est un compte joueur existant.
+        account: Email ou pseudo du compte
+        account_placeholder: alex@exemple.fr
+        not_found: Aucun compte joueur ne correspond.
+        already: Ce compte est déjà administrateur.
+        role: Rôle
+        role_help: Les droits viennent du rôle.
+        studio: Atelier de jeux
+        studio_help: Jeux sur lesquels ce membre travaille.
+        no_games: Aucun pour l'instant. On l'ajoute à une équipe depuis la fiche d'un jeu.
+        create: Ajouter
+
+    roles:
+        title: Rôles & permissions
+        subtitle: Un rôle regroupe des permissions. Chaque administrateur a un rôle.
+        new: Créer un rôle
+        system: système
+        all: Tous les droits
+        count: "{count} / {total} permissions"
+        duplicate: Dupliquer
+        delete_confirm: "Supprimer le rôle « {name} » ? Ses membres passent au rôle choisi."
+        reassign: Rôle à attribuer à ses membres
+        delete_empty_confirm: "Supprimer le rôle « {name} » ?"
+        delete_blocked: Ce rôle a encore des membres. Crée un autre rôle pour les y déplacer avant de le supprimer.
+        move_to: "→ {name}"
+        column:
+            role: Rôle
+            permissions: Permissions
+            members: Membres
+            updated: Modifié
+            actions: Actions
+        role: Rôle
+        name: Nom
+        name_required: Donne un nom au rôle.
+        color: Couleur du badge
+        description: Description
+        permissions: Permissions
+        permissions_help: Coche ce que ce rôle peut faire.
+        system_help: Le rôle système a tous les droits et ne peut pas être modifié.
+        all_group: "Tout · {count}"
+        members: "Membres · {count}"
+        create: Créer le rôle
+
+    games:
+        filters:
+            search: Nom, slug, dossier, catégorie…
+            all_statuses: Tous les statuts
+            category: Catégorie
+            all_categories: Toutes les catégories
+            all_sources: Toutes les sources
+            sources:
+                git: Dépôt Git
+                local: Local (var/games)
+            results: "{count} jeu(x) sur {total}"
+            reset: Réinitialiser
+            empty: Aucun jeu ne correspond à ces filtres.
+        export:
+            none: Coche des jeux pour les exporter.
+            selected: "{count} jeu(x) sélectionné(s) sur cette page"
+            all_selected: "Les {count} jeux filtrés sont sélectionnés"
+            select_all: "Sélectionner les {count} jeux filtrés"
+            select_every: "Sélectionner les {count} jeux"
+            every_selected: "Les {count} jeux sont sélectionnés"
+            submit: Exporter (.zip)
+            page: Sélectionner les jeux de la page
+            row: "Sélectionner {name}"
+            empty: Aucun jeu sélectionné pour l'export.
+        early_on: Avant-première
+        early_off: Fin d'avant-première
+        early_pill: Avant-première
+        title: Jeux installés
+        subtitle: "{count} jeu(x) installé(s)"
+        studio: Créer un jeu dans l'Atelier
+        install_title: Installer un jeu depuis un dépôt Git
+        install_help: Le dépôt est cloné dans var/games/ puis validé avant activation.
+        url: URL du dépôt (https)
+        ref: Tag ou branche
+        token: Jeton (dépôt privé)
+        after: Après installation
+        after_test: En test (visible par l'équipe)
+        after_live: Activer immédiatement
+        analyze: Analyser le dépôt
+        validation: Validation de game.json
+        no_analysis: Lance une analyse pour vérifier le dépôt avant de l'installer.
+        structure: |
+            mon-jeu/
+            ├─ game.json        manifeste (obligatoire)
+            ├─ composer.json    autoload psr-4 BattleGame\MonJeu\Sdk\
+            ├─ src/             Manager + Server du jeu
+            ├─ translations/    game.fr.yaml, game.en.yaml… (textes du jeu)
+            └─ assets/          client.js, styles, icône
+        valid: "{name} {version} est valide."
+        install: "Installer {slug}"
+        installed: Jeux installés
+        invalid_url: L'URL doit être une adresse https et la référence un tag ou une branche.
+        clone_failed: Le dépôt n'a pas pu être cloné (URL, référence ou jeton).
+        install_failed: L'analyse a expiré, relance-la.
+        no_repository: Ce jeu n'a pas été installé depuis un dépôt.
+        update_failed: La mise à jour depuis le dépôt a échoué.
+        update: Mettre à jour
+        disable: Désactiver
+        enable: Activer
+        sheet: Fiche
+        featured:
+            title: Jeux à la une
+            help: "Affichés en slider en haut de l'accueil, dans cet ordre. Seuls les jeux en ligne apparaissent."
+            empty: Aucun jeu à la une. Utilise « ★ À la une » dans la liste ci-dessous.
+            hidden: Ce jeu n'est pas en ligne, il n'apparaît pas sur l'accueil.
+            add: ★ À la une
+            remove: ★ Retirer de la une
+        column:
+            game: Jeu
+            version: Version
+            source: Source
+            status: Statut
+            actions: Actions
+
+    categories:
+        title: Catégories de jeux
+        subtitle: Filtres de l'accueil et du catalogue. Un jeu choisit sa catégorie par son slug dans game.json.
+        new: Nouvelle catégorie
+        preview: Aperçu sur l'accueil
+        note: Une catégorie utilisée par un jeu ne peut pas être supprimée. Désactive-la pour la masquer des filtres. L'installation d'un jeu dont la catégorie n'existe pas est refusée.
+        delete_confirm: "Supprimer la catégorie « {name} » ?"
+        used: Cette catégorie est utilisée par des jeux.
+        column:
+            order: Ordre
+            category: Catégorie
+            slug: Slug
+            games: Jeux
+            active: Active
+            actions: Actions
+        info: Informations
+        info_help: Le slug est la valeur que les jeux mettent dans "category" de leur game.json.
+        name: Nom
+        name_required: Donne un nom à la catégorie.
+        slug: Slug
+        slug_help: Généré depuis le nom si vide.
+        slug_locked: Des jeux sont rattachés à cette catégorie, le slug ne peut plus changer.
+        slug_taken: Ce slug est déjà utilisé.
+        look: Apparence
+        look_help: Couleur de la pastille dans l'admin et de l'étiquette sur les cartes de jeux.
+        active: Active (visible dans les filtres)
+        create: Créer la catégorie
+
+    badges:
+        title: Badges
+        subtitle: Badges généraux (compte) et badges de jeux. Chaque badge utilise une règle du registre et un design JSON.
+        new: Nouveau badge
+        kpi:
+            total: Badges
+            general: Généraux
+            games: De jeux
+            awarded: Attribués
+        search: Nom ou code
+        all_scopes: Toutes les portées
+        all_rarities: Toutes les raretés
+        rarity: Rareté
+        rarities:
+            common: Commun
+            rare: Rare
+            epic: Épique
+            legendary: Légendaire
+        scope: Portée
+        scope_help: Un badge général se gagne sur tout le site. Un badge de jeu s'affiche dans la progression du joueur pour ce jeu.
+        scopes:
+            general: Général
+            game: Jeu
+        empty: Aucun badge ne correspond.
+        secret: secret
+        active: Actif
+        inactive: Inactif
+        note: Un badge déjà obtenu ne peut pas être supprimé, seulement désactivé. Les badges déclarés dans un game.json sont resynchronisés à chaque installation du jeu.
+        registry: Registre des règles
+        registry_help: Classes qui implémentent BadgeRuleInterface (plateforme ou jeux).
+        used: "{count} badge(s)"
+        rules:
+            games_played: Parties jouées
+            wins: Victoires
+            level_reached: Niveau atteint
+            win_streak: Série de victoires
+            friends_count: Nombre d'amis
+            all_games_played: Tous les jeux joués
+            score_threshold: Seuil sur une stat du jeu
+        column:
+            badge: Badge
+            scope: Portée
+            rule: Règle
+            rarity: Rareté
+            rate: Obtenu par
+            status: Statut
+            actions: Actions
+        game: Jeu
+        game_required: Choisis le jeu du badge.
+        info: Informations
+        name: Nom
+        name_required: Donne un nom au badge.
+        code: Code
+        code_taken: Ce code est déjà utilisé.
+        description: Description
+        secret_help: Secret (condition cachée tant que non obtenu)
+        award: Attribuer aux joueurs qui remplissent déjà la condition
+        rule: Règle d'obtention
+        rule_help: Une règle du registre et ses paramètres en JSON.
+        rule_invalid: Cette règle n'existe pas.
+        params: Paramètres (JSON)
+        params_invalid: Les paramètres doivent être un objet JSON valide.
+        design: Design
+        design_help: Le même moteur de rendu affiche le badge sur le site.
+        fields:
+            shape: Forme
+            rarity: Rareté
+            frame: Cadre
+            icon: Icône
+            label: Texte court
+            glow: Lueur
+            color: Couleur personnalisée
+        options:
+            shape:
+                hexagon: Hexagone
+                shield: Bouclier
+                circle: Cercle
+                diamond: Losange
+                octagon: Octogone
+            rarity:
+                common: Commun
+                rare: Rare
+                epic: Épique
+                legendary: Légendaire
+            frame:
+                auto: Selon la rareté
+                simple: Simple
+                double: Double
+        preview: Aperçu
+        owners: "Obtenu par {count} joueur(s)"
+        create: Créer le badge
+        delete: Supprimer le badge
+        delete_confirm: "Supprimer le badge « {name} » ?"
+        owned: Ce badge a déjà été obtenu, désactive-le plutôt.
+
+    channels:
+        title: Discussions
+        subtitle: Salons de discussion publics du site, et qui peut les lire ou y écrire.
+        new: Nouveau salon
+        empty: Aucun salon pour le moment. Les joueurs voient « Aucun salon » dans la page Discussions.
+        note: Les invités peuvent lire les salons ouverts à tout le monde, mais n'écrivent jamais. Un joueur rendu muet par la modération ne peut écrire nulle part. L'équipe n'est pas soumise au mode lent.
+        info: Salon
+        name: Nom
+        slug: Adresse
+        slug_help: "Utilisée dans l'URL /chat/… Laisse vide pour la générer depuis le nom."
+        slug_locked: L'adresse ne peut plus être modifiée une fois le salon créé.
+        description: Description
+        rules: Qui peut faire quoi
+        rules_help: Un salon réservé n'apparaît pas pour ceux qui ne peuvent pas le lire.
+        read: Peut lire
+        write: Peut écrire
+        cooldown: Mode lent (secondes)
+        cooldown_help: Délai minimum entre deux messages d'un même joueur.
+        position: Ordre
+        position_help: Les salons sont triés du plus petit au plus grand.
+        active: Salon ouvert
+        slow: "lent · {seconds} s"
+        purge: Vider
+        purge_confirm: "Supprimer les {count} message(s) de #{name} ? Cette action est définitive."
+        purged: Salon vidé.
+        delete_confirm: "Supprimer le salon #{name} et tous ses messages ?"
+        states:
+            active: Ouvert
+            inactive: Fermé
+        column:
+            channel: Salon
+            read: Lecture
+            write: Écriture
+            messages: Messages
+            status: État
+            actions: Actions
+        errors:
+            name: Donne un nom au salon.
+            slug: "Adresse invalide (lettres, chiffres et tirets, « dm » est réservé)."
+            slug_taken: Cette adresse est déjà utilisée par un autre salon.
+
+    rooms:
+        title: Rooms
+        subtitle: "{total} rooms · {playing} en partie"
+        new: Créer une room officielle
+        search: Nom ou code
+        filter_access: Accès
+        filter_status: Statut
+        all_statuses: Tous les statuts
+        access:
+            all: Privées + publiques
+            private: Privées
+            public: Publiques
+            official: Officielles
+        empty: Aucune room ne correspond.
+        official: officielle
+        column:
+            code: Code
+            name: Nom
+            host: Hôte
+            visibility: Visibilité
+            status: Statut
+            players: Joueurs
+            age: Ouverte le
+            actions: Actions
+            player: Joueur
+            state: État
+            action: Action
+        host: "hôte {name}"
+        opened: "ouverte le {date}"
+        watch: Observer la partie
+        players: "Joueurs · {count} / {max}"
+        guest: Invité
+        spectator: Spectateur
+        present: Présent
+        away: Absent
+        kick: Exclure
+        settings: Réglages
+        max: Taille max
+        vote: Vote
+        vote_value: "{choices} jeux tirés · {seconds} s"
+        played: Parties jouées
+        guests: Invités
+        spectators: Spectateurs
+        topic: Topic Mercure
+        chat: Chat de la room (archive)
+        no_chat: Aucun message.
+        close: Fermer la room
+        close_help: Les joueurs présents sont renvoyés vers la liste des rooms avec ce message. La partie en cours n'est pas comptée.
+        close_message: Message affiché aux joueurs
+        close_confirm: "Fermer et supprimer la room {code} ?"
+        close_action: Fermer et supprimer
+        closed_default: Cette room a été fermée par l'équipe BattleGame.
+        form:
+            room: Room
+            official: Room officielle (animée par l'équipe et mise en avant)
+            access: Type & accès
+            capacity: Capacité & vote
+            max_players: Joueurs max
+            choices: Jeux tirés par tour
+            vote_duration: Durée du vote (s)
+            create: Créer la room
+
+    banners:
+        title: Bandeaux de diffusion
+        subtitle: Messages affichés sous le header du site public. Une seule liste est diffusée à la fois.
+        new: Nouveau bandeau
+        edit: Modifier le bandeau
+        live: "En diffusion maintenant · liste « {name} »"
+        no_live: Aucune liste n'est diffusée.
+        empty_live: Aucun bandeau actif dans cette liste.
+        lists: Listes de diffusion
+        on_air: EN COURS
+        count: "{count} bandeau(x)"
+        publish_list: Diffuser
+        schedule: Programmer
+        schedule_label: Date et heure de diffusion
+        schedule_cancel: Annuler la programmation
+        schedule_info: "Diffusion prévue le {date}"
+        schedule_invalid: Choisis une date et une heure dans le futur.
+        scheduled_at: "Programmée · {date}"
+        delete_list: "Supprimer la liste « {name} » et ses bandeaux ?"
+        list_name: Nom de la liste
+        new_list: Nouvelle liste
+        rows: "Bandeaux de « {name} »"
+        empty: Aucun bandeau dans cette liste.
+        button: "Bouton « {cta} » → {url}"
+        disable: Désactiver
+        enable: Activer
+        delete_confirm: Supprimer ce bandeau ?
+        states:
+            live: Diffusé
+            scheduled: Programmé
+            expired: Terminé
+            "off": Brouillon
+        column:
+            order: Ordre
+            banner: Bandeau
+            type: Type
+            period: Période
+            audience: Public
+            status: Statut
+            actions: Actions
+        content: Contenu
+        content_help: "Court : le bandeau défile sur une seule ligne. Les bandeaux de maintenance sont créés depuis la page Maintenance."
+        text: Texte
+        text_required: Le texte du bandeau est obligatoire.
+        cta: Bouton
+        url: Lien du bouton
+        url_invalid: "Le lien doit commencer par / ou être une URL complète."
+        diffusion: Diffusion
+        diffusion_help: Le bandeau s'affiche quand sa liste est diffusée, pendant sa période.
+        list: Liste
+        starts: Début
+        ends: Fin
+        audience: Public
+        pages: Pages
+        dismissible: Le joueur peut masquer ce bandeau
+        draft: Enregistrer en brouillon
+        save_publish: Enregistrer et diffuser
+
+    system:
+        title: Système · Général
+        platform: Plateforme
+        maintenances: "{count} maintenance(s) ouverte(s)"
+        manage: Gérer
+        toggles:
+            guests:
+                title: Jouer sans compte
+                help: Autorise les invités avec un simple pseudo.
+            registration:
+                title: Inscriptions ouvertes
+                help: Création de compte par email et Discord.
+            public_rooms:
+                title: Rooms publiques
+                help: Permet aux joueurs de lister leur room publiquement.
+        discord: Connexion Discord (OAuth2)
+        operational: Opérationnel
+        not_configured: Non configuré
+        secret_help: Stocké dans .env.local, jamais réaffiché.
+        redirect: Redirection
+        services: Services
+        storage:
+            uploads: Avatars importés
+            games: Jeux (var/games)
+            cache: Cache
+        clear_cache: Vider le cache
+        audit: Journal d'audit
+        audit_export:
+            button: Exporter en CSV
+            period: Période à exporter
+            periods:
+                all: Tout l'historique
+                month: 30 derniers jours
+                week: 7 derniers jours
+                day: Dernières 24 h
+            columns:
+                date: Date
+                user: Membre
+                action: Action
+                description: Description
+                detail: Détail
+
+    languages:
+        title: Système · Langues
+        add: Ajouter une langue
+        code: Code de langue (2 lettres)
+        reference: Référence
+        countries:
+            title: Pays
+            help: "Pays proposés dans les profils. La langue par défaut est celle que le site utilisera pour les joueurs de ce pays."
+            code: Code
+            name: Nom
+            name_placeholder: Belgique
+            add: Ajouter
+            locale: Langue par défaut
+            users: Joueurs
+            empty: Aucun pays pour le moment.
+            invalid: "Indique un code pays de 2 lettres (ex : BE) et un nom."
+            exists: Ce pays existe déjà.
+            delete_confirm: "Supprimer « {name} » ? {count} joueur(s) n'auront plus de pays affiché."
+            translations: "Traductions · {done}/{total}"
+        translate: "Traduire · {count} restants"
+        translate_short: Traduire
+        copy_source: Copier le texte de référence
+        reference_title: "Textes · {name}"
+        entries:
+            title: "Textes traduits · {count}"
+            help: Relis les traductions enregistrées et corrige-les si besoin.
+            search: Rechercher une clé ou un texte
+            key: Clé
+            empty: Aucun texte ne correspond à la recherche.
+            reference_title: "Textes de référence · {count}"
+            modified: modifié
+            revert: Rétablir
+            revert_help: Revenir au texte du dépôt (translations/)
+            revert_confirm: Rétablir le texte d'origine du dépôt ?
+            reverted: Texte d'origine rétabli.
+            reference_help: Les textes français servent de base à toutes les traductions. Corrige-les ici en cas de faute.
+        delete: Supprimer
+        delete_confirm: "Supprimer la langue « {name} » ? Ses fichiers de traduction et les traductions de contenu associées seront effacés."
+        unknown: Code de langue inconnu (ex. en, ru, pl).
+        locked: Cette langue est en cours de traduction par un autre membre de l'équipe.
+        locked_by: "Verrouillée par {name} jusqu'à {time}."
+        force_unlock: Forcer le déverrouillage
+        note: Une langue à la fois est verrouillée pour la personne qui la traduit (30 min d'inactivité). Les catégories, badges, bandeaux et maintenances se traduisent dans leur propre formulaire, les jeux dans le dossier translations/ de leur paquet (Atelier). L'affichage du site dans une autre langue reste à activer.
+        translation: "Traduction · {name}"
+        lock_info: Langue verrouillée par toi · se libère après 30 min d'inactivité
+        finish: Terminer et déverrouiller
+        domains: Fichiers
+        left: "{left} restants / {total}"
+        source: Français · référence
+        shortcuts: "Raccourcis : Ctrl + Entrée pour enregistrer, Ctrl + → pour passer"
+        skip: Passer
+        save_next: Enregistrer et suivant →
+        done: Fichier terminé
+        done_help: Tous les textes de ce fichier sont traduits.
+        done_skipped: "Il reste {count} texte(s) passé(s)."
+        review: Revoir les éléments passés
+
+    mercure:
+        title: Système · Temps réel (Mercure)
+        hub: Hub
+        connected: "● connecté · {ms} ms"
+        down: "● injoignable"
+        kpi:
+            messages: Messages reçus
+            since: depuis l'ouverture de la page
+            rate: Débit
+            per_minute: messages / min
+            topics: Topics
+            distinct: distincts observés
+            latency: Publication
+        feed: Flux en direct
+        live: EN DIRECT
+        paused: EN PAUSE
+        pause: Pause
+        resume: Reprendre
+        filter: Filtrer
+        test: Publier un message de test
+        topic: Topic
+        data: Données (JSON)
+        private: Message privé
+        publish: Publier
+        publish_failed: La publication a échoué, le hub ne répond pas.
+        terminal:
+            connecting: Connexion au hub…
+            connected: Connecté. En attente de messages…
+            lost: Connexion perdue, nouvelle tentative…
+        top: Topics les plus actifs
+        messages: Messages
+        errors: Erreurs récentes
+        no_errors: Aucune erreur Mercure dans le journal.
+
+    content:
+        title: Traductions
+        help: Le français est la langue de référence. Un champ vide affiche le texte français.
+        none: Aucune autre langue n'est ajoutée pour le moment.
+        add_language: Ajouter une langue
+        count: "{done} / {total} traduits"
+        fields:
+            name: Nom
+            description: Description
+            text: Texte
+            cta: Bouton
+            title: Titre
+            message: Message
+            content: Contenu
+            perks: Avantages (un par ligne)
+
+    pages:
+        title: Pages
+        subtitle: Pages libres du site (FAQ, règles, blog…) et liens du pied de page.
+        new: Nouvelle page
+        empty: Aucune page pour le moment.
+        note: "Une page répond à son adresse (par ex. /faq ou /blog/mon-article) si aucune autre page du site ne l'utilise déjà. Le Markdown accepte aussi du HTML."
+        delete_confirm: "Supprimer la page « {name} » ?"
+        create: Créer la page
+        info: Informations
+        page_title: Titre
+        title_required: Donne un titre à la page.
+        path: Adresse
+        path_help: "Lettres, chiffres et tirets, avec / pour les sous-pages. Générée depuis le titre si vide."
+        path_taken: Une autre page utilise déjà cette adresse.
+        path_reserved: Cette adresse est déjà utilisée par le site.
+        description: Description (sous le titre et pour les moteurs de recherche)
+        content: Contenu
+        content_help: "Écris le contenu une seule fois. Mets chaque texte à traduire sous forme de balise, par exemple {faq_titre}, puis remplis-le par langue dans « Textes à traduire »."
+        body: Contenu de la page
+        style: CSS de la page
+        style_help: Appliqué uniquement au contenu de cette page.
+        publication: Publication
+        publication_help: Une page non publiée n'est visible ni sur le site ni dans le pied de page.
+        footer: Lien dans le pied de page
+        position: Ordre dans la colonne
+        published: Publiée
+        strings:
+            title: Textes à traduire
+            help: "Chaque balise {cle} du contenu est remplacée par le texte de la langue du visiteur, ou par le français s'il manque."
+            empty: "Aucune balise dans le contenu. Ajoute par exemple {faq_titre} pour créer un texte à traduire."
+            key: Balise
+        states:
+            published: Publiée
+            draft: Brouillon
+        column:
+            page: Page
+            format: Format
+            footer: Pied de page
+            updated: Modifiée le
+            status: Statut
+            actions: Actions
+
+    color:
+        custom: Couleur personnalisée
+    engage:
+        delete_confirm: "Supprimer « {name} » ?"
+        events:
+            title: "Événements"
+            subtitle: "Multiplicateurs d'XP et de pièces, jeu de la semaine, week-ends spéciaux."
+            new: "Nouvel événement"
+            edit: "Modifier l'événement"
+            empty: "Aucun événement pour le moment."
+            all_games: "Tous les jeux"
+            coins_short: "Pièces"
+            name: "Nom"
+            name_placeholder: "Week-end double XP"
+            description: "Description"
+            game: "Jeu concerné"
+            xp: "Multiplicateur d'XP"
+            coins: "Multiplicateur de pièces"
+            starts: "Début"
+            ends: "Fin"
+            color: "Couleur"
+            help: "Les multiplicateurs (de 1 à 5) s'appliquent aux parties terminées pendant l'événement. Si plusieurs événements se chevauchent, le plus fort est retenu."
+            active: "Actif"
+            invalid: "Renseigne un nom et une fin postérieure au début."
+            column:
+                name: "Événement"
+                game: "Jeu"
+                boost: "Bonus"
+                period: "Période"
+                status: "Statut"
+                actions: "Actions"
+            states:
+                live: "En cours"
+                scheduled: "Programmé"
+                ended: "Terminé"
+                "off": "Désactivé"
+        pass:
+            title: "Pass de saison"
+            subtitle: "Les paliers et les récompenses gratuites et premium du pass."
+            help: "Chaque palier se débloque à un total d'XP de pass. Pour chaque piste, choisis une récompense : pièces, vies ou un produit (cosmétique ou badge). Les paliers sont triés par XP à l'enregistrement."
+            free: "Récompense gratuite"
+            premium: "Récompense premium"
+            value: "Valeur"
+            types:
+                coins: "Pièces"
+                lives: "Vies"
+                product: "Produit"
+                none: "Aucune"
+            column:
+                tier: "Palier"
+                xp: "XP requise"
+                free: "Gratuit"
+                premium: "Premium"
+            products: "Produits disponibles"
+            products_help: "Identifiants à utiliser pour une récompense de type « Produit ». Un produit inactif reste exclusif au pass."
+            hidden: "hors boutique"
+            tracks: "Pistes du pass"
+            tracks_help: "La piste gratuite est ouverte à tous. Ajoute autant de pistes que tu veux (Premium, VIP…) puis choisis dans chaque abonnement les pistes qu'il débloque."
+            add_track: "Ajouter une piste"
+            track_color: "Couleur de la piste"
+            track_placeholder: "Nom de la piste (ex. VIP)"
+            no_offer: "Aucun abonnement ne débloque cette piste"
+            everyone: "Tous les joueurs"
+            tiers: "Paliers"
+            add_tier: "Ajouter un palier"
+            remove_tier: "Supprimer ce palier"
+            empty: "Aucun palier pour le moment. Ajoute le premier."
+            type: "Type de récompense"
+            save_tracks: "Enregistrer les pistes"
+            tracks_link: "Gérer les pistes"
+        tournaments:
+            title: "Tournois"
+            subtitle: "Compétitions à durée limitée sur un jeu, avec des pièces à gagner."
+            new: "Nouveau tournoi"
+            edit: "Modifier le tournoi"
+            empty: "Aucun tournoi pour le moment."
+            draft: "Brouillon"
+            rewarded: "Récompensé"
+            name: "Nom"
+            description: "Description et règles"
+            game: "Jeu"
+            starts: "Début"
+            ends: "Fin"
+            max: "Places maximum"
+            prizes: "Pièces par place (1er, 2e, 3e…)"
+            help: "Le classement additionne les points des parties jouées sur le jeu pendant le tournoi. Les pièces sont versées automatiquement dans l'heure qui suit la fin."
+            published: "Publié (visible sur le site)"
+            invalid: "Renseigne un nom, un jeu et une fin postérieure au début."
+            column:
+                name: "Tournoi"
+                game: "Jeu"
+                period: "Période"
+                players: "Inscrits"
+                status: "Statut"
+                actions: "Actions"
+            general: "Informations"
+            view: "Voir sur le site"
+            rewards: "Récompenses"
+            rewards_help: "Une ligne par récompense. Plusieurs lignes pour la même place se cumulent (ex. 1re place : 1000 pièces + un cadre)."
+            add_reward: "Ajouter une récompense"
+            place: "Place"
+            qualification: "Qualification"
+            qualifier: "Accès au tournoi"
+            qualifier_count: "Nombre de qualifiés"
+            qualifier_period: "Période du classement"
+            qualification_help: "Réserve le tournoi aux X meilleurs joueurs du classement général ou du classement du jeu. Les autres joueurs ne peuvent pas s'inscrire."
+            qualifiers:
+                open: "Ouvert à tous"
+                general: "Top X du classement général"
+                game: "Top X du classement du jeu"
+            qualified: "Qualifiés ({count})"
+            no_qualified: "Aucun joueur classé sur cette période."
+            registered: "Inscrit"
+            qualify: "Inscrire tous les qualifiés"
+            qualify_confirm: "Inscrire tous les joueurs qualifiés et les prévenir par notification ?"
+            qualify_help: "Les joueurs déjà inscrits sont ignorés et la limite de places est respectée."
+            qualify_done: "Les joueurs qualifiés ont été inscrits et prévenus."
+            winners: "Gagnants"
+            manual: "À remettre à la main"
+        clans:
+            title: "Clans"
+            subtitle: "Tous les clans du site, classés par points de saison."
+            empty: "Aucun clan pour le moment."
+            disband: "Dissoudre"
+            column:
+                clan: "Clan"
+                members: "Membres"
+                points: "Points"
+                access: "Accès"
+                actions: "Actions"
+        seasons:
+            title: "Saisons"
+            subtitle: "Les saisons classées : dates, pass de saison associé, récompenses de fin de saison."
+            new: "Nouvelle saison"
+            edit: "Modifier la saison"
+            empty: "Aucune saison pour le moment."
+            none_live: "Aucune saison n'est en cours : le classement de saison et le pass sont inactifs côté site."
+            days_left: "{count} jour(s) restant(s)"
+            pass: "Pass de saison"
+            pass_select: "Pass utilisé pendant cette saison"
+            pass_help: "Les joueurs progressent dans ce pass pendant la saison. Un même pass peut servir à plusieurs saisons."
+            no_pass: "Aucun pass"
+            name: "Nom"
+            starts: "Début"
+            ends: "Fin"
+            dates_help: "Deux saisons ne peuvent pas se chevaucher. Les récompenses du classement sont versées automatiquement dans l'heure qui suit la fin."
+            invalid: "Renseigne un nom et une fin postérieure au début."
+            overlap: "Ces dates chevauchent une autre saison."
+            rewarded: "Récompensée"
+            delete_confirm: "Supprimer la saison « {name} » ? La progression des joueurs dans son pass sera perdue."
+            column:
+                name: "Saison"
+                period: "Période"
+                pass: "Pass"
+                players: "Joueurs du pass"
+                status: "Statut"
+                actions: "Actions"
+                progress: "Avancement"
+            states:
+                live: "En cours"
+                upcoming: "À venir"
+                finished: "Terminée"
+            elapsed: "{percent} % de la saison écoulée"
+            link_pass: "Relier un pass"
+            next: "Saison suivante"
+            no_next: "Aucune saison programmée"
+            plan_next: "Programmer la suivante"
+            none: "Pas de saison en cours"
+            players: "Joueurs du pass"
+            players_hint: "Joueurs ayant gagné de l'XP de pass cette saison"
+            starts_on: "Débute le {date}"
+        passes:
+            subtitle: "Crée un pass par saison (ou réutilise-le) et relie-le à une ou plusieurs saisons."
+            new: "Nouveau pass"
+            empty: "Aucun pass pour le moment."
+            active: "Saison en cours"
+            unlinked: "Relié à aucune saison"
+            duplicate: "Dupliquer"
+            tiers_count: "{count} palier(s)"
+            name: "Nom du pass"
+            seasons: "Saisons qui utilisent ce pass"
+            seasons_help: "Coche une saison pour lui attribuer ce pass. Pour retirer un pass d'une saison, modifie la saison."
+            no_seasons: "Aucune saison n'existe encore."
+            column:
+                name: "Pass"
+                tiers: "Paliers"
+                seasons: "Saisons"
+                actions: "Actions"
+        ranks:
+            title: "Grades classés"
+            subtitle: "Les rangs du mode classé, de la cote de départ jusqu'au sommet."
+            list: "Grades"
+            list_help: "Chaque grade s'obtient à partir d'une cote. Le premier commence toujours à 0. Les grades sont triés par cote à l'enregistrement."
+            add: "Ajouter un grade"
+            name: "Nom du grade"
+            name_placeholder: "Ex. Légende"
+            min: "Cote minimum"
+            from: "Dès"
+            color: "Couleur du grade"
+            beyond: "Après le dernier grade"
+            step: "Points par division"
+            step_help: "Au-delà de « {name} » ({min}), une nouvelle division s'ouvre tous les {step} points : {name} II dès {next}, puis III, IV… Il y a toujours un grade à atteindre."
+        rewards:
+            coins: "Pièces"
+            lives: "Vies"
+            product: "Cosmétique ou badge"
+            subscription: "Abonnement"
+            giftcard: "Carte cadeau (pièces)"
+            custom: "Lot libre (géré à la main)"
+            amount: "Quantité"
+            days: "Jours"
+            custom_placeholder: "Ex. Manette offerte, 20 € en carte cadeau…"

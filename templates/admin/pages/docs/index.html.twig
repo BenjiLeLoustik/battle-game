@@ -1,0 +1,45 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/docs.html.twig' as docs_ui %}
+
+{% set active = 'docs' %}
+
+{% block title %}{{ docs.title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page docs-home" data-component="DocsSearch">
+        <section class="docs-home__hero">
+            <span class="docs-home__eyebrow">{{ docs.eyebrow }}</span>
+            <h1 class="docs-home__title">{{ docs.title }}</h1>
+            <p class="docs-home__lead">{{ docs.subtitle }}</p>
+            <label class="admin-search docs-home__search">
+                <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                <input class="admin-search__input docs-search__query" type="search" placeholder="{{ docs.search }}" aria-label="{{ docs.search }}">
+            </label>
+        </section>
+
+        <p class="docs-search__empty docs-home__empty" hidden>{{ docs.empty }}</p>
+
+        {% for group, list in groups %}
+            <section class="docs-home__group docs-search__group" aria-labelledby="docs-group-{{ group }}">
+                <header class="docs-home__group-head">
+                    <span class="docs-home__group-icon">{{ docs_ui.icon(group) }}</span>
+                    <div class="docs-home__group-text">
+                        <h2 id="docs-group-{{ group }}" class="docs-home__group-title">{{ docs.groups[group] ?? group }}</h2>
+                        <p class="docs-home__group-intro">{{ docs.group_intros[group] ?? '' }}</p>
+                    </div>
+                    <span class="docs-home__group-count">{{ list|length }}</span>
+                </header>
+                <div class="docs-home__grid">
+                    {% for section in list %}
+                        <a href="{{ path('admin_docs_show', { id: section.id }) }}" class="docs-card docs-search__item" data-search="{{ section.search }}">
+                            <strong class="docs-card__title">{{ section.title }}</strong>
+                            <span class="docs-card__text">{{ section.intro ?? '' }}</span>
+                            <span class="docs-card__more">{{ docs.read }} <span aria-hidden="true">→</span></span>
+                        </a>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endfor %}
+    </div>
+{% endblock %}

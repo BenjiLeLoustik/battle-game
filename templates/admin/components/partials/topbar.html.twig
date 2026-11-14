@@ -1,0 +1,48 @@
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% set user = app_user() %}
+{% set environment = config('framework.app.environment') == 'prod' ? 'prod' : 'dev' %}
+
+<header class="admin-topbar">
+    <button type="button" class="admin-topbar__menu" data-admin-nav-open aria-controls="admin-nav" aria-expanded="false" aria-label="{{ 'admin.nav.open'|trans({}, 'admin') }}">
+        <svg class="admin-topbar__icon admin-topbar__icon--large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+    </button>
+    <a href="{{ path('admin_home') }}" class="admin-topbar__logo">
+        <span class="admin-topbar__mark">BG</span>
+        <span class="admin-topbar__brand">
+            <strong class="admin-topbar__name">
+                BattleGame
+            </strong>
+            <span class="admin-topbar__space">
+                {{ 'admin.title'|trans({}, 'admin') }}
+            </span>
+        </span>
+    </a>
+    <span class="admin-topbar__env admin-topbar__env--{{ environment }}">
+        {{ ('admin.env.' ~ environment)|trans({}, 'admin') }}
+    </span>
+    <span class="admin-topbar__url">
+        {{ config('framework.app.url')|split('://')|last }}/admin
+    </span>
+    <a href="{{ path('site_home_index') }}" class="admin-topbar__site">
+        <span class="admin-topbar__site-label">{{ 'admin.back_to_site'|trans({}, 'admin') }}</span>
+        <svg class="admin-topbar__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg>
+    </a>
+    {% if user %}
+        <div class="admin-topbar__user">
+            {{ ui.avatar(user, 'round') }}
+            <span class="admin-topbar__identity">
+                <strong class="admin-topbar__username">
+                    {{ user.firstName }}
+                </strong>
+                <span class="admin-topbar__role">
+                    {{ 'admin.role'|trans({}, 'admin') }}
+                </span>
+            </span>
+            <form method="post" action="{{ logout_path() }}">
+                <button type="submit" class="admin-topbar__logout" aria-label="{{ 'admin.logout'|trans({}, 'admin') }}" title="{{ 'admin.logout'|trans({}, 'admin') }}">
+                    <svg class="admin-topbar__icon admin-topbar__icon--large" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10"/></svg>
+                </button>
+            </form>
+        </div>
+    {% endif %}
+</header>

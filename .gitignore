@@ -1,0 +1,11 @@
+/vendor/
+/public/builds/
+/var/
+.env.local
+.env.*.local
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+/public/games/
+/public/uploads/

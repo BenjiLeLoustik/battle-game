@@ -1,0 +1,148 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/clan.html.twig' as clan_ui %}
+{% import '@site/components/macros/icon.html.twig' as icon %}
+
+{% set active = 'clans' %}
+{% set user = app_user() %}
+
+{% block title %}{{ clan.name }} · {{ parent() }}{% endblock %}
+
+{% macro post(path, label, class, confirm = null, title = null) %}
+    {% import '@site/components/macros/icon.html.twig' as icon %}
+    <form method="post" action="{{ path }}" class="clan-inline"{% if confirm %} data-component="ConfirmSubmit" data-message="{{ confirm }}"{% endif %}>
+        <input type="hidden" name="_token" value="{{ csrf_token('clans') }}">
+        <button type="submit" class="{{ class }}"{% if title %} title="{{ title }}" aria-label="{{ title }}"{% endif %}>{{ label starts with 'icon:' ? icon.svg(label|slice(5)) : label }}</button>
+    </form>
+{% endmacro %}
+
+{% block content %}
+    <div class="engage">
+        <nav class="engage__crumbs"><a href="{{ path('site_clan_index') }}">{{ 'site.clans.title'|trans }}</a> / {{ clan.name }}</nav>
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="engage-flash engage-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}</p>
+            {% endfor %}
+        {% endfor %}
+
+        <section class="clan-hero" style="--clan-color: {{ clan.color }}">
+            <div class="clan-hero__banner" aria-hidden="true"></div>
+            <div class="clan-hero__body">
+                {{ clan_ui.emblem(clan.tag, clan.color, 'xl') }}
+                <div class="clan-hero__text">
+                    <h1 class="clan-hero__name">{{ clan.name }}</h1>
+                    <p class="clan-hero__desc">{{ clan.description ?: 'site.clans.no_description'|trans }}</p>
+                </div>
+                <div class="clan-hero__actions">
+                    {% if mine %}
+                        <span class="clan-role clan-role--{{ mine.role.value }}">{{ mine.role.translate() }}</span>
+                        {{ _self.post(path('site_clan_action', { tag: clan.tag, action: 'leave' }), 'site.clans.leave'|trans, 'btn btn--ghost', 'site.clans.leave_confirm'|trans) }}
+                    {% elseif user and not user.guest and not other %}
+                        {% if requested %}
+                            <span class="clan-pending">{{ 'site.clans.request_sent'|trans }}</span>
+                        {% elseif members|length < max %}
+                            {{ _self.post(path('site_clan_action', { tag: clan.tag, action: 'join' }), (clan.open ? 'site.clans.join' : 'site.clans.request')|trans, 'btn btn--primary') }}
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+            <dl class="clan-stats">
+                <div class="clan-stats__item"><dt>{{ 'site.clans.stats.rank'|trans }}</dt><dd>{{ rank ? '#' ~ rank : '—' }}</dd></div>
+                <div class="clan-stats__item"><dt>{{ 'site.clans.stats.points'|trans }}</dt><dd>{{ total|number_format(0, ',', ' ') }}</dd></div>
+                <div class="clan-stats__item"><dt>{{ 'site.clans.stats.members'|trans }}</dt><dd>{{ members|length }}<small>/{{ max }}</small></dd></div>
+                <div class="clan-stats__item"><dt>{{ 'site.clans.stats.access'|trans }}</dt><dd class="clan-stats__access">{{ (clan.open ? 'site.clans.open' : 'site.clans.closed')|trans }}</dd></div>
+            </dl>
+        </section>
+
+        <div class="engage-grid">
+            <section class="engage-panel">
+                <div class="clan-toolbar">
+                    <h2 class="engage-panel__title">{{ 'site.clans.roster'|trans }}</h2>
+                    <span class="engage-list__meta">{{ 'site.clans.points_help'|trans }}</span>
+                </div>
+                <ul class="clan-roster">
+                    {% for member in members %}
+                        {% set score = points[member.user.id] ?? 0 %}
+                        <li class="clan-member{{ mine and mine.id == member.id ? ' clan-member--me' }}">
+                            {{ ui.avatar(member.user, 'md') }}
+                            <span class="clan-member__info">
+                                <a class="clan-member__name" href="{{ path('site_profile_show', { username: member.user.username }) }}">{{ ui.name(member.user) }}</a>
+                                <span class="clan-role clan-role--{{ member.role.value }}">{{ member.role.translate() }}</span>
+                            </span>
+                            <span class="clan-member__score">
+                                <strong>{{ score|number_format(0, ',', ' ') }}</strong>
+                                <span class="clan-member__share" aria-hidden="true"><span style="width: {{ total > 0 ? (score / total * 100)|round : 0 }}%"></span></span>
+                            </span>
+                            {% if mine and mine.id != member.id and mine.role.canManage and (mine.role.value == 'owner' or member.role.value == 'member') %}
+                                <span class="clan-member__actions">
+                                    {% if mine.role.value == 'owner' %}
+                                        {% if member.role.value == 'member' %}
+                                            {{ _self.post(path('site_clan_member', { tag: clan.tag, id: member.id, action: 'officer' }), 'icon:up', 'clan-icon-btn', null, 'site.clans.promote'|trans) }}
+                                        {% else %}
+                                            {{ _self.post(path('site_clan_member', { tag: clan.tag, id: member.id, action: 'member' }), 'icon:down', 'clan-icon-btn', null, 'site.clans.demote'|trans) }}
+                                        {% endif %}
+                                        {{ _self.post(path('site_clan_member', { tag: clan.tag, id: member.id, action: 'owner' }), 'icon:crown', 'clan-icon-btn', 'site.clans.transfer_confirm'|trans({ name: member.user.username }), 'site.clans.transfer'|trans) }}
+                                    {% endif %}
+                                    {{ _self.post(path('site_clan_member', { tag: clan.tag, id: member.id, action: 'kick' }), 'icon:x', 'clan-icon-btn clan-icon-btn--danger', 'site.clans.kick_confirm'|trans({ name: member.user.username }), 'site.clans.kick'|trans) }}
+                                </span>
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <aside class="clan-side">
+                {% if requests is not empty %}
+                    <section class="engage-panel">
+                        <h2 class="engage-panel__title">{{ 'site.clans.requests'|trans }} <span class="clan-count">{{ requests|length }}</span></h2>
+                        <ul class="clan-requests">
+                            {% for request in requests %}
+                                <li class="clan-request">
+                                    {{ ui.avatar(request.user, 'sm') }}
+                                    <a class="clan-request__name" href="{{ path('site_profile_show', { username: request.user.username }) }}">{{ ui.name(request.user) }}</a>
+                                    {{ _self.post(path('site_clan_request', { tag: clan.tag, id: request.id, answer: 'accept' }), 'icon:check', 'clan-icon-btn clan-icon-btn--ok', null, 'site.clans.accept'|trans) }}
+                                    {{ _self.post(path('site_clan_request', { tag: clan.tag, id: request.id, answer: 'decline' }), 'icon:x', 'clan-icon-btn clan-icon-btn--danger', null, 'site.clans.decline'|trans) }}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </section>
+                {% endif %}
+
+                {% if mine and mine.role.canManage %}
+                    <section class="engage-panel">
+                        <h2 class="engage-panel__title">{{ 'site.clans.settings'|trans }}</h2>
+                        <form class="clan-form" method="post" action="{{ path('site_clan_action', { tag: clan.tag, action: 'update' }) }}" data-component="ClanForm">
+                            <input type="hidden" name="_token" value="{{ csrf_token('clans') }}">
+                            <label class="field">
+                                <span class="field__label">{{ 'site.clans.form.description'|trans }}</span>
+                                <textarea class="field__input" name="description" rows="3" maxlength="300">{{ clan.description }}</textarea>
+                            </label>
+                            <div class="field">
+                                <span class="field__label">{{ 'site.clans.form.color'|trans }}</span>
+                                {{ clan_ui.colors('color', clan.color) }}
+                            </div>
+                            <label class="clan-switch">
+                                <span class="clan-switch__text">
+                                    <span class="clan-switch__label">{{ 'site.clans.form.open'|trans }}</span>
+                                </span>
+                                <input type="checkbox" class="settings-switch__input" name="open" value="1"{{ clan.open ? ' checked' }}>
+                            </label>
+                            <button type="submit" class="btn btn--primary">{{ 'site.clans.save'|trans }}</button>
+                        </form>
+                        {% if mine.role.value == 'owner' %}
+                            <div class="clan-danger">
+                                {{ _self.post(path('site_clan_action', { tag: clan.tag, action: 'disband' }), 'site.clans.disband'|trans, 'clan-danger__btn', 'site.clans.disband_confirm'|trans) }}
+                            </div>
+                        {% endif %}
+                    </section>
+                {% else %}
+                    <section class="engage-panel">
+                        <h2 class="engage-panel__title">{{ 'site.clans.about'|trans }}</h2>
+                        <p class="engage-help">{{ 'site.clans.about_help'|trans({ max: max }) }}</p>
+                    </section>
+                {% endif %}
+            </aside>
+        </div>
+    </div>
+{% endblock %}

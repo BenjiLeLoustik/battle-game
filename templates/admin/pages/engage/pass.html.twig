@@ -1,0 +1,101 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_pass' %}
+{% set title = plan.id ? plan.name : 'admin.engage.passes.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% macro cell(row, key, reward, products) %}
+    {% set type = reward ? reward.type : '' %}
+    <td class="admin-table__cell pass-admin__cell">
+        <span class="pass-admin__reward">
+            <select class="admin-field__input pass-admin__type" name="tiers[{{ row }}][{{ key }}][type]" data-reward-type aria-label="{{ 'admin.engage.pass.type'|trans({}, 'admin') }}">
+                <option value="">{{ 'admin.engage.pass.types.none'|trans({}, 'admin') }}</option>
+                {% for item in ['coins', 'lives', 'product'] %}<option value="{{ item }}"{{ type == item ? ' selected' }}>{{ ('admin.engage.pass.types.' ~ item)|trans({}, 'admin') }}</option>{% endfor %}
+            </select>
+            <input class="admin-field__input pass-admin__value" type="number" min="1" name="tiers[{{ row }}][{{ key }}][value]" value="{{ type in ['coins', 'lives'] ? reward.value }}" data-reward-value{{ type not in ['coins', 'lives'] ? ' hidden' }} aria-label="{{ 'admin.engage.pass.value'|trans({}, 'admin') }}">
+            <select class="admin-field__input pass-admin__product" name="tiers[{{ row }}][{{ key }}][product]" data-reward-product{{ type != 'product' ? ' hidden' }} aria-label="{{ 'admin.engage.pass.types.product'|trans({}, 'admin') }}">
+                {% for product in products %}<option value="{{ product.id }}"{{ type == 'product' and reward.value == product.id ? ' selected' }}>{{ product.name }}{{ product.active ? '' : ' · ' ~ 'admin.engage.pass.hidden'|trans({}, 'admin') }}</option>{% endfor %}
+            </select>
+        </span>
+    </td>
+{% endmacro %}
+
+{% macro row(index, tier, keys, products) %}
+    <tr class="admin-table__row" data-tier>
+        <td class="admin-table__cell"><strong data-tier-number>{{ index is same as('__ROW__') ? '' : index + 1 }}</strong></td>
+        <td class="admin-table__cell"><input class="admin-field__input pass-admin__xp" type="number" min="1" name="tiers[{{ index }}][xp]" value="{{ tier.xp ?? '' }}" data-tier-xp aria-label="{{ 'admin.engage.pass.column.xp'|trans({}, 'admin') }}"></td>
+        {% for key in keys %}{{ _self.cell(index, key, tier[key] ?? null, products) }}{% endfor %}
+        <td class="admin-table__cell"><button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-remove-tier aria-label="{{ 'admin.engage.pass.remove_tier'|trans({}, 'admin') }}" title="{{ 'admin.engage.pass.remove_tier'|trans({}, 'admin') }}"><svg class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18M6 6l12 12"/></svg></button></td>
+    </tr>
+{% endmacro %}
+
+{% block content %}
+    <form class="admin-page" method="post" data-component="PassEditor">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-engage') }}">
+        <nav class="admin-crumbs"><a href="{{ path('admin_engage_pass') }}" class="admin-crumbs__link">{{ 'admin.engage.pass.title'|trans({}, 'admin') }}</a> <span aria-hidden="true">/</span> <span class="admin-crumbs__current">{{ title }}</span></nav>
+        <div class="admin-page__head">
+            <h1 class="admin-page__title">{{ title }}</h1>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+
+        <section class="admin-panel">
+            <div class="admin-form-grid">
+                <label class="admin-field">{{ 'admin.engage.passes.name'|trans({}, 'admin') }}<input class="admin-field__input" name="name" maxlength="80" required value="{{ plan.name }}"></label>
+            </div>
+            <div class="admin-field">
+                {{ 'admin.engage.passes.seasons'|trans({}, 'admin') }}
+                {% if seasons is empty %}
+                    <span class="admin-panel__help">{{ 'admin.engage.passes.no_seasons'|trans({}, 'admin') }} <a class="admin-link" href="{{ path('admin_engage_season_new') }}">{{ 'admin.engage.seasons.new'|trans({}, 'admin') }}</a></span>
+                {% else %}
+                    <div class="shop-tracks__list">
+                        {% for season in seasons %}
+                            {% set state = season.state %}
+                            {% set mine = plan.id and season.pass and season.pass.id == plan.id %}
+                            <label class="shop-tracks__item" style="--track: {{ state == 'live' ? '#4ADE80' : (state == 'upcoming' ? '#FFC94A' : '#8A93B5') }}">
+                                <input type="checkbox" name="seasons[]" value="{{ season.id }}"{{ mine ? ' checked disabled' }}>
+                                <span class="shop-tracks__dot" aria-hidden="true"></span>
+                                {{ season.name }}
+                                <span class="admin-user__meta">· {{ ('admin.engage.seasons.states.' ~ state)|trans({}, 'admin') }}{{ season.pass and not mine ? ' · ' ~ season.pass.name }}</span>
+                            </label>
+                        {% endfor %}
+                    </div>
+                    <span class="admin-panel__help">{{ 'admin.engage.passes.seasons_help'|trans({}, 'admin') }}</span>
+                {% endif %}
+            </div>
+        </section>
+
+        <section class="admin-panel admin-panel--flush">
+            <div class="pass-admin__bar pass-admin__bar--pad">
+                <div>
+                    <h2 class="admin-panel__title">{{ 'admin.engage.pass.tiers'|trans({}, 'admin') }} <span class="admin-user__meta" data-tier-count>{{ tiers|length }}</span></h2>
+                    <span class="admin-panel__help">{{ 'admin.engage.pass.help'|trans({}, 'admin') }} <a class="admin-link" href="{{ path('admin_engage_pass') }}">{{ 'admin.engage.pass.tracks_link'|trans({}, 'admin') }}</a></span>
+                </div>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table pass-admin__table">
+                    <thead>
+                        <tr>
+                            <th class="admin-table__th">{{ 'admin.engage.pass.column.tier'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th">{{ 'admin.engage.pass.column.xp'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th pass-admin__head" style="--track: #2EE6D6"><span class="pass-admin__dot"></span>{{ 'admin.engage.pass.free'|trans({}, 'admin') }}</th>
+                            {% for track in tracks %}<th class="admin-table__th pass-admin__head" style="--track: {{ track.color }}"><span class="pass-admin__dot"></span>{{ track.name }}</th>{% endfor %}
+                            <th class="admin-table__th"></th>
+                        </tr>
+                    </thead>
+                    <tbody data-tiers>
+                        {% for tier in tiers %}{{ _self.row(loop.index0, tier, keys, products) }}{% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <p class="admin-empty" data-tier-empty{{ tiers is not empty ? ' hidden' }}>{{ 'admin.engage.pass.empty'|trans({}, 'admin') }}</p>
+            <div class="pass-admin__bar pass-admin__bar--pad">
+                <button type="button" class="admin-btn admin-btn--secondary" data-add-tier>+ {{ 'admin.engage.pass.add_tier'|trans({}, 'admin') }}</button>
+                <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+            </div>
+        </section>
+        <template data-tier-template>{{ _self.row('__ROW__', {}, keys, products) }}</template>
+    </form>
+{% endblock %}

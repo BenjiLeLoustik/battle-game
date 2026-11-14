@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'system.suspended.title'|trans }}{% endblock %}
+
+{% block body %}
+    <main class="error-page">
+        <p class="error-page__status">{{ sanction.type.translate()|upper }}</p>
+        <h1 class="error-page__message">
+            {{ sanction.endsAt ? 'system.suspended.until'|trans({ date: sanction.endsAt|date('d/m/Y H:i') }) : 'system.suspended.permanent'|trans }}
+        </h1>
+        <p class="error-page__detail">{{ 'system.suspended.reason'|trans({ reason: sanction.reason.translate() }) }}</p>
+        {% if sanction.message %}
+            <p class="error-page__detail">« {{ sanction.message }} »</p>
+        {% endif %}
+        <form method="post" action="{{ logout_path() }}">
+            <button type="submit" class="error-page__link">{{ 'system.suspended.logout'|trans }}</button>
+        </form>
+    </main>
+{% endblock %}

@@ -1,0 +1,79 @@
+.admin-topbar {
+    @apply flex min-h-16 flex-wrap items-center gap-4 border-b border-adm-line bg-adm-side px-5 py-3 max-md:gap-2.5 max-md:px-3;
+}
+
+.admin-topbar__menu {
+    @apply flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-adm-line text-adm-ink hover:border-adm-accent lg:hidden;
+}
+
+.admin-topbar__logo {
+    @apply flex items-center gap-2.5 text-adm-ink;
+}
+
+.admin-topbar__mark {
+    @apply flex size-[34px] items-center justify-center rounded-lg bg-adm-accent font-display text-sm font-bold text-[#0F0B26];
+}
+
+.admin-topbar__brand {
+    @apply flex flex-col leading-[1.2] max-sm:hidden;
+}
+
+.admin-topbar__name {
+    @apply text-[15px];
+}
+
+.admin-topbar__space {
+    @apply text-xs text-[#9BA1AE];
+}
+
+.admin-topbar__env {
+    @apply rounded-md px-2.5 py-1 text-xs font-semibold max-md:hidden;
+}
+
+.admin-topbar__env--prod {
+    @apply bg-success/12 text-[#6EE7A0];
+}
+
+.admin-topbar__env--dev {
+    @apply bg-[#60A5FA]/12 text-[#93C5FD];
+}
+
+.admin-topbar__url {
+    @apply text-[13px] text-[#9BA1AE] max-lg:hidden;
+}
+
+.admin-topbar__site {
+    @apply ml-auto flex h-10 items-center gap-1.5 rounded-lg border border-adm-line px-3 text-[13px] font-semibold text-adm-ink hover:border-adm-accent;
+}
+
+.admin-topbar__icon {
+    @apply size-3.5;
+}
+
+.admin-topbar__icon--large {
+    @apply size-[18px];
+}
+
+.admin-topbar__user {
+    @apply flex items-center gap-2.5;
+}
+
+.admin-topbar__identity {
+    @apply flex flex-col leading-[1.2] max-md:hidden;
+}
+
+.admin-topbar__username {
+    @apply text-[13px];
+}
+
+.admin-topbar__role {
+    @apply text-xs text-[#9BA1AE];
+}
+
+.admin-topbar__logout {
+    @apply flex size-9 cursor-pointer items-center justify-center rounded-lg bg-transparent text-[#9BA1AE] hover:bg-adm-hover hover:text-adm-ink;
+}
+
+.admin-topbar__site-label {
+    @apply max-sm:hidden;
+}

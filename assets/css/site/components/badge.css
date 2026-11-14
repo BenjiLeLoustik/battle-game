@@ -1,0 +1,115 @@
+.badge-shape {
+    --badge-from: #8C93B5;
+    --badge-to: #5A6080;
+    --badge-main: var(--badge-color, var(--badge-from));
+    --badge-pad: calc(var(--badge-size) * 0.06);
+    --badge-clip: polygon(25% 3%, 75% 3%, 100% 50%, 75% 97%, 25% 97%, 0 50%);
+    @apply relative inline-block shrink-0;
+    width: var(--badge-size);
+    height: var(--badge-size);
+    filter: drop-shadow(0 0 calc(var(--badge-size) * 0.12 * var(--badge-glow)) var(--badge-main));
+}
+
+.badge-shape--shield {
+    --badge-clip: polygon(50% 0, 100% 14%, 100% 56%, 50% 100%, 0 56%, 0 14%);
+}
+
+.badge-shape--circle {
+    --badge-clip: circle(50% at 50% 50%);
+}
+
+.badge-shape--diamond {
+    --badge-clip: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+}
+
+.badge-shape--octagon {
+    --badge-clip: polygon(30% 0, 70% 0, 100% 30%, 100% 70%, 70% 100%, 30% 100%, 0 70%, 0 30%);
+}
+
+.badge-shape--rare {
+    --badge-from: #2EE6D6;
+    --badge-to: #127A72;
+}
+
+.badge-shape--epic {
+    --badge-from: #A78BFA;
+    --badge-to: #5B3FC4;
+}
+
+.badge-shape--legendary {
+    --badge-from: #FFC94A;
+    --badge-to: #B07A12;
+}
+
+.badge-shape--double {
+    --badge-pad: calc(var(--badge-size) * 0.09);
+}
+
+.badge-shape--locked {
+    @apply opacity-45 grayscale;
+}
+
+.badge-shape__frame {
+    @apply absolute inset-0;
+    clip-path: var(--badge-clip);
+    background: linear-gradient(160deg, var(--badge-from), var(--badge-to));
+}
+
+.badge-shape__inner {
+    @apply absolute;
+    inset: var(--badge-pad);
+    clip-path: var(--badge-clip);
+    background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--badge-main) 27%, transparent), transparent 70%), #10142A;
+}
+
+.badge-shape--double .badge-shape__inner {
+    box-shadow: inset 0 0 0 max(1px, calc(var(--badge-size) * 0.02)) color-mix(in srgb, var(--badge-from) 53%, transparent);
+}
+
+.badge-shape__icon {
+    @apply absolute top-1/2 left-1/2 -translate-1/2 text-(--badge-main);
+    width: calc(var(--badge-size) * 0.42);
+    height: calc(var(--badge-size) * 0.42);
+}
+
+.badge-shape__icon--raised {
+    @apply top-[44%];
+}
+
+.badge-shape__label {
+    @apply absolute left-1/2 -translate-x-1/2 font-display font-bold tracking-[0.04em] whitespace-nowrap text-white;
+    bottom: calc(var(--badge-size) * 0.16);
+    font-size: calc(var(--badge-size) * 0.15);
+}
+
+.badge-card {
+    --badge-accent: var(--badge-color, var(--color-cyan));
+    @apply flex items-center gap-3 rounded-xl border border-(--badge-accent) p-3;
+    background: color-mix(in srgb, var(--badge-accent) 7%, transparent);
+}
+
+.badge-card--locked,
+.badge-card--secret,
+.badge-card--progress {
+    @apply border-dashed border-ghost bg-bg;
+}
+
+.badge-card__text {
+    @apply flex min-w-0 flex-col gap-[3px];
+}
+
+.badge-card__name {
+    @apply text-[13px];
+}
+
+.badge-card__description {
+    @apply text-xs text-muted-2;
+}
+
+.badge-card__track {
+    @apply mt-0.5 block h-1 overflow-hidden rounded-xs bg-line-soft;
+}
+
+.badge-card__fill {
+    @apply block h-full bg-[#5A6080];
+}

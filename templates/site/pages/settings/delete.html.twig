@@ -1,0 +1,84 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% set lost = ['profile', 'level', 'games', 'friends', 'rooms', 'discord'] %}
+
+{% block settings %}
+    {% if deletionDate %}
+        <section class="settings-card settings-card--danger" aria-labelledby="settings-scheduled" role="status">
+            <h2 id="settings-scheduled" class="settings-card__title">{{ 'site.settings.delete.scheduled'|trans }}</h2>
+            <p class="settings-card__text">{{ 'site.settings.delete.scheduled_text'|trans({ date: deletionDate|date('d/m/Y') }) }}</p>
+            <form method="post" action="{{ path('site_settings_delete_cancel') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                <button type="submit" class="settings-button settings-button--primary">{{ 'site.settings.delete.cancel'|trans }}</button>
+            </form>
+        </section>
+    {% else %}
+        <section class="settings-card settings-card--danger" aria-labelledby="settings-delete">
+            <h2 id="settings-delete" class="settings-card__title">{{ 'site.settings.delete.title'|trans }}</h2>
+            <p class="settings-card__text">{{ 'site.settings.delete.intro'|trans({ days: 14 }) }}</p>
+            <div class="settings-delete">
+                <span class="settings-delete__caption">{{ 'site.settings.delete.lost'|trans }}</span>
+                <ul class="settings-delete__list">
+                    {% for item in lost %}
+                        <li class="settings-delete__item">× {{ ('site.settings.delete.items.' ~ item)|trans }}</li>
+                    {% endfor %}
+                </ul>
+                <span class="settings-card__hint">{{ 'site.settings.delete.history'|trans }}</span>
+            </div>
+        </section>
+
+        <section class="settings-card" aria-labelledby="settings-before">
+            <h2 id="settings-before" class="settings-card__title">{{ 'site.settings.delete.before'|trans }}</h2>
+            <div class="settings-panel settings-panel--static">
+                <span class="settings-panel__info">
+                    <strong class="settings-panel__value">{{ 'site.settings.account.export'|trans }}</strong>
+                    <span class="settings-panel__note">{{ 'site.settings.delete.export_help'|trans }}</span>
+                </span>
+                <a href="{{ path('site_settings_export') }}" class="settings-button">{{ 'site.settings.account.export_action'|trans }}</a>
+            </div>
+            <div class="settings-panel settings-panel--static">
+                <span class="settings-panel__info">
+                    <strong class="settings-panel__value">{{ 'site.settings.delete.pause'|trans }}</strong>
+                    <span class="settings-panel__note">{{ 'site.settings.delete.pause_help'|trans }}</span>
+                </span>
+                <form method="post" action="{{ path('site_settings_pause') }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+                    <button type="submit" class="settings-button">{{ 'site.settings.delete.pause_action'|trans }}</button>
+                </form>
+            </div>
+        </section>
+
+        <form class="settings-card settings-card--danger" method="post" action="{{ path('site_settings_delete') }}" aria-labelledby="settings-confirm" data-component="DeleteAccount" data-username="{{ user.username }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+            <h2 id="settings-confirm" class="settings-card__title">{{ 'site.settings.delete.confirm'|trans }}</h2>
+            <div class="settings-card__grid">
+                <div class="field field--form">
+                    <label class="field__label" for="settings-reason">{{ 'site.settings.delete.reason'|trans }}</label>
+                    <select id="settings-reason" class="field__input field__input--large" name="reason">
+                        <option value="">{{ 'site.settings.delete.reasons.none'|trans }}</option>
+                        {% for reason in ['stopped', 'other_account', 'community', 'other'] %}
+                            <option value="{{ reason }}">{{ ('site.settings.delete.reasons.' ~ reason)|trans }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field field--form">
+                    <label class="field__label" for="settings-delete-username">{{ 'site.settings.delete.type'|trans({ username: user.username }) }}</label>
+                    <input id="settings-delete-username" class="field__input field__input--large{{ error == 'account.delete.username' ? ' field__input--invalid' }}" name="username" autocomplete="off" required>
+                </div>
+                {% if user.hasPassword %}
+                    <div class="field field--form">
+                        <label class="field__label" for="settings-delete-password">{{ 'site.settings.account.password'|trans }}</label>
+                        <input id="settings-delete-password" class="field__input field__input--large{{ error == 'account.password.wrong' ? ' field__input--invalid' }}" type="password" name="password" autocomplete="current-password" required>
+                    </div>
+                {% endif %}
+            </div>
+            {% if error %}
+                <p class="settings-flash settings-flash--error" role="alert">{{ error|trans({}, 'validators') }}</p>
+            {% endif %}
+            <div class="settings__actions">
+                <a href="{{ path('site_settings_account') }}" class="settings-button settings-button--ghost settings-button--large">{{ 'site.settings.cancel'|trans }}</a>
+                <button type="submit" class="settings-button settings-button--danger-solid settings-button--large" disabled>{{ 'site.settings.delete.title'|trans }}</button>
+            </div>
+        </form>
+    {% endif %}
+{% endblock %}

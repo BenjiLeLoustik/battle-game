@@ -1,0 +1,63 @@
+.twofa-setup {
+    @apply flex flex-wrap items-start gap-6;
+}
+
+.twofa-setup__qr {
+    @apply size-[220px] rounded-xl bg-white p-2;
+}
+
+.twofa-setup__side {
+    @apply flex min-w-0 flex-1 flex-col gap-3;
+}
+
+.twofa-setup__steps {
+    @apply list-decimal space-y-1 pl-5 text-sm text-adm-ink-soft;
+}
+
+.twofa-setup__secret {
+    @apply w-fit rounded-md bg-adm-hover px-2.5 py-1.5 font-mono text-sm tracking-wider text-adm-ink select-all;
+}
+
+.twofa-form {
+    @apply flex flex-wrap items-end gap-3;
+}
+
+.twofa-form__code {
+    @apply w-40 font-mono tracking-[0.3em];
+}
+
+.twofa-codes {
+    @apply border-yellow/40;
+}
+
+.twofa-codes__list {
+    @apply grid grid-cols-2 gap-2 sm:grid-cols-4;
+}
+
+.twofa-codes__list code {
+    @apply block rounded-md bg-adm-bg px-2.5 py-1.5 text-center font-mono text-sm text-adm-ink select-all;
+}
+
+.twofa-verify {
+    @apply flex min-h-[60vh] items-center justify-center;
+}
+
+.twofa-verify__card {
+    @apply w-full max-w-sm items-center text-center;
+}
+
+.twofa-verify__icon {
+    @apply flex size-12 items-center justify-center rounded-xl bg-adm-accent/15 text-adm-accent-soft;
+}
+
+.twofa-verify__icon svg {
+    @apply size-6;
+}
+
+.twofa-verify__title {
+    @apply text-lg font-bold;
+}
+
+.twofa-verify__input {
+    @apply text-center font-mono text-lg tracking-[0.3em];
+}

@@ -1,0 +1,17 @@
+{% macro error(errors, key) %}
+    {% if errors[key] is defined %}
+        <ul class="field__errors">
+            <li class="field__error">{{ errors[key]|trans({}, 'validators') }}</li>
+        </ul>
+    {% endif %}
+{% endmacro %}
+
+{% macro switch(name, checked, label, help) %}
+    <label class="settings-switch">
+        <span class="settings-switch__text">
+            <strong class="settings-switch__label">{{ label }}</strong>
+            <span class="settings-switch__help">{{ help }}</span>
+        </span>
+        <input type="checkbox" class="settings-switch__input" name="{{ name }}" role="switch"{{ checked ? ' checked' }}>
+    </label>
+{% endmacro %}

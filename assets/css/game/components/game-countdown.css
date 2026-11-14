@@ -1,0 +1,18 @@
+.game-countdown {
+    @apply flex flex-1 flex-col items-center justify-center gap-6
+    bg-[radial-gradient(circle_at_50%_45%,#141833,var(--color-stage)_70%)];
+}
+
+.game-countdown__kicker {
+    @apply font-display text-sm tracking-[0.24em] text-muted-2;
+}
+
+.game-countdown__value {
+    @apply flex size-[240px] max-md:size-[180px] items-center justify-center rounded-full border-[3px]
+    border-cyan font-display text-[96px] font-bold text-cyan
+    shadow-[0_0_60px_rgba(46,230,214,0.35)];
+}
+
+.game-countdown__hint {
+    @apply text-[15px] text-muted-2;
+}

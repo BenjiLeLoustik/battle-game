@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% set running = maintenance.running %}
+{% set same_day = maintenance.startsAt|date('Ymd') == maintenance.finishAt|date('Ymd') %}
+
+{% block title %}{{ 'site.maintenance.title'|trans }} · {{ parent() }}{% endblock %}
+{% block body_class %}maintenance-page{% endblock %}
+
+{% block body %}
+    <main class="maintenance-page__main">
+        <span class="maintenance-page__grid" aria-hidden="true"></span>
+
+        <a href="{{ path('site_home_index') }}" class="maintenance-page__logo" aria-label="{{ 'site.header.home'|trans }}">
+            <span class="maintenance-page__mark">BG</span>
+            <span class="maintenance-page__name">BATTLE<span class="maintenance-page__accent">GAME</span></span>
+        </a>
+
+        <div class="maintenance-page__intro">
+            <span class="maintenance-page__tag">{{ (running ? 'site.maintenance.tag_running' : 'site.maintenance.tag_planned')|trans }}</span>
+            <h1 class="maintenance-page__title">{{ (running ? 'site.maintenance.heading_running' : 'site.maintenance.heading_planned')|trans }}</h1>
+            <p class="maintenance-page__message">{{ maintenance|localize('message') }}</p>
+        </div>
+
+        <div class="maintenance-page__cards">
+            <div class="maintenance-page__card">
+                <span class="maintenance-page__label">{{ (running ? 'site.maintenance.back_in' : 'site.maintenance.starts_in')|trans }}</span>
+                <strong class="maintenance-page__countdown" data-component="Countdown" data-until="{{ (running ? maintenance.finishAt : maintenance.startsAt)|date('U') }}" data-reload="1">--:--:--</strong>
+            </div>
+            <div class="maintenance-page__card">
+                <span class="maintenance-page__label">{{ 'site.maintenance.window'|trans }}</span>
+                <strong class="maintenance-page__window">{{ maintenance.startsAt|date(same_day ? 'H:i' : 'd/m H:i') }} → {{ maintenance.finishAt|date(same_day ? 'H:i' : 'd/m H:i') }}</strong>
+            </div>
+        </div>
+
+        <div class="maintenance-page__links">
+            <span class="maintenance-page__label">{{ 'site.maintenance.available'|trans }}</span>
+            <div class="maintenance-page__buttons">
+                {% for page in pages %}
+                    <a href="{{ page.path }}" class="btn btn--ghost">{{ ('site.maintenance.page.' ~ page.value)|trans }}</a>
+                {% endfor %}
+                {% if not running %}
+                    <a href="{{ path('site_home_index') }}" class="btn btn--ghost">{{ 'site.maintenance.home'|trans }}</a>
+                {% endif %}
+                {% if discord_url() %}
+                    <a href="{{ discord_url() }}" class="btn btn--discord" target="_blank" rel="noopener">{{ 'site.maintenance.discord'|trans }}</a>
+                {% endif %}
+            </div>
+        </div>
+
+        <a href="{{ path('site_security_login') }}" class="maintenance-page__team">{{ 'site.maintenance.team'|trans }}</a>
+    </main>
+{% endblock %}

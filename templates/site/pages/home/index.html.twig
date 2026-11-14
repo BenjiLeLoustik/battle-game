@@ -1,0 +1,272 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/game.html.twig' as games_ui %}
+
+{% set active = 'home' %}
+
+{% block title %}BattleGame · {{ 'site.tagline'|trans }}{% endblock %}
+
+{% block content %}
+    <div class="home">
+        <h1 class="home__title">
+            {{ 'site.home.title'|trans }}
+        </h1>
+
+        {% if featured %}
+            <section class="featured" aria-roledescription="carousel" aria-label="{{ 'site.home.slider.label'|trans }}"
+                     data-component="FeaturedSlider"
+                     data-interval="7000"
+                     data-pause="{{ 'site.home.slider.pause'|trans }}"
+                     data-play="{{ 'site.home.slider.play'|trans }}">
+                <div class="featured__track">
+                    {% for game in featured %}
+                        <article class="home__featured featured__slide" role="group" aria-roledescription="slide" aria-label="{{ 'site.home.slider.slide'|trans({ current: loop.index, total: featured|length }) }}" style="--game-color: {{ game.color }}; --game-color-alt: {{ game.colorAlt }}">
+                            <div class="home__featured-grid" aria-hidden="true"></div>
+                            <div class="home__featured-glow" aria-hidden="true"></div>
+                            <div class="home__featured-content">
+                                <span class="home__featured-tag">
+                                    {{ 'site.home.featured'|trans({ category: game.category|localize('name') }) }}
+                                </span>
+                                <h2 class="home__featured-name">
+                                    {{ game.name }}
+                                </h2>
+                                <p class="home__featured-pitch">
+                                    {{ game|localize('description') }}
+                                </p>
+                                <div class="home__featured-stats">
+                                    <span>
+                                        <strong class="home__stat">
+                                            {{ game.players }}
+                                        </strong>
+                                        {{ 'site.home.players'|trans }}
+                                    </span>
+                                    <span>
+                                        <strong class="home__stat">
+                                            ~{{ game.duration }} min
+                                        </strong>
+                                        {{ 'site.home.per_game'|trans }}
+                                    </span>
+                                    <span>
+                                        <strong class="home__stat home__stat--online">
+                                            {{ online[game.id] ?? 0 }}
+                                        </strong>
+                                        {{ 'site.home.playing_now'|trans }}
+                                    </span>
+                                </div>
+                                <div class="home__featured-actions">
+                                    <a href="{{ path('site_play_quick', { slug: game.slug }) }}" class="btn btn--primary btn--large">
+                                        {{ 'site.home.play_now'|trans }}
+                                    </a>
+                                    <a href="{{ path('site_game_show', { slug: game.slug }) }}" class="btn btn--ghost btn--large">
+                                        {{ 'site.home.see_game'|trans }}
+                                    </a>
+                                </div>
+                            </div>
+                            {% if game.cover or game.icon %}
+                                <div class="featured__visual" aria-hidden="true">
+                                    <img class="featured__image" src="{{ game.cover ?? game.icon }}" alt="">
+                                </div>
+                            {% endif %}
+                        </article>
+                    {% endfor %}
+                </div>
+                {% if featured|length > 1 %}
+                    <div class="featured__controls">
+                        <button type="button" class="featured__arrow" data-step="-1" aria-label="{{ 'site.home.slider.previous'|trans }}">
+                            <svg class="featured__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg>
+                        </button>
+                        <div class="featured__dots">
+                            {% for game in featured %}
+                                <button type="button" class="featured__dot" data-index="{{ loop.index0 }}" aria-label="{{ 'site.home.slider.go_to'|trans({ name: game.name }) }}"{{ loop.first ? ' aria-current="true"' }}></button>
+                            {% endfor %}
+                        </div>
+                        <button type="button" class="featured__arrow" data-step="1" aria-label="{{ 'site.home.slider.next'|trans }}">
+                            <svg class="featured__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6"/></svg>
+                        </button>
+                        <button type="button" class="featured__arrow featured__arrow--toggle" aria-label="{{ 'site.home.slider.pause'|trans }}" aria-pressed="false">
+                            <svg class="featured__icon featured__icon--pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6v12M15 6v12"/></svg>
+                            <svg class="featured__icon featured__icon--play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5l11 7-11 7z"/></svg>
+                        </button>
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        {% set events = game_events() %}
+        {% if events is not empty %}
+            <section class="event-strip" aria-label="{{ 'site.events.label'|trans }}">
+                {% for event in events %}
+                    <article class="event-strip__item" style="--event-color: {{ event.color }}">
+                        <span class="event-strip__badge">{{ 'site.events.live'|trans }}</span>
+                        <span class="event-strip__text">
+                            <strong>{{ event.name }}</strong>
+                            <span>{{ event.description }}</span>
+                        </span>
+                        <span class="event-strip__boosts">
+                            {% if event.xpMultiplier > 1 %}<span>XP ×{{ event.xpMultiplier|number_format(1, ',')|replace({ ',0': '' }) }}</span>{% endif %}
+                            {% if event.coinsMultiplier > 1 %}<span>{{ 'site.events.coins'|trans({ x: event.coinsMultiplier|number_format(1, ',')|replace({ ',0': '' }) }) }}</span>{% endif %}
+                        </span>
+                        <span class="event-strip__end">{{ 'site.events.until'|trans({ date: event.endsAt|date('d/m H:i') }) }}</span>
+                        {% if event.game %}<a href="{{ path('site_game_show', { slug: event.game.slug }) }}" class="btn btn--primary event-strip__cta">{{ 'site.events.play'|trans({ game: event.game.name }) }}</a>{% endif %}
+                    </article>
+                {% endfor %}
+            </section>
+        {% endif %}
+
+        {% set reward = rewards() %}
+        {% if reward %}
+            {% set icons = {
+                play: 'M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z',
+                win: 'M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M10 17h4',
+                variety: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
+            } %}
+            {% set left = ('tomorrow'|date('U', 'Europe/Paris')) - ('now'|date('U')) %}
+            {% set countdown = 'site.rewards.countdown'|trans({ hours: (left // 3600), minutes: ((left % 3600) // 60)|format('%02d') }) %}
+            {% set earned = (reward.daily.claimed ? reward.daily.rewards[reward.daily.day - 1] : 0) + (reward.challenges|filter(c => c.claimed)|map(c => c.reward)|reduce((sum, value) => sum + value, 0)) %}
+            {% set pending = (reward.daily.claimed ? 0 : 1) + reward.challenges|filter(c => c.done and not c.claimed)|length %}
+            <section class="rewards" aria-labelledby="rewards-title">
+                <header class="rewards__top">
+                    <div class="rewards__heading">
+                        <h2 id="rewards-title" class="rewards__title">{{ 'site.rewards.title'|trans }}</h2>
+                        <span class="rewards__summary">
+                            {% if pending > 0 %}
+                                {{ 'site.rewards.pending'|trans({ count: pending }) }}
+                            {% else %}
+                                {{ 'site.rewards.all_done'|trans({ coins: earned }) }}
+                            {% endif %}
+                        </span>
+                    </div>
+                    <span class="rewards__timer">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/></svg>
+                        {{ countdown }}
+                    </span>
+                </header>
+
+                <div class="rewards__grid">
+                    <div class="rewards__panel">
+                        <div class="rewards__panel-head">
+                            <h3 class="rewards__subtitle">{{ 'site.rewards.daily'|trans }}</h3>
+                            <span class="rewards__streak">
+                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s6 5 6 11a6 6 0 0 1-12 0c0-3 2-5 2-5s0 3 2 3c0-4 2-9 2-9z"/></svg>
+                                {{ 'site.rewards.streak'|trans({ count: reward.daily.streak }) }}
+                            </span>
+                        </div>
+                        <ol class="rewards__days">
+                            {% for amount in reward.daily.rewards %}
+                                {% set state = loop.index < reward.daily.day or (loop.index == reward.daily.day and reward.daily.claimed) ? 'done' : (loop.index == reward.daily.day ? 'today' : (loop.index == reward.daily.day + 1 and reward.daily.claimed ? 'next' : 'later')) %}
+                                <li class="rewards__day rewards__day--{{ state }}">
+                                    <span class="rewards__day-label">{{ state == 'next' ? 'site.rewards.tomorrow'|trans : 'site.rewards.day'|trans({ day: loop.index }) }}</span>
+                                    {% if state == 'done' %}
+                                        <svg class="rewards__day-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
+                                    {% else %}
+                                        <strong class="rewards__day-coins">{{ amount }}</strong>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ol>
+                        {% if reward.daily.claimed %}
+                            <p class="rewards__note">{{ 'site.rewards.come_back'|trans({ coins: reward.daily.rewards[reward.daily.day % reward.daily.rewards|length] }) }}</p>
+                        {% else %}
+                            <form method="post" action="{{ path('site_reward_daily') }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
+                                <button type="submit" class="btn rewards__claim">{{ 'site.rewards.claim'|trans({ coins: reward.daily.amount }) }}</button>
+                            </form>
+                        {% endif %}
+                    </div>
+
+                    <div class="rewards__panel">
+                        <div class="rewards__panel-head">
+                            <h3 class="rewards__subtitle">{{ 'site.rewards.challenges'|trans }}</h3>
+                            <span class="rewards__count">{{ reward.challenges|filter(c => c.claimed)|length }}/{{ reward.challenges|length }}</span>
+                        </div>
+                        <ul class="rewards__list">
+                            {% for challenge in reward.challenges %}
+                                {% set state = challenge.claimed ? 'claimed' : (challenge.done ? 'ready' : 'progress') %}
+                                <li class="rewards__challenge rewards__challenge--{{ state }}">
+                                    <span class="rewards__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icons[challenge.code] ?? icons.play }}"/></svg></span>
+                                    <span class="rewards__challenge-text">
+                                        <span class="rewards__challenge-name">{{ ('site.rewards.list.' ~ challenge.code)|trans({ count: challenge.target }) }}</span>
+                                        {% if state == 'progress' %}
+                                            <span class="rewards__track"><span class="rewards__fill" style="width: {{ (challenge.value / challenge.target * 100)|round }}%"></span></span>
+                                        {% else %}
+                                            <span class="rewards__challenge-meta">{{ state == 'claimed' ? 'site.rewards.claimed_short'|trans({ coins: challenge.reward }) : 'site.rewards.ready'|trans }}</span>
+                                        {% endif %}
+                                    </span>
+                                    {% if state == 'ready' %}
+                                        <form method="post" action="{{ path('site_reward_challenge', { code: challenge.code }) }}">
+                                            <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
+                                            <button type="submit" class="rewards__take">+{{ challenge.reward }}</button>
+                                        </form>
+                                    {% elseif state == 'claimed' %}
+                                        <span class="rewards__done" aria-label="{{ 'site.rewards.claimed'|trans }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span>
+                                    {% else %}
+                                        <span class="rewards__progress">{{ challenge.value }}/{{ challenge.target }}<small>+{{ challenge.reward }}</small></span>
+                                    {% endif %}
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="home__join" aria-labelledby="home-join">
+            <div class="home__join-text">
+                <strong id="home-join" class="home__join-title">
+                    {{ 'site.home.join.title'|trans }}
+                </strong>
+                <span class="home__join-help">
+                    {{ 'site.home.join.help'|trans }}
+                </span>
+            </div>
+            <form class="home__join-form" action="{{ path('site_room_join') }}" method="post">
+                {% if guest %}
+                    <label class="field">
+                        {{ 'site.home.join.pseudo'|trans }}
+                        {{ form_widget(guest.username, { attr: { class: 'field__input home__join-pseudo', maxlength: 30, autocomplete: 'nickname' } }) }}
+                    </label>
+                    {{ form_rest(guest) }}
+                {% endif %}
+                <label class="field">
+                    {{ 'site.home.join.code'|trans }}
+                    <input class="field__input field__input--code home__join-code" name="code" placeholder="K7X-92Q" maxlength="7" required>
+                </label>
+                <button type="submit" class="btn btn--magenta home__join-submit">
+                    {{ 'site.home.join.submit'|trans }}
+                </button>
+            </form>
+        </section>
+
+        <section id="games" class="home__games" aria-labelledby="home-games" data-component="GameFilter" data-feed="{{ path('site_home_feed') }}" data-next="{{ more ? 2 : '' }}">
+            <div class="home__games-head">
+                <h2 id="home-games" class="home__heading">
+                    {{ 'site.home.games.title'|trans }}
+                </h2>
+                <div class="home__chips" role="group" aria-label="{{ 'site.home.games.filter'|trans }}">
+                    <button type="button" class="home__chip home__chip--active" aria-pressed="true" data-category="">
+                        {{ 'site.home.games.all'|trans }}
+                    </button>
+                    {% for category in categories %}
+                        <button type="button" class="home__chip" aria-pressed="false" data-category="{{ category.slug }}">
+                            {{ category|localize('name') }}
+                        </button>
+                    {% endfor %}
+                </div>
+            </div>
+            <p class="home__empty"{{ games is not empty ? ' hidden' }}>
+                {{ 'site.home.games.empty'|trans }}
+            </p>
+            <div class="home__grid" aria-live="polite" aria-busy="false">
+                {% for game in games %}
+                    {{ games_ui.card(game, online[game.id] ?? 0) }}
+                {% endfor %}
+            </div>
+            <div class="home__more" aria-hidden="true">
+                <span class="home__loader"></span>
+            </div>
+            <button type="button" class="btn btn--ghost home__retry" hidden>
+                {{ 'site.home.games.retry'|trans }}
+            </button>
+        </section>
+    </div>
+{% endblock %}

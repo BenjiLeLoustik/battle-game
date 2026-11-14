@@ -1,0 +1,168 @@
+.dashboard-legend {
+    @apply flex flex-wrap gap-3 text-xs text-adm-muted;
+}
+
+.dashboard-legend__item {
+    @apply flex items-center gap-1.5 before:size-2.5 before:rounded-sm before:content-[''];
+}
+
+.dashboard-legend__item--members {
+    @apply before:bg-[#8B7CFF];
+}
+
+.dashboard-legend__item--guests {
+    @apply before:bg-[#26A69A];
+}
+
+.dashboard-legend__value {
+    @apply font-semibold text-adm-ink;
+}
+
+.dashboard-activity__summary {
+    @apply flex flex-wrap items-baseline gap-x-2 gap-y-1 text-sm text-adm-muted;
+}
+
+.dashboard-activity__total {
+    @apply font-display text-[28px] leading-none text-adm-ink;
+}
+
+.dashboard-activity__peak {
+    @apply rounded-full bg-adm-hover px-2.5 py-0.5 text-xs text-adm-ink-soft;
+}
+
+.dashboard-chart {
+    @apply mt-2 grid grid-cols-[auto_1fr] gap-x-2.5 gap-y-1.5;
+}
+
+.dashboard-chart__scale {
+    @apply flex h-40 flex-col justify-between text-right font-mono text-[10px] leading-none text-adm-muted;
+}
+
+.dashboard-chart__plot {
+    @apply relative grid h-40 grid-cols-24 items-end gap-0.5 border-b border-adm-line;
+}
+
+.dashboard-chart__grid {
+    @apply pointer-events-none absolute inset-x-0 border-t border-dashed border-adm-line;
+}
+
+.dashboard-chart__grid--top {
+    @apply top-0;
+}
+
+.dashboard-chart__grid--middle {
+    @apply top-1/2;
+}
+
+.dashboard-chart__slot {
+    @apply relative flex h-full cursor-default items-end justify-center rounded-t-sm outline-none hover:bg-adm-hover focus-visible:bg-adm-hover focus-visible:ring-1 focus-visible:ring-adm-accent;
+}
+
+.dashboard-chart__slot--now {
+    @apply bg-adm-hover/50;
+}
+
+.dashboard-chart__stack {
+    @apply flex w-full max-w-[18px] flex-col-reverse gap-0.5;
+}
+
+.dashboard-chart__segment {
+    @apply block min-h-[3px] basis-0 last:rounded-t-[4px];
+}
+
+.dashboard-chart__segment--members {
+    @apply bg-[#8B7CFF];
+}
+
+.dashboard-chart__segment--guests {
+    @apply bg-[#26A69A];
+}
+
+.dashboard-chart__empty {
+    @apply block h-0.5 w-full max-w-[18px] rounded-full bg-adm-line;
+}
+
+.dashboard-chart__tip {
+    @apply pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 hidden w-max -translate-x-1/2 flex-col gap-1 rounded-lg border border-adm-line bg-adm-side px-3 py-2 text-xs text-adm-ink-soft shadow-lg;
+}
+
+.dashboard-chart__slot:hover .dashboard-chart__tip,
+.dashboard-chart__slot:focus-visible .dashboard-chart__tip {
+    @apply flex;
+}
+
+.dashboard-chart__slot:nth-child(-n+8) .dashboard-chart__tip {
+    @apply left-0 translate-x-0;
+}
+
+.dashboard-chart__slot:nth-last-child(-n+4) .dashboard-chart__tip {
+    @apply right-0 left-auto translate-x-0;
+}
+
+.dashboard-chart__tip-title {
+    @apply font-semibold text-adm-ink;
+}
+
+.dashboard-chart__tip-row {
+    @apply flex items-center gap-1.5 before:size-2 before:rounded-sm before:content-[''];
+}
+
+.dashboard-chart__tip-row--members {
+    @apply before:bg-[#8B7CFF];
+}
+
+.dashboard-chart__tip-row--guests {
+    @apply before:bg-[#26A69A];
+}
+
+.dashboard-chart__axis {
+    @apply col-start-2 grid grid-cols-24 gap-0.5 text-[10px] text-adm-muted;
+}
+
+.dashboard-chart__label {
+    @apply whitespace-nowrap last:justify-self-end last:text-adm-ink-soft;
+}
+
+.dashboard-services {
+    @apply flex flex-col divide-y divide-adm-line;
+}
+
+.dashboard-services__item {
+    @apply flex items-center gap-3 py-2.5 text-sm;
+}
+
+.dashboard-services__dot {
+    @apply size-2.5 shrink-0 rounded-full bg-success;
+}
+
+.dashboard-services__dot--down {
+    @apply bg-danger;
+}
+
+.dashboard-services__name {
+    @apply flex-1 text-adm-ink-soft;
+}
+
+.dashboard-services__value {
+    @apply font-mono text-xs text-adm-muted;
+}
+
+.dashboard-events {
+    @apply flex flex-col gap-3;
+}
+
+.dashboard-events__item {
+    @apply flex gap-3 text-sm;
+}
+
+.dashboard-events__time {
+    @apply shrink-0 font-mono text-xs text-adm-muted;
+}
+
+.dashboard-events__text {
+    @apply text-adm-ink-soft;
+}
+
+.dashboard-chart__label--near {
+    @apply max-md:invisible;
+}

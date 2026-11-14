@@ -1,0 +1,65 @@
+{% set history = reviews|filter(item => not item.pending) %}
+{% if review or history is not empty %}
+    <section class="admin-panel studio-review{{ review ? ' studio-review--pending' }}" aria-labelledby="studio-review">
+        <div class="admin-panel__bar">
+            <h2 id="studio-review" class="admin-panel__title">
+                {{ 'admin.studio.review.title'|trans({}, 'admin') }}
+            </h2>
+            {% if review %}
+                <span class="admin-pill admin-pill--warn">{{ review.status.translate() }}</span>
+            {% endif %}
+        </div>
+        {% if review %}
+            <div class="studio-review__request">
+                <p class="studio-review__text">
+                    {{ 'admin.studio.review.requested'|trans({ name: review.requester ? review.requester.username : '?', date: review.createdAt|date('d/m/Y à H:i') }, 'admin') }}
+                </p>
+                {% if review.message %}
+                    <blockquote class="studio-review__message">{{ review.message }}</blockquote>
+                {% endif %}
+                {% if lead %}
+                    <div class="studio-review__actions">
+                        <a href="{{ path('admin_studio_editor_index', { slug: game.slug }) }}" class="admin-btn admin-btn--secondary">
+                            {{ 'admin.studio.review.check'|trans({}, 'admin') }}
+                        </a>
+                        <form method="post" action="{{ path('admin_studio_review_approve', { slug: game.slug }) }}">
+                            <input type="hidden" name="_token" value="{{ token }}">
+                            <button type="submit" class="admin-btn admin-btn--primary">
+                                {{ 'admin.studio.review.approve'|trans({}, 'admin') }}
+                            </button>
+                        </form>
+                    </div>
+                    <form class="studio-review__reject" method="post" action="{{ path('admin_studio_review_reject', { slug: game.slug }) }}">
+                        <input type="hidden" name="_token" value="{{ token }}">
+                        <label class="admin-field">
+                            <span class="admin-field__label">{{ 'admin.studio.review.comment'|trans({}, 'admin') }}</span>
+                            <textarea class="admin-field__input studio-review__comment-input" name="comment" rows="3" required></textarea>
+                        </label>
+                        <button type="submit" class="admin-btn admin-btn--danger">
+                            {{ 'admin.studio.review.reject'|trans({}, 'admin') }}
+                        </button>
+                    </form>
+                {% else %}
+                    <p class="admin-panel__help">{{ 'admin.studio.review.waiting'|trans({}, 'admin') }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
+        {% if history is not empty %}
+            <ol class="studio-review__history">
+                {% for item in history %}
+                    <li class="studio-review__item">
+                        <span class="studio-review__line">
+                            <span class="admin-pill admin-pill--{{ item.status.tone() }}">{{ item.status.translate() }}</span>
+                            <span class="studio-review__meta">
+                                {{ 'admin.studio.review.history'|trans({ requester: item.requester ? item.requester.username : '?', reviewer: item.reviewer ? item.reviewer.username : '?', date: item.reviewedAt ? item.reviewedAt|date('d/m/Y H:i') : '—' }, 'admin') }}{% if item.version %} · v{{ item.version }}{% endif %}
+                            </span>
+                        </span>
+                        {% if item.comment %}
+                            <p class="studio-review__comment">{{ item.comment }}</p>
+                        {% endif %}
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </section>
+{% endif %}

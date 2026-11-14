@@ -1,0 +1,26 @@
+{% extends '@site/layouts/simple.html.twig' %}
+
+{% block title %}{{ 'site.auth.register'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    {% embed '@site/components/embeds/auth-card.html.twig' with {
+        tab: 'register'
+    } %}
+        {% block form %}
+            {{ form_start(form, {attr: {class: 'auth-card__form'}}) }}
+                {{ form_errors(form) }}
+                <div class="auth-card__pair">
+                    {{ form_row(form.firstName) }}
+                    {{ form_row(form.lastName) }}
+                </div>
+                {{ form_row(form.username, app_user() and app_user().guest ? { help: 'site.auth.guest_keep' } : {}) }}
+                {{ form_row(form.email) }}
+                {{ form_row(form.plainPassword) }}
+                {{ form_row(form.agreeTerms) }}
+                <button type="submit" class="btn btn--primary btn--large btn--block">
+                    {{ 'site.auth.submit_register'|trans }}
+                </button>
+            {{ form_end(form) }}
+        {% endblock %}
+    {% endembed %}
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/clan.html.twig' as clan_ui %}
+
+{% set active = 'clans' %}
+{% set user = app_user() %}
+
+{% block title %}{{ 'site.clans.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="engage">
+        <div class="engage__head">
+            <div class="engage__intro">
+                <h1 class="engage__title">{{ 'site.clans.title'|trans }}</h1>
+                <p class="engage__subtitle">{{ 'site.clans.subtitle'|trans }}</p>
+            </div>
+        </div>
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="engage-flash engage-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}</p>
+            {% endfor %}
+        {% endfor %}
+
+        {% if membership %}
+            {% set own = membership.clan %}
+            <a class="clan-mine" href="{{ path('site_clan_show', { tag: own.tag }) }}" style="--clan-color: {{ own.color }}">
+                {{ clan_ui.emblem(own.tag, own.color, 'md') }}
+                <span class="clan-mine__text">
+                    <span class="clan-mine__label">{{ 'site.clans.your_clan'|trans }}</span>
+                    <strong class="clan-mine__name">{{ own.name }}</strong>
+                </span>
+                <span class="clan-role clan-role--{{ membership.role.value }}">{{ membership.role.translate() }}</span>
+                <span class="clan-mine__go" aria-hidden="true">→</span>
+            </a>
+        {% elseif user and not user.guest %}
+            <div class="clan-cta">
+                <span class="clan-cta__text">
+                    <strong class="clan-cta__title">{{ 'site.clans.cta_title'|trans }}</strong>
+                    <span class="clan-cta__help">{{ 'site.clans.cta_help'|trans }}</span>
+                </span>
+                <a href="{{ path('site_clan_new') }}" class="btn btn--primary">+ {{ 'site.clans.create'|trans }}</a>
+            </div>
+        {% endif %}
+
+        {% if ranking is empty %}
+            <p class="engage-empty">{{ 'site.clans.empty'|trans }}</p>
+        {% else %}
+            <div class="clan-toolbar">
+                <h2 class="engage-panel__title">{{ 'site.clans.ranking'|trans }}</h2>
+                <span class="engage-list__meta">{{ 'site.clans.count'|trans({ count: ranking|length }) }}</span>
+            </div>
+            <div class="clan-grid">
+                {% for clan in ranking %}
+                    {% set full = clan.members >= max %}
+                    <a class="clan-card{{ loop.index <= 3 ? ' clan-card--top clan-card--top-' ~ loop.index }}{{ membership and membership.clan.id == clan.id ? ' clan-card--mine' }}" href="{{ path('site_clan_show', { tag: clan.tag }) }}" style="--clan-color: {{ clan.color }}">
+                        <span class="clan-card__rank">#{{ loop.index }}</span>
+                        <span class="clan-card__head">
+                            {{ clan_ui.emblem(clan.tag, clan.color, 'md') }}
+                            <span class="clan-card__title">
+                                <strong class="clan-card__name">{{ clan.name }}</strong>
+                                <span class="clan-card__access clan-card__access--{{ full ? 'full' : (clan.open ? 'open' : 'closed') }}">{{ (full ? 'site.clans.full' : (clan.open ? 'site.clans.open' : 'site.clans.closed'))|trans }}</span>
+                            </span>
+                        </span>
+                        <span class="clan-card__desc">{{ clan.description ?: 'site.clans.no_description'|trans }}</span>
+                        <span class="clan-card__stats">
+                            <span class="clan-card__stat"><strong>{{ clan.points|number_format(0, ',', ' ') }}</strong> {{ 'site.clans.points'|trans }}</span>
+                            <span class="clan-card__stat"><strong>{{ clan.members }}</strong>/{{ max }} {{ 'site.clans.members_short'|trans }}</span>
+                        </span>
+                        <span class="clan-card__bar" aria-hidden="true"><span style="width: {{ (clan.members / max * 100)|round }}%"></span></span>
+                    </a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

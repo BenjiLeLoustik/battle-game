@@ -1,0 +1,145 @@
+.reset-blocks {
+    @apply grid items-start gap-3 lg:grid-cols-2;
+}
+
+.reset-block {
+    @apply flex flex-col rounded-xl border border-adm-line bg-adm-bg transition hover:border-adm-muted
+    has-checked:border-danger/70 has-checked:bg-danger/6;
+}
+
+.reset-block__main {
+    @apply relative flex cursor-pointer items-center gap-4 p-4;
+}
+
+.reset-block__input {
+    @apply sr-only;
+}
+
+.reset-block__icon {
+    @apply flex size-10 shrink-0 items-center justify-center rounded-lg bg-adm-hover text-adm-ink-soft;
+}
+
+.reset-block:has(:checked) .reset-block__icon {
+    @apply bg-danger/15 text-danger;
+}
+
+.reset-block__icon svg {
+    @apply size-5;
+}
+
+.reset-block__text {
+    @apply flex min-w-0 flex-1 flex-col gap-1;
+}
+
+.reset-block__name {
+    @apply text-sm font-semibold text-adm-ink;
+}
+
+.reset-block__help {
+    @apply text-xs leading-relaxed text-adm-muted;
+}
+
+.reset-block__total {
+    @apply flex shrink-0 flex-col items-end leading-tight;
+}
+
+.reset-block__count {
+    @apply text-lg font-bold text-adm-ink;
+}
+
+.reset-block__unit {
+    @apply text-[11px] text-adm-muted;
+}
+
+.reset-block__check {
+    @apply flex size-5 shrink-0 items-center justify-center rounded-md border border-adm-line text-transparent transition;
+}
+
+.reset-block__check svg {
+    @apply size-3.5;
+}
+
+.reset-block:has(:checked) .reset-block__check {
+    @apply border-danger bg-danger text-white;
+}
+
+.reset-block__main:has(:focus-visible) {
+    @apply rounded-xl outline-2 outline-offset-2 outline-adm-accent;
+}
+
+.reset-block__details {
+    @apply border-t border-adm-line/70 px-4 py-2.5;
+}
+
+.reset-block__summary {
+    @apply cursor-pointer text-xs text-adm-muted select-none hover:text-adm-ink-soft;
+}
+
+.reset-block__tables {
+    @apply mt-2 grid gap-x-6 gap-y-1 sm:grid-cols-2;
+}
+
+.reset-block__table {
+    @apply flex items-center justify-between gap-3 border-b border-adm-line/40 py-1 text-xs text-adm-ink-soft;
+}
+
+.reset-block__table code {
+    @apply text-[11px] text-adm-muted;
+}
+
+.reset-confirm {
+    @apply flex flex-wrap items-end gap-3;
+}
+
+.reset-confirm .admin-field {
+    @apply w-full max-w-xs;
+}
+
+.reset-backups__bar {
+    @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.reset-dialog {
+    @apply m-auto w-[min(440px,calc(100vw-32px))] rounded-2xl border border-[#5B2333] bg-adm-panel p-0 text-adm-ink
+    shadow-[0_30px_80px_rgba(0,0,0,.6)] backdrop:bg-black/60 backdrop:backdrop-blur-sm;
+}
+
+.reset-dialog__card {
+    @apply flex flex-col gap-3.5 p-6;
+}
+
+.reset-dialog__icon {
+    @apply flex size-11 items-center justify-center rounded-xl bg-danger/15 text-danger;
+}
+
+.reset-dialog__icon svg {
+    @apply size-5;
+}
+
+.reset-dialog__title {
+    @apply text-lg font-bold;
+}
+
+.reset-dialog__file {
+    @apply w-fit max-w-full truncate rounded-md bg-adm-hover px-2 py-1 text-xs text-adm-ink-soft;
+}
+
+.reset-dialog__text {
+    @apply text-sm leading-relaxed text-adm-muted;
+}
+
+.reset-dialog__actions {
+    @apply mt-1 flex justify-end gap-2.5;
+}
+
+.reset-auto__head {
+    @apply flex flex-wrap items-start justify-between gap-3;
+}
+
+.reset-auto {
+    @apply flex flex-wrap items-end gap-x-6 gap-y-3;
+}
+
+.reset-auto__keep {
+    @apply w-56;
+}

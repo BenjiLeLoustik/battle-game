@@ -1,0 +1,334 @@
+const LAYOUT = {{layout}};
+const MARKS = ['', '✕', '◯', '△', '□', '◆', '★', '●', '▲'];
+const ENTITIES = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const escape = (value) => String(value).replace(/[&<>"']/g, (character) => ENTITIES[character]);
+
+export default function mount(element, context) {
+    const { t, html } = context;
+    const ids = new Set(LAYOUT.elements.filter((item) => item.type === 'box').map((item) => item.id));
+
+    const rowsOf = (parent) => {
+        const rows = [];
+
+        LAYOUT.elements.filter((item) => (ids.has(item.parent) ? item.parent : '') === parent).forEach((item) => {
+            if (item.inline && rows.length) {
+                rows.at(-1).push(item);
+            } else {
+                rows.push([item]);
+            }
+        });
+
+        return rows;
+    };
+
+    const block = (item) => {
+        const base = `nocode__${item.type} nocode__${item.type}--${item.variant} nocode__el--${item.id}`;
+
+        switch (item.type) {
+            case 'button':
+                return html`<button type="button" class="nocode__button ${base}" data-id="${item.id}"></button>`;
+            case 'grid':
+                return html`<div class="nocode__grid ${base}" data-id="${item.id}" style="--columns: ${item.columns}">${Array.from({ length: item.size }, (_, cell) => html`<button type="button" class="nocode__cell" data-cell="${cell}"></button>`)}</div>`;
+            case 'input':
+                return html`<form class="nocode__form ${base}" data-id="${item.id}" autocomplete="off"><input class="nocode__input" name="value" maxlength="60" placeholder="${t('answer')}" aria-label="${t('answer')}"><button type="submit" class="nocode__send"></button></form>`;
+            case 'counter':
+                return html`<div class="${base}" data-id="${item.id}"><span class="nocode__counter-label"></span><strong class="nocode__counter-value"></strong></div>`;
+            case 'timer':
+                return html`<div class="${base}" data-id="${item.id}" aria-hidden="true"><span class="nocode__timer-fill"></span></div>`;
+            case 'scores':
+                return html`<ul class="${base}" data-id="${item.id}" aria-label="${t('players')}"></ul>`;
+            case 'message':
+                return html`<p class="${base}" data-id="${item.id}" aria-live="polite"></p>`;
+            case 'choices':
+                return html`<div class="${base}" data-id="${item.id}" style="--columns: ${item.columns}">${Array.from({ length: item.options }, (_, index) => html`<button type="button" class="nocode__choice" data-option="${index}"></button>`)}</div>`;
+            case 'image':
+                return html`<img class="${base}" data-id="${item.id}" src="${item.src}" alt="${t(item.id) === item.id ? '' : t(item.id)}">`;
+            case 'icon':
+                return html`<span class="${base}" data-id="${item.id}" aria-hidden="true"></span>`;
+            case 'divider':
+                return html`<hr class="${base}" data-id="${item.id}">`;
+            case 'box':
+                return html`<section class="${base}" data-id="${item.id}">${t(item.id) === item.id ? '' : html`<h3 class="nocode__box-title"></h3>`}${rowsOf(item.id).map((row) => html`<div class="nocode__row">${row.map(block)}</div>`)}</section>`;
+            case 'custom':
+                return html`<div class="${base}" data-id="${item.id}"></div>`;
+            default:
+                return html`<p class="nocode__text ${base}" data-id="${item.id}"></p>`;
+        }
+    };
+
+    element.innerHTML = html`
+        <div class="nocode">
+            <header class="nocode__head">
+                <span class="nocode__round"></span>
+                <span class="nocode__status" aria-live="polite"></span>
+                <span class="nocode__clock"></span>
+            </header>
+            <div class="nocode__screen">
+                ${rowsOf('').map((row) => html`<div class="nocode__row">${row.map(block)}</div>`)}
+            </div>
+        </div>`;
+
+    const root = element.querySelector('.nocode');
+    const nodes = Object.fromEntries(LAYOUT.elements.map((item) => [item.id, root.querySelector(`[data-id="${item.id}"]`)]));
+    const ui = { round: root.querySelector('.nocode__round'), status: root.querySelector('.nocode__status'), clock: root.querySelector('.nocode__clock') };
+
+    const scripts = Object.fromEntries(LAYOUT.elements.filter((item) => item.script).map((item) => {
+        try {
+            return [item.id, new Function('node', 'api', item.script)];
+        } catch (error) {
+            console.warn(`[nocode] ${item.id}`, error);
+
+            return [item.id, null];
+        }
+    }));
+    const painted = {};
+    let sentFor = null;
+    let fxSeen = null;
+    let busy = false;
+    let shown = null;
+
+    const state = () => context.snapshot.state ?? {};
+    const me = () => String(context.player);
+    const names = () => Object.fromEntries((context.snapshot.players ?? []).map((player) => [String(player.id), player.username]));
+    const nameOf = (id) => (id === null || id === undefined ? '' : names()[String(id)] ?? '?');
+
+    const phaseOf = (current, now) => {
+        if (current.finished) {
+            return 'finished';
+        }
+
+        if (current.phase === 'reveal') {
+            return 'reveal';
+        }
+
+        return now < current.openAt ? 'ready' : 'play';
+    };
+
+    const canAct = (current, now) => phaseOf(current, now) === 'play'
+        && now < current.endsAt
+        && !current.done?.[me()]
+        && (LAYOUT.mode !== 'turns' || String(current.players[current.turn]) === me());
+
+    const value = (current, scope, key) => {
+        if (key === 'score') {
+            return current.scores?.[me()] ?? 0;
+        }
+
+        const source = scope === 'player' ? current.pvars?.[me()] : current.vars;
+
+        return source && key in source ? source[key] : '?';
+    };
+
+    const fill = (key, current, extra = {}) => template(t(key), current, extra);
+
+    const template = (source, current, extra = {}, safe = (value) => value) => source
+        .replace(/\{var\.([a-z0-9_]+)\}/g, (match, name) => safe(String(value(current, 'game', name))))
+        .replace(/\{my\.([a-z0-9_]+)\}/g, (match, name) => safe(String(value(current, 'player', name))))
+        .replace(/\{round\}/g, String(current.round ?? 0))
+        .replace(/\{rounds\}/g, String(current.rounds ?? 0))
+        .replace(/\{score\}/g, String(current.scores?.[me()] ?? 0))
+        .replace(/\{player\}/g, safe(nameOf(current.players?.[current.turn])))
+        .replace(/\{name\}/g, safe(extra.name ?? ''));
+
+    const message = (current) => {
+        const entry = current.messages?.[me()] ?? current.messages?.['*'];
+
+        return entry ? fill(entry.key, current, { name: nameOf(entry.by) }) : '';
+    };
+
+    const render = () => {
+        const current = state();
+
+        if (!current.players) {
+            return;
+        }
+
+        const now = context.now();
+        const phase = phaseOf(current, now);
+        const active = canAct(current, now) && !busy;
+        shown = `${phase}-${active}`;
+        root.dataset.phase = phase;
+        root.dataset.active = String(active);
+        ui.round.textContent = t('round').replace('{current}', String(current.round)).replace('{total}', String(current.rounds));
+
+        if (phase === 'finished') {
+            ui.status.textContent = t('finished');
+        } else if (phase === 'reveal') {
+            ui.status.textContent = t('reveal');
+        } else if (phase === 'ready') {
+            ui.status.textContent = t('ready');
+        } else if (LAYOUT.mode === 'turns') {
+            const turn = String(current.players[current.turn]);
+            ui.status.textContent = turn === me() ? t('your_turn') : t('their_turn').replace('{name}', nameOf(turn));
+        } else {
+            ui.status.textContent = current.done?.[me()] ? t('waiting') : t('play');
+        }
+
+        LAYOUT.elements.forEach((item) => {
+            const node = nodes[item.id];
+
+            if (item.type === 'text') {
+                node.textContent = fill(item.id, current);
+            } else if (item.type === 'button') {
+                node.textContent = fill(item.id, current);
+                node.disabled = !active;
+            } else if (item.type === 'counter') {
+                node.querySelector('.nocode__counter-label').textContent = fill(item.id, current);
+                node.querySelector('.nocode__counter-value').textContent = String(value(current, item.scope, item.variable));
+            } else if (item.type === 'message') {
+                node.textContent = message(current);
+            } else if (item.type === 'input') {
+                const input = node.querySelector('.nocode__input');
+                node.querySelector('.nocode__send').textContent = t(item.id) === item.id ? t('send') : fill(item.id, current);
+                input.disabled = !active;
+                node.querySelector('.nocode__send').disabled = !active;
+
+                if (active && document.activeElement !== input) {
+                    input.focus();
+                }
+            } else if (item.type === 'grid') {
+                const board = current.vars?.[item.variable] ?? [];
+                node.querySelectorAll('.nocode__cell').forEach((cell, index) => {
+                    const mark = Number(board[index] ?? 0);
+                    cell.textContent = MARKS[mark] ?? String(board[index] ?? '');
+                    cell.dataset.mark = String(mark);
+                    cell.disabled = !active || mark !== 0;
+                });
+            } else if (item.type === 'choices') {
+                node.querySelectorAll('.nocode__choice').forEach((choice) => {
+                    choice.textContent = fill(`${item.id}_o${choice.dataset.option}`, current);
+                    choice.disabled = !active;
+                });
+            } else if (item.type === 'icon') {
+                node.textContent = t(item.id) === item.id ? '★' : t(item.id);
+            } else if (item.type === 'box') {
+                const title = node.querySelector('.nocode__box-title');
+
+                if (title) {
+                    title.textContent = fill(item.id, current);
+                }
+            } else if (item.type === 'custom') {
+                const markup = template(item.html ?? '', current, {}, escape);
+
+                if (painted[item.id] !== markup) {
+                    painted[item.id] = markup;
+                    node.innerHTML = markup;
+                }
+
+                node.dataset.active = String(active);
+
+                try {
+                    scripts[item.id]?.(node, {
+                        state: current,
+                        me: me(),
+                        active,
+                        phase,
+                        names: names(),
+                        t: (key) => t(key),
+                        click: () => active && send('click', { element: item.id }),
+                        answer: (answer) => active && send('answer', { element: item.id, value: String(answer).slice(0, 60) }),
+                        sound: (name) => context.sound?.play(name),
+                    });
+                } catch (error) {
+                    console.warn(`[nocode] ${item.id}`, error);
+                }
+            } else if (item.type === 'scores') {
+                const people = names();
+                node.replaceChildren(...Object.entries(current.scores ?? {}).sort((a, b) => b[1] - a[1]).map(([player, score]) => {
+                    const row = document.createElement('li');
+                    row.className = 'nocode__score' + (player === me() ? ' nocode__score--me' : '') + (LAYOUT.mode === 'turns' && String(current.players[current.turn]) === player && phase === 'play' ? ' nocode__score--turn' : '');
+                    row.innerHTML = html`<span>${people[player] ?? '?'}</span><strong>${score}</strong>`;
+
+                    return row;
+                }));
+            }
+        });
+
+        if (current.fx && fxSeen !== null && current.fx.seq > fxSeen && current.fx.name) {
+            context.sound?.play(current.fx.name);
+        }
+
+        fxSeen = current.fx?.seq ?? 0;
+    };
+
+    const send = (action, payload) => {
+        if (busy) {
+            return;
+        }
+
+        busy = true;
+        context.send(action, payload).catch(() => {}).finally(() => {
+            busy = false;
+            render();
+        });
+    };
+
+    root.addEventListener('click', (event) => {
+        const button = event.target.closest('.nocode__button');
+        const cell = event.target.closest('.nocode__cell');
+        const choice = event.target.closest('.nocode__choice');
+        const custom = event.target.closest('.nocode__custom');
+        const trigger = custom ? event.target.closest('[data-click], [data-answer]') : null;
+
+        if (choice && !choice.disabled) {
+            send('answer', { element: choice.closest('.nocode__choices').dataset.id, value: choice.textContent });
+        }
+
+        if (trigger && custom.dataset.active === 'true') {
+            send(trigger.hasAttribute('data-answer') ? 'answer' : 'click', { element: custom.dataset.id, value: trigger.dataset.answer ?? '' });
+        }
+
+        if (button && !button.disabled) {
+            send('click', { element: button.dataset.id });
+        }
+
+        if (cell && !cell.disabled) {
+            send('cell', { element: cell.closest('.nocode__grid').dataset.id, cell: Number(cell.dataset.cell) });
+        }
+    });
+
+    root.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const form = event.target.closest('.nocode__form');
+        const input = form?.querySelector('.nocode__input');
+
+        if (form && input && input.value.trim() !== '' && !input.disabled) {
+            send('answer', { element: form.dataset.id, value: input.value.trim() });
+            input.value = '';
+        }
+    });
+
+    const loop = () => {
+        const current = state();
+        const now = context.now();
+
+        if (current.players && !current.finished) {
+            const playing = current.phase === 'play';
+            const left = playing ? Math.max(0, current.endsAt - Math.max(now, current.openAt)) : 0;
+            ui.clock.textContent = playing && now >= current.openAt ? t('seconds').replace('{seconds}', String(Math.ceil(left / 1000))) : '';
+            root.querySelectorAll('.nocode__timer-fill').forEach((fill) => {
+                fill.style.width = `${(left / current.duration) * 100}%`;
+            });
+
+            const due = playing ? now >= current.endsAt : current.nextAt !== null && now >= current.nextAt;
+            const key = `${current.phase}-${current.round}-${current.endsAt}-${current.nextAt}`;
+
+            if (due && sentFor !== key) {
+                sentFor = key;
+                context.send('tick').catch(() => {
+                    sentFor = null;
+                });
+            }
+
+            if (`${phaseOf(current, now)}-${canAct(current, now) && !busy}` !== shown) {
+                render();
+            }
+        }
+
+        requestAnimationFrame(loop);
+    };
+
+    context.on(render);
+    render();
+    requestAnimationFrame(loop);
+}

@@ -1,0 +1,86 @@
+# Security (key packages.security). `php bin/neo make:user` then `make:auth` configure a real login.
+providers:
+    # Where the users come from. With an entity (after make:user):
+    # users:
+    #     entity:
+    #         class: App\Entity\User
+    #         property: email
+    users:
+        entity:
+            class: App\Entity\User
+            property: email
+
+password_hashers:
+    # auto = best algorithm available (bcrypt / argon2), rehashed automatically on login
+    default: auto
+
+firewalls:
+    # Public files: no security at all
+    assets:
+        pattern: ^/builds/
+        security: false
+    main:
+        pattern: ^/
+        provider: users
+        custom_authenticators:
+            - NeoPHP\Package\Security\Authenticator\OAuthAuthenticator
+        form_login:
+            login_path: /login
+            enable_csrf: true
+            default_target_path: /
+        logout:
+            path: /logout
+            # Page displayed after the logout
+            target: /
+            # A CSRF token is required and only POST is accepted: another site cannot log your users out.
+            # In the templates: {{ logout_form('Logout') }} (a small form with a button)
+            enable_csrf: true
+            methods: [ POST ]
+        remember_me:
+            # "Remember me" checkbox (_remember_me): 604800 s = 7 days
+            lifetime: 2592000
+            # database = one token per device in the remember_me_tokens table (revocable), signature = cookie only
+            storage: database
+        login_throttling:
+            # Attempts per IP + identifier during interval seconds (5 x more per IP)
+            max_attempts: 5
+            interval: 60
+            # Attempts per identifier from every IP during interval seconds (0 = disabled)
+            max_account_attempts: 25
+            # Cache pool shared by the servers, ~ = local files
+            # cache_pool: shared
+
+# Optional features, see the Security documentation:
+# jwt:
+#     lifetime: 3600
+# two_factor:
+#     path: /2fa
+# oauth:
+#     resolver: App\Security\OAuthUserResolver
+#     providers:
+#         google: { client_id: '%env(GOOGLE_CLIENT_ID)%', client_secret: '%env(GOOGLE_CLIENT_SECRET)%' }
+
+oauth:
+    resolver: App\Site\Security\DiscordUserResolver
+    prefix: /oauth
+    default_target_path: /
+    failure_path: /login
+    providers:
+        discord:
+            client_id: '%env(DISCORD_CLIENT_ID)%'
+            client_secret: '%env(DISCORD_CLIENT_SECRET)%'
+            authorize_url: 'https://discord.com/oauth2/authorize'
+            token_url: 'https://discord.com/api/oauth2/token'
+            userinfo_url: 'https://discord.com/api/users/@me'
+            scopes: [ identify, email ]
+            id_field: id
+
+role_hierarchy:
+    ROLE_ADMIN: [ ROLE_USER ]
+
+# Access rules, the first matching one is used, e.g.
+# access_control:
+#     - { path: ^/admin, roles: ROLE_ADMIN }
+#     - { path: ^/account, roles: ROLE_USER }
+access_control:
+    - { path: ^/admin, roles: ROLE_ADMIN }

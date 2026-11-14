@@ -1,0 +1,21 @@
+{% macro action(user, action, label, back, class, title = null) %}
+    <form method="post" action="{{ path('site_friend_action', { username: user.username, action: action }) }}" class="social-action">
+        <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+        <input type="hidden" name="_back" value="{{ back }}">
+        <button type="submit" class="{{ class }}"{% if title %} aria-label="{{ title }}" title="{{ title }}"{% endif %}>{{ label }}</button>
+    </form>
+{% endmacro %}
+
+{% macro status(status) %}
+    {%- if status.state == 'playing' -%}
+        {{ 'site.presence.playing'|trans({ game: status.game }) }}
+    {%- elseif status.state == 'room' -%}
+        {{ 'site.presence.room'|trans({ room: status.room.name }) }}
+    {%- elseif status.state == 'online' -%}
+        {{ 'site.presence.online'|trans }}
+    {%- elseif status.seenAt -%}
+        {{ 'site.presence.seen'|trans({ date: status.seenAt|date('d/m H:i') }) }}
+    {%- else -%}
+        {{ 'site.presence.offline'|trans }}
+    {%- endif -%}
+{% endmacro %}

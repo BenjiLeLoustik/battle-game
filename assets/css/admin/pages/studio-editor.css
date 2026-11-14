@@ -1,0 +1,285 @@
+.admin-layout--editor {
+    @apply h-dvh overflow-hidden;
+}
+
+.studio-editor {
+    @apply flex min-h-0 flex-1 flex-col;
+}
+
+.studio-editor__toolbar {
+    @apply flex shrink-0 flex-wrap items-center gap-3 border-b border-adm-line bg-adm-side px-4 py-2.5 max-md:gap-2 max-md:px-3;
+}
+
+.studio-editor__separator {
+    @apply text-[#4B5060] max-md:hidden;
+}
+
+.studio-editor__name {
+    @apply text-[15px];
+}
+
+.studio-editor__version {
+    @apply font-mono text-xs text-adm-muted max-md:hidden;
+}
+
+.studio-editor__state {
+    @apply rounded-md bg-success/12 px-2 py-[3px] text-xs font-semibold text-[#6EE7A0];
+}
+
+.studio-editor__state--dirty {
+    @apply bg-yellow/12 text-[#FFD36E];
+}
+
+.studio-editor__state {
+    @apply max-w-[360px] truncate;
+}
+
+.studio-editor__state[data-tone="info"] {
+    @apply bg-adm-accent/16 text-adm-accent-soft;
+}
+
+.studio-editor__state[data-tone="error"] {
+    @apply bg-danger/14 text-[#FF8A9C];
+}
+
+.studio-editor__button[aria-busy="true"] {
+    @apply cursor-wait opacity-60;
+}
+
+.studio-editor__actions {
+    @apply ml-auto flex flex-wrap gap-2 max-md:ml-0 max-md:w-full max-md:flex-nowrap max-md:overflow-x-auto;
+}
+
+.studio-editor__button {
+    @apply flex h-9 shrink-0 cursor-pointer items-center rounded-[7px] border border-adm-line bg-adm-hover px-3 text-[13px]
+    font-semibold whitespace-nowrap text-adm-ink hover:border-adm-accent;
+}
+
+.studio-editor__button--test {
+    @apply border-[#6EE7A0] text-[#6EE7A0];
+}
+
+.studio-editor__button--primary {
+    @apply border-transparent bg-adm-accent px-3.5 font-bold text-[#0F0B26] hover:brightness-110;
+}
+
+.studio-editor__body {
+    @apply relative flex min-h-0 flex-1 overflow-clip;
+}
+
+.studio-editor__body::after {
+    @apply pointer-events-none absolute inset-0 z-20 bg-black/55 opacity-0 transition-opacity content-[''];
+}
+
+.studio-editor--files .studio-editor__body::after,
+.studio-editor--aside .studio-editor__body::after {
+    @apply max-xl:pointer-events-auto max-xl:opacity-100;
+}
+
+.studio-editor__button-icon {
+    @apply mr-1.5 size-4;
+}
+
+.studio-editor__button--files {
+    @apply lg:hidden;
+}
+
+.studio-editor__button--aside {
+    @apply xl:hidden;
+}
+
+.studio-editor__button--panel {
+    @apply max-xl:hidden aria-expanded:border-adm-accent aria-expanded:text-adm-accent-soft;
+}
+
+.studio-editor--no-aside .studio-editor__aside,
+.studio-editor--no-aside .studio-editor__resizer {
+    @apply xl:hidden;
+}
+
+.studio-editor--files .studio-editor__button--files,
+.studio-editor--aside .studio-editor__button--aside {
+    @apply border-adm-accent text-adm-accent-soft;
+}
+
+.studio-editor__side {
+    @apply flex w-[300px] shrink-0 flex-col border-r border-adm-line bg-adm-side
+    max-lg:absolute max-lg:inset-y-0 max-lg:left-0 max-lg:z-30 max-lg:w-[min(300px,85vw)] max-lg:-translate-x-full
+    max-lg:shadow-[0_0_40px_rgba(0,0,0,.6)] max-lg:transition-transform;
+}
+
+.studio-editor--files .studio-editor__side {
+    @apply max-lg:translate-x-0;
+}
+
+.studio-editor__side-title {
+    @apply flex h-10 shrink-0 items-center border-b border-adm-line px-4 text-[13px] font-semibold
+    text-adm-accent-soft shadow-[inset_0_-2px_0_var(--color-adm-accent)];
+}
+
+.studio-editor__tree {
+    @apply flex min-h-0 flex-1 flex-col gap-px overflow-y-auto px-2 py-2.5;
+}
+
+.studio-editor__folder {
+    @apply block h-[26px] w-full cursor-pointer rounded-[5px] bg-transparent pr-2 pl-[calc(8px+var(--depth)*14px)]
+    text-left font-mono text-[12.5px] text-[#9BA1AE] hover:bg-adm-hover hover:text-adm-ink;
+}
+
+.studio-editor__file {
+    @apply block h-7 w-full cursor-pointer truncate rounded-[5px] bg-transparent pr-2
+    pl-[calc(8px+var(--depth)*14px)] text-left font-mono text-[12.5px] text-adm-ink-soft hover:bg-adm-hover;;
+}
+
+.studio-editor__file--current {
+    @apply bg-[#26224A] text-[#D4CEFF] hover:bg-[#26224A];
+}
+
+.studio-editor__new {
+    @apply m-2 h-8 cursor-pointer rounded-md border border-dashed border-adm-line bg-transparent
+    text-xs text-[#9BA1AE] hover:border-adm-accent hover:text-adm-ink;
+}
+
+.studio-editor__main {
+    @apply flex min-w-0 flex-1 flex-col bg-[#0A0B0E];
+}
+
+.studio-editor__tabs {
+    @apply flex shrink-0 overflow-x-auto border-b border-adm-line bg-adm-side;
+}
+
+.studio-editor__tab {
+    @apply flex h-[38px] shrink-0 items-center border-r border-adm-line text-adm-muted;
+}
+
+.studio-editor__tab--active {
+    @apply bg-[#0A0B0E] text-adm-ink shadow-[inset_0_2px_0_var(--color-adm-accent)];
+}
+
+.studio-editor__tab-label {
+    @apply h-full cursor-pointer bg-transparent pr-1.5 pl-4 font-mono text-[12.5px] text-inherit;
+}
+
+.studio-editor__tab--dirty .studio-editor__tab-label::after {
+    @apply ml-2 text-[#FFD36E];
+    content: '●';
+}
+
+.studio-editor__tab-close {
+    @apply mr-2 flex size-5 cursor-pointer items-center justify-center rounded bg-transparent text-sm leading-none
+    text-adm-muted hover:bg-adm-hover hover:text-adm-ink;
+}
+
+.studio-editor__code {
+    @apply relative min-h-0 flex-1 overflow-hidden;
+}
+
+.studio-editor__empty {
+    @apply p-6 text-sm text-adm-muted;
+}
+
+.studio-editor__status {
+    @apply flex shrink-0 gap-[18px] bg-[#26224A] px-3.5 py-1 text-xs text-[#D4CEFF];
+}
+
+.studio-editor__sdk {
+    @apply ml-auto;
+}
+
+.studio-editor__aside {
+    @apply flex w-[340px] shrink-0 flex-col border-l border-adm-line bg-adm-side
+    max-xl:absolute max-xl:inset-y-0 max-xl:right-0 max-xl:z-30 max-xl:w-[min(380px,90vw)]! max-xl:translate-x-full
+    max-xl:shadow-[0_0_40px_rgba(0,0,0,.6)] max-xl:transition-transform;
+}
+
+.studio-editor--aside .studio-editor__aside {
+    @apply max-xl:translate-x-0;
+}
+
+.studio-editor__aside-head {
+    @apply flex items-center justify-between border-b border-adm-line px-3.5 py-3;
+}
+
+.studio-editor__aside-title {
+    @apply text-[13px];
+}
+
+.studio-editor__reloaded {
+    @apply cursor-pointer bg-transparent text-xs text-[#6EE7A0] hover:underline;
+}
+
+.studio-editor__frame {
+    @apply h-[260px] w-full shrink-0 border-0 bg-stage;
+}
+
+.studio-editor__no-preview {
+    @apply p-3.5 text-[13px] leading-[1.5] text-adm-muted;
+}
+
+.studio-editor__console-title {
+    @apply flex w-full cursor-pointer items-center gap-2 border-y border-adm-line bg-transparent px-3.5
+    py-2.5 text-left text-xs font-semibold text-adm-accent-soft hover:text-[#D4CEFF];
+}
+
+.studio-editor__chevron {
+    @apply transition-transform;
+}
+
+.studio-editor__aside--folded .studio-editor__chevron {
+    @apply -rotate-90;
+}
+
+.studio-editor__aside--folded .studio-editor__console {
+    @apply hidden;
+}
+
+.studio-editor__aside--folded .studio-editor__frame {
+    @apply h-auto flex-1;
+}
+
+.studio-editor__console {
+    @apply flex min-h-0 flex-1 flex-col overflow-auto px-3.5 py-3 font-mono text-[11.5px]
+    leading-[1.75] text-[#9BA1AE];
+}
+
+.studio-editor__log {
+    @apply whitespace-pre-wrap;
+}
+
+.studio-editor__log--success {
+    @apply text-[#6EE7A0];
+}
+
+.studio-editor__log--error {
+    @apply text-[#FF8A9C];
+}
+
+.studio-editor__resizer {
+    @apply w-1.5 shrink-0 cursor-col-resize bg-transparent transition-colors hover:bg-adm-accent/40
+    focus-visible:bg-adm-accent max-xl:hidden;
+}
+
+.studio-editor__aside--resizing {
+    @apply select-none;
+}
+
+.studio-editor__aside--resizing .studio-editor__frame {
+    @apply pointer-events-none;
+}
+
+.studio-editor__file--locked {
+    @apply cursor-default text-[#5A606E] hover:bg-transparent;
+}
+
+.studio-editor__menu {
+    @apply fixed z-50 flex min-w-[190px] flex-col rounded-lg border border-adm-line bg-adm-panel p-1 shadow-[0_12px_32px_rgba(0,0,0,0.5)];
+}
+
+.studio-editor__menu-item {
+    @apply h-8 cursor-pointer rounded-md bg-transparent px-3 text-left text-[13px] text-adm-ink-soft hover:bg-adm-hover hover:text-adm-ink
+    focus-visible:bg-adm-hover disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent;
+}
+
+.studio-editor__menu-item--danger {
+    @apply text-[#FF8A9C] hover:text-[#FF8A9C];
+}

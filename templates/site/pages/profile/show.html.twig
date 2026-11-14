@@ -1,0 +1,335 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/user.html.twig' as ui %}
+{% import '@site/components/macros/game.html.twig' as games_ui %}
+{% import '@site/components/macros/social.html.twig' as social_ui %}
+{% import '@site/components/macros/badge.html.twig' as badges_ui %}
+
+{% set active = me ? 'profile' : '' %}
+
+{% block title %}{{ user.username }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="profile">
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="settings-flash settings-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">{{ type == 'error' ? message|trans({}, 'validators') : message|trans }}</p>
+            {% endfor %}
+        {% endfor %}
+
+        {% if not me %}
+            <nav class="profile__crumbs" aria-label="{{ 'site.game_page.breadcrumb'|trans }}">
+                <a href="{{ path('site_leaderboard_index') }}" class="profile__crumb-link">{{ 'site.profile.players'|trans }}</a>
+                <span aria-hidden="true">/</span>
+                <span class="profile__crumb-current">{{ user.username }}</span>
+            </nav>
+        {% endif %}
+
+        <section class="profile-hero">
+            {% set look = cosmetics(user) %}
+            <div class="profile-hero__banner{{ look.banner is defined ? ' profile-banner--' ~ look.banner }}"{% if look.banner_style is defined %} style="{{ look.banner_style }}"{% endif %} aria-hidden="true"></div>
+            <div class="profile-hero__identity">
+                {{ ui.avatar(user, '3xl') }}
+                <div class="profile-hero__text">
+                    {{ ui.title(user) }}
+                    <h1 class="profile-hero__name">
+                        {{ ui.name(user) }}
+                        <span class="profile-hero__level">{{ 'site.profile.level_short'|trans({ level: progress.level }) }}</span>
+                        {% if featured is not empty %}
+                            <span class="profile-hero__featured" title="{{ featured[0].name }}">{{ badges_ui.shape(featured[0], 28) }}</span>
+                        {% endif %}
+                        {% if rank %}
+                            <span class="profile-hero__rank">{{ 'site.profile.rank_badge'|trans({ rank: rank }) }}</span>
+                        {% endif %}
+                    </h1>
+                    {% if user.bio %}
+                        <span class="profile-hero__bio">{{ user.bio }}</span>
+                    {% endif %}
+                    {% if clan %}
+                        <a href="{{ path('site_clan_show', { tag: clan.clan.tag }) }}" class="profile-hero__clan"><span class="clan-tag" style="--clan-color: {{ clan.clan.color }}">{{ clan.clan.tag }}</span> {{ clan.clan.name }} · {{ clan.role.translate() }}</a>
+                    {% endif %}
+                    <span class="profile-hero__meta">
+                        {{ 'site.profile.member_since'|trans({ date: user.createdAt|date('m/Y') }) }}
+                        · {{ 'site.profile.games_count'|trans({ count: played }) }}
+                        {%- if rank %} · {{ 'site.profile.global_rank'|trans({ rank: rank }) }}{% endif %}
+                        {%- if user.favoriteGame %} · {{ 'site.profile.favorite'|trans({ game: user.favoriteGame.name }) }}{% endif %}
+                    </span>
+                </div>
+                <div class="profile-hero__actions">
+                    {% if presence and presence.state == 'playing' %}
+                        <a href="{{ path('site_play_show', { code: presence.match }) }}" class="profile-hero__button profile-hero__button--primary">{{ 'site.friends.actions.watch'|trans }}</a>
+                    {% elseif presence and presence.state == 'room' %}
+                        <a href="{{ path('site_room_show', { code: presence.room.code }) }}" class="profile-hero__button profile-hero__button--primary">{{ 'site.friends.actions.join'|trans }}</a>
+                    {% endif %}
+                    {% if social %}
+                        {% set back = path('site_profile_show', { username: user.username }) %}
+                        {% if social.blocked %}
+                            {{ social_ui.action(user, 'unblock', 'site.friends.actions.unblock'|trans, back, 'profile-hero__button') }}
+                        {% else %}
+                            {% if social.state == 'friends' %}
+                                <form method="post" action="{{ path('site_friend_action', { username: user.username, action: 'remove' }) }}" data-component="ConfirmSubmit" data-message="{{ 'site.friends.confirm_remove'|trans({ name: user.username }) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                                    <input type="hidden" name="_back" value="{{ back }}">
+                                    <button type="submit" class="profile-hero__button profile-hero__button--friends">{{ 'site.friends.state.friends'|trans }}</button>
+                                </form>
+                            {% elseif social.state == 'sent' %}
+                                {{ social_ui.action(user, 'cancel', 'site.friends.state.sent'|trans, back, 'profile-hero__button profile-hero__button--muted') }}
+                            {% elseif social.state == 'received' %}
+                                {{ social_ui.action(user, 'accept', 'site.friends.state.received'|trans, back, 'profile-hero__button profile-hero__button--primary') }}
+                            {% else %}
+                                <form method="post" action="{{ path('site_friend_add') }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                                    <input type="hidden" name="_back" value="{{ back }}">
+                                    <input type="hidden" name="username" value="{{ user.username }}">
+                                    <button type="submit" class="profile-hero__button profile-hero__button--primary">{{ 'site.friends.state.none'|trans }}</button>
+                                </form>
+                            {% endif %}
+                            {% if social.room %}
+                                {{ social_ui.action(user, 'invite', 'site.friends.actions.invite_room'|trans, back, 'profile-hero__button') }}
+                            {% endif %}
+                            <a href="{{ path('site_chat_dm', { username: user.username }) }}" class="profile-hero__button">{{ 'site.friends.actions.message'|trans }}</a>
+                        {% endif %}
+                        <details class="profile-menu">
+                            <summary class="profile-hero__button profile-menu__toggle" aria-label="{{ 'site.profile.more'|trans }}">⋯</summary>
+                            <div class="profile-menu__panel">
+                                <button type="button" class="profile-menu__item" data-component="CopyButton" data-text="{{ url('site_profile_show', { username: user.username }) }}" data-done="{{ 'site.profile.copied'|trans }}">{{ 'site.profile.copy_link'|trans }}</button>
+                                <form class="profile-menu__report" method="post" action="{{ path('site_friend_report', { username: user.username }) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                                    <input type="hidden" name="_back" value="{{ back }}">
+                                    <label class="profile-menu__label" for="report-reason">{{ 'site.profile.report.title'|trans({ name: user.username }) }}</label>
+                                    <select id="report-reason" class="field__input profile-menu__field" name="reason">
+                                        {% for reason in social.reasons %}
+                                            <option value="{{ reason.value }}">{{ reason.translate() }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <textarea class="field__input field__input--area profile-menu__field" name="comment" rows="2" maxlength="500" placeholder="{{ 'site.profile.report.comment'|trans }}"></textarea>
+                                    <button type="submit" class="profile-menu__item profile-menu__item--warning">{{ 'site.profile.report.submit'|trans }}</button>
+                                </form>
+                                {% if not social.blocked %}
+                                    <form method="post" action="{{ path('site_friend_action', { username: user.username, action: 'block' }) }}" data-component="ConfirmSubmit" data-message="{{ 'site.profile.block_confirm'|trans({ name: user.username }) }}">
+                                        <input type="hidden" name="_token" value="{{ csrf_token('friends') }}">
+                                        <input type="hidden" name="_back" value="{{ back }}">
+                                        <button type="submit" class="profile-menu__item profile-menu__item--danger">{{ 'site.profile.block'|trans }}</button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </details>
+                    {% endif %}
+                    {% if me %}
+                        <a href="{{ path('site_settings_profile') }}" class="profile-hero__button">{{ 'site.profile.edit'|trans }}</a>
+                    {% endif %}
+                    <button type="button" class="profile-hero__button profile-hero__button--soft" data-component="CopyButton" data-text="{{ url('site_profile_show', { username: user.username }) }}" data-done="{{ 'site.profile.copied'|trans }}">{{ 'site.profile.share'|trans }}</button>
+                </div>
+            </div>
+
+            <div class="profile-level">
+                <div class="profile-level__badge">
+                    <span class="profile-level__label">{{ 'site.profile.level'|trans|upper }}</span>
+                    <strong class="profile-level__value">{{ progress.level }}</strong>
+                </div>
+                <div class="profile-level__main">
+                    <span class="profile-level__head">
+                        <strong>{{ 'site.profile.general'|trans }}</strong>
+                        <span class="profile-level__xp">{{ 'site.profile.xp'|trans({ current: progress.current|number_format(0, ',', ' '), needed: progress.needed|number_format(0, ',', ' ') }) }}</span>
+                    </span>
+                    <div class="profile-level__track"><div class="profile-level__fill" style="width: {{ progress.percent }}%"></div></div>
+                    {% if nextTitle %}
+                        <span class="profile-level__next">
+                            {{ 'site.profile.next_title'|trans }}
+                            <strong class="profile-level__next-value">{{ 'site.profile.title_at'|trans({ level: nextTitle.level, title: ('site.profile.titles.' ~ nextTitle.key)|trans }) }}</strong>
+                        </span>
+                    {% endif %}
+                </div>
+                <div class="profile-level__titles">
+                    {% for title in titles %}
+                        <span class="profile-level__title{{ title.unlocked ? ' profile-level__title--unlocked' }}">{{ ('site.profile.titles.' ~ title.key)|trans }} · {{ 'site.profile.level_short'|trans({ level: title.level })|lower }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section class="profile__section profile-activity" aria-labelledby="profile-activity">
+            <div class="profile-activity__head">
+                <h2 id="profile-activity" class="profile__heading">{{ 'site.profile.activity'|trans }}</h2>
+                <span class="profile-activity__total">{{ 'site.profile.activity_total'|trans({ points: activity|reduce((sum, d) => sum + d.points, 0) }) }}</span>
+            </div>
+            <div class="profile-activity__chart" role="img" aria-label="{{ 'site.profile.activity'|trans }}">
+                {% for day in activity %}
+                    <span class="profile-activity__bar{{ day.points == 0 ? ' profile-activity__bar--empty' }}" style="--h: {{ (day.points / activityMax * 100)|round }}%" title="{{ day.day|date('d/m') }} · {{ day.points }} XP"></span>
+                {% endfor %}
+            </div>
+            {% if ratings is not empty %}
+                <div class="profile-ranked">
+                    {% for item in ratings %}
+                        <span class="profile-ranked__item">
+                            <span class="rank-badge" style="--rank-color: {{ item.tier.color }}">{{ item.tier.label }}</span>
+                            <strong>{{ item.game.name }}</strong>
+                            <span>{{ item.rating }}</span>
+                        </span>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+
+        {% if featured is not empty %}
+            <section class="profile__section" aria-labelledby="profile-featured">
+                <h2 id="profile-featured" class="profile__heading">{{ 'site.badges.featured'|trans }}</h2>
+                <div class="profile__featured">
+                    {% for badge in featured %}
+                        <span class="profile-chip" style="{% if badge.design.color %}--badge-color: {{ badge.design.color }};{% endif %}">
+                            {{ badges_ui.shape(badge, 32) }}
+                            <span class="profile-chip__text">
+                                <strong class="profile-chip__name">{{ badge.name }}</strong>
+                                <span class="profile-chip__game">{{ badge.game ?? 'site.badges.general'|trans }}</span>
+                            </span>
+                        </span>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% set owned = badges|filter(badge => badge.state == 'on')|length %}
+        {% if me or owned > 0 %}
+            <section class="profile__section" aria-labelledby="profile-badges">
+                <div class="profile__section-head">
+                    <h2 id="profile-badges" class="profile__heading">{{ 'site.badges.general_title'|trans({ count: owned, total: badges|length }) }}</h2>
+                    <span class="profile__hint">{{ 'site.badges.general_help'|trans }}</span>
+                </div>
+                <div class="profile__badges">
+                    {% for badge in (me ? badges : badges|filter(badge => badge.state == 'on')) %}
+                        {{ badges_ui.card(badge) }}
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+
+        {% if versus and versus.played > 0 %}
+            <section class="profile__section" aria-labelledby="profile-versus">
+                <h2 id="profile-versus" class="profile__heading">{{ 'site.profile.versus.title'|trans }}</h2>
+                <div class="profile-versus">
+                    <span class="profile-versus__meta">{{ 'site.profile.versus.meta'|trans({ count: versus.played, date: versus.last|date('d/m/Y') }) }}</span>
+                    <div class="profile-versus__score">
+                        <span class="profile-versus__side">{{ 'site.profile.versus.you'|trans }} <strong class="profile-versus__value profile-versus__value--me">{{ versus.mine }}</strong></span>
+                        <span class="profile-versus__side">{{ user.username }} <strong class="profile-versus__value">{{ versus.theirs }}</strong></span>
+                    </div>
+                    {% set total = max(1, versus.mine + versus.theirs) %}
+                    <div class="profile-versus__track"><span class="profile-versus__fill" style="width: {{ (versus.mine / total * 100)|round }}%"></span></div>
+                    {% if versus.best %}
+                        <span class="profile-versus__best">{{ 'site.profile.versus.best'|trans({ game: versus.best.game.name, mine: versus.best.score.mine, theirs: versus.best.score.theirs }) }}</span>
+                    {% endif %}
+                </div>
+            </section>
+        {% endif %}
+
+        <section class="profile__section" aria-labelledby="profile-games" data-component="ProfileGames">
+            <div class="profile__section-head">
+                <h2 id="profile-games" class="profile__heading">{{ 'site.profile.games.title'|trans }}</h2>
+                <span class="profile__hint">{{ 'site.profile.games.help'|trans }}</span>
+            </div>
+            {% if games is empty %}
+                <p class="profile__empty">{{ 'site.profile.games.empty'|trans }}</p>
+            {% else %}
+                <div class="profile__tabs" role="tablist" aria-label="{{ 'site.profile.games.tabs'|trans }}">
+                    {% for row in games %}
+                        <button type="button" class="profile-game-tab" role="tab" id="profile-tab-{{ row.game.slug }}" aria-controls="profile-panel-{{ row.game.slug }}" aria-selected="{{ loop.first ? 'true' : 'false' }}" style="--game-color: {{ row.game.color }}">
+                            <span class="profile-game-tab__head">
+                                <strong class="profile-game-tab__name">{{ row.game.name }}</strong>
+                                <span class="profile-game-tab__level">{{ 'site.profile.level_short'|trans({ level: row.progress.level }) }}</span>
+                            </span>
+                            <span class="profile-game-tab__track"><span class="profile-game-tab__fill" style="width: {{ row.progress.percent }}%"></span></span>
+                            <span class="profile-game-tab__meta">{{ 'site.profile.games_count'|trans({ count: row.played }) }} · {{ 'site.badges.count'|trans({ count: row.badges|filter(badge => badge.state == 'on')|length, total: row.badges|length }) }}</span>
+                        </button>
+                    {% endfor %}
+                </div>
+                {% for row in games %}
+                    <div class="profile-game" role="tabpanel" id="profile-panel-{{ row.game.slug }}" aria-labelledby="profile-tab-{{ row.game.slug }}" style="--game-color: {{ row.game.color }}"{{ not loop.first ? ' hidden' }}>
+                        <div class="profile-game__head">
+                            <span class="profile-game__icon">
+                                {% if row.game.icon %}
+                                    <img class="profile-game__icon-image" src="{{ row.game.icon }}" alt="">
+                                {% else %}
+                                    <svg class="profile-game__icon-image" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+                                {% endif %}
+                            </span>
+                            <div class="profile-game__progress">
+                                <span class="profile-game__title-row">
+                                    <strong class="profile-game__title">{{ 'site.profile.games.level'|trans({ game: row.game.name, level: row.progress.level }) }}</strong>
+                                    <span class="profile-game__xp">{{ 'site.profile.xp_short'|trans({ current: row.progress.current, needed: row.progress.needed }) }}</span>
+                                </span>
+                                <div class="profile-game__track"><div class="profile-game__fill" style="width: {{ row.progress.percent }}%"></div></div>
+                            </div>
+                            <a href="{{ path('site_game_show', { slug: row.game.slug }) }}" class="profile-game__link">{{ 'site.profile.games.page'|trans }}</a>
+                        </div>
+                        <div class="profile-game__stats">
+                            <div class="profile-game__stat">
+                                <span class="profile-game__stat-label">{{ 'site.profile.games.played'|trans }}</span>
+                                <strong class="profile-game__stat-value">{{ row.played }}</strong>
+                            </div>
+                            <div class="profile-game__stat">
+                                <span class="profile-game__stat-label">{{ 'site.profile.games.wins'|trans }}</span>
+                                <strong class="profile-game__stat-value">{{ row.rate }} %</strong>
+                            </div>
+                            {% if row.board %}
+                                <div class="profile-game__stat">
+                                    <span class="profile-game__stat-label">{{ row.board.label }}</span>
+                                    <strong class="profile-game__stat-value">{{ games_ui.stat(row.board, row.best) }}</strong>
+                                </div>
+                                <div class="profile-game__stat">
+                                    <span class="profile-game__stat-label">{{ 'site.profile.games.rank'|trans }}</span>
+                                    <strong class="profile-game__stat-value">{{ row.rank ? '#' ~ row.rank : '—' }}</strong>
+                                </div>
+                            {% endif %}
+                        </div>
+                        {% set game_owned = row.badges|filter(badge => badge.state == 'on')|length %}
+                        {% if row.badges is not empty %}
+                            <div class="profile-game__badges">
+                                <h3 class="profile-game__subtitle">{{ 'site.badges.game_title'|trans({ game: row.game.name, count: game_owned, total: row.badges|length }) }}</h3>
+                                <div class="profile__badges">
+                                    {% for badge in (me ? row.badges : row.badges|filter(badge => badge.state == 'on')) %}
+                                        {{ badges_ui.card(badge) }}
+                                    {% else %}
+                                        <p class="profile__hint">{{ 'site.badges.none'|trans }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </section>
+
+        <section class="profile__section" aria-labelledby="profile-history">
+            <h2 id="profile-history" class="profile__heading">{{ 'site.profile.history.title'|trans }}</h2>
+            {% if recent is empty %}
+                <p class="profile__empty">{{ 'site.profile.history.empty'|trans }}</p>
+            {% else %}
+                <div class="profile-table">
+                    <table class="profile-table__table">
+                        <thead>
+                            <tr class="profile-table__head">
+                                <th class="profile-table__cell">{{ 'site.profile.history.game'|trans }}</th>
+                                <th class="profile-table__cell">{{ 'site.profile.history.result'|trans }}</th>
+                                <th class="profile-table__cell">{{ 'site.profile.history.score'|trans }}</th>
+                                <th class="profile-table__cell">{{ 'site.profile.history.xp'|trans }}</th>
+                                <th class="profile-table__cell">{{ 'site.profile.history.when'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in recent %}
+                                <tr class="profile-table__row">
+                                    <td class="profile-table__cell profile-table__cell--game">{{ row.game.name }}</td>
+                                    <td class="profile-table__cell">
+                                        <span class="profile-table__result{{ row.won ? ' profile-table__result--won' }}">{{ 'site.profile.history.position'|trans({ position: row.position }) }}</span>
+                                    </td>
+                                    <td class="profile-table__cell profile-table__cell--score">{{ row.board ? games_ui.stat(row.board, row.score) : '—' }}</td>
+                                    <td class="profile-table__cell profile-table__cell--xp">+{{ row.points }}</td>
+                                    <td class="profile-table__cell profile-table__cell--when">{{ row.date|date('d/m/Y H:i') }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends '@site/pages/settings/layout.html.twig' %}
+
+{% import '@site/components/macros/form.html.twig' as form_ui %}
+
+{% set privacy = preferences.section('privacy') %}
+
+{% block settings %}
+    <form class="settings__form" method="post" action="{{ path('site_settings_privacy') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('settings') }}">
+
+        <section class="settings-card" aria-labelledby="settings-visibility">
+            <h2 id="settings-visibility" class="settings-card__title">{{ 'site.settings.privacy.visibility'|trans }}</h2>
+            <div class="settings-card__list">
+                {% for key in ['public', 'online', 'leaderboard'] %}
+                    {{ form_ui.switch(key, privacy[key], ('site.settings.privacy.' ~ key ~ '.title')|trans, ('site.settings.privacy.' ~ key ~ '.help')|trans) }}
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="settings-card" aria-labelledby="settings-who">
+            <h2 id="settings-who" class="settings-card__title">{{ 'site.settings.privacy.who'|trans }}</h2>
+            <div class="settings-card__list">
+                {% for key in ['invite', 'message', 'friend_request'] %}
+                    <label class="settings-select">
+                        <span class="settings-select__label">{{ ('site.settings.privacy.' ~ key)|trans }}</span>
+                        <select class="field__input settings-select__input" name="{{ key }}">
+                            {% for audience in audiences %}
+                                <option value="{{ audience }}"{{ privacy[key] == audience ? ' selected' }}>{{ ('site.settings.privacy.audiences.' ~ audience)|trans }}</option>
+                            {% endfor %}
+                        </select>
+                    </label>
+                {% endfor %}
+            </div>
+        </section>
+
+        <div class="settings__actions">
+            <button type="submit" class="settings-button settings-button--primary settings-button--large">{{ 'site.settings.save'|trans }}</button>
+        </div>
+    </form>
+{% endblock %}

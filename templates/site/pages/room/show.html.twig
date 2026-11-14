@@ -1,0 +1,140 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% set active = 'rooms' %}
+{% set link = url('site_room_short', { code: room.code }) %}
+{% set labels = {
+    host_suffix: 'site.room.lobby.host_suffix'|trans,
+    invite: 'site.room.lobby.invite'|trans,
+    voted: 'site.room.lobby.voted'|trans,
+    thinking: 'site.room.lobby.thinking'|trans,
+    away: 'site.room.lobby.away'|trans,
+    ready: 'site.room.lobby.ready'|trans,
+    spectator: 'site.room.lobby.spectator'|trans,
+    meta: 'site.room.lobby.meta'|trans,
+    group: 'site.room.lobby.group'|trans,
+    vote_title: 'site.room.lobby.vote_title'|trans,
+    vote_help: 'site.room.lobby.vote_help'|trans,
+    voted_count: 'site.room.lobby.voted_count'|trans,
+    done: 'site.room.lobby.done'|trans,
+    winner_badge: 'site.room.lobby.winner_badge'|trans,
+    vote_one: 'site.room.lobby.vote_one'|trans,
+    vote_many: 'site.room.lobby.vote_many'|trans,
+    vote: 'site.room.lobby.vote'|trans,
+    your_vote: 'site.room.lobby.your_vote'|trans,
+    launching: 'site.room.lobby.launching'|trans,
+    wins: 'site.room.lobby.wins'|trans,
+    tie: 'site.room.lobby.tie'|trans,
+    launch_in: 'site.room.lobby.launch_in'|trans,
+    waiting_title: 'site.room.lobby.waiting_title'|trans,
+    waiting: 'site.room.lobby.waiting'|trans({ min: 2 }),
+    no_games: 'site.room.lobby.no_games'|trans,
+    playing_title: 'site.room.lobby.playing_title'|trans,
+    playing: 'site.room.lobby.playing'|trans,
+    present: 'site.room.lobby.present'|trans,
+    you: 'site.game_page.you'|trans,
+    kicked: 'site.room.lobby.kicked'|trans,
+    rules_title: 'site.room.lobby.rules_title'|trans,
+    rules_host: 'site.room.lobby.rules_host'|trans,
+    rules_waiting: 'site.room.lobby.rules_waiting'|trans,
+    rules_left: 'site.room.lobby.rules_left'|trans,
+    rules_default_tag: 'site.room.lobby.rules_default_tag'|trans,
+    rules_chosen: 'site.room.lobby.rules_chosen'|trans,
+    configuring: 'site.room.lobby.configuring'|trans,
+} %}
+
+{% block title %}{{ room.name }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="room-lobby" data-component="RoomLobby"
+         data-url="{{ mercure(topic) }}"
+         data-ping="{{ path('site_room_ping', { code: room.code }) }}"
+         data-vote="{{ path('site_room_vote', { code: room.code }) }}"
+         data-launch="{{ path('site_room_launch', { code: room.code }) }}"
+         data-configure="{{ path('site_room_configure', { code: room.code }) }}"
+         data-message="{{ path('site_room_message', { code: room.code }) }}"
+         data-home="{{ path('site_room_index') }}"
+         data-match-url="{{ path('site_play_show', { code: '__code__' }) }}"
+         data-token="{{ csrf_token('room-' ~ room.code) }}"
+         data-player="{{ app_user().id }}"
+         data-labels="{{ labels|json_encode }}"
+         data-snapshot="{{ snapshot|json_encode }}"
+         data-messages="{{ messages|json_encode }}">
+
+        <section class="room-lobby__header">
+            <div class="room-lobby__intro">
+                <span class="room-lobby__kicker">{{ 'site.room.lobby.kicker'|trans({ visibility: room.visibility.translate(), host: room.host ? room.host.username : '—' }) }}</span>
+                <h1 class="room-lobby__title">{{ room.name }}</h1>
+                <span class="room-lobby__meta"></span>
+            </div>
+            <div class="room-lobby__tools">
+                <div class="room-lobby__code-box">
+                    <span class="room-lobby__code-label">{{ 'site.room.lobby.code'|trans }}</span>
+                    <strong class="room-lobby__code">{{ room.code }}</strong>
+                </div>
+                <button type="button" class="room-lobby__copy" data-component="CopyButton" data-text="{{ 'site.room.lobby.invitation'|trans({ name: room.name, link: link, code: room.code }) }}" data-done="{{ 'site.room.lobby.copied'|trans }}">{{ 'site.room.lobby.copy'|trans }}</button>
+                <form method="post" action="{{ path('site_room_leave', { code: room.code }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('room-' ~ room.code) }}">
+                    <button type="submit" class="room-lobby__leave">{{ 'site.room.lobby.leave'|trans }}</button>
+                </form>
+            </div>
+        </section>
+
+        <div class="room-lobby__body">
+            <div class="room-lobby__main">
+                <section class="room-lobby__section" aria-labelledby="room-group">
+                    <h2 id="room-group" class="room-lobby__heading room-lobby__group-title"></h2>
+                    <div class="room-lobby__slots"></div>
+                </section>
+
+                <section class="room-vote" aria-labelledby="room-vote-title">
+                    <div class="room-vote__head">
+                        <div class="room-vote__intro">
+                            <h2 id="room-vote-title" class="room-vote__title"></h2>
+                            <span class="room-vote__help"></span>
+                        </div>
+                        <div class="room-vote__status">
+                            <span class="room-vote__voted"></span>
+                            <span class="room-vote__clock"></span>
+                        </div>
+                    </div>
+                    <div class="room-vote__options" role="radiogroup" aria-labelledby="room-vote-title"></div>
+                    <a href="#" class="room-vote__watch" hidden>{{ 'site.room.lobby.watch'|trans }}</a>
+                    <div class="room-vote__winner" hidden>
+                        <span class="room-vote__winner-text">
+                            <strong class="room-vote__winner-name"></strong>
+                            <span class="room-vote__winner-note"></span>
+                        </span>
+                        <button type="button" class="room-vote__launch" hidden>{{ 'site.room.lobby.launch_now'|trans }}</button>
+                    </div>
+                    <div class="room-rules" hidden>
+                        <div class="room-rules__head">
+                            <strong class="room-rules__title"></strong>
+                            <span class="room-rules__clock"></span>
+                        </div>
+                        <p class="room-rules__help"></p>
+                        <div class="room-rules__fields"></div>
+                        <div class="room-rules__actions" hidden>
+                            <button type="button" class="btn btn--ghost room-rules__default">{{ 'site.room.lobby.rules_default'|trans }}</button>
+                            <button type="button" class="btn btn--primary room-rules__apply">{{ 'site.room.lobby.rules_apply'|trans }}</button>
+                        </div>
+                    </div>
+                    <span class="room-vote__rules">{{ 'site.room.lobby.rules'|trans }}</span>
+                </section>
+            </div>
+
+            <aside class="room-chat" aria-labelledby="room-chat-title">
+                <div class="room-chat__head">
+                    <h2 id="room-chat-title" class="room-chat__title">{{ 'site.room.lobby.chat'|trans }}</h2>
+                    <span class="room-chat__present"></span>
+                </div>
+                <div class="room-chat__messages" aria-live="polite"></div>
+                <form class="room-chat__form">
+                    <input class="room-chat__input" name="text" maxlength="500" autocomplete="off" aria-label="{{ 'site.room.lobby.message_label'|trans }}" placeholder="{{ 'site.room.lobby.message'|trans }}">
+                    <button type="submit" class="room-chat__send" aria-label="{{ 'site.room.lobby.send'|trans }}">
+                        <svg class="room-chat__send-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 12l16-8-6 16-3-7-7-1z"/></svg>
+                    </button>
+                </form>
+            </aside>
+        </div>
+    </div>
+{% endblock %}

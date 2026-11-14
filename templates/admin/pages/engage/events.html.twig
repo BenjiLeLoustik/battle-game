@@ -1,0 +1,50 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_events' %}
+
+{% block title %}{{ 'admin.engage.events.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.events.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.events.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_engage_event_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.engage.events.new'|trans({}, 'admin') }}</a>
+        </div>
+        <section class="admin-panel admin-panel--flush">
+            {% if events is empty %}
+                <p class="admin-empty">{{ 'admin.engage.events.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(events, 'page', 10) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['name', 'game', 'boost', 'period', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.engage.events.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for event in pager.items %}
+                                {% set state = not event.active ? 'off' : (event.startsAt > now ? 'scheduled' : (event.endsAt <= now ? 'ended' : 'live')) %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><span class="engage-admin-name"><span class="engage-admin-dot" style="background: {{ event.color }}"></span>{{ event.name }}</span></td>
+                                    <td class="admin-table__cell">{{ event.game ? event.game.name : 'admin.engage.events.all_games'|trans({}, 'admin') }}</td>
+                                    <td class="admin-table__cell">XP ×{{ event.xpMultiplier }} · {{ 'admin.engage.events.coins_short'|trans({}, 'admin') }} ×{{ event.coinsMultiplier }}</td>
+                                    <td class="admin-table__cell">{{ event.startsAt|date('d/m H:i') }} → {{ event.endsAt|date('d/m H:i') }}</td>
+                                    <td class="admin-table__cell"><span class="admin-pill{{ { live: ' admin-pill--ok', scheduled: ' admin-pill--warn', ended: '', off: '' }[state] }}">{{ ('admin.engage.events.states.' ~ state)|trans({}, 'admin') }}</span></td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_engage_event_edit', { id: event.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_engage_event_delete', { id: event.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-engage', 'admin.engage.delete_confirm'|trans({ name: event.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

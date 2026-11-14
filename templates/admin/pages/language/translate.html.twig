@@ -1,0 +1,143 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'languages' %}
+{% set name = locale|language_name %}
+{% set is_reference = locale == reference %}
+{% set heading = (is_reference ? 'admin.languages.reference_title' : 'admin.languages.translation')|trans({ name: name }, 'admin') %}
+
+{% block title %}{{ heading }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <nav class="admin-crumbs" aria-label="{{ 'admin.breadcrumb'|trans({}, 'admin') }}">
+            <a href="{{ path('admin_language_index') }}" class="admin-crumbs__link">{{ 'admin.languages.title'|trans({}, 'admin') }}</a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ name }}</span>
+        </nav>
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ heading }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.languages.lock_info'|trans({}, 'admin') }}</span>
+            </div>
+            {{ admin_ui.post('admin_language_unlock', { locale: locale }, 'admin.languages.finish'|trans({}, 'admin'), 'admin-btn admin-btn--secondary', 'admin-languages') }}
+        </div>
+
+        <nav class="admin-tabs" aria-label="{{ 'admin.languages.domains'|trans({}, 'admin') }}">
+            {% for item in domains %}
+                <a href="{{ path('admin_language_translate', { locale: locale, domain: item.name }) }}" class="admin-tabs__tab{{ item.name == domain ? ' admin-tabs__tab--active' }}">{{ item.name }} · {{ item.left }}</a>
+            {% endfor %}
+        </nav>
+
+        {% if key %}
+            <form class="admin-panel" method="post" action="{{ path('admin_language_translate', { locale: locale, domain: domain, skip: skip }) }}" data-component="TranslateShortcuts">
+                <input type="hidden" name="_token" value="{{ csrf_token('admin-languages') }}">
+                <input type="hidden" name="key" value="{{ key }}">
+                {% if editing %}
+                    <input type="hidden" name="edited" value="1">
+                {% endif %}
+                <div class="admin-panel__bar">
+                    <span class="admin-table__cell--mono">{{ domain }} · {{ key }}</span>
+                    <span class="admin-page__subtitle"{{ is_reference ? ' hidden' }}>{{ 'admin.languages.left'|trans({ left: left, total: total }, 'admin') }}</span>
+                </div>
+                <div class="{{ is_reference ? 'admin-field' : 'admin-form-grid' }}">
+                    {% if not is_reference %}
+                        <div class="admin-field">
+                            <span class="admin-panel__help">{{ 'admin.languages.source'|trans({}, 'admin') }}</span>
+                            <div class="translate-source">
+                                <p class="translate-source__text">{{ source }}</p>
+                                <button type="button" class="translate-source__copy" data-component="CopyButton" data-text="{{ source }}" aria-label="{{ 'admin.languages.copy_source'|trans({}, 'admin') }}" title="{{ 'admin.languages.copy_source'|trans({}, 'admin') }}">
+                                    <svg class="translate-source__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 0 1 2-2h9"/></svg>
+                                    <svg class="translate-source__icon translate-source__icon--done" viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 5 5 9-10"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                    {% endif %}
+                    <label class="admin-field">
+                        {{ name|upper }}
+                        <textarea class="admin-field__input admin-field__input--area" name="value" rows="3" required autofocus>{{ value }}</textarea>
+                    </label>
+                </div>
+                <span class="admin-panel__help">{{ 'admin.languages.shortcuts'|trans({}, 'admin') }}</span>
+                <div class="admin-actions admin-actions--end">
+                    {% if editing %}
+                        <a href="{{ path('admin_language_translate', { locale: locale, domain: domain, skip: skip }) }}#entries" class="admin-btn admin-btn--ghost" data-skip>{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+                        <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+                    {% else %}
+                        <a href="{{ path('admin_language_translate', { locale: locale, domain: domain, skip: skip + 1 }) }}" class="admin-btn admin-btn--ghost" data-skip>{{ 'admin.languages.skip'|trans({}, 'admin') }}</a>
+                        <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.languages.save_next'|trans({}, 'admin') }}</button>
+                    {% endif %}
+                </div>
+            </form>
+        {% elseif not is_reference %}
+            <section class="admin-panel">
+                <h2 class="admin-panel__title">{{ 'admin.languages.done'|trans({}, 'admin') }}</h2>
+                <p class="admin-panel__help">{{ (skip > 0 ? 'admin.languages.done_skipped' : 'admin.languages.done_help')|trans({ count: skip }, 'admin') }}</p>
+                {% if skip > 0 %}
+                    <a href="{{ path('admin_language_translate', { locale: locale, domain: domain }) }}" class="admin-btn admin-btn--secondary">{{ 'admin.languages.review'|trans({}, 'admin') }}</a>
+                {% endif %}
+            </section>
+        {% endif %}
+        {% if not key or is_reference %}
+            {% if entries is not empty %}
+                <section id="entries" class="admin-panel admin-panel--flush" aria-labelledby="entries-title">
+                    <div class="admin-panel__bar translate-entries__bar">
+                        <div class="admin-panel__intro">
+                            <h2 id="entries-title" class="admin-panel__title">{{ (is_reference ? 'admin.languages.entries.reference_title' : 'admin.languages.entries.title')|trans({ count: entries|length }, 'admin') }}</h2>
+                            <span class="admin-panel__help">{{ (is_reference ? 'admin.languages.entries.reference_help' : 'admin.languages.entries.help')|trans({}, 'admin') }}</span>
+                        </div>
+                        <label class="admin-search">
+                            <svg class="admin-search__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                            <input class="admin-search__input" type="search" data-component="ListFilter" data-target="#entries-list" data-empty="#entries-empty" aria-label="{{ 'admin.languages.entries.search'|trans({}, 'admin') }}" placeholder="{{ 'admin.languages.entries.search'|trans({}, 'admin') }}">
+                        </label>
+                    </div>
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                                <tr>
+                                    <th class="admin-table__th">{{ 'admin.languages.entries.key'|trans({}, 'admin') }}</th>
+                                    {% if not is_reference %}
+                                        <th class="admin-table__th">{{ 'admin.languages.source'|trans({}, 'admin') }}</th>
+                                    {% endif %}
+                                    <th class="admin-table__th">{{ name }}</th>
+                                    <th class="admin-table__th"><span class="sr-only">{{ 'admin.edit'|trans({}, 'admin') }}</span></th>
+                                </tr>
+                            </thead>
+                            <tbody id="entries-list">
+                                {% for entry in entries %}
+                                    <tr class="admin-table__row">
+                                        <td class="admin-table__cell admin-table__cell--mono translate-entries__key">
+                                            {{ entry.key }}
+                                            {% if entry.modified %}
+                                                <span class="admin-pill admin-pill--warn translate-entries__flag">{{ 'admin.languages.entries.modified'|trans({}, 'admin') }}</span>
+                                            {% endif %}
+                                        </td>
+                                        {% if not is_reference %}
+                                            <td class="admin-table__cell translate-entries__text">{{ entry.source }}</td>
+                                        {% endif %}
+                                        <td class="admin-table__cell translate-entries__text">{{ entry.value }}</td>
+                                        <td class="admin-table__cell translate-entries__action">
+                                            <div class="translate-entries__buttons">
+                                                {% if entry.modified %}
+                                                    <form method="post" action="{{ path('admin_language_revert', { locale: locale }) }}" data-component="ConfirmSubmit" data-message="{{ 'admin.languages.entries.revert_confirm'|trans({}, 'admin') }}">
+                                                        <input type="hidden" name="_token" value="{{ csrf_token('admin-languages') }}">
+                                                        <input type="hidden" name="domain" value="{{ domain }}">
+                                                        <input type="hidden" name="key" value="{{ entry.key }}">
+                                                        <button type="submit" class="admin-btn admin-btn--ghost admin-btn--small" title="{{ 'admin.languages.entries.revert_help'|trans({}, 'admin') }}">{{ 'admin.languages.entries.revert'|trans({}, 'admin') }}</button>
+                                                    </form>
+                                                {% endif %}
+                                                <a href="{{ path('admin_language_translate', { locale: locale, domain: domain, skip: skip, edit: entry.key }) }}" class="admin-btn admin-btn--ghost admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <p id="entries-empty" class="admin-panel__help translate-entries__empty" hidden>{{ 'admin.languages.entries.empty'|trans({}, 'admin') }}</p>
+                </section>
+            {% endif %}
+        {% endif %}
+    </div>
+{% endblock %}

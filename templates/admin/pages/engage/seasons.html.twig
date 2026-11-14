@@ -1,0 +1,117 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'engage_seasons' %}
+
+{% block title %}{{ 'admin.engage.seasons.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.engage.seasons.title'|trans({}, 'admin') }}</h1>
+                <span class="admin-page__subtitle">{{ 'admin.engage.seasons.subtitle'|trans({}, 'admin') }}</span>
+            </div>
+            <a href="{{ path('admin_engage_season_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.engage.seasons.new'|trans({}, 'admin') }}</a>
+        </div>
+
+        <div class="season-board">
+            {% if current %}
+                {% set total = current.endsAt|date('U') - current.startsAt|date('U') %}
+                {% set elapsed = min(100, max(0, ((now - current.startsAt|date('U')) / max(1, total) * 100)|round)) %}
+                <section class="season-hero">
+                    <div class="season-hero__top">
+                        <div class="season-hero__title">
+                            <span class="season-badge season-badge--live"><span class="season-badge__dot"></span>{{ 'admin.engage.seasons.states.live'|trans({}, 'admin') }}</span>
+                            <h2 class="season-hero__name">{{ current.name }}</h2>
+                            <span class="season-hero__dates">{{ current.startsAt|date('d/m/Y H:i') }} → {{ current.endsAt|date('d/m/Y H:i') }}</span>
+                        </div>
+                        <a href="{{ path('admin_engage_season_edit', { id: current.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                    </div>
+                    <div class="season-hero__progress">
+                        <div class="season-hero__bar"><span style="width: {{ elapsed }}%"></span></div>
+                        <div class="season-hero__legend">
+                            <span>{{ 'admin.engage.seasons.elapsed'|trans({ percent: elapsed }, 'admin') }}</span>
+                            <strong>{{ 'admin.engage.seasons.days_left'|trans({ count: current.daysLeft }, 'admin') }}</strong>
+                        </div>
+                    </div>
+                    <div class="season-hero__stats">
+                        <div class="season-stat">
+                            <span class="season-stat__label">{{ 'admin.engage.seasons.pass'|trans({}, 'admin') }}</span>
+                            {% if current.pass %}
+                                <a class="season-stat__value admin-link" href="{{ path('admin_engage_pass_edit', { id: current.pass.id }) }}">{{ current.pass.name }}</a>
+                                <span class="season-stat__hint">{{ 'admin.engage.passes.tiers_count'|trans({ count: current.pass.tiers|length }, 'admin') }}</span>
+                            {% else %}
+                                <span class="season-stat__value season-stat__value--warn">{{ 'admin.engage.seasons.no_pass'|trans({}, 'admin') }}</span>
+                                <a class="season-stat__hint admin-link" href="{{ path('admin_engage_season_edit', { id: current.id }) }}">{{ 'admin.engage.seasons.link_pass'|trans({}, 'admin') }}</a>
+                            {% endif %}
+                        </div>
+                        <div class="season-stat">
+                            <span class="season-stat__label">{{ 'admin.engage.seasons.players'|trans({}, 'admin') }}</span>
+                            <span class="season-stat__value">{{ current_players }}</span>
+                            <span class="season-stat__hint">{{ 'admin.engage.seasons.players_hint'|trans({}, 'admin') }}</span>
+                        </div>
+                        <div class="season-stat">
+                            <span class="season-stat__label">{{ 'admin.engage.seasons.next'|trans({}, 'admin') }}</span>
+                            {% if next %}
+                                <a class="season-stat__value admin-link" href="{{ path('admin_engage_season_edit', { id: next.id }) }}">{{ next.name }}</a>
+                                <span class="season-stat__hint">{{ 'admin.engage.seasons.starts_on'|trans({ date: next.startsAt|date('d/m/Y') }, 'admin') }}</span>
+                            {% else %}
+                                <span class="season-stat__value season-stat__value--warn">{{ 'admin.engage.seasons.no_next'|trans({}, 'admin') }}</span>
+                                <a class="season-stat__hint admin-link" href="{{ path('admin_engage_season_new') }}">{{ 'admin.engage.seasons.plan_next'|trans({}, 'admin') }}</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </section>
+            {% else %}
+                <section class="season-hero season-hero--empty">
+                    <span class="season-badge">{{ 'admin.engage.seasons.none'|trans({}, 'admin') }}</span>
+                    <p class="season-hero__dates">{{ 'admin.engage.seasons.none_live'|trans({}, 'admin') }}</p>
+                    <a href="{{ path('admin_engage_season_new') }}" class="admin-btn admin-btn--primary">+ {{ 'admin.engage.seasons.new'|trans({}, 'admin') }}</a>
+                </section>
+            {% endif %}
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            {% if seasons is empty %}
+                <p class="admin-empty">{{ 'admin.engage.seasons.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                {% set pager = paginate(seasons, 'page', 15) %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead><tr>{% for column in ['name', 'period', 'progress', 'pass', 'players', 'status', 'actions'] %}<th class="admin-table__th">{{ ('admin.engage.seasons.column.' ~ column)|trans({}, 'admin') }}</th>{% endfor %}</tr></thead>
+                        <tbody>
+                            {% for item in pager.items %}
+                                {% set season = item.season %}
+                                {% set state = season.state %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell"><strong>{{ season.name }}</strong>{% if current and current.id == season.id %} <span class="season-badge season-badge--live season-badge--sm"><span class="season-badge__dot"></span></span>{% endif %}</td>
+                                    <td class="admin-table__cell"><span class="season-period">{{ season.startsAt|date('d/m/Y') }} <span aria-hidden="true">→</span> {{ season.endsAt|date('d/m/Y') }}</span></td>
+                                    {% set span = season.endsAt|date('U') - season.startsAt|date('U') %}
+                                    {% set done = state == 'finished' ? 100 : (state == 'upcoming' ? 0 : min(100, ((now - season.startsAt|date('U')) / max(1, span) * 100)|round)) %}
+                                    <td class="admin-table__cell"><span class="season-mini"><span class="season-mini__bar"><span style="width: {{ done }}%"></span></span>{{ done }} %</span></td>
+                                    <td class="admin-table__cell">
+                                        {% if season.pass %}<a class="admin-link" href="{{ path('admin_engage_pass_edit', { id: season.pass.id }) }}">{{ season.pass.name }}</a>{% else %}<span class="admin-user__meta">—</span>{% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">{{ item.players }}</td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-pill{{ state == 'live' ? ' admin-pill--ok' : (state == 'upcoming' ? ' admin-pill--warn' : '') }}">{{ ('admin.engage.seasons.states.' ~ state)|trans({}, 'admin') }}</span>
+                                        {% if season.rewardedAt %} <span class="admin-pill admin-pill--accent">{{ 'admin.engage.seasons.rewarded'|trans({}, 'admin') }}</span>{% endif %}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_engage_season_edit', { id: season.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">{{ 'admin.edit'|trans({}, 'admin') }}</a>
+                                            {{ admin_ui.post('admin_engage_season_delete', { id: season.id }, 'admin.delete'|trans({}, 'admin'), 'admin-btn admin-btn--danger admin-btn--small', 'admin-engage', 'admin.engage.seasons.delete_confirm'|trans({ name: season.name }, 'admin')) }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {{ admin_ui.pagination(pager) }}
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

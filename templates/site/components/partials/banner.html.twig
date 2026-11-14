@@ -1,0 +1,38 @@
+{% set announcements = maintenance_banner() %}
+{% set banners = site_banners(app.currentRoute) %}
+{% set dismissible = banners|filter(banner => not banner.dismissible) is empty %}
+
+<section class="site-banner{{ announcements is empty and banners is empty ? ' site-banner--hidden' }}" aria-label="{{ 'site.banner.label'|trans }}" aria-live="polite" data-component="LiveBanner" data-url="{{ mercure('banner') }}" data-cta="{{ 'site.banner.cta'|trans }}">
+    <span class="site-banner__tag">
+        <span class="site-banner__pulse"></span>
+        {{ 'site.banner.live'|trans }}
+    </span>
+    <div class="site-banner__list">
+        <div class="site-banner__track" data-track>
+            {% for item in announcements %}
+                <span class="site-banner__item">
+                    <span class="site-banner__dot site-banner__dot--maintenance{{ item.running ? ' site-banner__dot--running' }}"></span>
+                    <strong class="site-banner__title">{{ item.title }}</strong>
+                    <span class="site-banner__meta">{{ item.meta }}</span>
+                    {% if item.url %}
+                        <a href="{{ item.url }}" class="site-banner__link">{{ 'site.banner.details'|trans }} →</a>
+                    {% endif %}
+                </span>
+            {% endfor %}
+            {% for banner in banners %}
+                <span class="site-banner__item">
+                    <span class="site-banner__dot site-banner__dot--{{ banner.type.value }}"></span>
+                    <strong class="site-banner__title">{{ banner|localize('text') }}</strong>
+                    {% if banner.url %}
+                        <a href="{{ banner.url }}" class="site-banner__link">{{ banner|localize('cta') ?: 'site.banner.cta'|trans }} →</a>
+                    {% endif %}
+                </span>
+            {% endfor %}
+        </div>
+    </div>
+    {% if dismissible %}
+        <button type="button" class="site-banner__close" aria-label="{{ 'site.banner.close'|trans }}">
+            <svg class="site-banner__close-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+    {% endif %}
+</section>

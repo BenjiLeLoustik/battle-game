@@ -1,0 +1,128 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% set active = 'rooms' %}
+{% set user = app_user() %}
+
+{% block title %}{{ 'site.room.title'|trans }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="room-list">
+        <div class="room-list__head">
+            <div class="room-list__intro">
+                <h1 class="room-list__title">{{ 'site.room.title'|trans }}</h1>
+                <span class="room-list__text">{{ 'site.room.intro'|trans }}</span>
+            </div>
+            <a href="{{ path('site_room_new') }}" class="room-list__new">
+                <svg class="room-list__new-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+                {{ 'site.room.new'|trans }}
+            </a>
+        </div>
+
+        {% if user %}
+            <section class="room-list__section" aria-labelledby="rooms-mine">
+                <h2 id="rooms-mine" class="room-list__heading">{{ 'site.room.mine'|trans }}</h2>
+                {% if mine is empty %}
+                    <p class="room-list__empty">{{ 'site.room.mine_empty'|trans }}</p>
+                {% else %}
+                    <div class="room-list__cards">
+                        {% for item in mine %}
+                            {% set room = item.room %}
+                            {% set host = room.host and room.host.id == user.id %}
+                            <article class="room-card{{ host ? ' room-card--host' }}">
+                                <div class="room-card__top">
+                                    <span class="room-card__identity">
+                                        <span class="room-card__name-row">
+                                            <strong class="room-card__name">{{ room.name }}</strong>
+                                            <span class="room-card__chip room-card__chip--{{ room.visibility.value }}">{{ ('site.room.chip.' ~ room.visibility.value)|trans }}</span>
+                                        </span>
+                                        <span class="room-card__members">{{ item.names is empty ? 'site.room.empty_room'|trans : item.names|slice(0, 3)|join(', ') ~ (item.names|length > 3 ? ' +' ~ (item.names|length - 3)) }}</span>
+                                    </span>
+                                    <span class="room-state room-state--{{ room.status.value }}">{{ room.status.translate() }}</span>
+                                </div>
+                                <div class="room-card__line">
+                                    <span>{{ 'site.room.code'|trans }} <strong class="room-card__code">{{ room.code }}</strong></span>
+                                    <span>{{ 'site.room.count'|trans({ count: item.present, max: room.maxPlayers }) }}</span>
+                                </div>
+                                <span class="room-card__meta">
+                                    {{ host ? 'site.room.you_host'|trans : 'site.room.host_of'|trans({ name: room.host ? room.host.username : '—' }) }}
+                                    {%- if room.permanent %} · {{ 'site.room.permanent'|trans }}{% endif %}
+                                    {%- if item.game %} · {{ 'site.room.playing_game'|trans({ game: item.game.name }) }}{% endif %}
+                                </span>
+                                <div class="room-card__actions">
+                                    <a href="{{ path('site_room_show', { code: room.code }) }}" class="room-card__open">{{ 'site.room.open'|trans }}</a>
+                                    <button type="button" class="room-card__copy" data-component="CopyButton" data-text="{{ url('site_room_short', { code: room.code }) }}" data-done="{{ 'site.room.copied'|trans }}" aria-label="{{ 'site.room.copy_link'|trans }}" title="{{ 'site.room.copy_link'|trans }}">
+                                        <svg class="room-card__copy-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 9h11v11H9zM5 15H4V4h11v1"/></svg>
+                                    </button>
+                                </div>
+                            </article>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </section>
+        {% endif %}
+
+        <section class="room-list__section" aria-labelledby="rooms-public" data-component="RoomFilter">
+            <div class="room-list__bar">
+                <div class="room-list__intro">
+                    <h2 id="rooms-public" class="room-list__heading">
+                        {{ 'site.room.public'|trans }}
+                        <span class="room-list__count">{{ 'site.room.public_count'|trans({ count: public|length }) }}</span>
+                    </h2>
+                    <span class="room-list__legend">
+                        <span class="room-list__swatch" aria-hidden="true"></span>
+                        {{ 'site.room.legend_open'|trans }}
+                    </span>
+                </div>
+                <div class="room-list__filters">
+                    <label class="room-list__search">
+                        <svg class="room-list__search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-5-5"/></svg>
+                        <input type="search" class="room-list__search-input" data-filter="search" aria-label="{{ 'site.room.filter_label'|trans }}" placeholder="{{ 'site.room.filter'|trans }}">
+                    </label>
+                    <label class="field__check">
+                        <input type="checkbox" class="field__checkbox" data-filter="free" checked>
+                        <span class="field__check-label">{{ 'site.room.free'|trans }}</span>
+                    </label>
+                </div>
+            </div>
+            {% if public is empty %}
+                <p class="room-list__empty">{{ 'site.room.public_empty'|trans }}</p>
+            {% else %}
+                <div class="room-table">
+                    <table class="room-table__table">
+                        <thead>
+                            <tr class="room-table__head">
+                                <th class="room-table__cell room-table__cell--access"><span class="room-table__sr">{{ 'site.room.access'|trans }}</span></th>
+                                <th class="room-table__cell">{{ 'site.room.room'|trans }}</th>
+                                <th class="room-table__cell">{{ 'site.room.host'|trans }}</th>
+                                <th class="room-table__cell">{{ 'site.room.status'|trans }}</th>
+                                <th class="room-table__cell">{{ 'site.room.players'|trans }}</th>
+                                <th class="room-table__cell">{{ 'site.room.action'|trans }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in public %}
+                                {% set room = item.room %}
+                                {% set full = item.present >= room.maxPlayers %}
+                                {% set watching = room.status.value == 'playing' or full %}
+                                <tr class="room-table__row" data-search="{{ (room.name ~ ' ' ~ (room.host ? room.host.username))|lower }}" data-full="{{ full ? 1 : 0 }}">
+                                    <td class="room-table__cell room-table__cell--access">
+                                        <span class="room-table__access" title="{{ 'site.room.legend_open'|trans }}">
+                                            <svg class="room-table__access-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 9.9-1M5 11h14v10H5z"/></svg>
+                                        </span>
+                                    </td>
+                                    <td class="room-table__cell room-table__cell--name">{{ room.name }}</td>
+                                    <td class="room-table__cell room-table__cell--host">{{ room.host ? room.host.username : '—' }}</td>
+                                    <td class="room-table__cell"><span class="room-state room-state--{{ room.status.value }}">{{ room.status.translate() }}</span></td>
+                                    <td class="room-table__cell room-table__cell--count">{{ item.present }}/{{ room.maxPlayers }}</td>
+                                    <td class="room-table__cell">
+                                        <a href="{{ path('site_room_show', { code: room.code }) }}" class="room-table__action">{{ (watching ? 'site.room.watch' : 'site.room.enter')|trans }}</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}

@@ -1,0 +1,186 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'maintenance' %}
+
+{% macro target(maintenance, gameNames) %}
+    {% set value = maintenance.target.value %}
+    <span class="maintenance-pill maintenance-pill--{{ value }}">
+        {% if value == 'site' %}
+            {{ maintenance.target.translate() }}
+        {% elseif value == 'games' %}
+            {{ 'admin.maintenance.game_prefix'|trans({}, 'admin') }} · {{ maintenance.games|map(id => gameNames[id] ?? '?')|join(', ') }}
+        {% else %}
+            {{ 'admin.maintenance.feature_prefix'|trans({}, 'admin') }} · {{ maintenance.features|map(feature => enum('App\\Shared\\Maintenance\\Enum\\MaintenanceFeatureEnum').from(feature).translate())|join(', ') }}
+        {% endif %}
+    </span>
+{% endmacro %}
+
+{% block title %}{{ 'admin.maintenance.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">
+                    {{ 'admin.maintenance.title'|trans({}, 'admin') }}
+                </h1>
+                <span class="admin-page__subtitle">
+                    {{ 'admin.maintenance.subtitle'|trans({}, 'admin') }}
+                </span>
+            </div>
+            <a href="{{ path('admin_maintenance_new') }}" class="admin-btn admin-btn--primary">
+                + {{ 'admin.maintenance.new'|trans({}, 'admin') }}
+            </a>
+        </div>
+
+        <section class="maintenance-state" aria-label="{{ 'admin.maintenance.current'|trans({}, 'admin') }}">
+            <div class="maintenance-state__card">
+                <span class="maintenance-state__dot maintenance-state__dot--{{ site.running ? 'warning' : 'ok' }}" aria-hidden="true"></span>
+                <span class="maintenance-state__text">
+                    <strong>
+                        {{ (site.running ? 'admin.maintenance.site_down' : 'admin.maintenance.site_up')|trans({}, 'admin') }}
+                    </strong>
+                    <span class="maintenance-state__meta">
+                        {% if site.running %}
+                            {{ 'admin.maintenance.ends_at'|trans({ date: site.running.finishAt|date('d/m H:i') }, 'admin') }}
+                        {% elseif site.next %}
+                            {{ 'admin.maintenance.next_site'|trans({ date: site.next.startsAt|date('d/m H:i') }, 'admin') }}
+                        {% else %}
+                            {{ 'admin.maintenance.no_site'|trans({}, 'admin') }}
+                        {% endif %}
+                    </span>
+                </span>
+                {% if not site.running %}
+                    <a href="{{ path('admin_maintenance_new', { now: 1 }) }}" class="admin-btn admin-btn--warning admin-btn--small">
+                        {{ 'admin.maintenance.now'|trans({}, 'admin') }}
+                    </a>
+                {% endif %}
+            </div>
+            {% set downGames = gameMaintenances|reduce((carry, maintenance) => carry|merge(maintenance.games), [])|map(id => gameNames[id] ?? '?')|merge(studioGames|map(game => game.name))|reduce((carry, name) => name in carry ? carry : carry|merge([name]), []) %}
+            <div class="maintenance-state__card">
+                <span class="maintenance-state__dot maintenance-state__dot--{{ downGames ? 'warning' : 'ok' }}" aria-hidden="true"></span>
+                <span class="maintenance-state__text">
+                    <strong>
+                        {{ 'admin.maintenance.games_down'|trans({ count: downGames|length }, 'admin') }}
+                    </strong>
+                    <span class="maintenance-state__meta">
+                        {{ downGames ? downGames|join(', ') : 'admin.maintenance.games_up'|trans({}, 'admin') }}
+                    </span>
+                </span>
+            </div>
+            <div class="maintenance-state__card">
+                <span class="maintenance-state__dot maintenance-state__dot--{{ featureMaintenances ? 'warning' : 'ok' }}" aria-hidden="true"></span>
+                <span class="maintenance-state__text">
+                    <strong>
+                        {{ 'admin.maintenance.features'|trans({}, 'admin') }}
+                    </strong>
+                    <span class="maintenance-state__meta">
+                        {% if featureMaintenances %}
+                            {{ featureMaintenances|reduce((carry, maintenance) => carry|merge(maintenance.features), [])|map(feature => enum('App\\Shared\\Maintenance\\Enum\\MaintenanceFeatureEnum').from(feature).translate())|join(', ') }}
+                        {% else %}
+                            {{ 'admin.maintenance.features_up'|trans({}, 'admin') }}
+                        {% endif %}
+                    </span>
+                </span>
+            </div>
+        </section>
+
+        <section class="admin-panel admin-panel--flush" aria-labelledby="maintenance-list">
+            <div class="admin-panel__bar">
+                <h2 id="maintenance-list" class="admin-panel__title">
+                    {{ 'admin.maintenance.list'|trans({}, 'admin') }}
+                </h2>
+                <nav class="admin-segment" aria-label="{{ 'admin.maintenance.filter'|trans({}, 'admin') }}">
+                    {% for key, count in counts %}
+                        <a href="{{ path('admin_maintenance_index', { tab: key }) }}" class="admin-segment__item{{ key == tab ? ' admin-segment__item--active' }}"{% if key == tab %} aria-current="page"{% endif %}>
+                            {{ ('admin.maintenance.tab.' ~ key)|trans({ count: count }, 'admin') }}
+                        </a>
+                    {% endfor %}
+                </nav>
+            </div>
+            {% if maintenances %}
+                <div class="maintenance-table">
+                    {% set pager = paginate(maintenances) %}
+                    <div class="admin-table-wrap">
+                        <table class="admin-table">
+                            <thead>
+                            <tr>
+                                {% for column in ['name', 'target', 'period', 'notice', 'status', 'actions'] %}
+                                    <th class="admin-table__th">
+                                        {{ ('admin.maintenance.column.' ~ column)|trans({}, 'admin') }}
+                                    </th>
+                                {% endfor %}
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for maintenance in pager.items %}
+                                {% set status = maintenance.status.value %}
+                                <tr class="admin-table__row">
+                                    <td class="admin-table__cell">
+                                        <span class="maintenance-table__name">
+                                            <strong>
+                                                {{ maintenance.title }}
+                                            </strong>
+                                            {% if maintenance.author %}
+                                                <span class="maintenance-table__meta">
+                                                    {{ 'admin.maintenance.by'|trans({ name: maintenance.author.username }, 'admin') }}
+                                                </span>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        {{ _self.target(maintenance, gameNames) }}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        {{ maintenance.startsAt|date('d/m H:i') }} → {{ maintenance.finishAt|date('d/m H:i') }}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        {{ ('admin.maintenance.notice.' ~ maintenance.notice)|trans({}, 'admin') }}
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <span class="maintenance-status maintenance-status--{{ status }}">
+                                            {{ maintenance.status.translate() }}
+                                        </span>
+                                    </td>
+                                    <td class="admin-table__cell">
+                                        <span class="maintenance-table__actions">
+                                            {% if status in ['planned', 'running'] %}
+                                                <a href="{{ path('admin_maintenance_edit', { id: maintenance.id }) }}" class="admin-btn admin-btn--secondary admin-btn--small">
+                                                    {{ 'admin.maintenance.edit'|trans({}, 'admin') }}
+                                                </a>
+                                            {% endif %}
+                                            {% if status == 'running' %}
+                                                <form method="post" action="{{ path('admin_maintenance_end', { id: maintenance.id }) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('maintenance') }}">
+                                                    <button type="submit" class="admin-btn admin-btn--warning admin-btn--small">
+                                                        {{ 'admin.maintenance.end'|trans({}, 'admin') }}
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                            {% if status == 'planned' %}
+                                                <form method="post" action="{{ path('admin_maintenance_cancel', { id: maintenance.id }) }}">
+                                                    <input type="hidden" name="_token" value="{{ csrf_token('maintenance') }}">
+                                                    <button type="submit" class="admin-btn admin-btn--danger admin-btn--small">
+                                                        {{ 'admin.maintenance.cancel'|trans({}, 'admin') }}
+                                                    </button>
+                                                </form>
+                                            {% endif %}
+                                        </span>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    {{ admin_ui.pagination(pager) }}
+                </div>
+            {% else %}
+                <p class="studio-list__empty">
+                    {{ 'admin.maintenance.empty'|trans({}, 'admin') }}
+                </p>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}
