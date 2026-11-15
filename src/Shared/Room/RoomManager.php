@@ -58,11 +58,25 @@ class RoomManager
 
     public function create(Room $room, User $host): Room
     {
-        $this->lives->assert($host);
-        $room->setCode($this->code())->setHost($host);
+        $official = $room->isOfficial();
+
+        if (!$official) {
+            $this->lives->assert($host);
+        }
+
+        $room->setCode($this->code())
+            ->setHost($official ? null : $host)
+            ->setPermanent($room->isPermanent() || $official);
+
         $this->rooms->save($room, true);
-        $this->members->save($this->member($room, $host, false), true);
-        $this->system($room, 'site.room.system.created', ['name' => $host->getUsername()]);
+
+        if (!$official) {
+            $this->members->save($this->member($room, $host, false), true);
+        }
+
+        $this->system($room, 'site.room.system.created', [
+            'name' => $official ? 'BattleGame' : $host->getUsername(),
+        ]);
 
         return $room;
     }
@@ -159,7 +173,7 @@ class RoomManager
         $this->members->delete($member, true);
         $remaining = $this->members->findByRoom($room);
 
-        if ($remaining === [] && !$room->isPermanent()) {
+        if ($remaining === [] && !$room->isPermanent() && !$room->isOfficial()) {
             $this->rooms->delete($room, true);
 
             return;
@@ -286,6 +300,7 @@ class RoomManager
             'match' => $room->getStatus() === RoomStatusEnum::PLAYING ? $room->getMatchCode() : null,
             'presence' => RoomMember::PRESENCE_WINDOW,
             'serverTime' => $this->now(),
+            'official' => $room->isOfficial(),
         ];
     }
 

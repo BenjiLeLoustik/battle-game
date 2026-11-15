@@ -17,7 +17,7 @@
         <section class="admin-panel admin-user-head">
             <div class="admin-user-head__text">
                 <h1 class="admin-user-head__name">{{ room.name }} <span class="admin-pill admin-pill--ok">{{ room.status.translate() }}</span></h1>
-                <span class="admin-page__subtitle">{{ room.code }} · {{ room.visibility.translate() }} · {{ 'admin.rooms.host'|trans({ name: room.host ? room.host.username : '—' }, 'admin') }} · {{ 'admin.rooms.opened'|trans({ date: room.createdAt|date('d/m H:i') }, 'admin') }}</span>
+                <span class="admin-page__subtitle">{{ room.code }} · {{ room.visibility.translate() }} · {{ 'admin.rooms.host'|trans({ name: room.isOfficial ? 'BattleGame' : (room.host ? room.host.username : '-') }, 'admin') }} · {{ 'admin.rooms.opened'|trans({ date: room.createdAt|date('d/m H:i') }, 'admin') }}</span>
             </div>
             <div class="admin-actions">
                 {% if game %}

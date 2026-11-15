@@ -234,7 +234,7 @@ export default function RoomLobby(element, data) {
         .map((setting) => `${setting.label} : ${room.round.settings?.[setting.name] ?? setting.default}${setting.suffix}`)
         .join(' · ');
 
-    const hostName = () => room.members.find((member) => member.id === room.host)?.username ?? '';
+    const hostName = () => room.official ? 'BattleGame' : room.members.find((member) => member.id === room.host)?.username ?? '';
 
     const chip = (setting, value) => {
         const button = node('button', 'room-rules__chip' + (choices[setting.name] === value ? ' room-rules__chip--active' : ''), `${value}${setting.suffix}`);

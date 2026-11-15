@@ -47,7 +47,7 @@
                                 <tr class="admin-table__row">
                                     <td class="admin-table__cell admin-table__cell--mono">{{ room.code }}</td>
                                     <td class="admin-table__cell">{{ room.name }}{% if room.official %} <span class="admin-pill admin-pill--accent">{{ 'admin.rooms.official'|trans({}, 'admin') }}</span>{% endif %}</td>
-                                    <td class="admin-table__cell">{{ room.host ? room.host.username : '—' }}</td>
+                                    <td class="admin-table__cell">{{ room.official ? 'BattleGame' : (room.host ? room.host.username : '-') }}</td>
                                     <td class="admin-table__cell">{{ room.visibility.translate() }}</td>
                                     <td class="admin-table__cell"><span class="admin-pill{{ room.status.value == 'playing' ? ' admin-pill--ok' : (room.status.value == 'waiting' ? '' : ' admin-pill--warn') }}">{{ room.status.translate() }}</span></td>
                                     <td class="admin-table__cell">{{ row.present }} / {{ room.maxPlayers }}</td>

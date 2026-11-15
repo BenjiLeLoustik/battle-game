@@ -44,7 +44,7 @@
                                     <span>{{ 'site.room.count'|trans({ count: item.present, max: room.maxPlayers }) }}</span>
                                 </div>
                                 <span class="room-card__meta">
-                                    {{ host ? 'site.room.you_host'|trans : 'site.room.host_of'|trans({ name: room.host ? room.host.username : '—' }) }}
+                                    {{ host ? 'site.room.you_host'|trans : 'site.room.host_of'|trans({ name: room.official ? 'BattleGame' : (room.host ? room.host.username : '-') }) }}
                                     {%- if room.permanent %} · {{ 'site.room.permanent'|trans }}{% endif %}
                                     {%- if item.game %} · {{ 'site.room.playing_game'|trans({ game: item.game.name }) }}{% endif %}
                                 </span>
@@ -111,7 +111,7 @@
                                         </span>
                                     </td>
                                     <td class="room-table__cell room-table__cell--name">{{ room.name }}</td>
-                                    <td class="room-table__cell room-table__cell--host">{{ room.host ? room.host.username : '—' }}</td>
+                                    <td class="room-table__cell room-table__cell--host">{{ room.official ? 'BattleGame' : (room.host ? room.host.username : '-') }}</td>
                                     <td class="room-table__cell"><span class="room-state room-state--{{ room.status.value }}">{{ room.status.translate() }}</span></td>
                                     <td class="room-table__cell room-table__cell--count">{{ item.present }}/{{ room.maxPlayers }}</td>
                                     <td class="room-table__cell">

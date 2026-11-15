@@ -119,7 +119,12 @@ class RoomController extends AbstractAdminController
         $errors = $request->getMethod() === 'POST' ? $data->errors() : [];
 
         if ($request->getMethod() === 'POST' && $errors === []) {
-            $data->applyTo($room)->setOfficial($request->request->get('official') !== null);
+            $official = $request->request->get('official') !== null;
+            $data->applyTo($room)->setOfficial($official);
+
+            if ($official) {
+                $room->setPermanent(true);
+            }
 
             if ($creating) {
                 $this->rooms->create($room, $this->getUser());

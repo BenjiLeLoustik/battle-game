@@ -62,7 +62,7 @@
 
         <section class="room-lobby__header">
             <div class="room-lobby__intro">
-                <span class="room-lobby__kicker">{{ 'site.room.lobby.kicker'|trans({ visibility: room.visibility.translate(), host: room.host ? room.host.username : '—' }) }}</span>
+                <span class="room-lobby__kicker">{{ 'site.room.lobby.kicker'|trans({ visibility: room.visibility.translate(), host: room.isOfficial ? 'BattleGame' : (room.host ? room.host.username : '-') }) }}</span>
                 <h1 class="room-lobby__title">{{ room.name }}</h1>
                 <span class="room-lobby__meta"></span>
             </div>
