@@ -2,6 +2,7 @@
 
 namespace App\Site\Profile;
 
+use App\Entity\Badge;
 use App\Entity\Game;
 use App\Entity\GameResult;
 use App\Entity\User;
@@ -43,8 +44,8 @@ class ProfileManager
             'won' => (int) $totals['won'],
             'rank' => $points > 0 ? $this->results->globalRank($user, $points) : null,
             'progress' => $this->levels->progress($points),
-            'titles' => $this->levels->titles($level),
-            'nextTitle' => $this->levels->nextTitle($level),
+            'titles' => array_map($this->levelTitle(...), $this->levels->titles($level)),
+            'nextTitle' => $this->levelTitle($this->levels->nextTitle($level)),
             'games' => $this->games($user, $me),
             'badges' => $this->badges->collection($user, null, $me),
             'featured' => $this->badges->featured($user, self::FEATURED),
@@ -122,5 +123,14 @@ class ProfileManager
             'last' => $rows[0]['created_at'] ?? null,
             'best' => $best !== null && $byGame[$best]['mine'] > $byGame[$best]['theirs'] ? ['game' => $this->games->find((int) $best), 'score' => $byGame[$best]] : null,
         ];
+    }
+
+    protected function levelTitle(?array $title): ?array
+    {
+        if ($title !== null && $title['badge'] instanceof Badge) {
+            $title['badge'] = $this->badges->view($title['badge']);
+        }
+
+        return $title;
     }
 }

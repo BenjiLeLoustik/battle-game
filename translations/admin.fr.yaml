@@ -19,6 +19,25 @@ admin:
         dev: Développement
         prod: Production
         
+    levels:
+        title: Niveaux et paliers
+        new: Ajouter un niveau
+        edit: Modifier un niveau
+        empty: Aucun niveau configuré.
+        number: Numéro du niveau
+        name: Nom ou titre (facultatif)
+        experience: XP requis
+        badge: Badge associé
+        no_badge: Aucun badge
+        delete_last: Seul le dernier niveau peut être supprimé.
+        players: Joueurs
+        errors:
+            number: Numéro de niveau invalide.
+            experience: Seuil d'XP invalide.
+            badge: Badge invalide.
+            order: Les niveaux doivent être consécutifs et leurs seuils strictement croissants.
+            first: Le niveau 1 doit commencer à 0 XP.
+        
     nav:
         label: Menu du back-office
         steering: Pilotage
@@ -60,6 +79,7 @@ admin:
         engage_clans: "Clans"
         engage_seasons: "Saisons"
         engage_ranks: "Grades classés"
+        levels: Niveaux
         
     studio:
         title: Atelier de jeux

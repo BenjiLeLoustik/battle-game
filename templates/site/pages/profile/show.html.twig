@@ -136,13 +136,13 @@
                     {% if nextTitle %}
                         <span class="profile-level__next">
                             {{ 'site.profile.next_title'|trans }}
-                            <strong class="profile-level__next-value">{{ 'site.profile.title_at'|trans({ level: nextTitle.level, title: ('site.profile.titles.' ~ nextTitle.key)|trans }) }}</strong>
+                            <strong class="profile-level__next-value">{{ 'site.profile.title_at'|trans({ level: nextTitle.level, title: nextTitle.name }) }}</strong>
                         </span>
                     {% endif %}
                 </div>
                 <div class="profile-level__titles">
                     {% for title in titles %}
-                        <span class="profile-level__title{{ title.unlocked ? ' profile-level__title--unlocked' }}">{{ ('site.profile.titles.' ~ title.key)|trans }} · {{ 'site.profile.level_short'|trans({ level: title.level })|lower }}</span>
+                        <span class="profile-level__title{{ title.unlocked ? ' profile-level__title--unlocked' }}">{{ title.name }} · {{ 'site.profile.level_short'|trans({ level: title.level })|lower }}</span>
                     {% endfor %}
                 </div>
             </div>
@@ -306,26 +306,26 @@
                 <div class="profile-table">
                     <table class="profile-table__table">
                         <thead>
-                            <tr class="profile-table__head">
-                                <th class="profile-table__cell">{{ 'site.profile.history.game'|trans }}</th>
-                                <th class="profile-table__cell">{{ 'site.profile.history.result'|trans }}</th>
-                                <th class="profile-table__cell">{{ 'site.profile.history.score'|trans }}</th>
-                                <th class="profile-table__cell">{{ 'site.profile.history.xp'|trans }}</th>
-                                <th class="profile-table__cell">{{ 'site.profile.history.when'|trans }}</th>
-                            </tr>
+                        <tr class="profile-table__head">
+                            <th class="profile-table__cell">{{ 'site.profile.history.game'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.result'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.score'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.xp'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.when'|trans }}</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            {% for row in recent %}
-                                <tr class="profile-table__row">
-                                    <td class="profile-table__cell profile-table__cell--game">{{ row.game.name }}</td>
-                                    <td class="profile-table__cell">
-                                        <span class="profile-table__result{{ row.won ? ' profile-table__result--won' }}">{{ 'site.profile.history.position'|trans({ position: row.position }) }}</span>
-                                    </td>
-                                    <td class="profile-table__cell profile-table__cell--score">{{ row.board ? games_ui.stat(row.board, row.score) : '—' }}</td>
-                                    <td class="profile-table__cell profile-table__cell--xp">+{{ row.points }}</td>
-                                    <td class="profile-table__cell profile-table__cell--when">{{ row.date|date('d/m/Y H:i') }}</td>
-                                </tr>
-                            {% endfor %}
+                        {% for row in recent %}
+                            <tr class="profile-table__row">
+                                <td class="profile-table__cell profile-table__cell--game">{{ row.game.name }}</td>
+                                <td class="profile-table__cell">
+                                    <span class="profile-table__result{{ row.won ? ' profile-table__result--won' }}">{{ 'site.profile.history.position'|trans({ position: row.position }) }}</span>
+                                </td>
+                                <td class="profile-table__cell profile-table__cell--score">{{ row.board ? games_ui.stat(row.board, row.score) : '—' }}</td>
+                                <td class="profile-table__cell profile-table__cell--xp">+{{ row.points }}</td>
+                                <td class="profile-table__cell profile-table__cell--when">{{ row.date|date('d/m/Y H:i') }}</td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                 </div>

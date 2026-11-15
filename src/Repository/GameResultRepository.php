@@ -143,6 +143,17 @@ class GameResultRepository extends AbstractRepository
         return $favorites;
     }
 
+    public function playerExperiences(): array
+    {
+        return $this->connection()->fetchAllAssociative(
+            'SELECT u.id, COALESCE(SUM(r.points), 0) AS experience 
+                    FROM `user` u
+                    LEFT JOIN game_result r ON r.user_id = u.id
+                    WHERE u.guest = 0 AND u.deletion_requested_at IS NULL
+                    GROUP BY u.id'
+        );
+    }
+
     protected function filters(?Game $game, ?DateTime $since, ?DateTime $until): array
     {
         $conditions = [];

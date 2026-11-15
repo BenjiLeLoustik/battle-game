@@ -1,0 +1,65 @@
+{% extends '@admin/layouts/default.html.twig' %}
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'levels' %}
+{% set title = level.id ? 'admin.levels.edit'|trans({}, 'admin') : 'admin.levels.new'|trans({}, 'admin') %}
+
+{% block title %}{{ title }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <form class="admin-page" method="post">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-levels') }}">
+
+        <nav class="admin-crumbs">
+            <a class="admin-crumbs__link" href="{{ path('admin_level_index') }}">
+                {{ 'admin.levels.title'|trans({}, 'admin') }}
+            </a>
+            <span aria-hidden="true">/</span>
+            <span class="admin-crumbs__current">{{ title }}</span>
+        </nav>
+
+        <h1 class="admin-page__title">{{ title }}</h1>
+
+        <section class="admin-panel">
+            <div class="admin-form-grid">
+                <label class="admin-field">
+                    {{ 'admin.levels.number'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" min="1" name="number" value="{{ level.number }}" required>
+                    {{ admin_ui.error(errors, 'number') }}
+                </label>
+
+                <label class="admin-field">
+                    {{ 'admin.levels.experience'|trans({}, 'admin') }}
+                    <input class="admin-field__input" type="number" min="0" name="required_experience" value="{{ level.requiredExperience }}" required>
+                    {{ admin_ui.error(errors, 'required_experience') }}
+                </label>
+
+                <label class="admin-field admin-field--wide">
+                    {{ 'admin.levels.name'|trans({}, 'admin') }}
+                    <input class="admin-field__input" name="name" value="{{ level.name }}" maxlength="80">
+                    {{ admin_ui.error(errors, 'name') }}
+                </label>
+
+                <label class="admin-field admin-field--wide">
+                    {{ 'admin.levels.badge'|trans({}, 'admin') }}
+                    <select class="admin-field__input" name="badge">
+                        <option value="">{{ 'admin.levels.no_badge'|trans({}, 'admin') }}</option>
+                        {% for badge in badges %}
+                            <option value="{{ badge.id }}"{{ level.badge and level.badge.id == badge.id ? ' selected' }}>
+                                {{ badge.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {{ admin_ui.error(errors, 'badge') }}
+                </label>
+            </div>
+
+            {{ admin_ui.translations(level) }}
+        </section>
+
+        <div class="admin-actions admin-actions--end">
+            <a href="{{ path('admin_level_index') }}" class="admin-btn admin-btn--ghost">{{ 'admin.cancel'|trans({}, 'admin') }}</a>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+    </form>
+{% endblock %}

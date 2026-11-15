@@ -1,0 +1,69 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% import '@admin/components/macros/ui.html.twig' as admin_ui %}
+
+{% set active = 'levels' %}
+
+{% block title %}{{ 'admin.levels.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% block content %}
+    <div class="admin-page">
+        <div class="admin-page__head">
+            <div class="admin-page__intro">
+                <h1 class="admin-page__title">{{ 'admin.levels.title'|trans({}, 'admin') }}</h1>
+            </div>
+            <a href="{{ path('admin_level_new') }}" class="admin-btn admin-btn--primary">
+                + {{ 'admin.levels.new'|trans({}, 'admin') }}
+            </a>
+        </div>
+
+        <section class="admin-panel admin-panel--flush">
+            {% if levels is empty %}
+                <p class="admin-empty">{{ 'admin.levels.empty'|trans({}, 'admin') }}</p>
+            {% else %}
+                <div class="admin-table-wrap">
+                    <table class="admin-table">
+                        <thead>
+                        <tr>
+                            <th class="admin-table__th">{{ 'admin.levels.number'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th">{{ 'admin.levels.name'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th">{{ 'admin.levels.experience'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th">{{ 'admin.levels.players'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th">{{ 'admin.levels.badge'|trans({}, 'admin') }}</th>
+                            <th class="admin-table__th"></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for level in levels %}
+                            <tr class="admin-table__row">
+                                <td class="admin-table__cell admin-table__cell--mono">{{ level.number }}</td>
+                                <td class="admin-table__cell">{{ level.name ?: '—' }}</td>
+                                <td class="admin-table__cell">{{ level.requiredExperience|number_format(0, ',', ' ') }} XP</td>
+                                <td class="admin-table__cell">{{ playerCounts[level.number] ?? 0 }}</td>
+                                <td class="admin-table__cell">{{ level.badge ? level.badge.name : '—' }}</td>
+                                <td class="admin-table__cell">
+                                        <span class="admin-actions admin-actions--nowrap">
+                                            <a href="{{ path('admin_level_edit', { id: level.id }) }}"
+                                               class="admin-btn admin-btn--secondary admin-btn--small">
+                                                {{ 'admin.edit'|trans({}, 'admin') }}
+                                            </a>
+                                            {% if loop.last and levels|length > 1 %}
+                                                {{ admin_ui.post(
+                                                    'admin_level_delete',
+                                                    { id: level.id },
+                                                    'admin.delete'|trans({}, 'admin'),
+                                                    'admin-btn admin-btn--danger admin-btn--small',
+                                                    'admin-levels'
+                                                ) }}
+                                            {% endif %}
+                                        </span>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% endif %}
+        </section>
+    </div>
+{% endblock %}
