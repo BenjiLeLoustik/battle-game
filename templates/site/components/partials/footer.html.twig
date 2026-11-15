@@ -1,3 +1,6 @@
+{% set user = app_user() %}
+{% set member = user and not user.guest %}
+
 <footer class="site-footer">
     <div class="site-footer__columns">
         <div class="site-footer__about">
@@ -12,7 +15,9 @@
                 {{ 'site.footer.discord'|trans }}
             </a>
         </div>
+
         {% set pages = footer_pages() %}
+
         <div class="site-footer__column">
             <span class="site-footer__title">
                 {{ 'site.footer.play'|trans }}
@@ -23,13 +28,16 @@
             <a href="{{ path('site_room_new') }}" class="site-footer__link">
                 {{ 'site.nav.create_room'|trans }}
             </a>
-            <a href="{{ path('site_leaderboard_index') }}" class="site-footer__link">
-                {{ 'site.nav.leaderboard'|trans }}
-            </a>
+            {% if member %}
+                <a href="{{ path('site_leaderboard_index') }}" class="site-footer__link">
+                    {{ 'site.nav.leaderboard'|trans }}
+                </a>
+            {% endif %}
             {% for page in pages.play ?? [] %}
                 <a href="{{ page.url }}" class="site-footer__link">{{ page|localize('title') }}</a>
             {% endfor %}
         </div>
+
         {% for column in ['developers', 'info'] %}
             {% if pages[column] is defined %}
                 <div class="site-footer__column">
@@ -43,6 +51,7 @@
             {% endif %}
         {% endfor %}
     </div>
+
     <div class="site-footer__bottom">
         <span>
             © {{ 'now'|date('Y') }} BattleGame
