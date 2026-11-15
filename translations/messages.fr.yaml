@@ -834,6 +834,8 @@ site:
             empty: "Tu n'as encore aucun badge à exposer."
             save: "Enregistrer la vitrine"
             saved: "Vitrine mise à jour."
+            empty_help: "Joue pour obtenir tes premiers badges, puis choisis ceux à afficher sur ton profil."
+            play: "Jouer"
 
     presence:
         playing: "En jeu · {game}"
