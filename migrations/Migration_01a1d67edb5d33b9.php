@@ -20,7 +20,9 @@ class Migration_01a1d67edb5d33b9 extends AbstractMigration
         $this->addSql('ALTER TABLE `season` ADD `rewarded_at` DATETIME DEFAULT NULL');
         $this->addSql('ALTER TABLE `wallet` ADD `daily_day` DATE DEFAULT NULL');
         $this->addSql('ALTER TABLE `wallet` ADD `daily_streak` INT NOT NULL');
-        $this->addSql("ALTER TABLE `wallet` ADD `challenges` JSON NOT NULL DEFAULT '[]'");
+        $this->addSql('ALTER TABLE `wallet` ADD `challenges` JSON DEFAULT NULL');
+        $this->addSql("UPDATE `wallet` SET `challenges` = '[]' WHERE `challenges` IS NULL");
+        $this->addSql('ALTER TABLE `wallet` MODIFY `challenges` JSON NOT NULL');
     }
 
     public function down(): void
