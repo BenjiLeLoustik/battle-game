@@ -295,7 +295,7 @@ docs:
                     title: assets/js/client.js (extrait)
                     text: |
                         export default function mount(element, context) {
-                            const { t, html } = context;
+                            const '{' t, html '}' = context;
                             element.innerHTML = html`<button class="clic__button">${t('click')}</button>`;
                             element.querySelector('button').addEventListener('click', () => context.send('click'));
                             context.on((snapshot) => {
