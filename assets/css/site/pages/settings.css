@@ -241,7 +241,7 @@
 }
 
 .settings-panel__form {
-    @apply flex max-w-[460px] flex-col gap-3 border-t border-line-soft px-4 py-4;
+    @apply flex w-full max-w-none flex-col gap-3 border-t border-line-soft px-4 py-4;
 }
 
 .settings-switch {
