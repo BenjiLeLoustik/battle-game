@@ -43,16 +43,19 @@
 }
 
 .profile-hero__banner {
-    @apply h-[120px] overflow-hidden rounded-t-[17px] bg-[#151036];
+    @apply h-[200px] overflow-hidden rounded-t-[17px] bg-[#151036];
+}
+
+.profile-hero__banner:not(.profile-banner--custom) {
     background-image: repeating-linear-gradient(0deg, transparent 0 31px, rgb(124 92 255 / 0.25) 31px 32px), repeating-linear-gradient(90deg, transparent 0 31px, rgb(124 92 255 / 0.25) 31px 32px);
 }
 
 .profile-hero__identity {
-    @apply -mt-[52px] flex flex-wrap items-end gap-5 px-7 pb-5 max-sm:gap-3 max-sm:px-4 max-sm:pb-3;
+    @apply relative z-10 -mt-[52px] flex flex-wrap items-end gap-5 px-7 pb-5 max-sm:gap-3 max-sm:px-4 max-sm:pb-3;
 }
 
 .profile-hero__text {
-    @apply flex min-w-0 flex-[1_1_260px] flex-col gap-1.5;
+    @apply flex min-w-0 flex-[1_1_260px] translate-y-5 flex-col gap-1.5;
 }
 
 .profile-hero__name {
@@ -92,7 +95,7 @@
 }
 
 .profile-level {
-    @apply mx-7 mb-6 flex flex-wrap items-center gap-5 rounded-[14px] border border-[#2B2552] bg-bg/60 px-[18px] py-4 max-sm:mb-3.5 max-sm:gap-3 max-sm:px-2.5 max-sm:mx-4;
+    @apply mx-7 mb-6 mt-5 flex flex-wrap items-center gap-5 rounded-[14px] border border-[#2B2552] bg-bg/60 px-[18px] py-4 max-sm:mb-3.5 max-sm:gap-3 max-sm:px-2.5 max-sm:mx-4;
 }
 
 .profile-level__badge {
