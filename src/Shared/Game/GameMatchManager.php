@@ -206,6 +206,7 @@ class GameMatchManager
             if ($finished) {
                 $resultsAt = $this->now() + self::RESULTS_DELAY;
                 $match->setStatus(GameMatchStatusEnum::FINISHED)
+                    ->mark('finishedAt', $this->now())
                     ->mark('resultsAt', $resultsAt)
                     ->mark('voteEndsAt', $resultsAt + self::VOTE_DURATION);
             }
@@ -248,6 +249,9 @@ class GameMatchManager
         $players = $match->vote($user, $replay)->getReplayPlayers();
 
         if (!$this->isBlocked($match) && count($players) >= $this->majority($match) && count($players) >= $match->getGame()->getMinPlayers()) {
+
+            $players = array_merge(array_slice($players, 1), array_slice($players, 0, 1));
+
             $next = (new GameMatch())
                 ->setGame($match->getGame())
                 ->setMode($match->getMode())
@@ -396,7 +400,7 @@ class GameMatchManager
 
     protected function majority(GameMatch $match): int
     {
-        return intdiv(count($match->getPlayers()), 2) + 1;
+        return $match->getRoom() === null ? count($match->getPlayers()) : intdiv(count($match->getPlayers()), 2) + 1;
     }
 
     protected function code(): string

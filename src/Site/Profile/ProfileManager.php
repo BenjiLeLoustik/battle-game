@@ -88,9 +88,17 @@ class ProfileManager
     protected function recentRow(GameResult $result): array
     {
         $board = $result->getGame()->getLeaderboardStat();
+        $match = $result->getMatch();
+        $timeline = $match->getTimeline();
+        $rating = $match->getRewards()[(string) $result->getUser()->getId()]['rating'] ?? null;
+        $opponents = array_filter($match->getPlayers(), fn (array $player): bool => (string) $player['id'] !== (string) $result->getUser()->getId());
 
         return [
             'game' => $result->getGame(),
+            'mode' => $match->getMode(),
+            'opponents' => array_column($opponents, 'username'),
+            'duration' => isset($timeline['startsAt'], $timeline['finishedAt']) ? max(0, (int) floor(($timeline['finishedAt'] - $timeline['startsAt']) / 1000)) : null,
+            'rating' => $rating,
             'position' => $result->getPosition(),
             'won' => $result->isWon(),
             'points' => $result->getPoints(),

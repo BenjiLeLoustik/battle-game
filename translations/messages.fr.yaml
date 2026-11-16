@@ -686,6 +686,10 @@ site:
             xp: XP
             when: Quand
             position: "{position}e"
+            opponents: "Adversaires"
+            duration: "Durée"
+            duration_value: "{minutes} min {seconds} s"
+            elo: "Elo"
         activity: "Activité sur 30 jours"
         activity_total: "{points} points gagnés"
         elo: "{rating} Elo"
@@ -1258,6 +1262,7 @@ site:
 game:
     you: " (toi)"
     stage:
+        connection_retry: "Connexion interrompue. Synchronisation en cours... Les chronomètres continuent."
         round: Manche
         fullscreen: Plein écran
         effects: Effets sonores
@@ -1326,10 +1331,10 @@ game:
         preview_replay: RELANCER L'APERÇU
         points: "{score} pts"
         vote_title: On rejoue ?
-        vote_help: "La partie se relance avec les mêmes réglages dès que la majorité ({needed} / {total}) vote oui. Ceux qui votent non retournent sur la page du jeu."
+        vote_help: "La revanche démarre lorsque les {total} joueurs acceptent. Les mêmes réglages sont conservés et l’ordre des joueurs change."
+        vote_majority: "{needed} accords nécessaires"
         vote_help_room: "La partie se relance avec les mêmes réglages dès que la majorité ({needed} / {total}) vote oui. Ceux qui votent non retournent au lobby."
         vote_count: "{yes} / {total} veulent rejouer"
-        vote_majority: "majorité : {needed}"
         vote_ends: "Fin du vote dans {time}"
         vote_done: Vote terminé
         vote_relaunch: "Majorité atteinte · nouvelle partie dans {seconds} s"

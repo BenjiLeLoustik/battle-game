@@ -304,25 +304,51 @@
                 <p class="profile__empty">{{ 'site.profile.history.empty'|trans }}</p>
             {% else %}
                 <div class="profile-table">
-                    <table class="profile-table__table">
+                    <table class="profile-table__table profile-table__table--history">
                         <thead>
                         <tr class="profile-table__head">
                             <th class="profile-table__cell">{{ 'site.profile.history.game'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.opponents'|trans }}</th>
                             <th class="profile-table__cell">{{ 'site.profile.history.result'|trans }}</th>
                             <th class="profile-table__cell">{{ 'site.profile.history.score'|trans }}</th>
                             <th class="profile-table__cell">{{ 'site.profile.history.xp'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.duration'|trans }}</th>
+                            <th class="profile-table__cell">{{ 'site.profile.history.elo'|trans }}</th>
                             <th class="profile-table__cell">{{ 'site.profile.history.when'|trans }}</th>
                         </tr>
                         </thead>
                         <tbody>
                         {% for row in recent %}
                             <tr class="profile-table__row">
-                                <td class="profile-table__cell profile-table__cell--game">{{ row.game.name }}</td>
+                                <td class="profile-table__cell profile-table__cell--game">
+                                    <span class="profile-table__game">{{ row.game.name }}</span>
+                                    <span class="profile-table__mode">{{ row.mode.translate() }}</span>
+                                </td>
+                                <td class="profile-table__cell profile-table__cell--opponents">
+                                    {{ row.opponents is not empty ? row.opponents|join(', ') : '-' }}
+                                </td>
                                 <td class="profile-table__cell">
                                     <span class="profile-table__result{{ row.won ? ' profile-table__result--won' }}">{{ 'site.profile.history.position'|trans({ position: row.position }) }}</span>
                                 </td>
                                 <td class="profile-table__cell profile-table__cell--score">{{ row.board ? games_ui.stat(row.board, row.score) : '—' }}</td>
                                 <td class="profile-table__cell profile-table__cell--xp">+{{ row.points }}</td>
+                                <td class="profile-table__cell">
+                                    {% if row.duration is not null %}
+                                        {{ 'site.profile.history.duration_value'|trans({minutes: row.duration // 60, seconds: '%02d'|format(row.duration % 60)}) }}
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="profile-table__cell">
+                                    {% if row.rating %}
+                                        {% set delta = row.rating.after - row.rating.before %}
+                                        <span class="profile-table__elo{{ delta > 0 ? ' profile-table__elo--gain' : (delta < 0 ? ' profile-table__elo--loss' : '') }}">
+                                            {{ row.rating.after }} ({{ delta > 0 ? '+' : '' }}{{ delta }})
+                                        </span>
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
                                 <td class="profile-table__cell profile-table__cell--when">{{ row.date|date('d/m/Y H:i') }}</td>
                             </tr>
                         {% endfor %}

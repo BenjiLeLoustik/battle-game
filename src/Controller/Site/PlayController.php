@@ -227,6 +227,20 @@ class PlayController extends AbstractController
         return $this->json(['ok' => true]);
     }
 
+    #[Route('/match/{code}/state', name: 'state', methods: ['GET'])]
+    public function state(string $code): Response
+    {
+        $match = $this->find($code);
+        $response = $this->json([
+            'snapshot' => $this->matches->snapshot($match),
+            'secret' => $this->matches->secret($match, $this->getUser()),
+        ]);
+
+        $response->headers->set('Cache-Control', 'private, no-store');
+
+        return $response;
+    }
+
     #[Route('/match/{code}/secret', name: 'secret', methods: ['GET'])]
     public function secret(string $code): Response
     {

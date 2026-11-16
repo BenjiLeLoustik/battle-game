@@ -796,19 +796,14 @@ export default async function GameStage(element, data) {
         cancellingSearch = true;
     });
 
-    const acceptSnapshot = (next) => {
+    const acceptSnapshot = (next, privateState) => {
         pending = pending.catch(() => {}).then(async () => {
-            if (cancellingSearch) {
+            if (cancellingSearch || next.serverTime < snapshot.serverTime) {
                 return;
             }
 
             if (snapshot.mode === 'ranked' && snapshot.status === 'waiting' && next.status === 'cancelled') {
-                window.location.replace(
-                    next.next
-                        ? data.matchUrl.replace('__code__', next.next)
-                        : data.gameUrl,
-                );
-
+                window.location.replace(next.next ? data.matchUrl.replace('__code__', next.next) : data.gameUrl);
                 return;
             }
 
@@ -817,7 +812,13 @@ export default async function GameStage(element, data) {
             }
 
             snapshot = next;
-            await reveal();
+
+            if (privateState !== undefined) {
+                secret = Object.assign({}, privateState);
+            } else {
+                await reveal();
+            }
+
             update();
         });
 
@@ -866,7 +867,46 @@ export default async function GameStage(element, data) {
         }
     };
 
-    new EventSource(data.url).onmessage = (message) => {
+    const connectionNotice = node('div', 'game-stage__connection', labels.connection_retry);
+    connectionNotice.setAttribute('role', 'status');
+    connectionNotice.hidden = true;
+    element.prepend(connectionNotice);
+
+    let restoring = false;
+
+    const restore = async () => {
+        if (restoring || cancellingSearch) {
+            return;
+        }
+
+        restoring = true;
+        const controller new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 8000);
+
+        try {
+            const response = await fetch(data.stateUrl, {
+                headers: { Accept: 'application/json' },
+                cache: 'no-store',
+                signal: controller.signal,
+            });
+
+            if (!response.ok) {
+                throw new Error(`State failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+            await acceptSnapshot(result.snapshot, result.secret);
+            connectionNotice.hidden = steam.readyState === EventSource.OPEN;
+        } catch {
+            connectionNotice.hidden = false;
+        } finally {
+            clearTimeout(timeout);
+            restoring = false;
+        }
+    };
+
+    const stream = new EventSource(data.url);
+    steam.onmessage = (message) => {
         const next = JSON.parse(message.data);
 
         if (next.type === 'emote') {
@@ -876,6 +916,30 @@ export default async function GameStage(element, data) {
 
         acceptSnapshot(next);
     };
+
+    stream.onopen = () => restore();
+    stream.onerror = () => {
+        connectionNotice.hidden = false;
+        restore();
+    }
+
+    window.addEventListener('offline', () => {
+        connectionNotice.hidden = false;
+    });
+
+    window.addEventListener('online', restore);
+
+    document.addEventListener('visibilitychange', () => {
+        if (!document.hidden) {
+            restore();
+        }
+    });
+
+    setInterval(() => {
+        if (!connectionNotice.hidden || stream.readyState !== EventSource.OPEN) {
+            restore();
+        }
+    }, 5000);
 
     if (data.search) {
         setInterval(pollSearch, 3000);

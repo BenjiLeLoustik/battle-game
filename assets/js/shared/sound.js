@@ -23,7 +23,7 @@ export default function sound({ slug = '', effects = 0.7, music = 0.35 } = {}) {
     const seed = hash(slug);
     const mood = MOODS[seed % MOODS.length];
     const arpeggio = ARPEGGIOS[seed % ARPEGGIOS.length];
-    const volumes = { effects: effects || 0.7, music: music || 0.35 };
+    const volumes = { effects: Math.max(0, Math.min(1, effects)), music: Math.max(0, Math.min(1, music)) };
     const enabled = {
         effects: (remember(STORAGE.effects) ?? (effects > 0 ? '1' : '0')) === '1',
         music: (remember(STORAGE.music) ?? (music > 0 ? '1' : '0')) === '1',
@@ -260,7 +260,7 @@ export default function sound({ slug = '', effects = 0.7, music = 0.35 } = {}) {
     };
 
     const beginMusic = () => {
-        if (!ready() || scheduler !== null) {
+        if (!ready() || scheduler !== null || volumes.music === 0) {
             return;
         }
 

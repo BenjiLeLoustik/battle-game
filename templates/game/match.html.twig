@@ -1,6 +1,7 @@
 {% extends 'base.html.twig' %}
 
 {% set labels = {
+    connection_retry: 'game.stage.connection_retry'|trans,
     you: 'game.you'|trans,
     search_tag: 'game.search.tag'|trans,
     search_full: 'game.search.full'|trans,
@@ -106,7 +107,8 @@
          data-secret="{{ secret|json_encode }}"
          data-emote="{{ path('site_play_emote', { code: match.code }) }}"
          data-emote-icons="{{ emotes|json_encode }}"
-         data-snapshot="{{ snapshot|json_encode }}">
+         data-snapshot="{{ snapshot|json_encode }}"
+         data-state-url="{{ path('site_play_state', { code: match.code }) }}">
 
         <section class="game-search" hidden>
             <header class="game-search__bar">

@@ -283,6 +283,34 @@
     @apply w-full min-w-[620px] border-collapse text-sm;
 }
 
+.profile-table--history {
+    @apply min-w[1050px];
+}
+.profile-table__game {
+    @apply block;
+}
+
+.profile-table__mode {
+    @apply mt-1 block text-xs font-normal text-muted-2;
+}
+
+.profile-table__cell--opponents {
+    @apply max-w-[220px] whitespace-normal break-words font-normal text-ink-soft;
+}
+
+.profile-table__elo {
+    @apply whitespace-nowrap;
+}
+
+.profile-table__elo--gain {
+    @apply text-success;
+}
+
+.profile-table__elo--loss {
+    @apply text-danger;
+}
+
+
 .profile-table__head {
     @apply text-left text-xs tracking-[0.08em] text-muted-2 uppercase;
 }
