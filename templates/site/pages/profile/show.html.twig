@@ -164,7 +164,7 @@
                         <span class="profile-ranked__item">
                             <span class="rank-badge" style="--rank-color: {{ item.tier.color }}">{{ item.tier.label }}</span>
                             <strong>{{ item.game.name }}</strong>
-                            <span>{{ item.rating }}</span>
+                            <span>{{ 'site.profile.elo'|trans({ rating: item.rating }) }}</span>
                         </span>
                     {% endfor %}
                 </div>

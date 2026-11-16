@@ -647,7 +647,7 @@ site:
             position: "{position}e"
         activity: "Activité sur 30 jours"
         activity_total: "{points} points gagnés"
-
+        elo: "{rating} Elo"
     settings:
         title: Paramètres
         nav: Sections des paramètres
