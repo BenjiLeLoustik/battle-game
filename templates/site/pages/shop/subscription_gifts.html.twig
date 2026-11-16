@@ -30,45 +30,106 @@
             {% set gift = package.gift %}
             {% set form = values[gift.id] ?? {} %}
 
-            <section class="shop-panel subscription-gifts">
+            <section class="subscription-gifts"
+                     aria-labelledby="gift-title-{{ gift.id }}">
                 <div class="subscription-gifts__head">
-                    <h2 class="shop-panel__title">
-                        {{ gift.offerName }}
-                    </h2>
+        <span class="subscription-gifts__mark" aria-hidden="true">
+            {{ shop.icon('gift') }}
+        </span>
 
-                    <span class="subscription-gifts__date">
-                        {{ gift.createdAt|date('d/m/Y') }}
-                    </span>
+                    <div class="subscription-gifts__heading">
+            <span class="subscription-gifts__eyebrow">
+                {{ 'site.shop.subscription_gifts.welcome_label'|trans }}
+            </span>
+
+                        <h2 class="subscription-gifts__title"
+                            id="gift-title-{{ gift.id }}">
+                            {{ gift.offerName }}
+                        </h2>
+                    </div>
+
+                    <time class="subscription-gifts__date"
+                          datetime="{{ gift.createdAt|date('c') }}">
+                        {{ 'site.shop.subscription_gifts.received_date'|trans({
+                            date: gift.createdAt|date('d/m/Y')
+                        }) }}
+                    </time>
                 </div>
 
                 <ul class="subscription-gifts__list">
                     {% for item in package.items %}
+                        {% set product = item.productObject %}
+                        {% set kind = product and item.type == 'cosmetic' ? product.option('kind') : null %}
+                        {% set state = item.delivery ? item.delivery.status.value : item.status %}
+                        {% set tone = state in ['granted', 'shipped'] ? 'success' : (state in ['cancelled', 'refunded'] ? 'cancelled' : 'pending') %}
+
                         <li class="subscription-gifts__item">
-                            <strong class="subscription-gifts__name">
-                                {{ item.name }}
-                            </strong>
-
-                            <span class="subscription-gifts__status">
-                                {% if item.delivery %}
-                                    {{ item.delivery.status.value == 'paid' ? 'site.shop.subscription_gifts.awaiting_shipment'|trans : item.delivery.status.translate() }}
-
-                                    {% if item.delivery.variant %}
-                                        · {{ item.delivery.variant }}
-                                    {% endif %}
-
-                                    {% if item.delivery.tracking %}
-                                        · {{ 'site.shop.orders.tracking'|trans({code: item.delivery.tracking}) }}
-                                    {% endif %}
+                            <div class="subscription-gifts__preview"
+                                 aria-hidden="true">
+                                {% if kind in ['frame', 'banner', 'victory'] %}
+                                    {{ shop.cosmetic(product, app_user().initials, 'sm') }}
+                                {% elseif product and product.image %}
+                                    <img class="subscription-gifts__image" src="{{ product.image }}" alt="" loading="lazy">
                                 {% else %}
-                                    {{ ('site.shop.subscription_gifts.states.' ~ item.status)|trans }}
+                                    {{ shop.icon(item.type) }}
                                 {% endif %}
-                            </span>
+                            </div>
+
+                            <div class="subscription-gifts__content">
+                                <strong class="subscription-gifts__name">
+                                    {{ item.name }}
+                                </strong>
+
+                                <div class="subscription-gifts__meta">
+                                    <span class="subscription-gifts__kind">
+                                        {% if kind %}
+                                            {{ ('cosmetic_kind.' ~ kind)|trans({}, 'enums') }}
+                                        {% else %}
+                                            {{ ('shop_product_type.' ~ item.type)|trans({}, 'enums') }}
+                                        {% endif %}
+                                    </span>
+
+                                    <span class="subscription-gifts__status subscription-gifts__status--{{ tone }}">
+                                        {% if item.delivery %}
+                                            {{ item.delivery.status.value == 'paid' ? 'site.shop.subscription_gifts.awaiting_shipment'|trans : item.delivery.status.translate() }}
+                                        {% else %}
+                                            {{ ('site.shop.subscription_gifts.states.' ~ item.status)|trans }}
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                                {% if item.delivery and item.delivery.variant %}
+                                    <span class="subscription-gifts__variant">
+                                        {{ item.delivery.variant }}
+                                    </span>
+                                {% endif %}
+
+                                {% if item.delivery and item.delivery.tracking %}
+                                    <span class="subscription-gifts__tracking">
+                                        {{ 'site.shop.orders.tracking'|trans({code: item.delivery.tracking}) }}
+                                    </span>
+                                {% endif %}
+                            </div>
+
+                            {% if item.status == 'granted' %}
+                                <a class="subscription-gifts__action" href="{{ path(item.type == 'badge' ? 'site_profile_me' : 'site_shop_inventory') }}">
+                                    {{ 'site.shop.subscription_gifts.view_collection'|trans }}
+                                </a>
+                            {% elseif item.type == 'physical' and item.status == 'pending' %}
+                                <a class="subscription-gifts__action" href="#gift-shipping-{{ gift.id }}">
+                                    {{ 'site.shop.subscription_gifts.shipping_title'|trans }}
+                                </a>
+                            {% elseif item.delivery %}
+                                <a class="subscription-gifts__action" href="{{ path('site_shop_orders') }}">
+                                    {{ 'site.shop.nav.orders'|trans }}
+                                </a>
+                            {% endif %}
                         </li>
                     {% endfor %}
                 </ul>
 
                 {% if gift.pending is not empty %}
-                    <form class="subscription-gifts__form" method="post" action="{{ path('site_subscription_gift_claim', {id: gift.id}) }}">
+                    <form id="gift-shipping-{{ gift.id }}" class="subscription-gifts__form" method="post" action="{{ path('site_subscription_gift_claim', {id: gift.id}) }}">
                         <input type="hidden" name="_token" value="{{ csrf_token('subscription-gifts') }}">
 
                         <h3 class="subscription-gifts__form-title">

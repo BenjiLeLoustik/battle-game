@@ -211,12 +211,11 @@ class SubscriptionGiftManager
                     'gift' => $gift,
                     'items' => array_map(
                         fn (array $item): array => $item + [
-                                'delivery' => $item['order'] === null
-                                    ? null
-                                    : $this->orders->find(
-                                        (int) $item['order'],
-                                    ),
-                            ],
+                            'productObject' => $this->products->find((int) $item['product'],),
+                            'delivery' => $item['order'] === null
+                                ? null
+                                : $this->orders->find((int) $item['order']),
+                        ],
                         $gift->getItems(),
                     ),
                 ];

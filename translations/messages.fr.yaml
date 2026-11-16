@@ -207,6 +207,9 @@ site:
             no_items: Aucun cosmétique pour le moment.
             see_cosmetics: Découvrir les cosmétiques
         subscription_gifts:
+            welcome_label: "Cadeaux de bienvenue"
+            received_date: "Reçu le {date}"
+            view_collection: "Voir ma collection"
             title: "Mes cadeaux"
             intro: "Retrouve les cadeaux inclus dans tes abonnements, même après leur expiration."
             empty: "Tu n’as pas encore reçu de cadeaux d’abonnement."
