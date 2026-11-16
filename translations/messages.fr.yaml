@@ -136,6 +136,7 @@ site:
             inventory: Mon inventaire
             orders: Mes achats
             redeem: Utiliser un code
+            subscription_gifts: "Mes cadeaux"
         tabs:
             all: Tout
             subscription: Abonnements
@@ -205,6 +206,43 @@ site:
             unequip: Retirer
             no_items: Aucun cosmétique pour le moment.
             see_cosmetics: Découvrir les cosmétiques
+        subscription_gifts:
+            title: "Mes cadeaux"
+            intro: "Retrouve les cadeaux inclus dans tes abonnements, même après leur expiration."
+            empty: "Tu n’as pas encore reçu de cadeaux d’abonnement."
+            included: "Offert"
+            open: "Retrouver mes cadeaux"
+            digital_perk: "{name} offert définitivement"
+            physical_perk: "{name} offert, à faire expédier"
+            once: "Un seul lot de bienvenue par offre et par compte, sans nouvel envoi au renouvellement."
+            order_note: "Cadeau inclus dans l’abonnement {offer}"
+            shipping_title: "Recevoir mes goodies"
+            shipping_help: "Renseigne ton adresse et les éventuelles tailles pour demander l’envoi de tes cadeaux. Aucun paiement supplémentaire n’est demandé."
+            claim: "Demander l’envoi"
+            claimed: "Ta demande d’envoi est enregistrée. Retrouve son suivi dans tes commandes."
+            awaiting_shipment: "À expédier"
+            variant: "Taille ou variante pour {name}"
+            choose_variant: "Choisir une taille ou variante"
+            states:
+                granted: "Ajouté à ta collection"
+                pending: "Adresse à renseigner"
+                ordered: "Envoi demandé"
+                cancelled: "Annulé"
+            fields:
+                name: "Nom du destinataire"
+                line1: "Adresse"
+                line2: "Complément d’adresse (facultatif)"
+                postal_code: "Code postal"
+                city: "Ville"
+                country: "Pays"
+                phone: "Téléphone (facultatif)"
+            countries:
+                FR: "France"
+                BE: "Belgique"
+                CH: "Suisse"
+                LU: "Luxembourg"
+                MC: "Monaco"
+                CA: "Canada"
 
     nav:
         label: Navigation principale

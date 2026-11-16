@@ -44,6 +44,7 @@ class ShopManager
         protected InvoiceManager $invoices,
         protected NotificationManager $notifications,
         protected VoucherManager $vouchers,
+        protected SubscriptionGiftManager $gifts,
     ) {
     }
 
@@ -100,6 +101,14 @@ class ShopManager
         $order->setVoucherCode($voucher?->getCode())->setDiscountCents($discount > 0 ? $discount : null)->setAmountCents((int) $product->getPriceCents() - $discount);
         $this->orders->save($order, true);
         $subscription = $product->getType() === ShopProductTypeEnum::SUBSCRIPTION;
+
+        if ($subscription) {
+            $this->orders->save(
+                $order->setIncludedGifts($this->gifts->snapshot($product)),
+                true
+            );
+        }
+
         $data = [
             'mode' => $subscription ? 'subscription' : 'payment',
             'client_reference_id' => $order->getReference(),
@@ -188,7 +197,7 @@ class ShopManager
         }
     }
 
-    public function complete(ShopOrder $order, array $session = []): void
+    public function completeUnlocked(ShopOrder $order, array $session = []): void
     {
         if ($order->getStatus() !== ShopOrderStatusEnum::PENDING) {
             return;
@@ -217,7 +226,28 @@ class ShopManager
         $this->fulfill($order, is_string($session['subscription'] ?? null) ? $session['subscription'] : null, is_string($session['customer'] ?? null) ? $session['customer'] : null);
         $this->vouchers->consume($order);
         $this->invoices->issue($order);
-        $this->notify($order, NotificationTypeEnum::SHOP_PAID);
+    }
+
+    public function complete(ShopOrder $order, array $session = []): void
+    {
+        $connection = $this->orders->getOrm()->getConnection();
+        $completed = $connection->transactional(function () use ($connection, $order, $session): bool {
+            $connection->fetchOne('SELECT id FROM shop_order WHERE id = :id FOR UPDATE', ['id' => $order->getId()]);
+
+            $this->orders->getOrm()->refresh($order);
+
+            if ($order->getStatus() !== ShopOrderStatusEnum::PENDING) {
+                return false;
+            }
+
+            $this->completeUnlocked($order, $session);
+
+            return true;
+        });
+
+        if ($completed) {
+            $this->notify($order, NotificationTypeEnum::SHOP_PAID);
+        }
     }
 
     public function fulfill(ShopOrder $order, ?string $stripeSubscription = null, ?string $stripeCustomer = null): void
@@ -255,7 +285,7 @@ class ShopManager
                 break;
             case ShopProductTypeEnum::SUBSCRIPTION:
                 $endsAt = $this->periodEnd($stripeSubscription) ?? new DateTime('+1 month');
-                $this->subscriptions->grant($user, $product, $endsAt, $stripeSubscription, $stripeCustomer);
+                $this->subscriptions->grant($user, $product, $endsAt, $stripeSubscription, $stripeCustomer, $order->getIncludedGifts(), $order,);
                 break;
             case ShopProductTypeEnum::PHYSICAL:
                 break;
@@ -267,19 +297,53 @@ class ShopManager
 
     public function ship(ShopOrder $order, ?string $tracking): void
     {
-        $this->orders->save($order->setStatus(ShopOrderStatusEnum::SHIPPED)->setTracking($tracking !== '' ? $tracking : null), true);
+        $connection = $this->orders->getOrm()->getConnection();
+
+        $connection->transactional(function ()  use ($connection, $order, $tracking): void {
+            $connection->fetchOne('SELECT id FROM shop_order WHERE id = :id FOR UPDATE', ['id' => $order->getId()]);
+
+            $this->orders->getOrm()->refresh($order);
+
+            if ($order->getType() !== ShopProductTypeEnum::PHYSICAL || $order->getStatus() !== ShopOrderStatusEnum::PAID || $order->getShipping() === []) {
+                throw new ShopException();
+            }
+
+            $this->orders->save(
+                $order->setStatus(ShopOrderStatusEnum::SHIPPED)
+                    ->setTracking($tracking !== '' ? $tracking : null),
+                true
+            );
+        });
+
         $this->notify($order, NotificationTypeEnum::SHOP_SHIPPED);
     }
 
     public function cancel(ShopOrder $order): void
     {
+        if ($order->getPayment() === ShopPaymentEnum::INCLUDED) {
+            $this->gifts->cancelDelivery($order);
+
+            return;
+        }
+
         if (in_array($order->getStatus(), [ShopOrderStatusEnum::PENDING, ShopOrderStatusEnum::PAID], true)) {
-            $this->orders->save($order->setStatus(ShopOrderStatusEnum::CANCELLED), true);
+            if ($order->getType() === ShopProductTypeEnum::SUBSCRIPTION) {
+                $this->gifts->cancelPhysical($order);
+            }
+
+            $this->orders->save(
+                $order->setStatus(ShopOrderStatusEnum::CANCELLED),
+                true,
+            );
         }
     }
 
     public function refund(ShopOrder $order): void
     {
+        if ($order->getPayment() === ShopPaymentEnum::INCLUDED) {
+            throw new ShopException();
+        }
+
         if (!in_array($order->getStatus(), [ShopOrderStatusEnum::PAID, ShopOrderStatusEnum::SHIPPED], true)) {
             throw new ShopException();
         }
@@ -455,6 +519,7 @@ class ShopManager
                 }
                 break;
             case ShopProductTypeEnum::SUBSCRIPTION:
+                $this->gifts->cancelPhysical($order);
                 $this->cosmetics = [];
                 break;
             case ShopProductTypeEnum::GIFT:

@@ -68,6 +68,9 @@ class ShopOrder
     #[ORM\Column(nullable: true)]
     private ?int $discountCents = null;
 
+    #[ORM\Column(type: 'json', nullable: true)]
+    private ?array $includedGifts = null;
+
     public function getVoucherCode(): ?string
     {
         return $this->voucherCode;
@@ -284,6 +287,18 @@ class ShopOrder
     public function setPaidAt(?DateTime $paidAt): static
     {
         $this->paidAt = $paidAt;
+
+        return $this;
+    }
+
+    public function getIncludedGifts(): ?array
+    {
+        return $this->includedGifts;
+    }
+
+    public function setIncludedGifts(?array $value): static
+    {
+        $this->includedGifts = $value;
 
         return $this;
     }

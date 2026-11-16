@@ -81,7 +81,7 @@
                 {% if order.status.value in ['pending', 'paid'] %}
                     {{ admin_ui.post('admin_shop_order_action', { id: order.id, action: 'cancel' }, 'admin.shop.order.cancel'|trans({}, 'admin'), 'admin-btn admin-btn--ghost', 'admin-shop', 'admin.shop.order.cancel_confirm'|trans({}, 'admin')) }}
                 {% endif %}
-                {% if order.status.value in ['paid', 'shipped'] %}
+                {% if order.status.value in ['paid', 'shipped'] and order.payment.value != 'included' %}
                     {{ admin_ui.post('admin_shop_order_action', { id: order.id, action: 'refund' }, 'admin.shop.order.refund'|trans({}, 'admin'), 'admin-btn admin-btn--danger', 'admin-shop', 'admin.shop.order.refund_confirm'|trans({}, 'admin')) }}
                 {% endif %}
                 {% if order.stripeSession %}

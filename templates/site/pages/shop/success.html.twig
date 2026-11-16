@@ -27,6 +27,13 @@
                 {{ 'site.shop.reference'|trans }} <strong>{{ order.reference }}</strong>
             </p>
             <div class="shop-done__actions">
+
+                {% if order.status.value in ['paid', 'shipped'] and order.type.value === 'subscription' and order.includedGifts is not empty %}
+                    <a href="{{ path('site_subscription_gift_index') }}" class="btn btn--primary">
+                        {{ 'site.shop.subscription_gifts.open'|trans }}
+                    </a>
+                {% endif %}
+
                 <a href="{{ path('site_shop_index') }}" class="btn btn--primary">{{ 'site.shop.back'|trans }}</a>
                 <a href="{{ path(order.type.value == 'cosmetic' ? 'site_shop_inventory' : 'site_shop_orders') }}" class="btn btn--ghost">
                     {{ order.type.value == 'cosmetic' ? 'site.shop.nav.inventory'|trans : 'site.shop.nav.orders'|trans }}

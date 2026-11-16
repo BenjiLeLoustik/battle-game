@@ -1,0 +1,41 @@
+.subscription-gifts__head {
+    @apply flex flex-wrap items-center justify-between gap-2;
+}
+
+.subscription-gifts__date,
+.subscription-gifts__status,
+.subscription-gifts__help {
+    @apply text-[13px] leading-relaxed text-muted-2;
+}
+
+.subscription-gifts__list {
+    @apply flex list-none flex-col divide-y divide-line-soft;
+}
+
+.subscription-gifts__item {
+    @apply flex flex-wrap items-center justify-between gap-2 py-3;
+}
+
+.subscription-gifts__name {
+    @apply text-sm font-semibold text-ink;
+}
+
+.subscription-gifts__form {
+    @apply flex flex-col gap-4 border-t border-line-soft pt-4;
+}
+
+.subscription-gifts__form-title {
+    @apply font-display text-base font-semibold text-ink;
+}
+
+.subscription-gifts__fields {
+    @apply grid grid-cols-2 gap-4 max-sm:grid-cols-1;
+}
+
+.subscription-gifts__submit {
+    @apply self-start max-sm:w-full;
+}
+
+.shop-plan__perk--included {
+    @apply flex items-start gap-2;
+}

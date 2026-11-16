@@ -238,6 +238,8 @@
                             <textarea class="admin-field__input admin-field__input--area" name="perks" rows="4" placeholder="{{ 'admin.shop.products.perks_placeholder'|trans({}, 'admin') }}">{{ product.perks }}</textarea>
                             <span class="admin-panel__help">{{ 'admin.shop.products.perks_help'|trans({}, 'admin') }}</span>
                         </label>
+
+                        {% include '@admin/components/partials/subscription-includes.html.twig' %}
                     </div>
 
                     <div class="shop-form__row" data-for="badge">

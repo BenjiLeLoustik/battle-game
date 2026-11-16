@@ -8,6 +8,8 @@ use App\Entity\User;
 use App\Entity\Voucher;
 use App\Repository\VoucherRepository;
 use App\Shared\Shop\Enum\VoucherKindEnum;
+use App\Shared\Shop\Exception\SubscriptionGiftException;
+use App\Shared\Shop\SubscriptionGiftManager;
 use App\Shared\Shop\VoucherManager;
 use App\Repository\BadgeRepository;
 use App\Repository\InvoiceRepository;
@@ -111,7 +113,7 @@ class ShopController extends AbstractAdminController
     {
         $product = $this->product($id);
 
-        if ($this->orders->count(['product' => $product]) > 0) {
+        if ($this->orders->count(['product' => $product]) > 0 || $this->get(SubscriptionGiftManager::class)->uses($product)) {
             $this->products->save($product->setActive(false), true);
             $this->addFlash('error', 'admin.shop.products.archived');
 
@@ -451,6 +453,10 @@ class ShopController extends AbstractAdminController
                 $errors['price'] = $type->allowsCoins() ? 'admin.shop.products.errors.price' : 'admin.shop.products.errors.price_card';
             }
 
+            if ($product->getId() !== null && $type !== $product->getType() && $this->get(SubscriptionGiftManager::class)->uses($product)) {
+                $errors['name'] = 'admin.shop.products.errors.included_type';
+            }
+
             $payload = $this->payload($type, $data, $errors, $badges);
             $file = $request->files->get('image');
 
@@ -514,6 +520,7 @@ class ShopController extends AbstractAdminController
             'badges' => $badges->findAll(['name' => 'ASC']),
             'card' => $this->stripe->configured(),
             'pass_tracks' => $this->passTracks(),
+            'included_candidates' => $this->get(SubscriptionGiftManager::class)->candidates(),
         ], $errors === [] ? 200 : 422);
     }
 
@@ -538,6 +545,14 @@ class ShopController extends AbstractAdminController
                 $payload['label'] = mb_substr(trim((string) ($data['label'] ?? '')), 0, 30);
                 $payload['early_access'] = isset($data['early_access']);
                 $payload['pass_tracks'] = array_values(array_intersect(array_column($this->passTracks(), 'key'), array_map('strval', (array) ($data['pass_tracks'] ?? []))));
+
+                try {
+                    $payload['included_products'] = $this->get(SubscriptionGiftManager::class)->normalize((array) ($data['included_products'] ?? []));
+                } catch (SubscriptionGiftException) {
+                    $payload['included_products'] = [];
+                    $errors['included_products'] = 'admin.shop.products.errors.included_products';
+                }
+
                 $payload['perks'] = array_values(array_filter(array_map(fn (string $line): string => mb_substr(trim($line), 0, 120), explode("\n", (string) ($data['perks'] ?? ''))), fn (string $line): bool => $line !== ''));
                 break;
             case ShopProductTypeEnum::BADGE:

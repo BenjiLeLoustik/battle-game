@@ -30,7 +30,7 @@
                                 <span class="shop-list__meta">{% if gifts[order.id] is defined %}<code class="shop-gift__inline">{{ gifts[order.id].code }}</code>{{ gifts[order.id].uses > 0 ? ' (' ~ 'site.shop.gift.used'|trans ~ ')' }} · {% endif %}{% if order.voucherCode %}{{ 'site.shop.promo_used'|trans({ code: order.voucherCode }) }} · {% endif %}{{ order.reference }} · {{ order.createdAt|date('d/m/Y H:i') }}{% if order.tracking %} · {{ 'site.shop.orders.tracking'|trans({ code: order.tracking }) }}{% endif %}</span>
                             </span>
                             <span class="shop-list__amount">
-                                {{ order.payment.value == 'coins' ? 'site.shop.coins_price'|trans({ coins: order.amountCoins }) : shop.price(order.amountCents ?? 0) }}
+                                {{ order.payment.value == 'included' ? 'site.shop.subscription_gifts.included'|trans : (order.payment.value == 'coins' ? 'site.shop.coins_price'|trans({coins: order.amountCoins}) : shop.price(order.amountCents ?? 0)) }}
                             </span>
                             <span class="shop-status shop-status--{{ order.status.tone }}">{{ order.status.translate }}</span>
                             {% if invoices[order.id] is defined %}

@@ -1,0 +1,47 @@
+.subscription-includes {
+    @apply flex flex-col gap-3 border-t border-adm-line pt-4;
+}
+
+.subscription-includes__title {
+    @apply text-sm font-semibold text-adm-ink;
+}
+
+.subscription-includes__grid {
+    @apply grid gap-2 sm:grid-cols-2;
+}
+
+.subscription-includes__item {
+    @apply flex cursor-pointer items-center gap-3 rounded-xl
+    border border-adm-line bg-adm-bg p-3 transition-colors
+    hover:border-adm-muted
+    has-checked:border-adm-accent has-checked:bg-adm-accent/8;
+}
+
+.subscription-includes__check {
+    @apply size-4 shrink-0 accent-adm-accent;
+}
+
+.subscription-includes__preview {
+    @apply flex size-12 shrink-0 items-center justify-center
+    overflow-hidden rounded-lg;
+}
+
+.subscription-includes__preview svg {
+    @apply size-6;
+}
+
+.subscription-includes__image {
+    @apply size-full object-cover;
+}
+
+.subscription-includes__text {
+    @apply flex min-w-0 flex-col gap-1;
+}
+
+.subscription-includes__name {
+    @apply truncate text-sm text-adm-ink;
+}
+
+.subscription-includes__kind {
+    @apply text-xs text-adm-muted;
+}

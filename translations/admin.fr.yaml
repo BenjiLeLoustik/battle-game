@@ -836,6 +836,8 @@ admin:
                 badge: Choisis le badge à débloquer.
                 value: Choisis une valeur valide pour ce cosmétique.
                 image: Image invalide (PNG, JPEG ou WebP, 3 Mo maximum).
+                included_products: "Un des objets sélectionnés n’existe plus ou ne peut pas être offert."
+                included_type: "Ce produit est utilisé comme cadeau : son type ne peut plus être modifié."
             season_pass: "Débloque la piste premium du pass de saison"
             pass_tracks: "Pistes du pass de saison débloquées"
             pass_tracks_help: "Les abonnés pourront récupérer les récompenses de ces pistes en plus de la piste gratuite."
@@ -844,6 +846,9 @@ admin:
             icon_loading: "Chargement de l'icône…"
             icon_missing: "Icône introuvable"
             icon_ok: "Icône trouvée"
+            included_title: "Objets inclus"
+            included_help: "Choisis les objets offerts une seule fois avec cette offre. Les cosmétiques et badges sont conservés définitivement. Les goodies physiques sont demandés depuis Mes cadeaux après activation. Les produits sélectionnés peuvent rester masqués dans le catalogue."
+            included_empty: "Crée d’abord un cosmétique, un badge ou un produit physique dans la boutique."
         orders:
             title: Commandes
             subtitle: Tous les achats, par carte ou en pièces. Les goodies payés attendent ton expédition.

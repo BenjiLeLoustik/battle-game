@@ -10,4 +10,6 @@ enum ShopPaymentEnum: string
 
     case CARD = 'card';
     case COINS = 'coins';
+
+    case INCLUDED = 'included';
 }

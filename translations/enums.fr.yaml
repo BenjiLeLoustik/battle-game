@@ -40,10 +40,12 @@ game_task_status:
     todo: À faire
     doing: En cours
     done: Terminée
+    
 game_review_status:
     pending: En attente
     approved: Validée
     rejected: Refusée
+    
 game_member_role:
     lead: Responsable
     developer: Développeur
@@ -173,6 +175,7 @@ shop_order_status:
 shop_payment:
     card: Carte bancaire
     coins: Pièces
+    included: "Offer avec l'abonnement"
 
 subscription_status:
     active: Actif
@@ -193,6 +196,7 @@ cosmetic_kind:
     title: Titre
     banner: "Bannière de profil"
     victory: "Effet de victoire"
+    
 clan_role:
     owner: "Chef"
     officer: "Officier"

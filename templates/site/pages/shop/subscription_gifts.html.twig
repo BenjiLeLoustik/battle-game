@@ -1,0 +1,168 @@
+{% extends '@site/layouts/default.html.twig' %}
+
+{% import '@site/components/macros/shop.html.twig' as shop %}
+
+{% set active = 'shop' %}
+
+{% block title %}
+    {{ 'site.shop.subscription_gifts.title'|trans }} · {{ parent() }}
+{% endblock %}
+
+{% block content %}
+    <div class="shop">
+        <div class="shop__head">
+            <div class="shop__intro">
+                <h1 class="shop__title">
+                    {{ 'site.shop.subscription_gifts.title'|trans }}
+                </h1>
+
+                <p class="shop__subtitle">
+                    {{ 'site.shop.subscription_gifts.intro'|trans }}
+                </p>
+
+                {% include '@site/pages/shop/_nav.html.twig' with { page: 'subscription_gifts' } %}
+            </div>
+        </div>
+
+        {{ shop.flashes() }}
+
+        {% for package in packages %}
+            {% set gift = package.gift %}
+            {% set form = values[gift.id] ?? {} %}
+
+            <section class="shop-panel subscription-gifts">
+                <div class="subscription-gifts__head">
+                    <h2 class="shop-panel__title">
+                        {{ gift.offerName }}
+                    </h2>
+
+                    <span class="subscription-gifts__date">
+                        {{ gift.createdAt|date('d/m/Y') }}
+                    </span>
+                </div>
+
+                <ul class="subscription-gifts__list">
+                    {% for item in package.items %}
+                        <li class="subscription-gifts__item">
+                            <strong class="subscription-gifts__name">
+                                {{ item.name }}
+                            </strong>
+
+                            <span class="subscription-gifts__status">
+                                {% if item.delivery %}
+                                    {{ item.delivery.status.value == 'paid' ? 'site.shop.subscription_gifts.awaiting_shipment'|trans : item.delivery.status.translate() }}
+
+                                    {% if item.delivery.variant %}
+                                        · {{ item.delivery.variant }}
+                                    {% endif %}
+
+                                    {% if item.delivery.tracking %}
+                                        · {{ 'site.shop.orders.tracking'|trans({code: item.delivery.tracking}) }}
+                                    {% endif %}
+                                {% else %}
+                                    {{ ('site.shop.subscription_gifts.states.' ~ item.status)|trans }}
+                                {% endif %}
+                            </span>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if gift.pending is not empty %}
+                    <form class="subscription-gifts__form" method="post" action="{{ path('site_subscription_gift_claim', {id: gift.id}) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('subscription-gifts') }}">
+
+                        <h3 class="subscription-gifts__form-title">
+                            {{ 'site.shop.subscription_gifts.shipping_title'|trans }}
+                        </h3>
+
+                        <p class="subscription-gifts__help">
+                            {{ 'site.shop.subscription_gifts.shipping_help'|trans }}
+                        </p>
+
+                        <div class="subscription-gifts__fields">
+                            {% set limits = {
+                                name: 120,
+                                line1: 180,
+                                line2: 180,
+                                postal_code: 20,
+                                city: 100,
+                                phone: 40
+                            } %}
+
+                            {% set autocomplete = {
+                                name: 'shipping name',
+                                line1: 'shipping address-line1',
+                                line2: 'shipping address-line2',
+                                postal_code: 'shipping postal-code',
+                                city: 'shipping address-level2',
+                                phone: 'shipping tel'
+                            } %}
+
+                            {% for field in ['name','line1','line2','postal_code','city','phone'] %}
+                                <label class="field">
+                                    {{ ('site.shop.subscription_gifts.fields.' ~ field)|trans }}
+
+                                    <input class="field__input" type="{{ field == 'phone' ? 'tel' : 'text' }}" name="address[{{ field }}]" maxlength="{{ limits[field] }}" autocomplete="{{ autocomplete[field] }}" value="{{ form.address[field] ?? '' }}" {% if field not in ['line2', 'phone'] %}required{% endif %}>
+                                </label>
+                            {% endfor %}
+
+                            <label class="field">
+                                {{ 'site.shop.subscription_gifts.fields.country'|trans }}
+
+                                <select class="field__input" name="address[country]" autocomplete="shipping country" required>
+                                    {% for country in countries %}
+                                        <option value="{{ country }}" {{ (form.address.country ?? 'FR') == country ? ' selected' }}>
+                                            {{ ('site.shop.subscription_gifts.countries.' ~ country)|trans }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+
+                            {% for item in gift.pending %}
+                                {% if item.sizes is not empty %}
+                                    <label class="field">
+                                        {{ 'site.shop.subscription_gifts.variant'|trans({name: item.name}) }}
+
+                                        <select class="field__input" name="variants[{{ item.product }}]" required>
+                                            <option value="">
+                                                {{ 'site.shop.subscription_gifts.choose_variant'|trans }}
+                                            </option>
+
+                                            {% for size in item.sizes %}
+                                                <option value="{{ size }}"{{ (form.variants[item.product] ?? '') == size ? ' selected' }}>
+                                                    {{ size }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </label>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        <label class="shop-checkout__terms">
+                            <input type="checkbox" name="terms" value="1" required{{ (form.terms ?? '') == '1' ? ' checked' }}>
+
+                            <span>
+                                {{ 'site.shop.terms_physical'|trans({url: '/cgv'})|raw }}
+                            </span>
+                        </label>
+
+                        <button type="submit" class="btn btn--primary subscription-gifts__submit">
+                            {{ 'site.shop.subscription_gifts.claim'|trans }}
+                        </button>
+                    </form>
+                {% endif %}
+            </section>
+        {% else %}
+            <section class="shop-panel">
+                <p class="shop-empty">
+                    {{ 'site.shop.subscription_gifts.empty'|trans }}
+                </p>
+
+                <a class="shop-link" href="{{ path('site_shop_index', {tab: 'subscription'}) }}">
+                    {{ 'site.shop.inventory.see_plans'|trans }}
+                </a>
+            </section>
+        {% endfor %}
+    </div>
+{% endblock %}

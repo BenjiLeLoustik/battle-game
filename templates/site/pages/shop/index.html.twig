@@ -81,6 +81,21 @@
                             {% if product.earlyAccess %}<li class="shop-plan__perk shop-plan__perk--lives">{{ 'site.shop.plan.early'|trans }}</li>{% endif %}
                             {% set plan_tracks = pass_track_names(product) %}
                             {% if plan_tracks is not empty %}<li class="shop-plan__perk shop-plan__perk--lives">{{ 'site.shop.plan.pass'|trans({ tracks: plan_tracks|join(', ') }) }}</li>{% endif %}
+
+                            {% set included = included_products(product) %}
+
+                            {% for gift in included %}
+                                <li class="shop-plan__perk shop-plan__perk--included">
+                                    {{ (gift.type.value === 'physical' ? 'site.shop.subscription_gifts.physical_perk' : 'site.shop.subscription_gifts.digital_perk')|trans({name: gift|localize('name')}) }}
+                                </li>
+                            {% endfor %}
+
+                            {% if included is not empty %}
+                                <li class="shop-plan__perk">
+                                    {{ 'site.shop.subscription_gifts.once'|trans }}
+                                </li>
+                            {% endif %}
+
                             {% for perk in (product|localize('perks'))|split("\n")|filter(perk => perk|trim != '') %}
                                 <li class="shop-plan__perk">{{ perk }}</li>
                             {% endfor %}

@@ -2,6 +2,7 @@
 @import "./components/admin-topbar.css";
 @import "./components/admin-sidebar.css";
 @import "./components/admin-ui.css";
+@import "./components/subscription-includes.css";
 
 @import "./pages/studio.css";
 @import "./pages/studio-editor.css";

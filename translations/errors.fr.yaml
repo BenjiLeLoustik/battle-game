@@ -1,8 +1,10 @@
 error:
     unknown: Une erreur inattendue est survenue.
+    
     maintenance:
         site: Le site est en maintenance, réessaie un peu plus tard.
         feature: "{message}"
+        
     http:
         default: Une erreur est survenue.
         "400": La requête est invalide.
@@ -41,8 +43,17 @@ error:
         subscribed: Vous avez déjà un abonnement actif. Résiliez-le avant d'en changer.
         early_access: Ce jeu est en avant-première, réservé aux abonnements qui y donnent accès.
         voucher: Ce code n'est pas valable, a expiré, ne s'applique pas à ce produit ou a déjà été utilisé.
+        subscription_gifts:
+            selection: "Un des cadeaux sélectionnés n’est pas disponible."
+            unavailable: "Ce cadeau n’est plus disponible. Contacte l’équipe du site."
+            address: "Complète les coordonnées de livraison avec un pays proposé dans la liste."
+            variant: "Choisis une taille ou variante pour chaque goodie concerné."
+            stock: "Un des goodies est momentanément en rupture de stock. Ta demande n’a pas été enregistrée ; réessaie après son réapprovisionnement."
+            terms: "Accepte les conditions de livraison avant de demander l’envoi."
+            
     clan:
         invalid: "Action impossible sur ce clan."
+    
     tournament:
         invalid: "Inscription impossible pour ce tournoi."
         not_qualified: "Ce tournoi est réservé aux joueurs qualifiés."

@@ -1,0 +1,54 @@
+{% import '@site/components/macros/shop.html.twig' as gift_ui %}
+
+{% set selected = product.option('included_products', []) %}
+
+<div class="subscription-includes">
+    <h3 class="subscription-includes__title">
+        {{ 'admin.shop.products.included_title'|trans({}, 'admin') }}
+    </h3>
+
+    <p class="admin-panel__help">
+        {{ 'admin.shop.products.included_help'|trans({}, 'admin') }}
+    </p>
+
+    {% if included_candidates is empty %}
+        <p class="admin-panel__help">
+            {{ 'admin.shop.products.included_empty'|trans({}, 'admin') }}
+        </p>
+    {% else %}
+        <div class="subscription-includes__grid">
+            {% for gift in included_candidates %}
+                <label class="subscription-includes__item">
+                    <input class="subscription-includes__check" type="checkbox" name="included_products[]" value="{{ gift.id }}"{{ gift.id in selected ? ' checked' }}>
+
+                    <span class="subscription-includes__preview" aria-hidden="true">
+                        {% if gift.image %}
+                            <img class="subscription-includes__image" src="{{ gift.image }}" alt="" loading="lazy">
+                        {% elseif gift.type.value == 'cosmetic'
+                            and gift.option('kind') in ['frame', 'banner', 'victory'] %}
+                            {{ gift_ui.cosmetic(gift, 'BG', 'sm') }}
+                        {% else %}
+                            {{ gift_ui.icon(gift.type.value) }}
+                        {% endif %}
+                    </span>
+
+                    <span class="subscription-includes__text">
+                        <strong class="subscription-includes__name">
+                            {{ gift.name }}
+                        </strong>
+
+                        <span class="subscription-includes__kind">
+                            {{ gift.type.value == 'cosmetic' ? ('cosmetic_kind.' ~ gift.option('kind'))|trans({}, 'enums') : gift.type.translate() }}
+                        </span>
+                    </span>
+                </label>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if errors.included_products is defined %}
+        <p class="admin-field__error">
+            {{ errors.included_products|trans({}, 'admin') }}
+        </p>
+    {% endif %}
+</div>
