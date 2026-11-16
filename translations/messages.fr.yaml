@@ -1032,6 +1032,12 @@ site:
         games: Jeux
         players: Joueurs
         all: Voir tous les résultats
+        ranked: "Partie classée · {name}"
+        ranked_tag: "RECHERCHE CLASSÉE"
+        ranked_title: "Recherche d’adversaires de ton niveau…"
+        ranked_help: "L’écart de niveau accepté augmente progressivement avec ton attente."
+        range: "Écart recherché : ±{gap} Elo"
+        retry: "Connexion interrompue. Nouvelle tentative automatique…"
     events:
         label: "Événements"
         live: "EN COURS"
@@ -1242,10 +1248,10 @@ game:
         progress: Joueurs trouvés
         slots: Joueurs de la partie
         tag: RECHERCHE EN COURS
-        full: SALLE COMPLÈTE
+        full: PARTIE PRÊTE
         title: Recherche de joueurs…
         found: Partie trouvée !
-        count: "{found} / {total} joueurs trouvés · la partie démarre quand la salle est complète"
+        count: "{found} / {total} joueurs trouvés"
         help: Tu peux aussi envoyer le lien de cette page à un ami pour jouer ensemble.
         fill: "La partie démarre dans {seconds} s, ou dès que la salle est complète."
         launch: "Lancement automatique dans {seconds} s."

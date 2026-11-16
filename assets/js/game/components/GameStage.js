@@ -64,6 +64,8 @@ export default async function GameStage(element, data) {
         slots: find('.game-search__slots'),
         launch: find('.game-search__launch'),
         leave: find('.game-search__leave'),
+        range: find('.game-search__range'),
+        notice: find('.game-search__notice'),
     };
     const play = {
         screen: find('.game-stage__screen'),
@@ -138,7 +140,6 @@ export default async function GameStage(element, data) {
         } catch {}
     };
 
-    let searchStartedAt = null;
     let counted = null;
     let previous = null;
     let ended = false;
@@ -303,10 +304,22 @@ export default async function GameStage(element, data) {
         const found = snapshot.players.length;
         const total = snapshot.maxPlayers;
         const full = snapshot.status !== 'waiting';
+        const ranked = snapshot.mode === 'ranked';
 
         views.search.classList.toggle('game-search--found', full);
-        search.tag.textContent = full ? labels.search_full : labels.search_tag;
-        search.headline.textContent = full ? labels.search_found : labels.search_title;
+
+        search.tag.textContent = full
+            ? labels.search_full
+            : ranked
+                ? labels.search_ranked_tag
+                : labels.search_tag;
+
+        search.headline.textContent = full
+            ? labels.search_found
+            : ranked
+                ? labels.search_ranked_title
+                : labels.search_title;
+
         search.count.textContent = format(labels.search_count, { found, total });
         search.fill.style.width = `${(found / total) * 100}%`;
         search.track.setAttribute('aria-valuenow', String(found));
@@ -611,11 +624,47 @@ export default async function GameStage(element, data) {
             const left = seconds(snapshot.timeline.startsAt - now);
             const fill = snapshot.timeline.fillEndsAt;
             const waiting = snapshot.status === 'waiting';
+            const ranked = snapshot.mode === 'ranked';
 
-            searchStartedAt ??= now;
-            search.clock.textContent = clock(now - searchStartedAt);
-            search.sub.textContent = !waiting ? format(labels.search_launch, { seconds: left }) : fill ? format(labels.search_fill, { seconds: seconds(fill - now) }) : labels.search_help;
-            search.launch.textContent = format(labels.search_enter, { seconds: left });
+            const me = snapshot.players.find(
+                (player) => String(player.id) === String(data.player),
+            );
+
+            const queuedAt = me?.queuedAt
+                ?? snapshot.timeline.createdAt
+                ?? now;
+
+            search.clock.textContent = clock(now - queuedAt);
+
+            search.sub.textContent = !waiting
+                ? format(labels.search_launch, { seconds: left })
+                : fill
+                    ? format(labels.search_fill, {
+                        seconds: seconds(fill - now),
+                    })
+                    : ranked
+                        ? labels.search_ranked_help
+                        : labels.search_help;
+
+            search.launch.textContent = format(labels.search_enter, {
+                seconds: left,
+            });
+
+            search.range.hidden = !ranked || !waiting || !me;
+
+            if (!search.range.hidden && snapshot.queuePolicy) {
+                const policy = snapshot.queuePolicy;
+
+                const gap = Math.min(
+                    policy.max,
+                    policy.initial
+                    + Math.floor(
+                        Math.max(0, now - queuedAt) / policy.interval,
+                    ) * policy.step,
+                );
+
+                search.range.textContent = format(labels.search_range, { gap });
+            }
 
             if (waiting && fill && now >= fill + 300 && readyAt !== fill) {
                 readyAt = fill;
@@ -740,21 +789,97 @@ export default async function GameStage(element, data) {
         }));
     }
 
+    let cancellingSearch = false;
+    let pollingSearch = false;
+
+    search.leave.addEventListener('submit', () => {
+        cancellingSearch = true;
+    });
+
+    const acceptSnapshot = (next) => {
+        pending = pending.catch(() => {}).then(async () => {
+            if (cancellingSearch) {
+                return;
+            }
+
+            if (snapshot.mode === 'ranked' && snapshot.status === 'waiting' && next.status === 'cancelled') {
+                window.location.replace(
+                    next.next
+                        ? data.matchUrl.replace('__code__', next.next)
+                        : data.gameUrl,
+                );
+
+                return;
+            }
+
+            if (snapshot.status !== 'waiting' && next.status === 'waiting') {
+                return;
+            }
+
+            snapshot = next;
+            await reveal();
+            update();
+        });
+
+        return pending;
+    };
+
+    const pollSearch = async () => {
+        const participating = snapshot.players.some(
+            (player) => String(player.id) === String(data.player),
+        );
+
+        if (!data.search || pollingSearch || cancellingSearch || snapshot.status !== 'waiting' || !participating) {
+            return;
+        }
+
+        pollingSearch = true;
+
+        try {
+            const response = await post(data.search, {});
+
+            if (!response.ok) {
+                throw new Error(`Search failed: ${response.status}`);
+            }
+
+            const result = await response.json();
+
+            if (cancellingSearch) {
+                return;
+            }
+
+            search.notice.hidden = true;
+
+            if (result.redirect) {
+                window.location.replace(result.redirect);
+                return;
+            }
+
+            await acceptSnapshot(result.snapshot);
+        } catch {
+            if (!cancellingSearch && snapshot.status === 'waiting') {
+                search.notice.textContent = labels.search_retry;
+                search.notice.hidden = false;
+            }
+        } finally {
+            pollingSearch = false;
+        }
+    };
+
     new EventSource(data.url).onmessage = (message) => {
         const next = JSON.parse(message.data);
 
         if (next.type === 'emote') {
             showEmote(next);
-
             return;
         }
 
-        pending = pending.then(async () => {
-            snapshot = next;
-            await reveal();
-            update();
-        });
+        acceptSnapshot(next);
     };
+
+    if (data.search) {
+        setInterval(pollSearch, 3000);
+    }
 
     await sync();
     update();

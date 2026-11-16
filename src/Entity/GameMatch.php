@@ -128,11 +128,15 @@ class GameMatch
 
     public function addPlayer(User $user): static
     {
+        $now = (int) floor(microtime(true) * 1000);
+
         $this->players[] = [
             'id' => (string) $user->getId(),
             'username' => $user->getUsername(),
             'initials' => $user->getInitials(),
             'avatar' => $user->getAvatar(),
+            'queuedAt' => $now,
+            'queueSeenAt' => $now,
         ];
 
         return $this;

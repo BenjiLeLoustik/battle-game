@@ -44,6 +44,10 @@ class GameMatchManager
 
     public function quickPlay(Game $game, User $user, GameMatchModeEnum $mode = GameMatchModeEnum::QUICK): GameMatch
     {
+        if ($mode !== GameMatchModeEnum::QUICK) {
+            throw new GameActionException();
+        }
+
         $this->purgeStale($game);
         $waiting = $this->matches->findBy([
             'game' => $game,
@@ -122,6 +126,10 @@ class GameMatchManager
 
     public function ready(GameMatch $match, User $user): void
     {
+        if ($match->getMode() === GameMatchModeEnum::RANKED) {
+            return;
+        }
+
         if ($this->interrupt($match) || $this->isBlocked($match)) {
             return;
         }
@@ -139,6 +147,10 @@ class GameMatchManager
 
     public function join(GameMatch $match, User $user): void
     {
+        if ($match->getMode() === GameMatchModeEnum::RANKED) {
+            return;
+        }
+
         if ($match->hasPlayer($user) || $match->getStatus() !== GameMatchStatusEnum::WAITING || $match->isFull()) {
             return;
         }
@@ -213,6 +225,20 @@ class GameMatchManager
         $this->mercure->publish(Update::json($this->topic($match), $this->snapshot($match)));
     }
 
+    public function launchRanked(GameMatch $match): void
+    {
+        if ($match->getMode() !== GameMatchModeEnum::RANKED || $match->getStatus() !== GameMatchStatusEnum::WAITING || $this->isBlocked($match)) {
+            return;
+        }
+
+        $enough = count($match->getPlayers()) >= $this->quickMinimum($match);
+        $deadline = $match->getTimeline()['fillEndsAt'] ?? PHP_INT_MAX;
+
+        if ($enough && ($match->isFull() || $this->now() >= $deadline)) {
+            $this->start($match);
+        }
+    }
+
     public function vote(GameMatch $match, User $user, bool $replay): void
     {
         if ($match->isSolo() || !$match->hasPlayer($user) || $match->getStatus() !== GameMatchStatusEnum::FINISHED || $match->getNextCode() !== null || $this->now() > $match->getTimeline()['voteEndsAt']) {
@@ -266,6 +292,14 @@ class GameMatchManager
             'room' => $match->getRoom()?->getCode(),
             'rewards' => $match->getRewards(),
             'serverTime' => $this->now(),
+            'queuePolicy' => $match->getMode() === GameMatchModeEnum::RANKED
+                ? [
+                    'initial' => RankedQueue::INITIAL_GAP,
+                    'step' => RankedQueue::GAP_STEP,
+                    'interval' => RankedQueue::STEP_MS,
+                    'max' => RankedQueue::MAX_GAP,
+                ]
+                : null,
         ];
     }
 
@@ -347,7 +381,7 @@ class GameMatchManager
     protected function purgeStale(Game $game): void
     {
         foreach ($this->matches->findBy(['game' => $game, 'status' => GameMatchStatusEnum::WAITING]) as $match) {
-            if ($match->getMode() !== GameMatchModeEnum::ROOM && $this->now() - ($match->getTimeline()['createdAt'] ?? 0) >= self::STALE_AFTER) {
+            if (!in_array($match->getMode(), [GameMatchModeEnum::ROOM, GameMatchModeEnum::RANKED], true) && $this->now() - ($match->getTimeline()['createdAt'] ?? 0) >= self::STALE_AFTER) {
                 $this->matches->delete($match);
             }
         }

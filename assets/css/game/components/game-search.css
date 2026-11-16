@@ -139,3 +139,16 @@
 .game-search__slot .avatar {
     @apply max-md:size-12 max-md:text-lg max-md:[--avatar-radius:14px];
 }
+
+.game-search__range {
+    @apply text-sm font-medium text-violet;
+}
+
+.game-search__notice {
+    @apply text-[13px] text-danger;
+}
+
+.game-search__range[hidden],
+.game-search__notice[hidden] {
+    @apply hidden;
+}

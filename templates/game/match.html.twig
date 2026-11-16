@@ -36,6 +36,11 @@
     rewards_badge: 'game.rewards.badge'|trans,
     rewards_badge_game: 'game.rewards.badge_game'|trans({ game: game.name }),
     ping: 'game.stage.ping'|trans,
+    search_ranked_tag: 'game.search.ranked.tag'|trans,
+    search_ranked_title: 'game.search.ranked_title'|trans,
+    search_ranked_help: 'game.search.ranked_help'|trans,
+    search_range: 'game.search.range'|trans,
+    search_retry: 'game.search.retry'|trans,
     sound_effects_on: 'game.stage.effects_on'|trans,
     sound_effects_off: 'game.stage.effects_off'|trans,
     sound_music_on: 'game.stage.music_on'|trans,
@@ -96,6 +101,7 @@
          data-player="{{ app_user().id }}"
          data-settings="{{ app_user().preferences.section('game')|json_encode }}"
          data-labels="{{ labels|json_encode }}"
+         data-search="{{ match.mode.value == 'ranked' ? path('site_play_search', {code: match.code}) : '' }}"
          data-secret-url="{{ path('site_play_secret', { code: match.code }) }}"
          data-secret="{{ secret|json_encode }}"
          data-emote="{{ path('site_play_emote', { code: match.code }) }}"
@@ -107,7 +113,7 @@
                 <span class="game-stage__mark">BG</span>
                 <span class="game-search__title">
                     <strong class="game-search__name">
-                        {{ 'game.search.quick'|trans({ name: game.name }) }}
+                        {{ (match.mode.value == 'ranked' ? 'game.search.ranked' : 'game.search.quick')|trans({name: game.name}) }}
                     </strong>
                     <span class="game-search__meta">
                         {{ 'site.game.players'|trans({ players: game.players }) }}
@@ -142,6 +148,8 @@
                             <div class="game-search__fill"></div>
                         </div>
                         <span class="game-search__sub"></span>
+                        <p class="game-search__range" hidden></p>
+                        <p class="game-search__notice" role="status" hidden></p>
                     </div>
                 </div>
                 <ul class="game-search__slots" aria-label="{{ 'game.search.slots'|trans }}"></ul>

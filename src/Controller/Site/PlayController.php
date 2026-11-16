@@ -7,10 +7,12 @@ use App\Entity\GameMatch;
 use App\Repository\GameMatchRepository;
 use App\Repository\GameRepository;
 use App\Sdk\Trait\ClockTrait;
+use App\Shared\Game\Enum\GameMatchStatusEnum;
 use App\Shared\Game\Exception\GameManifestException;
 use App\Shared\Game\GameManager;
 use App\Shared\Game\Enum\GameMatchModeEnum;
 use App\Shared\Game\GameMatchManager;
+use App\Shared\Game\RankedQueue;
 use NeoPHP\Component\Session\SessionManagerInterface;
 use NeoPHP\Package\Mercure\MercureManagerInterface;
 use NeoPHP\Package\Mercure\Model\Update;
@@ -75,7 +77,7 @@ class PlayController extends AbstractController
     }
 
     #[Route('/{slug}/ranked', name: 'ranked', methods: ['GET'])]
-    public function ranked(string $slug, GameRepository $games): Response
+    public function ranked(string $slug, GameRepository $games, RankedQueue $queue): Response
     {
         $game = $games->findPlayable($slug, $this->isGranted('ROLE_ADMIN')) ?? throw $this->createNotFoundException();
         $user = $this->getUser();
@@ -102,7 +104,9 @@ class PlayController extends AbstractController
             return $this->redirectToRoute('site_shop_index', ['tab' => 'lives']);
         }
 
-        return $this->redirectToRoute('site_play_show', ['code' => $this->matches->quickPlay($game, $user, GameMatchModeEnum::RANKED)->getCode()]);
+        return $this->redirectToRoute('site_play_show', [
+            'code' => $queue->enter($game, $user)->getCode(),
+        ]);
     }
 
     #[Route('/match/{code}/emote', name: 'emote', methods: ['POST'])]
@@ -153,12 +157,31 @@ class PlayController extends AbstractController
     }
 
     #[Route('/match/{code}', name: 'show', methods: ['GET'])]
-    public function show(string $code, Request $request, GameManager $games, ?WebProfilerManagerInterface $profiler): Response
+    public function show(string $code, Request $request, GameManager $games, ?WebProfilerManagerInterface $profiler, RankedQueue $queue): Response
     {
         $match = $this->find($code);
         $preview = $this->isPreview($request);
         $this->matches->interrupt($match);
-        $this->matches->join($match, $this->getUser());
+
+        if ($match->getMode() === GameMatchModeEnum::RANKED) {
+            if ($match->hasPlayer($this->getUser()) && in_array($match->getStatus(), [GameMatchStatusEnum::WAITING, GameMatchStatusEnum::CANCELLED], true)) {
+                $current = $queue->poll($match, $this->getUser());
+
+                if ($current->getCode() !== $code) {
+                    return $this->redirectToRoute('site_play_show', [
+                        'code' => $current->getCode(),
+                    ]);
+                }
+
+                $match = $current;
+            } elseif ($match->getStatus() === GameMatchStatusEnum::WAITING) {
+                return $this->redirectToRoute('site_play_ranked', [
+                    'slug' => $match->getGame()->getSlug(),
+                ]);
+            }
+        } else {
+            $this->matches->join($match, $this->getUser());
+        }
 
         if ($preview) {
             $profiler?->disable();
@@ -172,6 +195,20 @@ class PlayController extends AbstractController
             'topic' => $this->matches->topic($match),
             'languages' => $games->languages($match->getGame()),
             'preview' => $preview,
+        ]);
+    }
+
+    #[Route('/match/{code}/search', name: 'search', methods: ['POST'])]
+    #[Csrf('game-match-{code}')]
+    public function search(string $code, RankedQueue $queue): Response
+    {
+        $match = $queue->poll($this->find($code), $this->getUser());
+
+        return $this->json([
+            'redirect' => $match->getCode() !== $code
+                ? $this->generateUrl('site_play_show', ['code' => $match->getCode()])
+                : null,
+            'snapshot' => $this->matches->snapshot($match),
         ]);
     }
 
@@ -198,9 +235,15 @@ class PlayController extends AbstractController
 
     #[Route('/match/{code}/ready', name: 'ready', methods: ['POST'])]
     #[Csrf('game-match-{code}')]
-    public function ready(string $code): Response
+    public function ready(string $code, RankedQueue $queue): Response
     {
-        $this->matches->ready($this->find($code), $this->getUser());
+        $match = $this->find($code);
+
+        if ($match->getMode() === GameMatchModeEnum::RANKED) {
+            $queue->poll($match, $this->getUser());
+        } else {
+            $this->matches->ready($match, $this->getUser());
+        }
 
         return $this->json(['ok' => true]);
     }
@@ -220,12 +263,25 @@ class PlayController extends AbstractController
 
     #[Route('/match/{code}/leave', name: 'leave', methods: ['POST'])]
     #[Csrf('game-match-{code}')]
-    public function leave(string $code): Response
+    public function leave(string $code, RankedQueue $queue): Response
     {
         $match = $this->find($code);
-        $this->matches->leave($match, $this->getUser());
 
-        return $this->redirectToRoute('site_game_show', ['slug' => $match->getGame()->getSlug()]);
+        if ($match->getMode() === GameMatchModeEnum::RANKED) {
+            $match = $queue->cancel($match, $this->getUser());
+
+            if ($match->getStatus() === GameMatchStatusEnum::PLAYING) {
+                return $this->redirectToRoute('site_play_show', [
+                    'code' => $match->getCode(),
+                ]);
+            }
+        } else {
+            $this->matches->leave($match, $this->getUser());
+        }
+
+        return $this->redirectToRoute('site_game_show', [
+            'slug' => $match->getGame()->getSlug(),
+        ]);
     }
 
     protected function sync(Game $game, GameManager $manager): Game
