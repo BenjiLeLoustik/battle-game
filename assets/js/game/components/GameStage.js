@@ -880,7 +880,7 @@ export default async function GameStage(element, data) {
         }
 
         restoring = true;
-        const controller new AbortController();
+        const controller = new AbortController();
         const timeout = setTimeout(() => controller.abort(), 8000);
 
         try {
@@ -896,7 +896,7 @@ export default async function GameStage(element, data) {
 
             const result = await response.json();
             await acceptSnapshot(result.snapshot, result.secret);
-            connectionNotice.hidden = steam.readyState === EventSource.OPEN;
+            connectionNotice.hidden = stream.readyState === EventSource.OPEN;
         } catch {
             connectionNotice.hidden = false;
         } finally {
@@ -906,7 +906,7 @@ export default async function GameStage(element, data) {
     };
 
     const stream = new EventSource(data.url);
-    steam.onmessage = (message) => {
+    stream.onmessage = (message) => {
         const next = JSON.parse(message.data);
 
         if (next.type === 'emote') {
