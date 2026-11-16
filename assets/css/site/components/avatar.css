@@ -95,6 +95,10 @@
     @apply rounded-[inherit];
 }
 
+.avatar--3xl .avatar__image {
+    @apply rounded-[calc(var(--avatar-radius)_-_4px)];
+}
+
 .plan-badge {
     @apply inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-(--plan-color) text-bg
     shadow-[0_0_10px_color-mix(in_srgb,var(--plan-color)_55%,transparent)];
