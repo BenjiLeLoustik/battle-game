@@ -129,7 +129,11 @@
 }
 
 .shop-form__check {
-    @apply self-center sm:mt-6 sm:self-start;
+    @apply self-start sm:mt-[35px];
+}
+
+.shop-switch__label {
+    @apply select-none leading-6;
 }
 
 .shop-form__segment {

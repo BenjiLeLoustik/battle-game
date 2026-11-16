@@ -170,9 +170,11 @@
                                 <input class="admin-field__input" type="number" min="1" name="plan_lives" value="{{ product.option('lives', 0) > 0 ? product.option('lives') : 10 }}" data-plan-lives>
                                 <span class="admin-panel__help">{{ 'admin.shop.products.plan_lives_help'|trans({}, 'admin') }}</span>
                             </label>
-                            <label class="admin-check shop-form__check">
-                                <input type="checkbox" class="admin-check__input" name="unlimited" value="1" data-plan-unlimited{{ product.id and product.option('lives', 0) <= 0 ? ' checked' }}>
-                                {{ 'admin.shop.products.plan_unlimited'|trans({}, 'admin') }}
+                            <label class="shop-switch shop-form__check">
+                                <input type="checkbox" class="shop-switch__input" name="unlimited" value="1" data-plan-unlimited{{ product.id and product.option('lives', 0) <= 0 ? ' checked' }}>
+
+                                <span class="shop-switch__track" aria-hidden="true"></span>
+                                <span class="shop-switch__label">{{ 'admin.shop.products.plan_unlimited'|trans({}, 'admin') }}</span>
                             </label>
                         </div>
                         <div class="shop-badge-editor" data-badge-editor>
