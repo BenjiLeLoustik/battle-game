@@ -251,11 +251,32 @@ class SettingsController extends AbstractController
     public function dismissOnboarding(): Response
     {
         $user = $this->getUser();
+        $preferences = $user->getPreferences();
 
         $user->setPreferences(
-            $user->getPreferences()->with('onboarding', [
-                'dismissed' => true,
-            ])
+            $preferences->with('onboarding', array_replace(
+                $preferences->section('onboarding'),
+                ['dismissed' => true],
+            )),
+        );
+
+        $this->users->save($user, true);
+
+        return $this->redirectToRoute('site_home_index');
+    }
+
+    #[Route('/onboarding/resume', name: 'onboarding_resume', methods: ['POST'])]
+    #[Csrf('onboarding')]
+    public function resumeOnboarding(): Response
+    {
+        $user = $this->getUser();
+        $preferences = $user->getPreferences();
+
+        $user->setPreferences(
+            $preferences->with('onboarding', array_replace(
+                $preferences->section('onboarding'),
+                ['dismissed' => false],
+            )),
         );
 
         $this->users->save($user, true);

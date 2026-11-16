@@ -12,6 +12,7 @@ class UserPreferences
     public const DEFAULTS = [
         'onboarding' => [
             'dismissed' => false,
+            'completed' => [],
         ],
         'privacy' => [
             'public' => true,

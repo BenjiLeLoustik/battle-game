@@ -7,36 +7,36 @@
     @apply flex flex-wrap items-start justify-between gap-3;
 }
 
-.onboarding h2 {
+.onboarding__title {
     @apply font-display text-lg font-bold text-ink;
 }
 
-.onboarding h3 {
+.onboarding__step-title {
     @apply text-sm font-semibold text-ink;
 }
 
-.onboarding p {
+.onboarding__description {
     @apply mt-1 text-[13px] leading-relaxed text-muted-2;
 }
 
-.onboarding label {
+.onboarding__label {
     @apply text-xs font-medium text-muted-2;
 }
 
-.onboarding progress {
+.onboarding__progress {
     @apply block h-2 w-full overflow-hidden rounded-full
     border-0 bg-line-soft accent-cyan;
 }
 
-.onboarding progress::-webkit-progress-bar {
+.onboarding__progress::-webkit-progress-bar {
     @apply rounded-full bg-line-soft;
 }
 
-.onboarding progress::-webkit-progress-value {
+.onboarding__progress::-webkit-progress-value {
     @apply rounded-full bg-cyan;
 }
 
-.onboarding progress::-moz-progress-bar {
+.onboarding__progress::-moz-progress-bar {
     @apply rounded-full bg-cyan;
 }
 

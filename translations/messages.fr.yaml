@@ -344,6 +344,9 @@ site:
         progress: "{completed} étapes sur {total}"
         done: "Terminé"
         step_action: "{action} : {title}"
+        settings_title: "Parcours de découverte"
+        settings_description: "Retrouve les étapes pour bien démarrer sur BattleGame."
+        resume: "Réafficher le parcours"
         steps:
             profile:
                 title: "Personnalise ton profil"
@@ -355,7 +358,7 @@ site:
                 action: "Choisir"
             play:
                 title: "Termine ta première partie"
-                description: "Choisis un jeu et joue jusqu’au résultat."
+                description: "Termine une partie multijoueur ou un entraînement solo."
                 action: "Voir les jeux"
         
     game_page:

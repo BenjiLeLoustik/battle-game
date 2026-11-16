@@ -173,15 +173,30 @@
 }
 
 .game-emote {
-    @apply relative;
+    @apply relative shrink-0;
 }
 
 .game-emote__menu {
-    @apply absolute top-[calc(100%+6px)] right-0 z-30 flex gap-1 rounded-xl border border-line bg-panel p-1.5 shadow-[0_14px_30px_rgba(0,0,0,.5)];
+    @apply absolute top-[calc(100%+6px)] right-0 z-30
+    flex gap-1 rounded-xl border border-line bg-panel p-1.5
+    shadow-[0_14px_30px_rgba(0,0,0,.5)]
+    max-md:fixed max-md:inset-x-3 max-md:top-[62px]
+    max-md:z-[80] max-md:grid max-md:grid-cols-6
+    max-md:max-h-[calc(100dvh-74px)] max-md:overflow-y-auto
+    max-[380px]:grid-cols-3;
+}
+
+.game-emote__menu[hidden] {
+    @apply hidden;
 }
 
 .game-emote__item {
-    @apply flex size-9 cursor-pointer items-center justify-center rounded-lg text-lg font-bold text-ink hover:bg-surface-2;
+    @apply flex size-9 shrink-0 cursor-pointer items-center
+    justify-center rounded-lg text-lg font-bold text-ink
+    hover:bg-surface-2
+    focus-visible:outline-2 focus-visible:outline-offset-2
+    focus-visible:outline-cyan
+    max-md:h-11 max-md:w-full max-md:min-w-0;
 }
 
 .game-emotes {

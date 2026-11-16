@@ -44,7 +44,7 @@ class AdminAccess
         'pages' => ['admin_page_index', 'sys.pages', '/admin/pages'],
         'maintenance' => ['admin_maintenance_index', 'sys.maintenance', '/admin/maintenance'],
         'languages' => ['admin_language_index', 'sys.langs', '/admin/languages'],
-        'levels' => ['admin_level_index', 'engagne.manage', 'admin/levels'],
+        'levels' => ['admin_level_index', 'engage.manage', '/admin/levels'],
         'emails' => ['admin_email_index', 'sys.emails', '/admin/emails'],
         'realtime' => ['admin_mercure_index', 'sys.mercure', '/admin/realtime'],
         'admins' => ['admin_admin_index', 'sys.admins', '/admin/admins'],
