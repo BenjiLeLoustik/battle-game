@@ -334,6 +334,30 @@ site:
             empty: Aucun jeu dans cette catégorie pour le moment.
             retry: Réessayer le chargement
         
+    onboarding:
+        title: "Tes premiers pas sur BattleGame"
+        description: "Découvre le site à ton rythme."
+        finished_title: "Tu es prêt à jouer !"
+        finished_description: "Bravo, tu as terminé le parcours de découverte."
+        finish: "Terminer"
+        dismiss: "Masquer le parcours"
+        progress: "{completed} étapes sur {total}"
+        done: "Terminé"
+        step_action: "{action} : {title}"
+        steps:
+            profile:
+                title: "Personnalise ton profil"
+                description: "Ajoute un avatar ou une courte bio."
+                action: "Personnaliser"
+            favorite:
+                title: "Choisis ton jeu favori"
+                description: "Sélectionne ton jeu préféré dans ton profil."
+                action: "Choisir"
+            play:
+                title: "Termine ta première partie"
+                description: "Choisis un jeu et joue jusqu’au résultat."
+                action: "Voir les jeux"
+        
     game_page:
         lives:
             left: "{left}/{max} vies aujourd'hui"

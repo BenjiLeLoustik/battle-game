@@ -12,6 +12,10 @@
             {{ 'site.home.title'|trans }}
         </h1>
 
+        {% include '@site/components/partials/onboarding.html.twig' with {
+            onboarding: onboarding
+        } only %}
+
         {% if featured %}
             <section class="featured" aria-roledescription="carousel" aria-label="{{ 'site.home.slider.label'|trans }}"
                      data-component="FeaturedSlider"

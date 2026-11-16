@@ -1,0 +1,93 @@
+{% if onboarding %}
+    <section class="onboarding" aria-labelledby="onboarding-title">
+        <div class="onboarding__header">
+            <div class="onboarding__heading">
+                <h2 id="onboarding-title" class="onboarding__title">
+                    {{ (onboarding.finished
+                    ? 'site.onboarding.finished_title'
+                    : 'site.onboarding.title')|trans }}
+                </h2>
+
+                <p class="onboarding__description">
+                    {{ (onboarding.finished
+                    ? 'site.onboarding.finished_description'
+                    : 'site.onboarding.description')|trans }}
+                </p>
+            </div>
+
+            <form
+                    class="onboarding__dismiss"
+                    method="post"
+                    action="{{ path('site_settings_onboarding_dismiss') }}"
+            >
+                <input
+                        type="hidden"
+                        name="_token"
+                        value="{{ csrf_token('onboarding') }}"
+                >
+
+                <button type="submit" class="btn btn--ghost">
+                    {{ (onboarding.finished
+                    ? 'site.onboarding.finish'
+                    : 'site.onboarding.dismiss')|trans }}
+                </button>
+            </form>
+        </div>
+
+        <div class="onboarding__status">
+            <label
+                    for="onboarding-progress"
+                    class="onboarding__label"
+            >
+                {{ 'site.onboarding.progress'|trans({
+                    completed: onboarding.completed,
+                    total: onboarding.total
+                }) }}
+            </label>
+
+            <progress
+                    id="onboarding-progress"
+                    class="onboarding__progress"
+                    value="{{ onboarding.completed }}"
+                    max="{{ onboarding.total }}"
+            ></progress>
+        </div>
+
+        <ol class="onboarding__steps">
+            {% for step in onboarding.steps %}
+                <li class="onboarding__step{{ step.done ? ' onboarding__step--done' : '' }}">
+                    <span class="onboarding__number" aria-hidden="true">
+                        {{ step.done ? '✓' : loop.index }}
+                    </span>
+
+                    <div class="onboarding__text">
+                        <h3 class="onboarding__step-title">
+                            {{ step.title|trans }}
+                        </h3>
+
+                        <p class="onboarding__description">
+                            {{ step.description|trans }}
+                        </p>
+                    </div>
+
+                    {% if step.done %}
+                        <span class="onboarding__done">
+                            {{ 'site.onboarding.done'|trans }}
+                        </span>
+                    {% else %}
+                        <a
+                                class="btn btn--primary"
+                                href="{{ path(step.route) }}{{ step.fragment }}"
+                                aria-label="{{ 'site.onboarding.step_action'|trans({
+                                    action: step.action|trans,
+                                    title: step.title|trans
+                                }) }}"
+                        >
+                            {{ step.action|trans }}
+                        </a>
+                    {% endif %}
+                </li>
+            {% endfor %}
+        </ol>
+    </section>
+{% endif %}

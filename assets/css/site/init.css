@@ -11,6 +11,7 @@
 @import "./components/badge.css";
 @import "./components/icon.css";
 @import "./components/error-page.css";
+@import "./components/onboarding.css";
 
 @import "./pages/home.css";
 @import "./pages/game.css";

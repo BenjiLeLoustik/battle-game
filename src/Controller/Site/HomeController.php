@@ -6,6 +6,7 @@ use App\Repository\CategoryRepository;
 use App\Repository\GameRepository;
 use App\Shared\Game\GameMatchManager;
 use App\Shared\Setting\SettingManager;
+use App\Site\Onboarding\OnboardingManager;
 use App\Site\Security\Form\GuestForm;
 use NeoPHP\Component\Controller\Contract\AbstractController;
 use NeoPHP\Component\Http\Request\Request;
@@ -25,7 +26,7 @@ class HomeController extends AbstractController
     }
 
     #[Route('', name: 'index', methods: ['GET'])]
-    public function index(SettingManager $settings): Response
+    public function index(SettingManager $settings, OnboardingManager $onboarding): Response
     {
         [$games, $more] = $this->games->findLivePage(null, 1, self::PAGE_SIZE);
 
@@ -36,6 +37,7 @@ class HomeController extends AbstractController
             'online' => $this->matches->online(),
             'categories' => $this->categories->findOrdered(true),
             'guest' => $this->getUser() === null && $settings->get('guests') ? $this->createForm(GuestForm::class, null, ['action' => $this->generateUrl('site_room_join')]) : null,
+            'onboarding' => $onboarding->build($this->getUser()),
         ]);
     }
 

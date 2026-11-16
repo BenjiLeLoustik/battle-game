@@ -246,6 +246,23 @@ class SettingsController extends AbstractController
         return $this->saved('site_settings_delete', 'site.settings.flash.deletion_cancelled');
     }
 
+    #[Route('/onboarding/dismiss', name: 'onboarding_dismiss', methods: ['POST'])]
+    #[Csrf('onboarding')]
+    public function dismissOnboarding(): Response
+    {
+        $user = $this->getUser();
+
+        $user->setPreferences(
+            $user->getPreferences()->with('onboarding', [
+                'dismissed' => true,
+            ])
+        );
+
+        $this->users->save($user, true);
+
+        return $this->redirectToRoute('site_home_index');
+    }
+
     protected function preferences(Request $request, string $section): Response
     {
         if ($request->getMethod() === 'POST') {

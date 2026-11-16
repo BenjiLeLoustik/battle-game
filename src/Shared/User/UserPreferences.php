@@ -10,6 +10,9 @@ class UserPreferences
     public const CHANNELS = ['site', 'email'];
 
     public const DEFAULTS = [
+        'onboarding' => [
+            'dismissed' => false,
+        ],
         'privacy' => [
             'public' => true,
             'online' => true,
