@@ -530,6 +530,16 @@ admin:
         back: Retour à la liste
         save: Enregistrer
         schedule: Planifier la maintenance
+        feature_table:
+            title: "Fonctionnalités concernées"
+            page: "Page ou fonctionnalité"
+            description: "Description"
+            maintenance: "En maintenance"
+            toggle: "Mettre {name} en maintenance"
+            descriptions:
+                leaderboard: "Rend le classement indisponible pendant la maintenance."
+                registration: "Suspend la création de nouveaux comptes."
+                discord: "Suspend la connexion et l’inscription avec Discord."
 
     save: Enregistrer
     close: Fermer
@@ -637,6 +647,7 @@ admin:
         translation.delete: "a supprimé la langue {detail}"
         audit.export: "a exporté le journal d'audit ({detail})"
         mercure.test: "a publié un test sur {detail}"
+        engage.daily: "a configuré les défis et les récompenses quotidiennes"
         engage.event: "a enregistré l'événement {detail}"
         engage.event_delete: "a supprimé l'événement {detail}"
         engage.pass: "a modifié le pass de saison ({detail})"

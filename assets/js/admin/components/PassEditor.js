@@ -16,7 +16,23 @@ export default function PassEditor(form) {
     const tiers = form.querySelector('[data-tiers]');
     const empty = form.querySelector('[data-tier-empty]');
     const count = form.querySelector('[data-tier-count]');
+    const table = form.querySelector('[data-tier-table]');
+    const footer = form.querySelector('[data-tier-footer]');
     let counter = 100000;
+
+    const syncReward = (box) => {
+        const type = box.querySelector('[data-reward-type]').value;
+        const value = box.querySelector('[data-reward-value]');
+        const product = box.querySelector('[data-reward-product]');
+        const numeric = ['coins', 'lives'].includes(type);
+
+        value.hidden = !numeric;
+        value.disabled = !numeric;
+        value.required = numeric;
+        product.hidden = type !== 'product';
+        product.disabled = type !== 'product';
+        product.required = type === 'product';
+    };
 
     const renumber = () => {
         if (!tiers) {
@@ -32,19 +48,28 @@ export default function PassEditor(form) {
             empty.hidden = rows.length > 0;
         }
 
+        if (table) {
+            table.hidden = rows.length === 0;
+        }
+
+        if (footer) {
+            footer.hidden = rows.length === 0;
+        }
+
         if (count) {
             count.textContent = String(rows.length);
         }
     };
 
-    form.querySelector('[data-add-tier]')?.addEventListener('click', () => {
+    form.querySelectorAll('[data-add-tier]').forEach((button) => button.addEventListener('click', () => {
         const tier = parse(tierTemplate, { __ROW__: String(counter += 1) }, 'tbody');
         const last = [...tiers.querySelectorAll('[data-tier-xp]')].pop();
         tier.querySelector('[data-tier-xp]').value = String((Number(last?.value) || 0) + 100);
         tiers.append(tier);
         renumber();
+        tier.querySelectorAll('.pass-admin__reward').forEach(syncReward);
         tier.querySelector('[data-tier-xp]').focus();
-    });
+    }));
 
     form.querySelector('[data-add-track]')?.addEventListener('click', () => {
         const row = parse(trackTemplate, { __INDEX__: String(counter += 1), __KEY__: `t${Date.now().toString(36)}` }, 'ul');
@@ -73,15 +98,11 @@ export default function PassEditor(form) {
     });
 
     form.addEventListener('change', (event) => {
-        if (!event.target.matches('[data-reward-type]')) {
-            return;
+        if (event.target.matches('[data-reward-type]')) {
+            syncReward(event.target.closest('.pass-admin__reward'));
         }
-
-        const box = event.target.closest('.pass-admin__reward');
-        const type = event.target.value;
-        box.querySelector('[data-reward-value]').hidden = !['coins', 'lives'].includes(type);
-        box.querySelector('[data-reward-product]').hidden = type !== 'product';
     });
 
+    form.querySelectorAll('.pass-admin__reward').forEach(syncReward);
     renumber();
 }

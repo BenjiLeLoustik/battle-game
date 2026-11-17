@@ -179,3 +179,47 @@
 .maintenance-form__actions {
     @apply justify-end;
 }
+
+.maintenance-feature-table {
+    @apply overflow-x-auto rounded-xl border border-adm-line;
+}
+
+.maintenance-feature-table__table {
+    @apply w-full min-w-[600px] border-collapse text-left;
+}
+
+.maintenance-feature-table__head {
+    @apply bg-adm-hover px-4 py-3 text-xs font-semibold text-adm-muted;
+}
+
+.maintenance-feature-table__head:first-child {
+    @apply w-52;
+}
+
+.maintenance-feature-table__row + .maintenance-feature-table__row {
+    @apply border-t border-adm-line;
+}
+
+.maintenance-feature-table__row:has(input:checked) {
+    @apply bg-adm-accent/5;
+}
+
+.maintenance-feature-table__name {
+    @apply px-4 py-4 text-sm font-semibold text-adm-ink;
+}
+
+.maintenance-feature-table__description {
+    @apply px-4 py-4 text-sm leading-relaxed text-adm-muted;
+}
+
+.maintenance-feature-table__control {
+    @apply w-40 px-4 py-3 text-center;
+}
+
+.maintenance-feature-table__toggle {
+    @apply inline-flex align-middle;
+}
+
+.maintenance-feature-table .shop-switch__input:checked + .shop-switch__track {
+    @apply bg-adm-accent;
+}

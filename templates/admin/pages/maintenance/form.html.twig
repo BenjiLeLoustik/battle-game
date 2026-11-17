@@ -94,13 +94,33 @@
                     {% endfor %}
                     {{ _self.error(errors, 'games') }}
                 </div>
-                <div class="maintenance-form__checks" data-for-target="features">
-                    {% for feature in features %}
-                        <label class="maintenance-form__check">
-                            <input type="checkbox" name="features[]" value="{{ feature.value }}" data-label="{{ feature.translate() }}"{{ feature.value in data.features ? ' checked' }}>
-                            {{ feature.translate() }}
-                        </label>
-                    {% endfor %}
+                <div data-for-target="features">
+                    <div class="maintenance-feature-table">
+                        <table class="maintenance-feature-table__table">
+                            <caption class="sr-only">{{ 'admin.maintenance.feature_table.title'|trans({}, 'admin') }}</caption>
+                            <thead>
+                            <tr>
+                                <th scope="col" class="maintenance-feature-table__head">{{ 'admin.maintenance.feature_table.page'|trans({}, 'admin') }}</th>
+                                <th scope="col" class="maintenance-feature-table__head">{{ 'admin.maintenance.feature_table.description'|trans({}, 'admin') }}</th>
+                                <th scope="col" class="maintenance-feature-table__head maintenance-feature-table__control">{{ 'admin.maintenance.feature_table.maintenance'|trans({}, 'admin') }}</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for feature in features %}
+                                <tr class="maintenance-feature-table__row">
+                                    <th scope="row" class="maintenance-feature-table__name">{{ feature.translate() }}</th>
+                                    <td class="maintenance-feature-table__description">{{ ('admin.maintenance.feature_table.descriptions.' ~ feature.value)|trans({}, 'admin') }}</td>
+                                    <td class="maintenance-feature-table__control">
+                                        <label class="shop-switch maintenance-feature-table__toggle">
+                                            <input class="shop-switch__input" type="checkbox" role="switch" name="features[]" value="{{ feature.value }}" data-label="{{ feature.translate() }}" aria-label="{{ 'admin.maintenance.feature_table.toggle'|trans({ name: feature.translate() }, 'admin') }}"{{ feature.value in data.features ? ' checked' }}>
+                                            <span class="shop-switch__track" aria-hidden="true"></span>
+                                        </label>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                     {{ _self.error(errors, 'features') }}
                 </div>
             </section>

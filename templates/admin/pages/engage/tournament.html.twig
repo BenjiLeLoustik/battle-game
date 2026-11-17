@@ -8,6 +8,7 @@
 {% block title %}{{ title }} · {{ parent() }}{% endblock %}
 
 {% macro reward(index, reward, types, items, offers) %}
+    {% set reward = { place: 1, type: 'coins', value: 1, product: null, label: '' }|merge(reward) %}
     {% set type = reward.type ?? 'coins' %}
     <li class="reward-row" data-row data-reward-row>
         <label class="reward-row__place">

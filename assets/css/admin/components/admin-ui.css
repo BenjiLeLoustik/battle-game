@@ -1,9 +1,9 @@
 .admin-page {
-    @apply flex flex-col gap-5;
+    @apply flex w-full min-w-0 flex-col gap-5;
 }
 
 .admin-page--narrow {
-    @apply max-w-[1100px];
+    @apply max-w-none;
 }
 
 .admin-page__head {

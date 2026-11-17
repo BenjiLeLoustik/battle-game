@@ -225,12 +225,20 @@
 }
 
 .tourney-admin {
-    @apply grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_360px];
+    @apply grid w-full grid-cols-1 items-start gap-4;
+}
+
+.tourney-admin:has(> .tourney-admin__side > .admin-panel) {
+    @apply xl:grid-cols-[minmax(0,1fr)_360px];
 }
 
 .tourney-admin__main,
 .tourney-admin__side {
-    @apply flex flex-col gap-4;
+    @apply flex min-w-0 flex-col gap-4;
+}
+
+.tourney-admin__side:not(:has(> .admin-panel)) {
+    @apply hidden;
 }
 
 .reward-rows {
@@ -311,4 +319,85 @@
 
 .daily-admin__remove {
     @apply justify-self-end max-sm:justify-self-start;
+}
+
+.pass-admin__tiers {
+    @apply min-w-0 overflow-hidden;
+}
+
+.pass-admin__intro {
+    @apply flex min-w-0 flex-1 flex-col gap-2;
+}
+
+.pass-admin__title {
+    @apply flex items-center gap-2;
+}
+
+.pass-admin__count {
+    @apply inline-flex min-w-7 items-center justify-center rounded-md bg-adm-accent/15 px-2 py-0.5 text-xs font-semibold text-adm-accent-soft;
+}
+
+.pass-admin__tiers .pass-admin__bar--pad {
+    @apply items-start border-b border-adm-line px-5 py-5 max-sm:px-4;
+}
+
+.pass-admin__table-wrap {
+    @apply w-full overflow-x-auto;
+}
+
+.pass-admin__tiers .pass-admin__table {
+    @apply w-full table-fixed min-w-[calc(14rem_+_var(--pass-track-count)_*_17rem)];
+}
+
+.pass-admin__tiers .admin-table__th:first-child {
+    @apply w-20;
+}
+
+.pass-admin__tiers .admin-table__th:nth-child(2) {
+    @apply w-36;
+}
+
+.pass-admin__tiers .admin-table__th:last-child {
+    @apply w-16;
+}
+
+.pass-admin__tiers .admin-table__cell {
+    @apply align-middle;
+}
+
+.pass-admin__tiers .pass-admin__reward {
+    @apply flex min-w-0 flex-col gap-2;
+}
+
+.pass-admin__tiers .pass-admin__type,
+.pass-admin__tiers .pass-admin__value,
+.pass-admin__tiers .pass-admin__product,
+.pass-admin__tiers .pass-admin__xp {
+    @apply w-full min-w-0;
+}
+
+.pass-admin__empty {
+    @apply flex flex-col items-center gap-4 px-5 py-12 text-center max-sm:px-4;
+}
+
+.pass-admin__empty-icon {
+    @apply flex size-14 items-center justify-center rounded-2xl bg-adm-accent/10 text-adm-accent-soft;
+}
+
+.pass-admin__empty-icon svg {
+    @apply size-7;
+}
+
+.pass-admin__empty-text {
+    @apply text-sm leading-relaxed text-adm-muted;
+}
+
+.pass-admin__footer {
+    @apply border-t border-adm-line px-5 py-4 max-sm:px-4;
+}
+
+.pass-admin__empty[hidden],
+.pass-admin__footer[hidden],
+.pass-admin__table-wrap[hidden] {
+    @apply hidden;
 }
