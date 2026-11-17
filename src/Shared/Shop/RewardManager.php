@@ -3,136 +3,170 @@
 namespace App\Shared\Shop;
 
 use App\Entity\User;
+use App\Entity\Wallet;
 use App\Repository\WalletRepository;
-use App\Shared\Setting\SettingManager;
 use App\Shared\Shop\Exception\ShopException;
 use DateTime;
 use DateTimeZone;
 
 class RewardManager
 {
-    public const CHALLENGES = [
-        'play' => ['metric' => 'played', 'target' => 3, 'setting' => 'challenge_play'],
-        'win' => ['metric' => 'won', 'target' => 1, 'setting' => 'challenge_win'],
-        'variety' => ['metric' => 'games', 'target' => 2, 'setting' => 'challenge_variety'],
-    ];
-    private const TIMEZONE = 'Europe/Paris';
-
     public function __construct(
         protected WalletManager $wallets,
         protected WalletRepository $repository,
-        protected SettingManager $settings,
+        protected DailyProgram $program,
     ) {
     }
 
-    public function daily(User $user): array
+    public function daily(User $user, ?DateTime $today = null): array
     {
+        $today ??= $this->program->today();
         $wallet = $this->wallets->wallet($user);
-        $today = $this->today();
         $last = $wallet->getDailyDay()?->format('Y-m-d');
         $claimed = $last === $today->format('Y-m-d');
         $continues = $claimed || $last === (clone $today)->modify('-1 day')->format('Y-m-d');
         $streak = $continues ? $wallet->getDailyStreak() : 0;
-        $rewards = $this->dailyRewards();
-        $next = $claimed ? $streak : $streak + 1;
+        $config = $this->program->current($today->format('Y-m-d'));
+        $next = $claimed ? max(1, $streak) : $streak + 1;
+        $cycle = $wallet->getChallenges()['cycle'] ?? null;
+
+        if (!$continues || !is_array($cycle)) {
+            $cycle = [
+                'start' => $continues ? $next - (($next - 1) % count($config['cycle'])) : $next,
+                'rewards' => $config['cycle'],
+                'duplicate_coins' => $config['duplicate_coins'],
+            ];
+        } elseif ($next >= $cycle['start'] + count($cycle['rewards'])) {
+            $cycle = ['start' => $next, 'rewards' => $config['cycle'], 'duplicate_coins' => $config['duplicate_coins']];
+        }
+
+        $index = $next - $cycle['start'];
+        $rewards = array_map(fn (array $reward): array => $reward + ['label' => $this->program->describe($reward)], $cycle['rewards']);
+        $tomorrow = $rewards[$index + 1] ?? $this->program->current((clone $today)->modify('+1 day')->format('Y-m-d'))['cycle'][0];
+        $tomorrow['label'] ??= $this->program->describe($tomorrow);
 
         return [
             'claimed' => $claimed,
             'streak' => $streak,
-            'day' => (($next - 1) % count($rewards)) + 1,
-            'amount' => $rewards[($next - 1) % count($rewards)],
+            'day' => $index + 1,
+            'reward' => $rewards[$index],
             'rewards' => $rewards,
+            'tomorrow' => $tomorrow,
+            'duplicate_coins' => $cycle['duplicate_coins'],
+            'cycle' => $cycle,
         ];
     }
 
-    public function claimDaily(User $user): int
+    public function challenges(User $user, ?DateTime $today = null): array
     {
-        $status = $this->daily($user);
-
-        if ($status['claimed']) {
-            throw new ShopException();
-        }
-
-        $wallet = $this->wallets->wallet($user);
-        $this->repository->save($wallet->setDailyDay($this->today())->setDailyStreak($status['streak'] + 1), true);
-        $this->wallets->credit($user, $status['amount'], 'daily', 'Jour ' . $status['day']);
-
-        return $status['amount'];
-    }
-
-    public function challenges(User $user): array
-    {
-        $progress = $this->progress($user);
-        $claimed = $this->claimed($user);
+        $today ??= $this->program->today();
+        $config = $this->program->current($today->format('Y-m-d'));
+        $claimed = $this->claimed($this->wallets->wallet($user), $today);
         $list = [];
 
-        foreach (self::CHALLENGES as $code => $challenge) {
-            $value = min($challenge['target'], $progress[$challenge['metric']]);
-            $list[$code] = [
-                'code' => $code,
-                'target' => $challenge['target'],
-                'value' => $value,
-                'reward' => (int) $this->settings->get($challenge['setting']),
-                'done' => $value >= $challenge['target'],
-                'claimed' => in_array($code, $claimed, true),
-            ];
+        foreach ($config['challenges'] as $challenge) {
+            $value = min($challenge['target'], $this->progress($user, $challenge, $today));
+            $list[$challenge['code']] = $challenge + [
+                    'label' => $this->program->challengeLabel($challenge),
+                    'reward_label' => $this->program->describe($challenge['reward']),
+                    'value' => $value,
+                    'done' => $value >= $challenge['target'],
+                    'claimed' => in_array($challenge['code'], $claimed, true),
+                ];
         }
 
         return $list;
     }
 
-    public function claimChallenge(User $user, string $code): int
+    public function claimDaily(User $user): array
     {
-        $challenge = $this->challenges($user)[$code] ?? null;
+        return $this->claim($user);
+    }
 
-        if ($challenge === null || !$challenge['done'] || $challenge['claimed'] || $challenge['reward'] <= 0) {
-            throw new ShopException();
-        }
-
-        $wallet = $this->wallets->wallet($user);
-        $this->repository->save($wallet->setChallenges(['day' => $this->today()->format('Y-m-d'), 'codes' => [...$this->claimed($user), $code]]), true);
-        $this->wallets->credit($user, $challenge['reward'], 'challenge', $code);
-
-        return $challenge['reward'];
+    public function claimChallenge(User $user, string $code): array
+    {
+        return $this->claim($user, $code);
     }
 
     public function pending(User $user): int
     {
-        $count = $this->daily($user)['claimed'] ? 0 : 1;
+        return ($this->daily($user)['claimed'] ? 0 : 1) + count(array_filter($this->challenges($user), fn (array $challenge): bool => $challenge['done'] && !$challenge['claimed']));
+    }
 
-        foreach ($this->challenges($user) as $challenge) {
-            $count += $challenge['done'] && !$challenge['claimed'] ? 1 : 0;
+    protected function claim(User $user, ?string $code = null): array
+    {
+        if ($user->isGuest()) {
+            throw new ShopException();
         }
 
-        return $count;
+        $orm = $this->repository->getOrm();
+
+        return $orm->transactional(function () use ($orm, $user, $code): array {
+            $orm->getConnection()->fetchOne('SELECT id FROM `user` WHERE id = :id FOR UPDATE', ['id' => $user->getId()]);
+            $wallet = $this->wallets->wallet($user);
+            $orm->getConnection()->fetchOne('SELECT id FROM wallet WHERE id = :id FOR UPDATE', ['id' => $wallet->getId()]);
+            $orm->refresh($wallet);
+            $today = $this->program->today();
+            $config = $this->program->current($today->format('Y-m-d'));
+
+            if ($code === null) {
+                $status = $this->daily($user, $today);
+
+                if ($status['claimed']) {
+                    throw new ShopException();
+                }
+
+                $result = $this->program->give($user, $status['reward'], $status['duplicate_coins'], 'daily');
+                $wallet->setDailyDay($today)->setDailyStreak($status['streak'] + 1)->setChallenges(array_replace($wallet->getChallenges(), ['cycle' => $status['cycle']]));
+            } else {
+                $challenge = $this->challenges($user, $today)[$code] ?? null;
+
+                if ($challenge === null || !$challenge['done'] || $challenge['claimed']) {
+                    throw new ShopException();
+                }
+
+                $result = $this->program->give($user, $challenge['reward'], $config['duplicate_coins'], 'challenge');
+                $wallet->setChallenges(array_replace($wallet->getChallenges(), ['day' => $today->format('Y-m-d'), 'codes' => [...$this->claimed($wallet, $today), $code]]));
+            }
+
+            $this->repository->save($wallet, true);
+
+            return $result;
+        });
     }
 
-    public function dailyRewards(): array
+    protected function progress(User $user, array $challenge, DateTime $today): int
     {
-        $values = array_values(array_filter(array_map('intval', explode(',', (string) $this->settings->get('daily_rewards'))), fn (int $value): bool => $value > 0));
+        $timezone = new DateTimeZone(date_default_timezone_get());
+        $params = [
+            'user' => $user->getId(),
+            'since' => (clone $today)->setTimezone($timezone)->format('Y-m-d H:i:s'),
+            'until' => (clone $today)->modify('+1 day')->setTimezone($timezone)->format('Y-m-d H:i:s'),
+        ];
+        $metric = match ($challenge['metric']) {
+            'won' => 'COALESCE(SUM(r.won), 0)',
+            'games' => 'COUNT(DISTINCT r.game_id)',
+            default => 'COUNT(*)',
+        };
+        $sql = 'SELECT ' . $metric . ' FROM game_result r JOIN game_match m ON m.id = r.match_id WHERE r.user_id = :user AND r.created_at >= :since AND r.created_at < :until';
 
-        return $values === [] ? [10] : $values;
+        if ($challenge['game'] !== null) {
+            $sql .= ' AND r.game_id = :game';
+            $params['game'] = $challenge['game'];
+        }
+
+        if ($challenge['mode'] !== 'all') {
+            $sql .= ' AND m.mode = :mode';
+            $params['mode'] = $challenge['mode'];
+        }
+
+        return (int) $this->repository->getOrm()->getConnection()->fetchOne($sql, $params);
     }
 
-    protected function progress(User $user): array
+    protected function claimed(Wallet $wallet, DateTime $today): array
     {
-        $row = $this->repository->getOrm()->getConnection()->fetchAssociative(
-            'SELECT COUNT(*) AS played, COALESCE(SUM(won), 0) AS won, COUNT(DISTINCT game_id) AS games FROM game_result WHERE user_id = :user AND created_at >= :since',
-            ['user' => $user->getId(), 'since' => $this->today()->setTimezone(new DateTimeZone(date_default_timezone_get()))->format('Y-m-d H:i:s')],
-        );
+        $data = $wallet->getChallenges();
 
-        return array_map('intval', $row ?? ['played' => 0, 'won' => 0, 'games' => 0]);
-    }
-
-    protected function claimed(User $user): array
-    {
-        $data = $this->wallets->wallet($user)->getChallenges();
-
-        return ($data['day'] ?? null) === $this->today()->format('Y-m-d') ? (array) ($data['codes'] ?? []) : [];
-    }
-
-    protected function today(): DateTime
-    {
-        return new DateTime('today', new DateTimeZone(self::TIMEZONE));
+        return ($data['day'] ?? null) === $today->format('Y-m-d') ? (array) ($data['codes'] ?? []) : [];
     }
 }

@@ -24,14 +24,14 @@ class RewardController extends AbstractController
     #[Csrf('rewards')]
     public function daily(Request $request): Response
     {
-        return $this->claim($request, fn (User $user): int => $this->rewards->claimDaily($user));
+        return $this->claim($request, fn (User $user): array => $this->rewards->claimDaily($user));
     }
 
-    #[Route('/challenges/{code}', name: 'challenge', methods: ['POST'], requirements: ['code' => '[a-z]+'])]
+    #[Route('/challenges/{code}', name: 'challenge', methods: ['POST'], requirements: ['code' => '[a-z0-9]{1,32}'])]
     #[Csrf('rewards')]
     public function challenge(string $code, Request $request): Response
     {
-        return $this->claim($request, fn (User $user): int => $this->rewards->claimChallenge($user, $code));
+        return $this->claim($request, fn (User $user): array => $this->rewards->claimChallenge($user, $code));
     }
 
     protected function claim(Request $request, callable $action): Response
@@ -43,10 +43,10 @@ class RewardController extends AbstractController
         }
 
         try {
-            $coins = $action($user);
+            $result = $action($user);
 
             if ($request->wantsJson()) {
-                return $this->json(['coins' => $coins]);
+                return $this->json($result);
             }
 
             $this->addFlash('success', 'site.rewards.claimed');

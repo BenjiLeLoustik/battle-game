@@ -65,6 +65,24 @@ site:
         claimed_short: "+{coins} pièces récupérées"
         ready: Défi réussi, récupère ta récompense
         challenges: Défis du jour
+        all_collected: "Toutes les récompenses du jour ont été récupérées."
+        cycle: "Cycle des récompenses de connexion"
+        collected_short: "Récupéré"
+        claim_reward: "Récupérer : {reward}"
+        next_reward: "Demain : {reward}. Reviens pour prolonger ta série."
+        collect: "Récupérer"
+        no_challenges: "Aucun défi n’est proposé aujourd’hui."
+        product_unavailable: "Récompense indisponible"
+        game_unavailable: "Jeu indisponible"
+        duplicates_help: "Un cosmétique ou badge déjà possédé est remplacé par {count} pièces."
+        kinds:
+            coins: "Pièces"
+            lives: "Vies"
+            product: "Objet"
+        objectives:
+            played: "Jouer {count} partie(s)"
+            won: "Gagner {count} partie(s)"
+            games: "Jouer à {count} jeux différents"
         list:
             play: "Jouer {count} parties en ligne"
             win: Gagner une partie en ligne

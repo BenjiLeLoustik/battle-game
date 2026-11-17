@@ -80,6 +80,49 @@ admin:
         engage_seasons: "Saisons"
         engage_ranks: "Grades classés"
         levels: Niveaux
+        engage_daily: "Défis et récompenses"
+        
+    daily:
+        title: "Défis et récompenses quotidiennes"
+        subtitle: "Configure le cycle de connexion et les objectifs quotidiens."
+        effective: "Les défis changent demain à minuit, heure de Paris. Les joueurs terminent leur cycle de récompenses en cours avant de recevoir le nouveau. Un nouvel enregistrement remplace la programmation de demain."
+        saved: "Programme enregistré pour demain."
+        cycle: "Cycle de connexion"
+        cycle_help: "De 1 à 31 jours, numérotés depuis 1 sans interruption. Le cycle se répète ; un jour de connexion manqué remet la série au jour 1."
+        add_day: "Ajouter un jour"
+        day: "Jour"
+        reward: "Récompense"
+        type: "Type de récompense"
+        amount: "Quantité"
+        product: "Cosmétique ou badge"
+        choose_product: "Choisir une récompense"
+        challenges: "Défis du jour"
+        add_challenge: "Ajouter un défi"
+        challenges_help: "Jusqu’à 12 défis, renouvelés chaque jour à minuit. Pour compter des jeux différents, sélectionne « Tous les jeux ». Seules les parties terminées en ligne comptent."
+        metric: "Objectif"
+        target: "Nombre à atteindre"
+        game: "Jeu"
+        all_games: "Tous les jeux"
+        mode: "Mode"
+        all_modes: "Tous les modes en ligne"
+        duplicates: "Récompenses déjà possédées"
+        duplicate_coins: "Pièces de remplacement"
+        duplicates_help: "Un cosmétique ou badge déjà possédé est remplacé par ce montant. Les objets reçus restent acquis définitivement."
+        types:
+            coins: "Pièces"
+            lives: "Vies"
+            product: "Cosmétique ou badge"
+        metrics:
+            played: "Parties jouées"
+            won: "Parties gagnées"
+            games: "Jeux différents"
+        errors:
+            limits: "Configure entre 1 et 31 jours et au maximum 12 défis."
+            days: "Les jours doivent être uniques et numérotés de 1 sans interruption."
+            number: "Une quantité, un objectif ou un numéro de jour est invalide."
+            reward: "Choisis une récompense valide et une quantité positive."
+            challenge: "Un objectif ou un mode de défi est invalide."
+            game: "Choisis un jeu existant. L’objectif « Jeux différents » nécessite « Tous les jeux »."
         
     studio:
         title: Atelier de jeux

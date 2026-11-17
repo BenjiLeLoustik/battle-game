@@ -1,0 +1,66 @@
+{% set reward = rewards() %}
+{% if reward %}
+    {% set pending = (reward.daily.claimed ? 0 : 1) + reward.challenges|filter(c => c.done and not c.claimed)|length %}
+    {% set left = ('tomorrow'|date('U', 'Europe/Paris')) - ('now'|date('U')) %}
+    <section class="rewards" aria-labelledby="rewards-title">
+        <header class="rewards__top">
+            <div class="rewards__heading">
+                <h2 id="rewards-title" class="rewards__title">{{ 'site.rewards.title'|trans }}</h2>
+                <span class="rewards__summary">{{ pending ? 'site.rewards.pending'|trans({ count: pending }) : 'site.rewards.all_collected'|trans }}</span>
+            </div>
+            <span class="rewards__timer">{{ 'site.rewards.countdown'|trans({ hours: left // 3600, minutes: '%02d'|format((left % 3600) // 60) }) }}</span>
+        </header>
+        <div class="rewards__grid">
+            <div class="rewards__panel">
+                <div class="rewards__panel-head"><h3 class="rewards__subtitle">{{ 'site.rewards.daily'|trans }}</h3><span class="rewards__streak">{{ 'site.rewards.streak'|trans({ count: reward.daily.streak }) }}</span></div>
+                <ol class="rewards__days" tabindex="0" aria-label="{{ 'site.rewards.cycle'|trans }}">
+                    {% for item in reward.daily.rewards %}
+                        {% set state = loop.index < reward.daily.day or (loop.index == reward.daily.day and reward.daily.claimed) ? 'done' : (loop.index == reward.daily.day ? 'today' : 'later') %}
+                        <li class="rewards__day rewards__day--{{ state }}">
+                            <span class="rewards__day-label">{{ 'site.rewards.day'|trans({ day: loop.index }) }}</span>
+                            <span class="rewards__day-kind">{{ ('site.rewards.kinds.' ~ item.type)|trans }}</span>
+                            <strong class="rewards__day-reward">{{ item.label }}</strong>
+                            {% if state == 'done' %}<span class="rewards__day-state">{{ 'site.rewards.collected_short'|trans }}</span>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ol>
+                {% if reward.daily.claimed %}
+                    <p class="rewards__note">{{ 'site.rewards.next_reward'|trans({ reward: reward.daily.tomorrow.label }) }}</p>
+                {% else %}
+                    <form method="post" action="{{ path('site_reward_daily') }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
+                        <button type="submit" class="btn rewards__claim">{{ 'site.rewards.claim_reward'|trans({ reward: reward.daily.reward.label }) }}</button>
+                    </form>
+                {% endif %}
+                <p class="rewards__help">{{ 'site.rewards.duplicates_help'|trans({ count: reward.daily.duplicate_coins }) }}</p>
+            </div>
+            <div class="rewards__panel">
+                <div class="rewards__panel-head"><h3 class="rewards__subtitle">{{ 'site.rewards.challenges'|trans }}</h3><span class="rewards__count">{{ reward.challenges|filter(c => c.claimed)|length }}/{{ reward.challenges|length }}</span></div>
+                <ul class="rewards__list">
+                    {% for challenge in reward.challenges %}
+                        {% set state = challenge.claimed ? 'claimed' : (challenge.done ? 'ready' : 'progress') %}
+                        <li class="rewards__challenge rewards__challenge--{{ state }}">
+                            <span class="rewards__challenge-text">
+                                <span class="rewards__challenge-name">{{ challenge.label }}</span>
+                                <span class="rewards__challenge-meta">{{ challenge.claimed ? 'site.rewards.claimed'|trans : challenge.reward_label }}</span>
+                                {% if state == 'progress' %}<span class="rewards__track"><span class="rewards__fill" style="width: {{ (challenge.value / challenge.target * 100)|round }}%"></span></span>{% endif %}
+                            </span>
+                            {% if state == 'ready' %}
+                                <form method="post" action="{{ path('site_reward_challenge', { code: challenge.code }) }}">
+                                    <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
+                                    <button type="submit" class="rewards__take">{{ 'site.rewards.collect'|trans }}</button>
+                                </form>
+                            {% elseif state == 'claimed' %}
+                                <span class="rewards__done" aria-label="{{ 'site.rewards.claimed'|trans }}">✓</span>
+                            {% else %}
+                                <span class="rewards__progress">{{ challenge.value }}/{{ challenge.target }}</span>
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="rewards__note">{{ 'site.rewards.no_challenges'|trans }}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </section>
+{% endif %}

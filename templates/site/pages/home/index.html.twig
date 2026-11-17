@@ -12,6 +12,14 @@
             {{ 'site.home.title'|trans }}
         </h1>
 
+        {% for type, messages in flashes() %}
+            {% for message in messages %}
+                <p class="settings-flash settings-flash--{{ type }}" role="{{ type == 'error' ? 'alert' : 'status' }}">
+                    {{ message starts with 'error.' ? message|trans({}, 'errors') : message|trans }}
+                </p>
+            {% endfor %}
+        {% endfor %}
+
         {% include '@site/components/partials/onboarding.html.twig' with {
             onboarding: onboarding
         } only %}
@@ -117,102 +125,7 @@
             </section>
         {% endif %}
 
-        {% set reward = rewards() %}
-        {% if reward %}
-            {% set icons = {
-                play: 'M6 9h4M8 7v4M15 10h.01M18 8h.01M7 4h10a5 5 0 0 1 5 5v4a5 5 0 0 1-9 3h-2a5 5 0 0 1-9-3V9a5 5 0 0 1 5-5z',
-                win: 'M8 4h8v5a4 4 0 0 1-8 0V4zM8 6H4a3 3 0 0 0 4 4M16 6h4a3 3 0 0 1-4 4M12 13v4M8 21h8M10 17h4',
-                variety: 'M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z',
-            } %}
-            {% set left = ('tomorrow'|date('U', 'Europe/Paris')) - ('now'|date('U')) %}
-            {% set countdown = 'site.rewards.countdown'|trans({ hours: (left // 3600), minutes: ((left % 3600) // 60)|format('%02d') }) %}
-            {% set earned = (reward.daily.claimed ? reward.daily.rewards[reward.daily.day - 1] : 0) + (reward.challenges|filter(c => c.claimed)|map(c => c.reward)|reduce((sum, value) => sum + value, 0)) %}
-            {% set pending = (reward.daily.claimed ? 0 : 1) + reward.challenges|filter(c => c.done and not c.claimed)|length %}
-            <section class="rewards" aria-labelledby="rewards-title">
-                <header class="rewards__top">
-                    <div class="rewards__heading">
-                        <h2 id="rewards-title" class="rewards__title">{{ 'site.rewards.title'|trans }}</h2>
-                        <span class="rewards__summary">
-                            {% if pending > 0 %}
-                                {{ 'site.rewards.pending'|trans({ count: pending }) }}
-                            {% else %}
-                                {{ 'site.rewards.all_done'|trans({ coins: earned }) }}
-                            {% endif %}
-                        </span>
-                    </div>
-                    <span class="rewards__timer">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 7v5l3 2M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18z"/></svg>
-                        {{ countdown }}
-                    </span>
-                </header>
-
-                <div class="rewards__grid">
-                    <div class="rewards__panel">
-                        <div class="rewards__panel-head">
-                            <h3 class="rewards__subtitle">{{ 'site.rewards.daily'|trans }}</h3>
-                            <span class="rewards__streak">
-                                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2s6 5 6 11a6 6 0 0 1-12 0c0-3 2-5 2-5s0 3 2 3c0-4 2-9 2-9z"/></svg>
-                                {{ 'site.rewards.streak'|trans({ count: reward.daily.streak }) }}
-                            </span>
-                        </div>
-                        <ol class="rewards__days">
-                            {% for amount in reward.daily.rewards %}
-                                {% set state = loop.index < reward.daily.day or (loop.index == reward.daily.day and reward.daily.claimed) ? 'done' : (loop.index == reward.daily.day ? 'today' : (loop.index == reward.daily.day + 1 and reward.daily.claimed ? 'next' : 'later')) %}
-                                <li class="rewards__day rewards__day--{{ state }}">
-                                    <span class="rewards__day-label">{{ state == 'next' ? 'site.rewards.tomorrow'|trans : 'site.rewards.day'|trans({ day: loop.index }) }}</span>
-                                    {% if state == 'done' %}
-                                        <svg class="rewards__day-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg>
-                                    {% else %}
-                                        <strong class="rewards__day-coins">{{ amount }}</strong>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ol>
-                        {% if reward.daily.claimed %}
-                            <p class="rewards__note">{{ 'site.rewards.come_back'|trans({ coins: reward.daily.rewards[reward.daily.day % reward.daily.rewards|length] }) }}</p>
-                        {% else %}
-                            <form method="post" action="{{ path('site_reward_daily') }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
-                                <button type="submit" class="btn rewards__claim">{{ 'site.rewards.claim'|trans({ coins: reward.daily.amount }) }}</button>
-                            </form>
-                        {% endif %}
-                    </div>
-
-                    <div class="rewards__panel">
-                        <div class="rewards__panel-head">
-                            <h3 class="rewards__subtitle">{{ 'site.rewards.challenges'|trans }}</h3>
-                            <span class="rewards__count">{{ reward.challenges|filter(c => c.claimed)|length }}/{{ reward.challenges|length }}</span>
-                        </div>
-                        <ul class="rewards__list">
-                            {% for challenge in reward.challenges %}
-                                {% set state = challenge.claimed ? 'claimed' : (challenge.done ? 'ready' : 'progress') %}
-                                <li class="rewards__challenge rewards__challenge--{{ state }}">
-                                    <span class="rewards__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="{{ icons[challenge.code] ?? icons.play }}"/></svg></span>
-                                    <span class="rewards__challenge-text">
-                                        <span class="rewards__challenge-name">{{ ('site.rewards.list.' ~ challenge.code)|trans({ count: challenge.target }) }}</span>
-                                        {% if state == 'progress' %}
-                                            <span class="rewards__track"><span class="rewards__fill" style="width: {{ (challenge.value / challenge.target * 100)|round }}%"></span></span>
-                                        {% else %}
-                                            <span class="rewards__challenge-meta">{{ state == 'claimed' ? 'site.rewards.claimed_short'|trans({ coins: challenge.reward }) : 'site.rewards.ready'|trans }}</span>
-                                        {% endif %}
-                                    </span>
-                                    {% if state == 'ready' %}
-                                        <form method="post" action="{{ path('site_reward_challenge', { code: challenge.code }) }}">
-                                            <input type="hidden" name="_token" value="{{ csrf_token('rewards') }}">
-                                            <button type="submit" class="rewards__take">+{{ challenge.reward }}</button>
-                                        </form>
-                                    {% elseif state == 'claimed' %}
-                                        <span class="rewards__done" aria-label="{{ 'site.rewards.claimed'|trans }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></span>
-                                    {% else %}
-                                        <span class="rewards__progress">{{ challenge.value }}/{{ challenge.target }}<small>+{{ challenge.reward }}</small></span>
-                                    {% endif %}
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                </div>
-            </section>
-        {% endif %}
+        {% include '@site/components/partials/daily_rewards.html.twig' %}
 
         <section class="home__join" aria-labelledby="home-join">
             <div class="home__join-text">

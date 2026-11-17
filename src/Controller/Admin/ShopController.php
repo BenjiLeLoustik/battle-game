@@ -44,8 +44,8 @@ use NeoPHP\Package\Image\ImageManagerInterface;
 class ShopController extends AbstractAdminController
 {
     public const PERIODS = ['1', '7', '30', '90'];
-    public const SETTINGS = ['coins_per_match', 'coins_per_win', 'lives_free', 'challenge_play', 'challenge_win', 'challenge_variety', 'referral_referrer', 'referral_referee'];
-    public const LISTS = ['daily_rewards', 'season_rewards'];
+    public const SETTINGS = ['coins_per_match', 'coins_per_win', 'lives_free', 'referral_referrer', 'referral_referee'];
+    public const LISTS = ['season_rewards'];
     public const LEGAL = ['legal_name', 'legal_form', 'legal_address', 'legal_siret', 'legal_vat_number', 'legal_email'];
     private const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/webp'];
     private const IMAGE_MAX_SIZE = 3145728;

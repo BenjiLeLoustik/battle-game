@@ -31,6 +31,7 @@ class AdminAccess
         'shop_settings' => ['admin_shop_settings', 'shop.manage', '/admin/shop/settings'],
         'shop_coins' => ['admin_shop_settings', 'shop.manage', '/admin/shop/coins'],
         'shop_players' => ['admin_shop_settings', 'shop.manage', '/admin/shop/players'],
+        'engage_daily' => ['admin_daily_index', 'engage.manage', '/admin/engage/daily'],
         'engage_seasons' => ['admin_engage_seasons', 'engage.manage', '/admin/engage/seasons'],
         'engage_ranks' => ['admin_engage_ranks', 'engage.manage', '/admin/engage/ranks'],
         'engage_events' => ['admin_engage_events', 'engage.manage', '/admin/engage/events'],

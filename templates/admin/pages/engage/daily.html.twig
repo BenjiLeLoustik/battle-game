@@ -1,0 +1,79 @@
+{% extends '@admin/layouts/default.html.twig' %}
+
+{% set active = 'engage_daily' %}
+
+{% block title %}{{ 'admin.daily.title'|trans({}, 'admin') }} · {{ parent() }}{% endblock %}
+
+{% macro reward(prefix, reward, products) %}
+    <div class="daily-admin__reward">
+        <select class="admin-field__input" name="{{ prefix }}[type]" data-reward-kind aria-label="{{ 'admin.daily.type'|trans({}, 'admin') }}">
+            {% for type in ['coins', 'lives', 'product'] %}<option value="{{ type }}"{{ (reward.type ?? 'coins') == type ? ' selected' }}>{{ ('admin.daily.types.' ~ type)|trans({}, 'admin') }}</option>{% endfor %}
+        </select>
+        <input class="admin-field__input" type="number" name="{{ prefix }}[value]" min="1" max="100000" value="{{ reward.type|default('coins') != 'product' ? reward.value|default(10) : 10 }}" data-show="coins lives" aria-label="{{ 'admin.daily.amount'|trans({}, 'admin') }}" required>
+        <select class="admin-field__input" name="{{ prefix }}[product]" data-show="product" aria-label="{{ 'admin.daily.product'|trans({}, 'admin') }}" required>
+            <option value="">{{ 'admin.daily.choose_product'|trans({}, 'admin') }}</option>
+            {% for product in products %}<option value="{{ product.id }}"{{ (reward.product ?? (reward.type|default('coins') == 'product' ? reward.value|default(0) : 0)) == product.id ? ' selected' }}>{{ product.name }} · {{ product.type.translate() }}</option>{% endfor %}
+        </select>
+    </div>
+{% endmacro %}
+
+{% macro day(index, row, products) %}
+    <li class="daily-admin__day" data-row>
+        <label class="admin-field">{{ 'admin.daily.day'|trans({}, 'admin') }}<input class="admin-field__input" type="number" name="cycle[{{ index }}][day]" min="1" max="31" value="{{ row.day ?? (index is same as('__INDEX__') ? '' : index + 1) }}" required></label>
+        <div class="admin-field"><span>{{ 'admin.daily.reward'|trans({}, 'admin') }}</span>{{ _self.reward('cycle[' ~ index ~ ']', row, products) }}</div>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--small" data-remove-row>{{ 'admin.delete'|trans({}, 'admin') }}</button>
+    </li>
+{% endmacro %}
+
+{% macro challenge(index, row, products, games) %}
+    <li class="daily-admin__challenge" data-row>
+        <input type="hidden" name="challenges[{{ index }}][code]" value="{{ row.code ?? '' }}">
+        <label class="admin-field">{{ 'admin.daily.metric'|trans({}, 'admin') }}
+            <select class="admin-field__input" name="challenges[{{ index }}][metric]">
+                {% for metric in ['played', 'won', 'games'] %}<option value="{{ metric }}"{{ (row.metric ?? 'played') == metric ? ' selected' }}>{{ ('admin.daily.metrics.' ~ metric)|trans({}, 'admin') }}</option>{% endfor %}
+            </select>
+        </label>
+        <label class="admin-field">{{ 'admin.daily.target'|trans({}, 'admin') }}<input class="admin-field__input" type="number" name="challenges[{{ index }}][target]" min="1" max="1000" value="{{ row.target ?? 1 }}" required></label>
+        <label class="admin-field">{{ 'admin.daily.game'|trans({}, 'admin') }}
+            <select class="admin-field__input" name="challenges[{{ index }}][game]">
+                <option value="">{{ 'admin.daily.all_games'|trans({}, 'admin') }}</option>
+                {% for game in games %}<option value="{{ game.id }}"{{ (row.game ?? '') == game.id ? ' selected' }}>{{ game.name }}</option>{% endfor %}
+            </select>
+        </label>
+        <label class="admin-field">{{ 'admin.daily.mode'|trans({}, 'admin') }}
+            <select class="admin-field__input" name="challenges[{{ index }}][mode]">
+                {% for mode in ['all', 'quick', 'ranked', 'room'] %}<option value="{{ mode }}"{{ (row.mode ?? 'all') == mode ? ' selected' }}>{{ mode == 'all' ? 'admin.daily.all_modes'|trans({}, 'admin') : ('game_match_mode.' ~ mode)|trans({}, 'enums') }}</option>{% endfor %}
+            </select>
+        </label>
+        <div class="admin-field daily-admin__challenge-reward"><span>{{ 'admin.daily.reward'|trans({}, 'admin') }}</span>{{ _self.reward('challenges[' ~ index ~ ']', row.reward ?? row, products) }}</div>
+        <button type="button" class="admin-btn admin-btn--ghost admin-btn--small daily-admin__remove" data-remove-row>{{ 'admin.delete'|trans({}, 'admin') }}</button>
+    </li>
+{% endmacro %}
+
+{% block content %}
+    <form class="admin-page" method="post" action="{{ path('admin_daily_index') }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('admin-daily') }}">
+        <div class="admin-page__head">
+            <div><h1 class="admin-page__title">{{ 'admin.daily.title'|trans({}, 'admin') }}</h1><span class="admin-page__subtitle">{{ 'admin.daily.subtitle'|trans({}, 'admin') }}</span></div>
+            <button type="submit" class="admin-btn admin-btn--primary">{{ 'admin.save'|trans({}, 'admin') }}</button>
+        </div>
+        <p class="admin-panel__help">{{ 'admin.daily.effective'|trans({}, 'admin') }}</p>
+        <section class="admin-panel" data-component="RowsEditor">
+            <div class="daily-admin__bar"><h2 class="admin-panel__title">{{ 'admin.daily.cycle'|trans({}, 'admin') }}</h2><button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-add-row>{{ 'admin.daily.add_day'|trans({}, 'admin') }}</button></div>
+            <p class="admin-panel__help">{{ 'admin.daily.cycle_help'|trans({}, 'admin') }}</p>
+            <ul class="daily-admin__list" data-rows>{% for row in submitted is not null ? submitted.cycle|default([]) : config.cycle %}{{ _self.day(loop.index0, row, products) }}{% endfor %}</ul>
+            <template data-row-template>{{ _self.day('__INDEX__', {}, products) }}</template>
+        </section>
+        <section class="admin-panel" data-component="RowsEditor">
+            <div class="daily-admin__bar"><h2 class="admin-panel__title">{{ 'admin.daily.challenges'|trans({}, 'admin') }}</h2><button type="button" class="admin-btn admin-btn--secondary admin-btn--small" data-add-row>{{ 'admin.daily.add_challenge'|trans({}, 'admin') }}</button></div>
+            <p class="admin-panel__help">{{ 'admin.daily.challenges_help'|trans({}, 'admin') }}</p>
+            <ul class="daily-admin__list" data-rows>{% for row in submitted is not null ? submitted.challenges|default([]) : config.challenges %}{{ _self.challenge(loop.index0, row, products, games) }}{% endfor %}</ul>
+            <template data-row-template>{{ _self.challenge('__INDEX__', {}, products, games) }}</template>
+        </section>
+        <section class="admin-panel">
+            <h2 class="admin-panel__title">{{ 'admin.daily.duplicates'|trans({}, 'admin') }}</h2>
+            <label class="admin-field">{{ 'admin.daily.duplicate_coins'|trans({}, 'admin') }}<input class="admin-field__input" type="number" name="duplicate_coins" min="1" max="100000" value="{{ submitted.duplicate_coins ?? config.duplicate_coins }}" required></label>
+            <p class="admin-panel__help">{{ 'admin.daily.duplicates_help'|trans({}, 'admin') }}</p>
+        </section>
+    </form>
+{% endblock %}

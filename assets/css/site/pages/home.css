@@ -379,3 +379,40 @@
 .rewards__done svg {
     @apply size-4;
 }
+
+.rewards__panel {
+    @apply min-w-0;
+}
+
+.rewards__days {
+    @apply flex gap-2 overflow-x-auto pb-2;
+}
+
+.rewards__day {
+    @apply aspect-auto min-h-28 w-28 shrink-0 px-2 py-3;
+}
+
+.rewards__day-kind,
+.rewards__day-state {
+    @apply text-[10px] font-semibold;
+}
+
+.rewards__day-reward {
+    @apply w-full break-words text-center text-xs leading-relaxed;
+}
+
+.rewards__day--later .rewards__day-reward {
+    @apply text-muted-2;
+}
+
+.rewards__help {
+    @apply text-xs leading-relaxed text-muted-2;
+}
+
+.rewards__challenge {
+    @apply flex-wrap;
+}
+
+.rewards__take {
+    @apply max-w-full whitespace-normal text-xs;
+}

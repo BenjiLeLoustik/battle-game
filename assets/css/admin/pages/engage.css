@@ -284,3 +284,31 @@
 .admin-btn--block {
     @apply w-full justify-center;
 }
+
+.daily-admin__bar {
+    @apply flex flex-wrap items-center justify-between gap-3;
+}
+
+.daily-admin__list {
+    @apply m-0 flex list-none flex-col gap-3 p-0;
+}
+
+.daily-admin__day {
+    @apply grid grid-cols-[90px_minmax(0,1fr)_auto] items-end gap-3 rounded-xl border border-adm-line p-4 max-md:grid-cols-1;
+}
+
+.daily-admin__reward {
+    @apply grid min-w-0 grid-cols-2 gap-2 max-sm:grid-cols-1;
+}
+
+.daily-admin__challenge {
+    @apply grid grid-cols-4 items-end gap-3 rounded-xl border border-adm-line p-4 max-lg:grid-cols-2 max-sm:grid-cols-1;
+}
+
+.daily-admin__challenge-reward {
+    @apply col-span-3 max-lg:col-span-2 max-sm:col-span-1;
+}
+
+.daily-admin__remove {
+    @apply justify-self-end max-sm:justify-self-start;
+}

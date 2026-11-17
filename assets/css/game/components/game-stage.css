@@ -271,7 +271,7 @@
 }
 
 .game-stage__connection {
-    @apply shrink-0 border-b border-yellow/30 bg-pannel px-4 py-2 text-center text-xs font-semibold text-yellow;
+    @apply shrink-0 border-b border-yellow/30 bg-panel px-4 py-2 text-center text-xs font-semibold text-yellow;
 }
 
 @keyframes victory-rain {

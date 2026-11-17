@@ -82,13 +82,9 @@
                     <h2 class="admin-panel__title">{{ 'admin.shop.settings.rewards'|trans({}, 'admin') }}</h2>
                     <span class="admin-panel__help">{{ 'admin.shop.settings.rewards_help'|trans({}, 'admin') }}</span>
                 </div>
-                <label class="admin-field">
-                    {{ 'admin.shop.settings.daily_rewards'|trans({}, 'admin') }}
-                    <input class="admin-field__input" name="daily_rewards" value="{{ lists.daily_rewards }}" placeholder="10, 15, 20, 25, 30, 40, 60">
-                    <span class="admin-panel__help">{{ 'admin.shop.settings.daily_rewards_help'|trans({}, 'admin') }}</span>
-                </label>
+                <a class="admin-link" href="{{ path('admin_daily_index') }}">{{ 'admin.daily.title'|trans({}, 'admin') }}</a>
                 <div class="admin-form-grid">
-                    {% for key in ['challenge_play', 'challenge_win', 'challenge_variety', 'referral_referrer', 'referral_referee'] %}
+                    {% for key in ['referral_referrer', 'referral_referee'] %}
                         <label class="admin-field">
                             {{ ('admin.shop.settings.' ~ key)|trans({}, 'admin') }}
                             <input class="admin-field__input" type="number" min="0" name="{{ key }}" value="{{ values[key] }}">
