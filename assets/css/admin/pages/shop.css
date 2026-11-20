@@ -612,3 +612,56 @@
 .designer__upload-text span {
     @apply truncate;
 }
+
+.shop-form__row:has(> :only-child),
+.shop-form__row:has(> [data-coins-field][hidden]) {
+    @apply grid-cols-1;
+}
+
+.shop-form__row > .admin-field {
+    @apply w-full min-w-0;
+}
+
+.shop-sizes {
+    @apply w-full min-w-0 gap-3;
+}
+
+.shop-sizes__select {
+    @apply w-full;
+}
+
+.shop-sizes .admin-panel__help {
+    @apply text-xs font-normal leading-relaxed;
+}
+
+.shop-sizes__list {
+    @apply m-0 flex list-none flex-wrap gap-2 p-0;
+}
+
+.shop-sizes__list[hidden] {
+    @apply hidden;
+}
+
+.shop-sizes__row {
+    @apply inline-flex max-w-full items-center overflow-hidden rounded-lg border border-adm-accent/25 bg-adm-accent/8 transition-colors focus-within:border-adm-accent;
+}
+
+.shop-sizes__value {
+    @apply h-9 w-auto min-w-10 max-w-64 flex-[0_1_auto] cursor-default rounded-none border-0 bg-transparent px-3 text-center font-semibold text-adm-accent-soft shadow-none;
+}
+
+.shop-sizes__remove {
+    @apply flex size-9 shrink-0 cursor-pointer items-center justify-center border-l border-adm-accent/15 bg-transparent p-0 text-lg leading-none text-adm-muted transition-colors hover:bg-danger/10 hover:text-danger focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-adm-accent;
+}
+
+.shop-sizes__shipping {
+    @apply mt-1 flex items-start gap-2.5 rounded-lg border border-adm-line bg-adm-bg/40 px-3 py-2.5;
+}
+
+.shop-sizes__shipping svg {
+    @apply mt-0.5 size-4 shrink-0 text-adm-accent-soft;
+}
+
+.shop-sizes__shipping p {
+    @apply min-w-0 text-xs font-normal leading-relaxed text-adm-muted;
+}

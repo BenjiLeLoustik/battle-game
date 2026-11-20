@@ -4,7 +4,6 @@ namespace App\Controller\Site;
 
 use App\Repository\SubscriptionGiftRepository;
 use App\Shared\Shop\Exception\SubscriptionGiftException;
-use App\Shared\Shop\ShopManager;
 use App\Shared\Shop\SubscriptionGiftManager;
 use NeoPHP\Component\Controller\Contract\AbstractController;
 use NeoPHP\Component\Csrf\Attribute\Csrf;
@@ -68,7 +67,7 @@ class SubscriptionGiftController extends AbstractController
             [
                 'active' => 'shop',
                 'packages' => $gifts->forUser($this->getUser()),
-                'countries' => ShopManager::COUNTRIES,
+                'countries' => $gifts->countries(),
                 'values' => $values,
             ],
             $status,

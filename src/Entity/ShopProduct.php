@@ -16,6 +16,8 @@ class ShopProduct implements TranslatableInterface
     public const PLAN_ICONS = ['crown', 'star', 'diamond', 'bolt', 'heart', 'flame', 'shield', 'check'];
     public const PLAN_PATHS = ['crown' => 'M3 8l4.5 4L12 5l4.5 7L21 8l-2 11H5L3 8z', 'star' => 'M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9L12 2.5z', 'diamond' => 'M6 3h12l4 6-10 12L2 9l4-6z', 'bolt' => 'M13 2L4 14h7l-1 8 9-12h-7l1-8z', 'heart' => 'M12 21s-8-5-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 6-8 11-8 11z', 'flame' => 'M12 2s6 5 6 11a6 6 0 0 1-12 0c0-3 2-5 2-5s0 3 2 3c0-4 2-9 2-9z', 'shield' => 'M12 2l8 3v6c0 5.5-3.5 9.5-8 11-4.5-1.5-8-5.5-8-11V5l8-3z', 'check' => 'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-1.5 14.5l-4.5-4.5 1.6-1.6 2.9 2.9 6-6 1.6 1.6-7.6 7.6z'];
 
+    public const SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
+
     use IdTrait;
     use TimestampTrait;
 

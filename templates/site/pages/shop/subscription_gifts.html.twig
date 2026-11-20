@@ -33,14 +33,14 @@
             <section class="subscription-gifts"
                      aria-labelledby="gift-title-{{ gift.id }}">
                 <div class="subscription-gifts__head">
-        <span class="subscription-gifts__mark" aria-hidden="true">
-            {{ shop.icon('gift') }}
-        </span>
+                    <span class="subscription-gifts__mark" aria-hidden="true">
+                        {{ shop.icon('gift') }}
+                    </span>
 
                     <div class="subscription-gifts__heading">
-            <span class="subscription-gifts__eyebrow">
-                {{ 'site.shop.subscription_gifts.welcome_label'|trans }}
-            </span>
+                        <span class="subscription-gifts__eyebrow">
+                            {{ 'site.shop.subscription_gifts.welcome_label'|trans }}
+                        </span>
 
                         <h2 class="subscription-gifts__title"
                             id="gift-title-{{ gift.id }}">
@@ -170,11 +170,11 @@
                             <label class="field">
                                 {{ 'site.shop.subscription_gifts.fields.country'|trans }}
 
+                                {% set selectedCountry = form.address.country ?? app_user().country ?? '' %}
                                 <select class="field__input" name="address[country]" autocomplete="shipping country" required>
+                                    <option value="">{{ 'site.shop.subscription_gifts.choose_country'|trans }}</option>
                                     {% for country in countries %}
-                                        <option value="{{ country }}" {{ (form.address.country ?? 'FR') == country ? ' selected' }}>
-                                            {{ ('site.shop.subscription_gifts.countries.' ~ country)|trans }}
-                                        </option>
+                                        <option value="{{ country.code }}"{{ selectedCountry == country.code ? ' selected' }}>{{ country|localize('name') }}</option>
                                     {% endfor %}
                                 </select>
                             </label>

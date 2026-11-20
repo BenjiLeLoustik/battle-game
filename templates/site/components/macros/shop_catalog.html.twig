@@ -1,0 +1,125 @@
+{% macro preview(product, initials) %}
+    {% import '@site/components/macros/shop.html.twig' as shop %}
+    {% import '@site/components/macros/user.html.twig' as ui %}
+    <div class="shop-preview shop-preview--{{ product.type.value }}">
+        {% if product.image %}
+            <img class="shop-preview__image" src="{{ product.image }}" alt="" loading="lazy">
+        {% elseif product.type.value == 'cosmetic' and product.option('kind') in ['frame', 'banner', 'victory'] %}
+            <div class="shop-preview__cosmetic">{{ shop.cosmetic(product, initials, 'lg') }}</div>
+        {% elseif product.type.value == 'cosmetic' and product.option('kind') == 'title' %}
+            <span class="shop-preview__title">{{ product.option('value') }}</span>
+        {% elseif product.type.value == 'subscription' %}
+            <span class="shop-preview__plan">{{ ui.plan(product.badge, 'lg') }}</span>
+        {% else %}
+            <span class="shop-preview__glyph">{{ shop.icon(product.type.value) }}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro price(product) %}
+    {% import '@site/components/macros/shop.html.twig' as shop %}
+    <div class="shop-price">
+        {% if product.priceCents is not null %}
+            <span class="shop-price__value">{{ shop.price(product.priceCents) }}{% if product.type.value == 'subscription' %}<span class="shop-price__period"> / {{ 'site.shop.month'|trans }}</span>{% endif %}</span>
+            {% if product.priceCoins is not null and product.type.allowsCoins %}<span class="shop-price__alternative">{{ product.priceCoins == 1 ? 'site.shop.catalog.or_coin'|trans : 'site.shop.catalog.or_coins'|trans({ count: product.priceCoins|number_format(0, ',', ' ') }) }}</span>{% endif %}
+        {% elseif product.priceCoins is not null and product.type.allowsCoins %}
+            <span class="shop-price__value shop-price__value--coins">{{ shop.icon('coins') }}{{ product.priceCoins == 1 ? 'site.shop.catalog.coin_one'|trans : 'site.shop.catalog.coins_many'|trans({ count: product.priceCoins|number_format(0, ',', ' ') }) }}</span>
+        {% else %}
+            <span class="shop-price__alternative">{{ 'site.shop.catalog.unavailable'|trans }}</span>
+        {% endif %}
+    </div>
+{% endmacro %}
+
+{% macro perks(product, included, full = false) %}
+    <ul class="shop-plan-card__perks">
+        <li>{{ product.unlimited ? 'site.shop.plan.unlimited'|trans : 'site.shop.plan.lives'|trans({ count: product.option('lives') }) }}</li>
+        {% if product.earlyAccess %}<li>{{ 'site.shop.plan.early'|trans }}</li>{% endif %}
+        {% set names = pass_track_names(product) %}
+        {% if names is not empty %}<li>{{ 'site.shop.plan.pass'|trans({ tracks: names|join(', ') }) }}</li>{% endif %}
+        {% if full %}
+            {% for perk in (product|localize('perks'))|split("\n")|filter(perk => perk|trim != '') %}<li>{{ perk }}</li>{% endfor %}
+        {% elseif included is not empty %}
+            <li>{{ included|length == 1 ? 'site.shop.catalog.gift_one'|trans : 'site.shop.catalog.gift_many'|trans({ count: included|length }) }}</li>
+        {% endif %}
+    </ul>
+{% endmacro %}
+
+{% macro offer(product, owned, card, member, initials, included = []) %}
+    {% import '@site/components/macros/shop.html.twig' as shop %}
+    {% import _self as catalog %}
+    <dialog class="shop-offer" id="shop-offer-{{ product.id }}" aria-labelledby="shop-offer-title-{{ product.id }}">
+        <div class="shop-offer__header">
+            <div><span class="shop-offer__type">{{ product.type.translate() }}</span><h2 class="shop-offer__title" id="shop-offer-title-{{ product.id }}">{{ product|localize('name') }}</h2></div>
+            <button class="shop-offer__close" type="button" data-shop-close autofocus aria-label="{{ 'site.shop.catalog.close'|trans }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" aria-hidden="true"><path d="m6 6 12 12M18 6 6 18"/></svg></button>
+        </div>
+        <div class="shop-offer__body">
+            <div class="shop-offer__details">
+                {{ catalog.preview(product, initials) }}
+                {% if product|localize('description') %}<p class="shop-offer__description">{{ product|localize('description') }}</p>{% endif %}
+                {% if product.type.value == 'subscription' %}
+                    {{ catalog.perks(product, included, true) }}
+                    {% if included is not empty %}
+                        <div class="shop-offer__gifts">
+                            <h3 class="shop-offer__subtitle">{{ 'site.shop.catalog.included_gifts'|trans }}</h3>
+                            {% for gift in included %}
+                                <div class="shop-offer__gift">{{ shop.icon(gift.type.value) }}<span>{{ (gift.type.value == 'physical' ? 'site.shop.subscription_gifts.physical_perk' : 'site.shop.subscription_gifts.digital_perk')|trans({ name: gift|localize('name') }) }}</span></div>
+                            {% endfor %}
+                            <p class="shop-offer__note">{{ 'site.shop.subscription_gifts.once'|trans }}</p>
+                        </div>
+                    {% endif %}
+                {% endif %}
+            </div>
+            <div class="shop-offer__checkout">
+                <h3 class="shop-offer__subtitle">{{ 'site.shop.catalog.your_choice'|trans }}</h3>
+                {{ catalog.price(product) }}
+                {% if product.stock is not null and product.stock <= 0 and not owned %}
+                    <p class="shop-offer__note">{{ 'site.shop.catalog.sold_out'|trans }}</p>
+                {% else %}
+                    {{ shop.buy(product, owned, card, member) }}
+                {% endif %}
+                {% if owned and member %}<a class="shop-link" href="{{ path(product.type.value == 'badge' ? 'site_profile_me' : 'site_shop_inventory') }}">{{ 'site.shop.catalog.view_collection'|trans }}</a>{% endif %}
+            </div>
+        </div>
+    </dialog>
+{% endmacro %}
+
+{% macro product(product, owned, card, member, initials) %}
+    {% import '@site/components/macros/shop.html.twig' as shop %}
+    {% import _self as catalog %}
+    <article class="shop-product" style="--shop-accent: {{ shop.color(product.type.value) }}" data-shop-item data-search="{{ product|localize('name') }} {{ product|localize('description')|striptags }} {{ product.type.translate() }}">
+        <div class="shop-product__visual">
+            {{ catalog.preview(product, initials) }}
+            <span class="shop-product__type">{{ product.type.translate() }}</span>
+            {% if owned %}<span class="shop-product__owned">{{ 'site.shop.owned'|trans }}</span>{% endif %}
+        </div>
+        <div class="shop-product__content">
+            <h3 class="shop-product__name">{{ product|localize('name') }}</h3>
+            {% if product|localize('description') %}<p class="shop-product__description">{{ product|localize('description') }}</p>{% endif %}
+            {% if product.stock is not null %}
+                <span class="shop-product__stock{{ product.stock <= 5 ? ' shop-product__stock--low' }}">{{ product.stock <= 0 ? 'site.shop.catalog.sold_out'|trans : 'site.shop.stock'|trans({ count: product.stock }) }}</span>
+            {% endif %}
+            <div class="shop-product__footer">
+                {{ catalog.price(product) }}
+                <button class="shop-product__button" type="button" data-shop-open aria-haspopup="dialog" aria-controls="shop-offer-{{ product.id }}">{{ 'site.shop.catalog.details'|trans }}<span aria-hidden="true">↗</span></button>
+            </div>
+        </div>
+        {{ catalog.offer(product, owned, card, member, initials) }}
+    </article>
+{% endmacro %}
+
+{% macro plan(product, owned, card, member, initials, wide = false) %}
+    {% import '@site/components/macros/user.html.twig' as ui %}
+    {% import _self as catalog %}
+    {% set included = included_products(product) %}
+    <article class="shop-plan-card{{ wide ? ' shop-plan-card--wide' }}" style="--shop-accent: {{ product.option('color', '#7C5CFF') }}" data-shop-item data-search="{{ product|localize('name') }} {{ product|localize('description')|striptags }} {{ 'site.shop.tabs.subscription'|trans }}">
+        <div class="shop-plan-card__intro">
+            <div class="shop-plan-card__brand">{{ ui.plan(product.badge, 'lg') }}<span class="shop-plan-card__tag">{{ 'site.shop.plan.tag'|trans }}</span>{% if owned %}<span class="shop-plan-card__owned">{{ 'site.shop.owned'|trans }}</span>{% endif %}</div>
+            <h3 class="shop-plan-card__name">{{ product|localize('name') }}</h3>
+            {% if product|localize('description') %}<p class="shop-plan-card__description">{{ product|localize('description') }}</p>{% endif %}
+            {{ catalog.price(product) }}
+        </div>
+        {{ catalog.perks(product, included) }}
+        <div class="shop-plan-card__footer"><button class="shop-product__button" type="button" data-shop-open aria-haspopup="dialog" aria-controls="shop-offer-{{ product.id }}">{{ 'site.shop.catalog.details'|trans }}<span aria-hidden="true">↗</span></button></div>
+        {{ catalog.offer(product, owned, card, member, initials, included) }}
+    </article>
+{% endmacro %}

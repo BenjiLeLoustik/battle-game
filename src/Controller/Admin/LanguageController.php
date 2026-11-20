@@ -185,7 +185,8 @@ class LanguageController extends AbstractAdminController
 
         $countries->save($country
             ->setName($name !== '' ? $name : $country->getName())
-            ->setLocale(in_array($locale, $this->catalog->locales(), true) ? $locale : $country->getLocale()), true);
+            ->setLocale(in_array($locale, $this->catalog->locales(), true) ? $locale : $country->getLocale())
+            ->setShippingEnabled($request->request->get('shipping_enabled') === '1'), true);
         $this->saveTranslations($country, $request);
         $this->audit('country.save', $country->getCode());
 

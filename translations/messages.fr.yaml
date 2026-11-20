@@ -120,6 +120,37 @@ site:
         legal: "Pas d'escompte pour paiement anticipé. En cas de retard de paiement, indemnité forfaitaire pour frais de recouvrement : 40 €."
 
     shop:
+        catalog:
+            kicker: "L’espace des joueurs"
+            subtitle: "Des avantages pour jouer, des styles pour ton profil et des objets à collectionner."
+            earn: "{match} pièces par partie en ligne, +{win} pour une victoire."
+            balance: "Ton espace boutique"
+            search: "Rechercher un article…"
+            results: "Articles affichés : {count}"
+            details: "Voir les détails"
+            close: "Fermer les détails"
+            your_choice: "Ton offre"
+            view_collection: "Retrouver dans ma collection"
+            included_gifts: "Cadeaux de bienvenue inclus"
+            gift_one: "Un cadeau de bienvenue inclus"
+            gift_many: "{count} cadeaux de bienvenue inclus"
+            coin_one: "1 pièce"
+            coins_many: "{count} pièces"
+            or_coin: "ou 1 pièce"
+            or_coins: "ou {count} pièces"
+            unavailable: "Indisponible"
+            sold_out: "Rupture de stock"
+            empty_title: "Aucun article à afficher"
+            empty_help: "Essaie un autre terme ou explore une autre catégorie."
+            clear_search: "Effacer la recherche"
+            descriptions:
+                subscription: "Compare les avantages et découvre les cadeaux inclus dans chaque offre."
+                coins: "Complète ton portefeuille pour choisir tes prochaines récompenses."
+                lives: "Fais le plein de vies pour tes prochaines parties."
+                cosmetic: "Cadres, bannières et autres styles pour personnaliser ton profil."
+                badge: "Enrichis ta collection et affiche tes badges sur ton profil."
+                physical: "Retrouve les objets physiques de la boutique."
+                gift: "Offre des pièces avec une carte cadeau."
         title: Boutique
         subtitle: "Abonnements, pièces, vies et objets. Chaque partie en ligne rapporte {match} pièces, +{win} en cas de victoire."
         categories: Catégories de la boutique
@@ -244,6 +275,7 @@ site:
             awaiting_shipment: "À expédier"
             variant: "Taille ou variante pour {name}"
             choose_variant: "Choisir une taille ou variante"
+            choose_country: "Choisir un pays"
             states:
                 granted: "Ajouté à ta collection"
                 pending: "Adresse à renseigner"

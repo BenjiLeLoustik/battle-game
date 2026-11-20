@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserBadge;
 use App\Entity\UserItem;
 use App\Repository\BadgeRepository;
+use App\Repository\CountryRepository;
 use App\Repository\ShopOrderRepository;
 use App\Repository\ShopProductRepository;
 use App\Repository\SubscriptionGiftRepository;
@@ -32,6 +33,7 @@ class SubscriptionGiftManager
         protected BadgeRepository $badges,
         protected UserBadgeRepository $userBadges,
         protected ShopOrderRepository $orders,
+        protected CountryRepository $countries,
     ) {
     }
 
@@ -224,7 +226,7 @@ class SubscriptionGiftManager
         );
     }
 
-    public static function address(array $data): array
+    public function address(array $data): array
     {
         $address = [];
 
@@ -261,7 +263,7 @@ class SubscriptionGiftManager
             }
         }
 
-        if (!in_array($address['country'], ShopManager::COUNTRIES, true,)) {
+        if ($this->countries->canShipTo($address['country'])) {
             throw new SubscriptionGiftException(
                 'error.shop.subscription_gifts.address',
             );
@@ -276,7 +278,7 @@ class SubscriptionGiftManager
         array $address,
         array $variants,
     ): void {
-        $address = self::address($address);
+        $address = $this->address($address);
         $connection = $this->gifts->getOrm()->getConnection();
 
         $connection->transactional(function () use (
@@ -496,5 +498,10 @@ class SubscriptionGiftManager
         }
 
         return false;
+    }
+
+    public function countries(): array
+    {
+        return $this->countries->findForShipping();
     }
 }

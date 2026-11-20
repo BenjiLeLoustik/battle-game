@@ -76,6 +76,7 @@
                                 <th class="admin-table__th">{{ 'admin.languages.countries.code'|trans({}, 'admin') }}</th>
                                 <th class="admin-table__th">{{ 'admin.languages.countries.name'|trans({}, 'admin') }} · {{ reference|upper }}</th>
                                 <th class="admin-table__th">{{ 'admin.languages.countries.locale'|trans({}, 'admin') }}</th>
+                                <th class="admin-table__th countries__shipping-cell">{{ 'admin.languages.countries.shipping'|trans({}, 'admin') }}</th>
                                 <th class="admin-table__th">{{ 'admin.languages.countries.users'|trans({}, 'admin') }}</th>
                                 <th class="admin-table__th">{{ 'admin.users.column.actions'|trans({}, 'admin') }}</th>
                             </tr>
@@ -96,6 +97,12 @@
                                             {% endfor %}
                                         </select>
                                     </td>
+                                    <td class="admin-table__cell countries__shipping-cell">
+                                        <label class="shop-switch countries__shipping">
+                                            <input class="shop-switch__input" type="checkbox" role="switch" form="{{ form }}" name="shipping_enabled" value="1" aria-label="{{ 'admin.languages.countries.shipping_toggle'|trans({ name: country.name }, 'admin') }}"{{ country.shippingEnabled ? ' checked' }}>
+                                            <span class="shop-switch__track" aria-hidden="true"></span>
+                                        </label>
+                                    </td>
                                     <td class="admin-table__cell">{{ row.users }}</td>
                                     <td class="admin-table__cell">
                                         <span class="admin-actions admin-actions--nowrap">
@@ -114,7 +121,7 @@
                                 </tr>
                                 {% if targets is not empty %}
                                     <tr id="{{ form }}-names" class="countries__names" hidden>
-                                        <td class="admin-table__cell" colspan="5">
+                                        <td class="admin-table__cell" colspan="6">
                                             <div class="countries__grid">
                                                 {% for locale in targets %}
                                                     <label class="admin-field">

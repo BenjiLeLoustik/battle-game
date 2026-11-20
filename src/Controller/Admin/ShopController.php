@@ -457,7 +457,7 @@ class ShopController extends AbstractAdminController
                 $errors['name'] = 'admin.shop.products.errors.included_type';
             }
 
-            $payload = $this->payload($type, $data, $errors, $badges);
+            $payload = $this->payload($type, $data, $errors, $badges, $product);
             $file = $request->files->get('image');
 
             if ($file instanceof UploadedFile && $file->getError() !== UPLOAD_ERR_NO_FILE && ($file->isValid() === false || !in_array($file->getMimeType(), self::IMAGE_TYPES, true) || $file->getSize() > self::IMAGE_MAX_SIZE)) {
@@ -524,7 +524,7 @@ class ShopController extends AbstractAdminController
         ], $errors === [] ? 200 : 422);
     }
 
-    protected function payload(ShopProductTypeEnum $type, array $data, array &$errors, BadgeRepository $badges): array
+    protected function payload(ShopProductTypeEnum $type, array $data, array &$errors, BadgeRepository $badges, ShopProduct $product): array
     {
         $payload = [];
 
@@ -585,7 +585,32 @@ class ShopController extends AbstractAdminController
                 $payload['coins'] > 0 || $errors['coins'] = 'admin.shop.products.errors.amount';
                 break;
             case ShopProductTypeEnum::PHYSICAL:
-                $payload['sizes'] = mb_substr(trim((string) ($data['sizes'] ?? '')), 0, 120);
+                $sizes = $data['sizes'] ?? [];
+                $allowed = array_values(array_unique([...ShopProduct::SIZES, ...$product->getSizes()]));
+                $valid = is_array($sizes) && count($sizes) <= count($allowed);
+
+                if ($valid) {
+                    foreach ($sizes as $size) {
+                        if (!is_string($size) || !in_array($size, $allowed, true)) {
+                            $valid = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (!$valid) {
+                    $errors['sizes'] = 'admin.shop.products.errors.sizes';
+                    $payload['sizes'] = implode(', ', $product->getSizes());
+                    break;
+                }
+
+                $selected = array_values(array_filter($allowed, fn (string $size): bool => in_array($size, $sizes, true)));
+                $payload['sizes'] = implode(', ', $selected);
+
+                if (mb_strlen($payload['sizes']) > 120) {
+                    $errors['sizes'] = 'admin.shop.products.errors.sizes';
+                }
+
                 break;
         }
 

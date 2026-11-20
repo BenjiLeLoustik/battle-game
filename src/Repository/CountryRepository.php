@@ -23,4 +23,19 @@ class CountryRepository extends AbstractRepository
     {
         return array_map(fn (Country $country): string => $country->getCode(), $this->findOrdered());
     }
+
+    public function findForShipping(): array
+    {
+        return $this->findBy(['shippingEnabled' => true], ['name' => 'ASC']);
+    }
+
+    public function shippingCodes(): array
+    {
+        return array_map(fn (Country $country): string => $country->getCode(), $this->findForShipping());
+    }
+
+    public function canShipTo(?string $code): bool
+    {
+        return $this->findByCode($code)?->isShippingEnabled() ?? false;
+    }
 }

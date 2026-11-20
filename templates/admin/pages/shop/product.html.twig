@@ -421,11 +421,35 @@
                     </div>
 
                     <div class="shop-form__row" data-for="physical">
-                        <label class="admin-field">
-                            {{ 'admin.shop.products.sizes'|trans({}, 'admin') }}
-                            <input class="admin-field__input" name="sizes" maxlength="120" value="{{ product.option('sizes') }}" placeholder="S, M, L, XL">
-                            <span class="admin-panel__help">{{ 'admin.shop.products.physical_help'|trans({}, 'admin') }}</span>
-                        </label>
+                        <div class="admin-field shop-sizes" data-component="ProductSizes" data-field-label="{{ 'admin.shop.products.sizes'|trans({}, 'admin') }}" data-remove-label="{{ 'admin.shop.products.remove_size'|trans({ size: '__SIZE__' }, 'admin') }}">
+                            <label for="product-size-picker">{{ 'admin.shop.products.sizes'|trans({}, 'admin') }}</label>
+                            {% set sizeOptions = constant('App\\Entity\\ShopProduct::SIZES') %}
+                            {% for size in product.sizes %}
+                                {% if size not in sizeOptions %}{% set sizeOptions = sizeOptions|merge([size]) %}{% endif %}
+                            {% endfor %}
+                            <select id="product-size-picker" class="admin-field__input shop-sizes__select" data-size-select aria-describedby="product-sizes-help">
+                                <option value="">{{ 'admin.shop.products.add_size'|trans({}, 'admin') }}</option>
+                                {% for size in sizeOptions %}
+                                    <option value="{{ size }}"{{ size in product.sizes ? ' disabled' }}>{{ size }}</option>
+                                {% endfor %}
+                            </select>
+                            <span id="product-sizes-help" class="admin-panel__help">{{ 'admin.shop.products.sizes_help'|trans({}, 'admin') }}</span>
+                            <ul class="shop-sizes__list" data-size-list{{ product.sizes is empty ? ' hidden' }}>
+                                {% for size in sizeOptions %}
+                                    {% if size in product.sizes %}
+                                        <li class="shop-sizes__row" data-size-row>
+                                            <input class="admin-field__input shop-sizes__value" type="text" name="sizes[]" value="{{ size }}" size="{{ max(4, size|length + 2) }}" title="{{ size }}" readonly data-size-value aria-label="{{ 'admin.shop.products.sizes'|trans({}, 'admin') }} : {{ size }}">
+                                            <button type="button" class="shop-sizes__remove" data-size-remove aria-label="{{ 'admin.shop.products.remove_size'|trans({ size: size }, 'admin') }}">×</button>
+                                        </li>
+                                    {% endif %}
+                                {% endfor %}
+                            </ul>
+                            {{ _self.error(errors, 'sizes') }}
+                            <div class="shop-sizes__shipping">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/></svg>
+                                <p>{{ 'admin.shop.products.physical_help'|trans({}, 'admin') }} <a class="admin-link admin-link--inline" href="{{ path('admin_language_index', { _fragment: 'countries' }) }}">{{ 'admin.shop.products.shipping_countries_link'|trans({}, 'admin') }}</a></p>
+                            </div>
+                        </div>
                     </div>
                 </section>
 

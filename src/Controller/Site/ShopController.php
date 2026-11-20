@@ -61,6 +61,7 @@ class ShopController extends AbstractController
             'active' => 'shop',
             'tab' => $tab,
             'tabs' => array_values(array_filter(self::TABS, fn (string $item): bool => $item === 'all' || isset($counts[$item]))),
+            'counts' => ['all' => array_sum($counts)] + $counts,
             'plans' => array_values(array_filter($products, fn (ShopProduct $product): bool => $product->getType() === ShopProductTypeEnum::SUBSCRIPTION)),
             'products' => array_values(array_filter($products, fn (ShopProduct $product): bool => $product->getType() !== ShopProductTypeEnum::SUBSCRIPTION)),
             'owned' => $owned,

@@ -9,6 +9,7 @@ use App\Entity\User;
 use App\Entity\UserBadge;
 use App\Entity\UserItem;
 use App\Repository\BadgeRepository;
+use App\Repository\CountryRepository;
 use App\Repository\ShopOrderRepository;
 use App\Repository\ShopProductRepository;
 use App\Repository\UserBadgeRepository;
@@ -27,8 +28,6 @@ use DateTime;
 
 class ShopManager
 {
-    public const COUNTRIES = ['FR', 'BE', 'CH', 'LU', 'MC', 'CA'];
-
     protected array $cosmetics = [];
 
     public function __construct(
@@ -45,6 +44,7 @@ class ShopManager
         protected NotificationManager $notifications,
         protected VoucherManager $vouchers,
         protected SubscriptionGiftManager $gifts,
+        protected CountryRepository $countries,
     ) {
     }
 
@@ -89,6 +89,17 @@ class ShopManager
     public function checkout(User $user, ShopProduct $product, string $successUrl, string $cancelUrl, ?string $variant = null, ?string $code = null): string
     {
         $this->check($user, $product);
+
+        $shippingCountries = [];
+
+        if ($product->getType() === ShopProductTypeEnum::PHYSICAL) {
+            $shippingCountries = $this->countries->shippingCodes();
+
+            if ($shippingCountries === []) {
+                throw new ShopException();
+            }
+        }
+
         $sizes = $product->getSizes();
 
         if ($product->getPriceCents() === null || ($product->getType() === ShopProductTypeEnum::PHYSICAL && $sizes !== [] && !in_array($variant, $sizes, true))) {
@@ -132,7 +143,7 @@ class ShopManager
         }
 
         if ($product->getType() === ShopProductTypeEnum::PHYSICAL) {
-            $data['shipping_address_collection'] = ['allowed_countries' => self::COUNTRIES];
+            $data['shipping_address_collection'] = ['allowed_countries' => $shippingCountries];
             $data['phone_number_collection'] = ['enabled' => 'true'];
         }
 

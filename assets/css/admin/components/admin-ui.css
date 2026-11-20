@@ -918,3 +918,11 @@
 .player-picker__empty {
     @apply px-3 py-2.5 text-sm text-adm-muted;
 }
+
+.countries__shipping-cell {
+    @apply w-32 text-center align-middle;
+}
+
+.countries__shipping-cell .countries__shipping {
+    @apply inline-flex w-fit align-middle;
+}

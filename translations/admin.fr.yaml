@@ -879,7 +879,8 @@ admin:
             color: Couleur du pseudo
             title_value: Texte du titre (30 caractères max.)
             sizes: Tailles ou variantes proposées
-            physical_help: "L'adresse de livraison et le téléphone sont demandés par Stripe au paiement. Pays livrés : France, Belgique, Suisse, Luxembourg, Monaco, Canada."
+            physical_help: "L’adresse et le téléphone sont recueillis par Stripe. Seuls les pays autorisés à la livraison sont proposés."
+            shipping_countries_link: "Gérer les pays"
             active: Mettre en vente sur la boutique
             errors:
                 name: Le nom est obligatoire.
@@ -892,6 +893,7 @@ admin:
                 image: Image invalide (PNG, JPEG ou WebP, 3 Mo maximum).
                 included_products: "Un des objets sélectionnés n’existe plus ou ne peut pas être offert."
                 included_type: "Ce produit est utilisé comme cadeau : son type ne peut plus être modifié."
+                sizes: "La sélection de tailles est invalide ou dépasse la longueur autorisée."
             season_pass: "Débloque la piste premium du pass de saison"
             pass_tracks: "Pistes du pass de saison débloquées"
             pass_tracks_help: "Les abonnés pourront récupérer les récompenses de ces pistes en plus de la piste gratuite."
@@ -903,6 +905,10 @@ admin:
             included_title: "Objets inclus"
             included_help: "Choisis les objets offerts une seule fois avec cette offre. Les cosmétiques et badges sont conservés définitivement. Les goodies physiques sont demandés depuis Mes cadeaux après activation. Les produits sélectionnés peuvent rester masqués dans le catalogue."
             included_empty: "Crée d’abord un cosmétique, un badge ou un produit physique dans la boutique."
+            add_size: "Ajouter une taille…"
+            remove_size: "Supprimer la taille {size}"
+            sizes_help: "Ajoute les tailles disponibles. Sans sélection, le produit est proposé sans taille."
+        
         orders:
             title: Commandes
             subtitle: Tous les achats, par carte ou en pièces. Les goodies payés attendent ton expédition.
@@ -1874,6 +1880,8 @@ admin:
         code: Code de langue (2 lettres)
         reference: Référence
         countries:
+            shipping: "Livraison"
+            shipping_toggle: "Autoriser la livraison vers {name}"
             title: Pays
             help: "Pays proposés dans les profils. La langue par défaut est celle que le site utilisera pour les joueurs de ce pays."
             code: Code

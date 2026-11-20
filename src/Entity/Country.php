@@ -23,6 +23,9 @@ class Country implements TranslatableInterface
     #[ORM\Column(length: 5)]
     private string $locale = 'fr';
 
+    #[ORM\Column(default: false)]
+    private bool $shippingEnabled = false;
+
     public function getCode(): string
     {
         return $this->code;
@@ -62,5 +65,17 @@ class Country implements TranslatableInterface
     public static function getTranslatableFields(): array
     {
         return ['name' => 'text'];
+    }
+
+    public function isShippingEnabled(): bool
+    {
+        return $this->shippingEnabled;
+    }
+
+    public function setShippingEnabled(bool $shippingEnabled): static
+    {
+        $this->shippingEnabled = $shippingEnabled;
+
+        return $this;
     }
 }
